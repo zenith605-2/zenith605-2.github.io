@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=18">
+<link rel="stylesheet" href="/assets/app.css?v=20">
 </head>
 <body>
 
@@ -42,8 +42,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=18';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=18';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=20';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=20';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -480,6 +480,7 @@ function paneTesting(pane) {
         ${e.uninstalled_at ? `<span class="tag rose">${t('t_uninstalled')}</span>` : ''}
         ${e.status === 'done' ? `<span class="tag mint">${t('t_finished')}</span>` : ''}
         ${peerStatus(e)}</p>
+      ${e.peer_package ? `<p class="muted" style="margin:0;font-size:12px">${esc(e.peer_package)}</p>` : ''}
       <p class="muted" style="margin:0">D+${dayNo} / ${total}${t('days')} ·
         ${t('me')} ${days}${t('days')}${pd ? ` · ${t('them')} ${Object.keys(pd).length}${t('days')}` : ''}</p>
       ${peerLine(e)}
@@ -660,8 +661,9 @@ function tradeForm(existing) {
       <input type="text" id="x_store" value="${esc(x.peer_package || '')}"
              placeholder="https://play.google.com/store/apps/details?id=...">
 
-      <label>${t('f_peer_name')} <span class="req">${t('req')}</span></label>
+      <label>${t('f_peer_name')} <span class="muted">${t('optional_h')}</span></label>
       <input type="text" id="x_name" value="${esc(x.peer_app_name || '')}">
+      <p class="hint">${t('f_peer_name_p')}</p>
 
       <div class="row" style="gap:16px;align-items:flex-end">
         <div style="flex:1;min-width:150px">
@@ -714,7 +716,7 @@ function tradeForm(existing) {
     $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') fetchNow(); });
   }
 
-  $('x_gchk').onclick = async () => {
+  const groupNow = async () => {
     const v = $('x_group').value.trim();
     if (!v) return;
     $('x_gmsg').textContent = '…';
@@ -724,10 +726,16 @@ function tradeForm(existing) {
       $('x_gmsg').innerHTML = r?.ok ? `✓ ${esc(r.title)}` : `⚠ ${t('grp_bad')}`;
     } catch (_) { $('x_gmsg').textContent = ''; }
   };
+  $('x_gchk').onclick = groupNow;
+  $('x_group').addEventListener('blur', groupNow);
 
   $('x_save').onclick = async (ev) => {
-    const name = $('x_name').value.trim();
-    if (!name) { $('x_name').focus(); alert(t('need_name')); return; }
+    const pkgNow = pkgFromUrl($('x_optin').value) || pkgFromUrl($('x_store').value) || '';
+    // 이름을 모르는 게 정상이다. 비공개 테스트 앱은 스토어에 없으니 확인할
+    // 데가 없다. 일단 패키지명으로 넣어 두면, 폰에 깔린 걸 확인하는 순간
+    // 안드로이드 앱이 진짜 이름으로 바꿔 준다.
+    const name = $('x_name').value.trim() || pkgNow;
+    if (!name) { $('x_optin').focus(); alert(t('need_optin')); return; }
     ev.target.disabled = true;
     const row = {
         peer_app_name: name,
