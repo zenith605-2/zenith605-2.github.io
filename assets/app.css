@@ -824,3 +824,25 @@ h3.grp-h {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12.5px; line-height: 1.6; white-space: pre; overflow-wrap: normal;
 }
+
+/* 이력 날짜 — 시작·12명·연속·마지막 */
+.hdates {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 4px 12px; margin-top: 10px;
+}
+.hdate { display: flex; align-items: baseline; gap: 6px; font-size: 12px; }
+.hdate span { color: var(--ink300); }
+.hdate b { margin-left: auto; font-variant-numeric: tabular-nums; }
+
+/* 대화 묶음 — 상대별로 접는다 */
+details.recg { margin-bottom: 6px; }
+details.recg > summary {
+  cursor: pointer; list-style: none; display: flex; align-items: center;
+  gap: 8px; font-size: 12.5px; padding: 7px 10px;
+  background: var(--ink800); border-radius: 8px;
+}
+details.recg > summary::-webkit-details-marker { display: none; }
+details.recg > summary .when { margin-left: auto; font-size: 11px; }
+details.recg > summary::after { content: '›'; color: var(--ink300); }
+details.recg[open] > summary::after { content: '⌄'; }
+details.recg > .rec { margin: 6px 0 6px 12px; }
