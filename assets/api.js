@@ -327,7 +327,11 @@ export function dayStrip(ex, peerDays) {
   const start = new Date((ex.started_on || '') + 'T00:00:00');
   if (isNaN(start)) return '';
   const today = new Date(); today.setHours(0, 0, 0, 0);
-  const key = (d) => d.toISOString().slice(0, 10);
+  // toISOString 은 UTC 로 바꾼다. 한국(+9)에서는 자정 기준으로 하루가 밀려
+  // 달력이 앱과 하루씩 어긋났다. day_date 는 로컬 날짜이므로 로컬로 맞춘다.
+  const key = (d) => `${d.getFullYear()}-${
+    String(d.getMonth() + 1).padStart(2, '0')}-${
+    String(d.getDate()).padStart(2, '0')}`;
   const mine = {};
   for (const c of ex.exchange_checkins || []) mine[c.day_date] = c.minutes ?? 0;
 
