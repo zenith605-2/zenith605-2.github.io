@@ -916,3 +916,9 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
 .gtab tr.sum.ok-row th.who { color: var(--mint); }
 .gtab tr.sum.all-row th.who { color: var(--ink300); }
 .gtab tr.sum td { padding-top: 4px; }
+
+/* 확인 안 되는 구간 — 그만뒀어도 우리는 모른다 */
+.gtab tbody td.keep.stale, .glegend i.stale {
+  background: repeating-linear-gradient(45deg,
+    var(--ink700) 0 2px, transparent 2px 4px);
+}

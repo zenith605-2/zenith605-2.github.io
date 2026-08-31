@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=39">
+<link rel="stylesheet" href="/assets/app.css?v=41">
 </head>
 <body>
 
@@ -44,8 +44,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=39';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=39';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=41';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=41';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -294,11 +294,10 @@ function paneApps(pane) {
           <button class="btn ghost sm" data-delapp="${a.id}">${t('delete')}</button>
           ${a.package_name ? `<a class="btn ghost sm" href="/app.html?p=${encodeURIComponent(a.package_name)}">${t('public_page')}</a>` : ''}
         </div>
-        ${now > 0 ? `<details class="testers" data-app="${a.id}" data-ext="${est}">
-          <summary>${t('act_testers')} ${now - est}${
-            est > 0 ? ` <span class="muted">· ${t('outside')} ${est}</span>` : ''}</summary>
-          <div class="tbody"><p class="hint">…</p></div>
-        </details>` : ''}
+        <details class="grid-d" data-grid="${a.id}">
+          <summary>${t('grid_open')}</summary>
+          <div class="gridbody"><p class="muted">${t('loading')}</p></div>
+        </details>
         <details class="testers emails" data-app="${a.id}">
           <summary>${t('emails_h')}</summary>
           <div class="tbody"><p class="hint">…</p></div>
@@ -306,30 +305,7 @@ function paneApps(pane) {
       </div></div>`;
   }).join('') : `<p class="muted">${t('no_apps')}</p>`;
 
-  // 테스터 목록은 펼칠 때만 불러온다 — 앱이 여러 개면 매번 다 부르는 건 낭비다.
-  // 이메일 칸도 details.testers 를 같이 쓰고 있어서, 빼지 않으면
-  // [테스터 이메일] 자리에 테스터 목록이 한 번 더 찍힌다.
-  pane.querySelectorAll('details.testers:not(.emails)').forEach(d => {
-    d.addEventListener('toggle', async () => {
-      if (!d.open || d.dataset.loaded) return;
-      d.dataset.loaded = '1';
-      const box = d.querySelector('.tbody');
-      const rows = await appTesters(d.dataset.app).catch(() => []);
-      box.innerHTML = rows.length ? rows.map(r => `<div class="trow">
-        ${iconHtml(r.icon_url, r.name || '?')}
-        <div style="min-width:0;flex:1">
-          <p style="margin:0;font-size:14px">${esc(r.name || t('developer'))}</p>
-          <p class="muted" style="margin:0">${r.days ?? 0}${t('days_opened')}</p>
-        </div>
-        <span class="tag">${t('src_' + (r.source || 'outside'))}</span>
-      </div>`).join('') : `<p class="muted">${t('no_testers')}</p>`;
-      const ext = Number(d.dataset.ext || 0);
-      if (ext > 0) {
-        box.insertAdjacentHTML('beforeend',
-          `<p class="hint" style="margin:10px 0 0">${tf('outside_note', { a: ext })}</p>`);
-      }
-    });
-  });
+  wireGrids(pane);
 
   // 그룹스 대신 이메일 목록으로 테스터를 받는 앱 — 모바일 요청함과 같은 흐름이다.
   // 미등록 이메일을 한 번에 복사해서 Play Console 테스터 목록에 붙여넣는다.
@@ -1024,16 +1000,7 @@ async function paneHistory(pane) {
             `<p class="rec" style="margin:6px 0 0">${esc(f.body || '')}</p>`).join('')}
         </div>`).join('')}</div>` : ''}`;
 
-  // 표는 펼칠 때만 받는다 — 앱마다 수백 칸이다
-  pane.querySelectorAll('details.grid-d').forEach(d => {
-    d.addEventListener('toggle', async () => {
-      if (!d.open || d.dataset.done) return;
-      d.dataset.done = '1';
-      let rows = [];
-      try { rows = await appOptinGrid(d.dataset.grid); } catch (_) {}
-      d.querySelector('.gridbody').innerHTML = gridHtml(rows);
-    });
-  });
+  wireGrids(pane);
 
   pane.querySelectorAll('[data-rpt]').forEach(b => {
     b.onclick = () => exportReport(b.dataset.rpt, b);
@@ -1087,6 +1054,19 @@ async function paneHistory(pane) {
   });
 }
 
+/// 표는 펼칠 때만 받는다 — 앱마다 수백 칸이다. 내 앱 탭과 이력 탭이 같이 쓴다.
+function wireGrids(pane) {
+  pane.querySelectorAll('details.grid-d').forEach(d => {
+    d.addEventListener('toggle', async () => {
+      if (!d.open || d.dataset.done) return;
+      d.dataset.done = '1';
+      let rows = [];
+      try { rows = await appOptinGrid(d.dataset.grid); } catch (_) {}
+      d.querySelector('.gridbody').innerHTML = gridHtml(rows);
+    });
+  });
+}
+
 /// 사람 × 날짜 표. 숫자 하나로는 왜 12명이 안 되는지 알 수 없다.
 /// 칸이 차 있으면 그날 옵트인을 유지한 것, 진하면 그날 앱까지 연 것.
 ///
@@ -1123,14 +1103,24 @@ function gridHtml(rows) {
       d === now ? 'now' : ''}">${dd === '01' ? m + '/' : ''}${+dd}</th>`;
   }).join('')}</tr>`;
 
-  const line = (r) => `<tr class="${r.tracked ? '' : 'out'}">
+  const line = (r) => {
+    // ACT 를 안 쓰는 상대는 언제 그만뒀는지 우리가 알 수 없다. 내가 그 앱을
+    // 마지막으로 연 날 이후는 '확인 안 됨'으로 흐리게 둔다 — 채워 두면
+    // 살아 있는 줄 안다.
+    const last = r.tracked ? null
+      : (r.opened || []).length ? r.opened[r.opened.length - 1] : '';
+    return `<tr class="${r.tracked ? '' : 'out'}">
     <th class="who" title="${esc(r.who || '')}">${
       iconHtml(r.icon, r.who || '?', 'gicon')}<span>${
       esc(r.app_name || r.who || '')}</span></th>
-    ${shown.map(d => `<td class="${
-      !on(r, d) ? '' : (r.opened || []).includes(d) ? 'hit' : 'keep'}"></td>`)
-      .join('')}
+    ${shown.map(d => {
+      if (!on(r, d)) return '<td></td>';
+      if ((r.opened || []).includes(d)) return '<td class="hit"></td>';
+      const stale = last !== null && d > last;
+      return `<td class="keep${stale ? ' stale' : ''}"></td>`;
+    }).join('')}
   </tr>`;
+  };
 
   const sum = (label, fn, cls) => `<tr class="sum ${cls}">
     <th class="who">${label}</th>
@@ -1148,7 +1138,8 @@ function gridHtml(rows) {
     <p class="glegend">
       <span><i class="keep"></i>${t('grid_legend1')}</span>
       <span><i class="hit"></i>${t('grid_legend2')}</span>
-      ${theirs.length ? `<span><i class="out"></i>${t('grid_legend3')}</span>` : ''}
+      ${theirs.length ? `<span><i class="out"></i>${t('grid_legend3')}</span>
+      <span><i class="stale"></i>${t('grid_legend4')}</span>` : ''}
     </p>
     <div class="gwrap"><table class="gtab">
       <thead>${head}</thead>
