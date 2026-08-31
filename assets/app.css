@@ -670,6 +670,32 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
 #board #list .cardact .muted { font-size: 13px; text-align: left; }
 #board #list .cardact .state { align-self: center; padding: 0; }
 
+/* ---- 넓은 화면(900px 이상): 오른쪽에 진행·버튼 ----
+   세로로만 쌓으면 카드 한 장이 6줄이라 열 개를 보려면 계속 스크롤해야 한다.
+   글은 왼쪽, 숫자와 버튼은 오른쪽으로 갈라 카드 높이를 절반으로 줄인다.
+   좁은 화면에서는 아래 블록이 다시 한 줄씩 쌓는다. */
+@media (min-width: 900px) {
+  #board.wrap { max-width: 1060px; }
+  #board #list .main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    grid-template-areas:
+      "head  stats"
+      "badge stats"
+      "who   act"
+      "desc  act";
+    column-gap: 28px; row-gap: 10px; align-items: start;
+  }
+  #board #list .head   { grid-area: head; }
+  #board #list .badges { grid-area: badge; }
+  #board #list p.who   { grid-area: who; }
+  #board #list .desc   { grid-area: desc; }
+  #board #list .stats  { grid-area: stats; align-self: center; }
+  #board #list .cardact { grid-area: act; align-self: center; justify-content: flex-start; }
+  /* 소개가 없는 카드도 오른쪽 칸이 무너지지 않게 */
+  #board #list .main::after { content: ''; grid-area: desc; }
+}
+
 @media (max-width: 560px) {
   /* 좁은 화면에서는 순번을 뺀다. 30px 을 순번에 내주면 그만큼 글이 잘린다.
      몇 번째인지는 스크롤하면 알 수 있고, 글이 잘리는 편이 훨씬 나쁘다. */
