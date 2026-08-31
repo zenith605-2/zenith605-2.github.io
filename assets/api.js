@@ -451,25 +451,6 @@ export async function deleteAppReview(id) {
   if (error) throw error;
 }
 
-/// 프로덕션 신청 결과 — 우리가 알 방법이 없으니 본인이 적는다.
-/// 반려되면 14일을 처음부터 다시 세므로 표의 시작점도 그 날로 옮긴다.
-export async function myAppReviews(appId) {
-  const { data } = await sb.rpc('my_app_reviews', { p_app_id: appId });
-  return data || [];
-}
-
-export async function addAppReview(appId, result, decidedOn, note) {
-  const { error } = await sb.from('app_reviews').insert({
-    app_id: appId, result, decided_on: decidedOn, note: note || null,
-  });
-  if (error) throw error;
-}
-
-export async function deleteAppReview(id) {
-  const { error } = await sb.from('app_reviews').delete().eq('id', id);
-  if (error) throw error;
-}
-
 /// 사람 × 날짜 표 — 어느 날 몇 명이 유지 중이었는지를 그림으로 본다.
 /// tracked=false 는 상대가 우리 쪽에 안 걸린 품앗이다(레딧에서 손으로 맺은 것).
 export async function appOptinGrid(appId) {
