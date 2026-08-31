@@ -625,7 +625,7 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
   gap: 0 14px; align-items: start; padding: 22px 24px;
 }
 #board #list .rank {
-  width: 30px; text-align: right; align-self: start; padding-top: 16px;
+  width: 30px; text-align: right; align-self: start; padding-top: 24px;
   font-size: 15px; font-weight: 700; color: var(--ink300); opacity: .7;
   font-variant-numeric: tabular-nums;
 }
@@ -660,7 +660,7 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
 #board #list .stats .bar { margin: 0; }
 #board #list .stats .count { margin-top: 10px; }
 #board #list .stats .count b { font-size: 22px; }
-#board #list .stats .sub { margin: 6px 0 0; font-size: 13px; color: var(--ink300); }
+#board #list .stats .sub { font-size: 13px; font-weight: 400; color: var(--ink300); }
 
 #board #list .cardact {
   flex-direction: row; align-items: center; gap: 14px;

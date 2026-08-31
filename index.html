@@ -9,7 +9,7 @@
 <meta property="og:title" content="Android apps looking for closed testers">
 <meta property="og:description" content="Trade closed tests with other Android devs. Daily opens record themselves.">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="/assets/app.css?v=9">
+<link rel="stylesheet" href="/assets/app.css?v=10">
 </head>
 <body>
 
@@ -139,8 +139,8 @@ function card(a, i) {
       ${a.description ? `<p class="desc">${esc(a.description)}</p>` : ''}
       <div class="stats">
         <div class="bar"><i style="width:${pct}%"></i></div>
-        <p class="count"><b>${cur}</b> / ${need} ${t('testers')}</p>
-        ${ext > 0 ? `<p class="sub">${act} ${t('on_act')} · ${ext} ${t('outside')}</p>` : ''}
+        <p class="count"><b>${cur}</b> / ${need} ${t('testers')}${
+          ext > 0 ? ` <span class="sub">(${act} ${t('on_act')} · ${ext} ${t('outside')})</span>` : ''}</p>
         ${testerFaces(a)}
       </div>
       ${offerBtn(a, href)}
