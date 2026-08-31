@@ -418,13 +418,56 @@ export function watchTrade(requestId, onRow) {
 /// 앱별 이력 — 테스트가 끝난 뒤 남는 건 이 기록이다.
 /// 앱을 지워도 archive 쪽에 내용까지 남는다.
 export async function myAppHistory() {
-  const { data } = await sb.rpc('my_app_history');
+  // 오늘을 우리가 알려 준다 — 서버의 current_date 는 UTC 라 한국에서는
+  // 오전 9시 전까지 하루 전이다.
+  const n = new Date();
+  const today = `${n.getFullYear()}-${String(n.getMonth() + 1)
+    .padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`;
+  const { data } = await sb.rpc('my_app_history', { p_today: today });
   return data || [];
 }
 
 export async function myAppArchives() {
   const { data } = await sb.rpc('my_app_archives');
   return data || [];
+}
+
+/// 프로덕션 신청 결과 — 우리가 알 방법이 없으니 본인이 적는다.
+/// 반려되면 14일을 처음부터 다시 세므로 표의 시작점도 그 날로 옮긴다.
+export async function myAppReviews(appId) {
+  const { data } = await sb.rpc('my_app_reviews', { p_app_id: appId });
+  return data || [];
+}
+
+export async function addAppReview(appId, result, decidedOn, note) {
+  const { error } = await sb.from('app_reviews').insert({
+    app_id: appId, result, decided_on: decidedOn, note: note || null,
+  });
+  if (error) throw error;
+}
+
+export async function deleteAppReview(id) {
+  const { error } = await sb.from('app_reviews').delete().eq('id', id);
+  if (error) throw error;
+}
+
+/// 프로덕션 신청 결과 — 우리가 알 방법이 없으니 본인이 적는다.
+/// 반려되면 14일을 처음부터 다시 세므로 표의 시작점도 그 날로 옮긴다.
+export async function myAppReviews(appId) {
+  const { data } = await sb.rpc('my_app_reviews', { p_app_id: appId });
+  return data || [];
+}
+
+export async function addAppReview(appId, result, decidedOn, note) {
+  const { error } = await sb.from('app_reviews').insert({
+    app_id: appId, result, decided_on: decidedOn, note: note || null,
+  });
+  if (error) throw error;
+}
+
+export async function deleteAppReview(id) {
+  const { error } = await sb.from('app_reviews').delete().eq('id', id);
+  if (error) throw error;
 }
 
 /// 사람 × 날짜 표 — 어느 날 몇 명이 유지 중이었는지를 그림으로 본다.
