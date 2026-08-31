@@ -745,3 +745,9 @@ p.faces .more { margin-left: 8px; font-size: 12px; color: var(--ink300); }
   #board #list .meta { gap: 10px; }
   #board #list .meta .badges, #board #list .meta p.who { flex: 1 1 100%; }
 }
+
+/* 진행 막대가 카드 오른쪽 끝까지 뻗어 신청 버튼 밑을 지나갔다.
+   윗줄(배지·개발자)이 끝나는 근처에서 같이 멈추게 폭을 묶는다. */
+@media (min-width: 900px) {
+  #board #list .stats { max-width: calc(100% - 210px); }
+}
