@@ -857,40 +857,40 @@ details.grid-d > summary::after { content: ' \203A'; }
 details.grid-d[open] > summary::after { content: ' \2304'; }
 .gnote { font-size: 11.5px; line-height: 1.5; margin: 6px 0 8px; }
 .gwrap { overflow-x: auto; }
-.gtab { border-collapse: collapse; font-size: 10px; }
+.gtab { border-collapse: collapse; font-size: 11px; }
 .gtab th, .gtab td { padding: 0; }
 .gtab thead th {
   color: var(--ink300); font-weight: 600; text-align: center;
-  min-width: 15px; padding-bottom: 4px;
+  min-width: 22px; padding-bottom: 6px;
 }
 .gtab thead th.mstart { color: var(--ink100); }
 .gtab th.who {
   position: sticky; left: 0; z-index: 1; background: var(--ink900);
-  text-align: left; font-weight: 600; font-size: 11px;
+  text-align: left; font-weight: 600; font-size: 12.5px;
   /* 긴 이름이 두 줄로 접히면 그 줄만 키가 커져 칸이 어긋난다.
      한 줄로 못 박고 넘치면 말줄임으로 자른다. */
   white-space: nowrap; padding-right: 12px;
 }
 .gno {
-  display: inline-block; width: 16px; margin-right: 2px;
+  display: inline-block; width: 18px; margin-right: 3px;
   text-align: right; font-style: normal; font-weight: 600;
   color: var(--ink600); font-variant-numeric: tabular-nums;
 }
 .gtab th.who > span {
-  display: inline-block; max-width: 150px; vertical-align: middle;
+  display: inline-block; max-width: 170px; vertical-align: middle;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .gicon {
-  width: 14px; height: 14px; border-radius: 4px; margin-right: 5px;
+  width: 18px; height: 18px; border-radius: 5px; margin-right: 6px;
   vertical-align: middle; object-fit: cover;
 }
 .gicon.ph {
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--ink700); color: var(--ink300); font-size: 8px;
+  background: var(--ink700); color: var(--ink300); font-size: 10px;
 }
 .gtab tbody td {
-  width: 15px; height: 15px; border: 1px solid var(--ink900);
-  background: var(--ink800); border-radius: 3px;
+  width: 22px; height: 22px; border: 2px solid var(--ink900);
+  background: var(--ink800); border-radius: 5px;
 }
 /* 세 단계가 한눈에 갈려야 한다 — 빈칸 / 유지 / 그날 엶.
    유지가 빈칸에 가까우면 '아무것도 없는 날'로 읽힌다. */
@@ -902,7 +902,7 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
 .gtab tr.sum th.who { color: var(--ink100); font-weight: 800; }
 .gtab tr.sum td {
   background: transparent; border: 0; color: var(--ink300);
-  text-align: center; font-size: 10px; font-variant-numeric: tabular-nums;
+  text-align: center; font-size: 12px; font-variant-numeric: tabular-nums;
   padding-top: 3px;
 }
 .gtab tr.sum td.ok { color: var(--mint); font-weight: 800; }
@@ -922,7 +922,7 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
 .gtab th.grp > span b { color: var(--ink100); }
 .gtab tr.out th.grp > span { color: var(--ink600); }
 .gtab tr.out th.grp > span b { color: var(--ink300); }
-.gtab th.who { left: 22px; }
+.gtab th.who { left: 26px; }
 
 /* 표 다듬기 — 오늘 열, 구분 띠, 범례 */
 .hdates.alt { margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--ink700); }
@@ -937,7 +937,7 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
 .gtab thead th.now { color: var(--mint); font-weight: 800; }
 .gtab tr.sum th.who { white-space: nowrap; }
 .gtab tr.sum .run {
-  font-style: normal; font-weight: 600; font-size: 10.5px;
+  font-style: normal; font-weight: 600; font-size: 11.5px;
   margin-left: 6px; color: var(--ink300);
 }
 .gtab tr.sum.ok-row th.who { color: var(--mint); }
