@@ -415,6 +415,31 @@ export function watchTrade(requestId, onRow) {
 }
 
 // ---- 피드백 ----
+/// 앱별 이력 — 테스트가 끝난 뒤 남는 건 이 기록이다.
+/// 앱을 지워도 archive 쪽에 내용까지 남는다.
+export async function myAppHistory() {
+  const { data } = await sb.rpc('my_app_history');
+  return data || [];
+}
+
+export async function myAppArchives() {
+  const { data } = await sb.rpc('my_app_archives');
+  return data || [];
+}
+
+/// 버전 타임라인 — 어느 피드백이 어느 버전에서 나왔는지 자르는 기준.
+/// 보고 시각이 아니라 테스터 폰에 그 버전이 깔린 시각을 쓴다.
+export async function appVersionTimeline(appId) {
+  const { data } = await sb.rpc('app_version_timeline', { p_app_id: appId });
+  return data || [];
+}
+
+/// 숫자만으로는 "그래서 뭐라고 했더라"를 알 수 없다 — 종류별 원문
+export async function appDetailRecords(appId) {
+  const { data } = await sb.rpc('app_detail_records', { p_app_id: appId });
+  return data || [];
+}
+
 export async function myFeedbacks() {
   const { data } = await sb.rpc('my_feedbacks');
   return data ?? [];

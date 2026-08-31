@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=27">
+<link rel="stylesheet" href="/assets/app.css?v=29">
 </head>
 <body>
 
@@ -38,12 +38,13 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          sendTradeImage, sendSupportImage, blockUser, reportSomething,
          deleteApp, deleteExchange, updateExchange,
          iconHtml, esc, ago, STORE_URL, mountAuth, authReady, cleanUrl,
+         myAppHistory, myAppArchives, appDetailRecords, appVersionTimeline,
          dayStrip, peerCheckDays, peerIdentity, myTradeChats, tradeMessages, sendTradeMessage,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=27';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=27';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=29';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=29';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -67,7 +68,8 @@ cleanUrl();
 
 const TABS = [
   ['apps', 'tab_myapps'], ['testing', 'tab_testing'], ['offers', 'tab_offers'],
-  ['chats', 'tab_chats'], ['feedback', 'tab_feedback'], ['contact', 'tab_contact'],
+  ['chats', 'tab_chats'], ['feedback', 'tab_feedback'],
+  ['history', 'tab_history'], ['contact', 'tab_contact'],
 ];
 
 let D = {};
@@ -230,7 +232,7 @@ function render() {
   const pane = document.getElementById('pane');
   // 주소에 이상한 해시가 들어와도 죽지 않게
   ({ apps: paneApps, testing: paneTesting, offers: paneOffers,
-     chats: paneChats, feedback: paneFeedback,
+     chats: paneChats, feedback: paneFeedback, history: paneHistory,
      contact: paneContact }[tab] || paneApps)(pane);
   paintCounts();
 }
@@ -937,6 +939,319 @@ async function openChat(requestId, title) {
       const r = await sendTradeImage(requestId, url);
       if (r && !rows.some(x => x.id === r.id)) { rows.push(r); draw(rows); }
     } catch (e) { alert(e.message || e); }
+  };
+}
+
+// ---- 이력 ----
+/// 비공개 테스트가 끝나면 남는 건 숫자가 아니라 내용이다.
+/// 부팅을 늦추지 않으려고 이 탭을 처음 열 때만 받아 온다.
+async function paneHistory(pane) {
+  if (!D.hist) {
+    pane.innerHTML = `<p class="muted">${t('loading')}</p>`;
+    const [rows, arc] = await Promise.all([
+      myAppHistory().catch(() => []),
+      myAppArchives().catch(() => []),
+    ]);
+    D.hist = rows; D.arc = arc;
+    if (tab !== 'history') return;   // 기다리는 사이 다른 탭으로 갔다
+  }
+  const stat = (label, v) =>
+    `<div class="hstat"><b>${v}</b><span>${esc(label)}</span></div>`;
+
+  pane.innerHTML = `
+    <p class="muted" style="margin:0 0 14px">${t('hist_note')}</p>
+    <div class="grid">${D.hist.length ? D.hist.map(r => `
+      <div class="card">
+        <div class="app-card" style="align-items:center;gap:10px">
+          ${iconHtml(r.icon_url, r.app_name || '?')}
+          <div style="min-width:0;flex:1">
+            <p class="app-name">${esc(r.app_name || '')}</p>
+            <p class="muted">${esc(r.package_name || '—')}</p>
+          </div>
+        </div>
+        <div class="hstats">
+          ${stat(t('hist_party'), r.party_testers ?? 0)}
+          ${stat(t('hist_trades'), r.trade_count ?? 0)}
+          ${stat(t('hist_fb'), r.feedback_count ?? 0)}
+          ${stat(t('hist_chats'), r.chat_count ?? 0)}
+          ${stat(t('hist_gdays'), r.google_days ?? 0)}
+        </div>
+        <details class="recs" data-app="${esc(r.app_id)}">
+          <summary>${t('hist_open')}</summary>
+          <div class="recbody"><p class="muted">${t('loading')}</p></div>
+        </details>
+        <p style="margin:10px 0 0">
+          <button class="btn ghost sm" data-rpt="${esc(r.app_id)}">${t('hist_export')}</button></p>
+      </div>`).join('')
+      : `<p class="muted">${t('hist_empty')}</p>`}</div>
+
+    ${D.arc.length ? `
+      <h3 class="grp-h">${t('hist_deleted')}</h3>
+      <div class="grid">${D.arc.map(a => `
+        <div class="card">
+          <p style="margin:0 0 4px"><b>${esc(a.app_name || '')}</b>
+            <span class="muted" style="font-size:12px">${ago(a.archived_at)}</span></p>
+          <p class="muted" style="margin:0;font-size:12px">
+            ${t('hist_party')} ${a.party_testers ?? 0} ·
+            ${t('hist_trades')} ${a.trade_count ?? 0} ·
+            ${t('hist_fb')} ${a.feedback_count ?? 0} ·
+            ${t('hist_chats')} ${a.chat_count ?? 0} ·
+            ${t('hist_gdays')} ${a.google_days ?? 0}</p>
+          ${((a.feedbacks || []).slice(0, 3)).map(f =>
+            `<p class="rec" style="margin:6px 0 0">${esc(f.body || '')}</p>`).join('')}
+        </div>`).join('')}</div>` : ''}`;
+
+  pane.querySelectorAll('[data-rpt]').forEach(b => {
+    b.onclick = () => exportReport(b.dataset.rpt, b);
+  });
+
+  // 펼칠 때 원문을 받는다 — 앱이 여러 개면 한꺼번에 받을 이유가 없다
+  pane.querySelectorAll('details.recs').forEach(d => {
+    d.addEventListener('toggle', async () => {
+      if (!d.open || d.dataset.done) return;
+      d.dataset.done = '1';
+      const box = d.querySelector('.recbody');
+      let rows = [];
+      try { rows = await appDetailRecords(d.dataset.app); } catch (_) {}
+      const kinds = ['feedback', 'chat', 'trade', 'tester'];
+      const has = kinds.filter(k => rows.some(x => x.kind === k));
+      if (!has.length) { box.innerHTML = `<p class="muted">${t('hist_none')}</p>`; return; }
+      box.innerHTML = has.map(k => `
+        <p class="reckind">${t('kind_' + k)}
+          <span class="muted">${rows.filter(x => x.kind === k).length}</span></p>
+        ${rows.filter(x => x.kind === k).map(x => `
+          <div class="rec">
+            <p style="margin:0"><b>${esc(x.title || '')}</b>
+              <span class="muted" style="font-size:11px">${ago(x.at)}</span></p>
+            ${x.body ? `<p style="margin:2px 0 0">${esc(x.body)}</p>` : ''}
+          </div>`).join('')}`).join('');
+    });
+  });
+}
+
+// ---- 리포트 내보내기 ----
+/// 구글 프로덕션 신청서는 "어떤 의견을 받아 무엇을 바꿨나"를 묻는다.
+/// 그때 기억을 더듬어 지어내지 않아도 되게, 있던 그대로를 뽑아 준다.
+/// 없는 건 만들어 넣지 않고 빈칸으로 남긴다 — 지어낸 답이 반려를 부른다.
+const RPT = {
+  ko: { period: '기간', testers: '테스터', party: '파티', trade: '개인 품앗이',
+        total: '합계', gdays: '12명 이상이 함께 테스트한 날', unit_p: '명',
+        unit_d: '일', fb: '받은 피드백', replied: '내가 답한 것', chats: '대화',
+        cnt: '건', byver: '버전별', vtesters: '테스터', from: '부터',
+        nover: '버전을 모르는 기간', novernote:
+          '테스터가 앱을 열기 전이거나 버전을 아직 못 받은 피드백입니다.',
+        reply: '내 답변', nofb: '이 버전에서 받은 피드백은 없습니다.',
+        draft: 'Play Console 제출용 초안',
+        draftnote: '아래는 사실만 채운 뼈대입니다. 문장은 직접 다듬으세요.',
+        q1: '테스터를 어떻게 모았나',
+        a1: 'ACT Party(비공개 테스트 품앗이)에서 다른 개발자들과 서로의 앱을 테스트했습니다. {n}명이 참여했습니다.',
+        q2: '의견을 어떻게 받았나',
+        a2: '앱 안의 피드백 기능과 1:1 대화로 받았습니다. 피드백 {f}건, 대화 {c}건이 남아 있습니다.',
+        q3: '어떤 의견을 받았나', q4: '무엇을 바꿨나',
+        a4blank: '[받은 의견별로 무엇을 고쳤는지 쓰세요 — 위 답변에 이미 적은 내용이 있습니다]',
+        vernote: '버전 구간은 테스터 폰에 그 버전이 설치된 시각으로 잘랐습니다.',
+        madeby: 'ACT Party에서 내보냄' },
+  en: { period: 'Period', testers: 'Testers', party: 'Party', trade: 'Trades',
+        total: 'Total', gdays: 'Days with 12+ testers together', unit_p: '',
+        unit_d: ' days', fb: 'Feedback received', replied: 'Replied by me',
+        chats: 'Chat messages', cnt: '', byver: 'By version',
+        vtesters: 'testers', from: 'from', nover: 'Version unknown',
+        novernote: 'Feedback left before we saw a version on the tester phone.',
+        reply: 'My reply', nofb: 'No feedback on this version.',
+        draft: 'Draft for the Play Console form',
+        draftnote: 'Facts only. Write the sentences yourself.',
+        q1: 'How did you recruit testers',
+        a1: 'Through ACT Party, where developers test each other closed tests. {n} people took part.',
+        q2: 'How did you collect feedback',
+        a2: 'In-app feedback and 1:1 chat. {f} feedback items and {c} chat messages are on record.',
+        q3: 'What feedback did you receive', q4: 'What did you change',
+        a4blank: '[Write what you fixed for each item above]',
+        vernote: 'Version windows are cut at the time the build appeared on a tester phone.',
+        madeby: 'Exported from ACT Party' },
+  ja: { period: '期間', testers: 'テスター', party: 'パーティ', trade: '個人交換',
+        total: '合計', gdays: '12名以上が同じ日にテストした日', unit_p: '名',
+        unit_d: '日', fb: '受けたフィードバック', replied: '返信したもの',
+        chats: 'チャット', cnt: '件', byver: 'バージョン別',
+        vtesters: 'テスター', from: 'から', nover: 'バージョン不明',
+        novernote: 'テスター端末でバージョンを確認する前の意見です。',
+        reply: '私の返信', nofb: 'このバージョンでの意見はありません。',
+        draft: 'Play Console 提出用の下書き',
+        draftnote: '事実だけ入れた骨組みです。文章はご自身で整えてください。',
+        q1: 'テスターをどう集めたか',
+        a1: 'ACT Party で開発者同士が互いのクローズドテストを行いました。{n}名が参加しました。',
+        q2: '意見をどう集めたか',
+        a2: 'アプリ内のフィードバックと1:1チャットです。フィードバック{f}件、チャット{c}件が残っています。',
+        q3: 'どんな意見を受けたか', q4: '何を変えたか',
+        a4blank: '[各意見に対して何を直したか書いてください]',
+        vernote: 'バージョン区間は端末にそのビルドが入った時刻で区切っています。',
+        madeby: 'ACT Party から出力' },
+};
+RPT['zh-Hans'] = { ...RPT.en, period: '周期', testers: '测试者', party: '派对',
+  trade: '互测', total: '合计', gdays: '12 人以上同日测试的天数',
+  fb: '收到的反馈', replied: '我回复的', chats: '对话', byver: '按版本',
+  vtesters: '人', from: '起', nover: '版本未知', reply: '我的回复',
+  nofb: '该版本没有收到反馈。', draft: '给 Play Console 表单的草稿',
+  draftnote: '只填了事实。句子请自己润色。', madeby: '由 ACT Party 导出' };
+RPT['zh-Hant'] = { ...RPT['zh-Hans'], period: '週期', testers: '測試者',
+  party: '派對', trade: '互測', gdays: '12 人以上同日測試的天數',
+  fb: '收到的回饋', replied: '我回覆的', chats: '對話', byver: '按版本',
+  nover: '版本未知', reply: '我的回覆', nofb: '該版本沒有收到回饋。',
+  draft: '給 Play Console 表單的草稿',
+  draftnote: '只填了事實。句子請自己潤色。', madeby: '由 ACT Party 匯出' };
+
+const ymd = (v) => {
+  const d = new Date(v);
+  return isNaN(d) ? '' : `${d.getFullYear()}-${String(d.getMonth() + 1)
+    .padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+async function exportReport(appId, btn) {
+  const label = btn.textContent;
+  btn.disabled = true; btn.textContent = t('loading');
+  let vers = [], recs = [];
+  try {
+    [vers, recs] = await Promise.all([
+      appVersionTimeline(appId).catch(() => []),
+      appDetailRecords(appId).catch(() => []),
+    ]);
+  } finally { btn.disabled = false; btn.textContent = label; }
+
+  const R = RPT[LANG] || RPT.en;
+  const h = D.hist.find(x => x.app_id === appId) || {};
+  const uid = user?.id;
+  const fbs = D.fbIn.filter(f => f.app_id === appId)
+    .slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+  // 기간 — 첫 기록부터 마지막 기록까지
+  const times = [...recs.map(x => x.at), ...fbs.map(f => f.created_at)]
+    .filter(Boolean).map(x => new Date(x).getTime()).filter(x => !isNaN(x));
+  const span = times.length
+    ? `${ymd(Math.min(...times))} ~ ${ymd(Math.max(...times))}`
+    : '—';
+
+  const people = (h.party_testers ?? 0) + (h.trade_count ?? 0);
+  const repliedN = fbs.filter(f =>
+    (f.replies || []).some(r => r.author_id === uid)).length;
+
+  // 버전 구간에 피드백을 넣는다. 마지막 버전은 끝이 없다.
+  const vsorted = vers.slice()
+    .sort((a, b) => new Date(a.first_seen) - new Date(b.first_seen));
+  const bucket = vsorted.map((v, i) => ({
+    v, from: new Date(v.first_seen).getTime(),
+    to: i + 1 < vsorted.length
+      ? new Date(vsorted[i + 1].first_seen).getTime() : Infinity,
+    items: [],
+  }));
+  const orphans = [];
+  for (const f of fbs) {
+    const at = new Date(f.created_at).getTime();
+    const b = bucket.find(x => at >= x.from && at < x.to);
+    (b ? b.items : orphans).push(f);
+  }
+
+  const fbLine = (f) => {
+    const who = f.author_name || '';
+    let s = `- ${ymd(f.created_at)}${who ? ` ${who}` : ''}: ${f.body || ''}`;
+    for (const r of (f.replies || [])) {
+      if (r.author_id !== uid) continue;
+      s += `\n  → ${R.reply}: ${r.body || ''}`;
+    }
+    return s;
+  };
+
+  const lines = [];
+  lines.push(`# ${h.app_name || ''} — ${t('rpt_title')}`);
+  if (h.package_name) lines.push(h.package_name);
+  lines.push('');
+  lines.push(`- ${R.period}: ${span}`);
+  lines.push(`- ${R.testers}: ${R.party} ${h.party_testers ?? 0}${R.unit_p} · `
+    + `${R.trade} ${h.trade_count ?? 0}${R.unit_p} (${R.total} ${people}${R.unit_p})`);
+  lines.push(`- ${R.gdays}: ${h.google_days ?? 0}${R.unit_d}`);
+  lines.push(`- ${R.fb}: ${fbs.length}${R.cnt} (${R.replied} ${repliedN}${R.cnt})`);
+  lines.push(`- ${R.chats}: ${h.chat_count ?? 0}${R.cnt}`);
+  lines.push('');
+
+  if (bucket.length) {
+    lines.push(`## ${R.byver}`);
+    lines.push(`_${R.vernote}_`);
+    lines.push('');
+    for (const b of bucket.slice().reverse()) {
+      lines.push(`### ${b.v.version || '?'}`
+        + (b.v.version_code ? ` (${b.v.version_code})` : '')
+        + ` — ${R.vtesters} ${b.v.testers}${R.unit_p}, ${ymd(b.v.first_seen)} ${R.from}`);
+      lines.push(b.items.length ? b.items.map(fbLine).join('\n') : `_${R.nofb}_`);
+      lines.push('');
+    }
+  }
+  if (orphans.length) {
+    lines.push(`## ${R.nover}`);
+    lines.push(`_${R.novernote}_`);
+    lines.push('');
+    lines.push(orphans.map(fbLine).join('\n'));
+    lines.push('');
+  }
+
+  // 신청서 초안 — 사실만 채우고 나머지는 빈칸으로 둔다
+  const fill = (s, v) => Object.entries(v)
+    .reduce((a, [k, x]) => a.replace('{' + k + '}', x), s);
+  lines.push(`## ${R.draft}`);
+  lines.push(`_${R.draftnote}_`);
+  lines.push('');
+  lines.push(`**${R.q1}**`);
+  lines.push(fill(R.a1, { n: people }));
+  lines.push('');
+  lines.push(`**${R.q2}**`);
+  lines.push(fill(R.a2, { f: fbs.length, c: h.chat_count ?? 0 }));
+  lines.push('');
+  lines.push(`**${R.q3}**`);
+  lines.push(fbs.slice(-5).map(f => `- ${f.body || ''}`).join('\n') || '-');
+  lines.push('');
+  lines.push(`**${R.q4}**`);
+  const changes = fbs.flatMap(f => (f.replies || [])
+    .filter(r => r.author_id === uid).map(r => `- ${r.body || ''}`));
+  lines.push(changes.length ? changes.slice(-5).join('\n') : R.a4blank);
+  lines.push('');
+  lines.push(`---`);
+  lines.push(`_${R.madeby} · ${ymd(Date.now())}_`);
+
+  showReport(h.app_name || 'report', lines.join('\n'));
+}
+
+function showReport(name, text) {
+  const box = document.createElement('div');
+  box.className = 'lb';
+  box.innerHTML = `
+    <div class="rptbox" onclick="event.stopPropagation()">
+      <p style="margin:0 0 4px;font-weight:800">${t('rpt_title')}</p>
+      <p class="muted" style="margin:0 0 10px;font-size:12px">${t('rpt_why')}</p>
+      <textarea class="rpttext" spellcheck="false"></textarea>
+      <div class="row" style="gap:8px;margin-top:10px">
+        <button class="btn sm" id="rcopy">${t('rpt_copy')}</button>
+        <button class="btn ghost sm" id="rsave">${t('rpt_save')}</button>
+        <button class="btn ghost sm" id="rclose"
+          style="margin-left:auto">${t('rpt_close')}</button>
+      </div>
+    </div>`;
+  box.querySelector('.rpttext').value = text;
+  box.onclick = () => box.remove();
+  document.body.appendChild(box);
+
+  box.querySelector('#rclose').onclick = () => box.remove();
+  box.querySelector('#rcopy').onclick = async (e) => {
+    try { await navigator.clipboard.writeText(text); } catch (_) {
+      box.querySelector('.rpttext').select();
+      document.execCommand('copy');
+    }
+    e.target.textContent = t('rpt_copied');
+  };
+  box.querySelector('#rsave').onclick = () => {
+    const url = URL.createObjectURL(
+      new Blob([text], { type: 'text/markdown;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${name.replace(/[\\/:*?"<>|]/g, '_')}.md`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 }
 

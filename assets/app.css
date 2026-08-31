@@ -780,3 +780,47 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
   line-height: 18px; text-align: center;
   font-variant-numeric: tabular-nums;
 }
+
+/* 앱 이력 */
+.hstats { display: flex; gap: 6px; margin: 12px 0 0; }
+.hstat {
+  flex: 1; min-width: 0; text-align: center; padding: 8px 2px;
+  background: var(--ink800); border: 1px solid var(--ink600); border-radius: 10px;
+}
+.hstat b { display: block; font-size: 16px; font-variant-numeric: tabular-nums; }
+.hstat span { display: block; font-size: 10.5px; color: var(--ink300); margin-top: 2px; }
+details.recs { margin-top: 10px; }
+details.recs > summary {
+  cursor: pointer; font-size: 12.5px; color: var(--mint);
+  list-style: none; padding: 4px 0;
+}
+details.recs > summary::-webkit-details-marker { display: none; }
+details.recs > summary::after { content: ' \203A'; }
+details.recs[open] > summary::after { content: ' \2304'; }
+.reckind { margin: 10px 0 4px; font-size: 12px; font-weight: 800; color: var(--ink100); }
+.rec {
+  font-size: 12.5px; line-height: 1.5; padding: 8px 10px; margin-bottom: 6px;
+  background: var(--ink800); border-radius: 8px; overflow-wrap: break-word;
+}
+h3.grp-h {
+  font-size: 14px; margin: 24px 0 10px; color: var(--ink100);
+  padding-bottom: 6px; border-bottom: 1px solid var(--ink600);
+}
+
+/* 리포트 창 — 사진 확대와 같은 덮개를 쓰되 커서만 다르다 */
+.lb {
+  position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.88);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.rptbox {
+  width: min(720px, 94vw); max-height: 88vh; overflow: auto; cursor: default;
+  background: var(--ink900); border: 1px solid var(--ink600);
+  border-radius: 14px; padding: 16px;
+}
+.rpttext {
+  width: 100%; height: min(52vh, 460px); resize: vertical;
+  background: var(--ink800); color: var(--ink000);
+  border: 1px solid var(--ink600); border-radius: 10px; padding: 10px 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px; line-height: 1.6; white-space: pre; overflow-wrap: normal;
+}
