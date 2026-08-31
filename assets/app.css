@@ -671,10 +671,22 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
 #board #list .cardact .state { align-self: center; padding: 0; }
 
 @media (max-width: 560px) {
-  #board #list .app-card { padding: 18px; gap: 0 10px; grid-template-columns: 22px minmax(0, 1fr); }
-  #board #list .rank { width: 22px; font-size: 13px; padding-top: 12px; }
+  /* 좁은 화면에서는 순번을 뺀다. 30px 을 순번에 내주면 그만큼 글이 잘린다.
+     몇 번째인지는 스크롤하면 알 수 있고, 글이 잘리는 편이 훨씬 나쁘다. */
+  #board #list .rank { display: none; }
+  #board #list .app-card { display: block; padding: 18px; }
   #board #list .app-icon { width: 52px; height: 52px; border-radius: 14px; }
   #board #list a.app-name { font-size: 19px; }
   #board #list .head { gap: 12px; }
+
+  /* 한 줄 고정은 넓은 화면 얘기다. 여기서는 접어야 안 잘린다. */
+  #board #list p.who {
+    white-space: normal; flex-wrap: wrap; overflow: visible; row-gap: 4px;
+  }
+  #board #list .desc {
+    white-space: normal; display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
   #board #list .cardact { flex-wrap: wrap; gap: 10px; }
+  #board #list .stats .count b { font-size: 20px; }
 }
