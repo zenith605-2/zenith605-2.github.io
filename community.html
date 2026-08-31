@@ -6,7 +6,7 @@
 <title>Board — ACT Party</title>
 <meta name="description" content="Where Android developers running closed tests compare notes: guides, questions, launch stories, and what Google actually asks for.">
 <link rel="canonical" href="https://zenith605-2.github.io/community.html">
-<link rel="stylesheet" href="/assets/app.css?v=11">
+<link rel="stylesheet" href="/assets/app.css?v=12">
 </head>
 <body>
 
@@ -36,8 +36,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
 import { me, signIn, esc, ago, iconHtml, mountAuth,
-         posts, post, addPost, addComment, deletePost } from '/assets/api.js';
-import { t, applyDom, langPicker, wireLangPicker, catLabel } from '/assets/i18n.js';
+         posts, post, addPost, addComment, deletePost } from '/assets/api.js?v=12';
+import { t, applyDom, langPicker, wireLangPicker, catLabel } from '/assets/i18n.js?v=12';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
