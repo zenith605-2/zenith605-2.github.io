@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=48">
+<link rel="stylesheet" href="/assets/app.css?v=49">
 </head>
 <body>
 
@@ -44,8 +44,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=48';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=48';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=49';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=49';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -1127,8 +1127,19 @@ function gridHtml(rows) {
   </tr>`;
   };
 
+  // 오늘까지 이어지는 연속 일수 — 구글이 보는 게 그거다.
+  // 표 전체를 훑는다(보이는 35일이 아니라).
+  const runOf = (fn) => {
+    let n = 0;
+    for (let i = days.length - 1; i >= 0 && fn(days[i]) >= 12; i--) n++;
+    return n;
+  };
   const sum = (label, fn, cls) => `<tr class="sum ${cls}">
-    <th class="grp"></th><th class="who">${label}</th>
+    <th class="grp"></th><th class="who">${label}
+      <em class="run">${(() => {
+        const n = runOf(fn);
+        return n ? tf('grid_run', { n }) : t('grid_run0');
+      })()}</em></th>
     ${shown.map(d => {
       const n = fn(d);
       return `<td class="${n >= 12 ? 'ok' : ''}">${n || ''}</td>`;

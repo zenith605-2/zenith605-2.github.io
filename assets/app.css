@@ -935,7 +935,13 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
 .glegend i.hit { background: var(--mint); }
 .glegend i.out { background: var(--ink600); }
 .gtab thead th.now { color: var(--mint); font-weight: 800; }
+.gtab tr.sum th.who { white-space: nowrap; }
+.gtab tr.sum .run {
+  font-style: normal; font-weight: 600; font-size: 10.5px;
+  margin-left: 6px; color: var(--ink300);
+}
 .gtab tr.sum.ok-row th.who { color: var(--mint); }
+.gtab tr.sum.ok-row .run { color: var(--mint); }
 .gtab tr.sum.all-row th.who { color: var(--ink300); }
 .gtab tr.sum td { padding: 0 0 6px; }
 /* 결론이 맨 위에 있으니 표와 살짝 떼어 둔다 */
