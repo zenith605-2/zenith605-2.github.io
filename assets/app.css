@@ -620,18 +620,24 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
 #board #list .app-card {
   grid-template-columns: 30px 64px minmax(0, 1fr) 190px 165px;
   gap: 20px; padding: 22px 24px;
+  /* 아이콘이 64px 이면 가운데 정렬로는 글이 아이콘 한가운데서 시작해
+     따로 노는 두 덩어리로 보인다. 아이콘 윗선에서 같이 시작하게 한다. */
+  align-items: start;
 }
+#board #list .stats, #board #list .cardact { align-self: center; }
 #board #list .app-icon { width: 64px; height: 64px; border-radius: 16px; }
 #board #list .app-icon.ph { font-size: 24px; }
 
 /* 순번 — 몇 번째인지 보이라고 붙인 건데 배경색에 가까워 안 읽혔다 */
 #board #list .rank {
   width: 30px; font-size: 15px; color: var(--ink300); opacity: .75;
+  align-self: start; padding-top: 4px;
 }
 
 #board #list .app-name {
-  font-size: 17px; gap: 10px; row-gap: 8px; align-items: center;
-  margin-bottom: 6px;
+  /* 아이콘 높이에 눌리지 않게 이름도 그만큼 키운다 */
+  font-size: 20px; line-height: 1.25; gap: 10px; row-gap: 8px;
+  align-items: center; margin: -2px 0 7px;
 }
 #board #list .badges { gap: 7px; }
 #board #list p.who { row-gap: 7px; margin-top: 2px; }
@@ -646,5 +652,5 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
   }
   #board #list .app-icon { width: 52px; height: 52px; border-radius: 14px; }
   #board #list .rank { width: 22px; font-size: 13px; }
-  #board #list .app-name { font-size: 16px; }
+  #board #list .app-name { font-size: 17px; margin: -1px 0 6px; }
 }
