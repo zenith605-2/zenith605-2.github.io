@@ -962,3 +962,8 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
   padding-bottom: 3px;
 }
 .gtab tr.goal td { background: transparent; border: 0; }
+
+/* 기록 한 줄 — 아이콘·이름·시각 */
+.recwho { display: flex; align-items: center; gap: 6px; margin: 0; }
+.recwho .gicon { margin: 0; }
+.grid-d { margin-top: 12px; }

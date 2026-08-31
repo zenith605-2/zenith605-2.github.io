@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=56">
+<link rel="stylesheet" href="/assets/app.css?v=59">
 </head>
 <body>
 
@@ -44,8 +44,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=56';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=56';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=59';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=59';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -294,10 +294,9 @@ function paneApps(pane) {
           <button class="btn ghost sm" data-delapp="${a.id}">${t('delete')}</button>
           ${a.package_name ? `<a class="btn ghost sm" href="/app.html?p=${encodeURIComponent(a.package_name)}">${t('public_page')}</a>` : ''}
         </div>
-        <details class="grid-d" data-grid="${a.id}" open>
-          <summary>${t('grid_open')}</summary>
+        <div class="grid-d" data-grid="${a.id}">
           <div class="gridbody"><p class="muted">${t('loading')}</p></div>
-        </details>
+        </div>
         <details class="testers emails" data-app="${a.id}">
           <summary>${t('emails_h')}</summary>
           <div class="tbody"><p class="hint">…</p></div>
@@ -960,24 +959,9 @@ async function paneHistory(pane) {
           ${stat(t('hist_chats'), r.chat_count ?? 0)}
           ${stat(t('hist_gdays'), r.google_days ?? 0)}
         </div>
-        <div class="hdates">
-          ${dline(t('hist_start'), r.first_day)}
-          ${dline(t('hist_12day'), r.twelve_day)}
-          ${dline(t('hist_streak'), r.streak_days
-            ? tf('hist_dnum', { n: r.streak_days }) : null)}
-          ${dline(t('hist_last'), tf('hist_pnum', { n: r.optin_now ?? 0 }))}
-        </div>
-        <div class="hdates alt">
-          ${dline(t('hist_all') + ' · ' + t('hist_12day'), r.total_twelve_day)}
-          ${dline(t('hist_all') + ' · ' + t('hist_streak'), r.total_streak_days
-            ? tf('hist_dnum', { n: r.total_streak_days }) : null)}
-          ${dline(t('hist_all') + ' · ' + t('hist_last'),
-            tf('hist_pnum', { n: r.total_optin_now ?? 0 }))}
-        </div>
-        <details class="grid-d" data-grid="${esc(r.app_id)}" open>
-          <summary>${t('grid_open')}</summary>
+        <div class="grid-d" data-grid="${esc(r.app_id)}">
           <div class="gridbody"><p class="muted">${t('loading')}</p></div>
-        </details>
+        </div>
         <details class="recs" data-app="${esc(r.app_id)}">
           <summary>${t('hist_open')}</summary>
           <div class="recbody"><p class="muted">${t('loading')}</p></div>
@@ -1017,17 +1001,16 @@ async function paneHistory(pane) {
       const box = d.querySelector('.recbody');
       let rows = [];
       try { rows = await appDetailRecords(d.dataset.app); } catch (_) {}
-      const kinds = ['feedback', 'chat', 'trade', 'tester'];
+      // 품앗이·파티 인증은 표가 보여 준다. 여기 남길 건 받은 말뿐이다.
+      const kinds = ['feedback', 'chat'];
       const has = kinds.filter(k => rows.some(x => x.kind === k));
       if (!has.length) { box.innerHTML = `<p class="muted">${t('hist_none')}</p>`; return; }
-      const one = (x, k) => `
+      const one = (x) => `
           <div class="rec">
-            <p style="margin:0"><b>${esc(x.title || '')}</b>
+            <p class="recwho">${iconHtml(x.icon, x.title || '?', 'gicon')}
+              <b>${esc(x.title || '')}</b>
               <span class="muted" style="font-size:11px">${ago(x.at)}</span></p>
-            ${x.body ? `<p style="margin:2px 0 0">${
-              // 인증·품앗이는 숫자가 본문이라 단위 없이는 뜻이 안 통한다
-              k === 'trade' || k === 'tester'
-                ? tf('rec_days', { n: esc(x.body) }) : esc(x.body)}</p>` : ''}
+            ${x.body ? `<p style="margin:2px 0 0">${esc(x.body)}</p>` : ''}
           </div>`;
       // 대화는 수백 건이라 쭉 늘어놓으면 못 읽는다 — 상대별로 접어 둔다.
       // rows 는 최신순이라 각 묶음의 첫 줄이 곧 마지막으로 주고받은 말이다.
@@ -1040,10 +1023,10 @@ async function paneHistory(pane) {
         }
         return [...m.entries()].map(([who, items]) => `
           <details class="recg">
-            <summary><b>${esc(who)}</b>
+            <summary>${iconHtml(items[0].icon, who, 'gicon')}<b>${esc(who)}</b>
               <span class="muted">${items.length}</span>
               <span class="muted when">${ago(items[0].at)}</span></summary>
-            ${items.map(x => one(x, 'chat')).join('')}
+            ${items.map(one).join('')}
           </details>`).join('');
       };
       box.innerHTML = has.map(k => {
@@ -1051,7 +1034,7 @@ async function paneHistory(pane) {
         return `
         <p class="reckind">${t('kind_' + k)}
           <span class="muted">${list.length}</span></p>
-        ${k === 'chat' ? byWho(list) : list.map(x => one(x, k)).join('')}`;
+        ${k === 'chat' ? byWho(list) : list.map(one).join('')}`;
       }).join('');
     });
   });
@@ -1068,10 +1051,45 @@ function wireGrids(pane) {
     try { rows = await appOptinGrid(d.dataset.grid); } catch (_) {}
     d.querySelector('.gridbody').innerHTML = gridHtml(rows);
   };
-  pane.querySelectorAll('details.grid-d').forEach(d => {
-    d.addEventListener('toggle', () => { if (d.open) load(d); });
-    if (d.open) load(d);
-  });
+  pane.querySelectorAll('.grid-d').forEach(load);
+}
+
+/// 표와 리포트가 같은 숫자를 내도록 계산을 한 곳에 둔다.
+/// 날짜는 처음부터 끝까지 로컬로 다룬다 — 서버(UTC)와 섞으면 하루가 어긋난다.
+function gridStats(rows) {
+  const key = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1)
+    .padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const local = (v) => {
+    const [y, m, d] = String(v).slice(0, 10).split('-').map(Number);
+    return new Date(y, m - 1, d);
+  };
+  const froms = rows.map(r => r.from_day).filter(Boolean).sort();
+  const n = new Date();
+  const today = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  const days = [];
+  for (let d = froms.length ? local(froms[0]) : new Date(today);
+       d <= today; d.setDate(d.getDate() + 1)) days.push(key(d));
+
+  const on = (r, day) => {
+    if (!r.from_day || day < r.from_day) return false;
+    if (r.to_day && day >= r.to_day) return false;
+    return true;
+  };
+  const mine = rows.filter(r => r.tracked);
+  const okN = (d) => mine.filter(r => on(r, d)).length;
+  const allN = (d) => rows.filter(r => on(r, d)).length;
+  const firstAt = (fn) => days.find(d => fn(d) >= 12) || '';
+  const runOf = (fn) => {
+    let k = 0;
+    for (let i = days.length - 1; i >= 0 && fn(days[i]) >= 12; i--) k++;
+    return k;
+  };
+  const last = days[days.length - 1] || '';
+  return {
+    first: froms[0] || '',
+    okTwelve: firstAt(okN), okRun: runOf(okN), okNow: last ? okN(last) : 0,
+    allTwelve: firstAt(allN), allRun: runOf(allN), allNow: last ? allN(last) : 0,
+  };
 }
 
 /// 사람 × 날짜 표. 숫자 하나로는 왜 12명이 안 되는지 알 수 없다.
@@ -1376,11 +1394,12 @@ const ymd = (v) => {
 async function exportReport(appId, btn) {
   const label = btn.textContent;
   btn.disabled = true; btn.textContent = t('loading');
-  let vers = [], recs = [];
+  let vers = [], recs = [], grid = [];
   try {
-    [vers, recs] = await Promise.all([
+    [vers, recs, grid] = await Promise.all([
       appVersionTimeline(appId).catch(() => []),
       appDetailRecords(appId).catch(() => []),
+      appOptinGrid(appId).catch(() => []),
     ]);
   } finally { btn.disabled = false; btn.textContent = label; }
 
@@ -1401,6 +1420,8 @@ async function exportReport(appId, btn) {
         Math.round((times[times.length - 1] - times[0]) / 86400000) + 1)})`
     : '—';
 
+  // 표와 같은 계산(로컬 날짜) — 서버는 UTC 로 오늘을 잡아 하루 어긋난다
+  const g = gridStats(grid);
   const party = h.party_testers ?? 0, trades = h.trade_count ?? 0;
   const people = party + trades, chats = h.chat_count ?? 0;
   const repliedN = fbs.filter(f => mine(f).length).length;
@@ -1441,13 +1462,13 @@ async function exportReport(appId, btn) {
   L.push(quote(R.basis + ' ' + R.basis2), '');
   L.push(mdTable([R.item, R.value], [
     [R.period, span],
-    [R.start, h.first_day || '—'],
-    [R.twelve, h.twelve_day || R.notyet],
-    [R.streak, R.days(h.streak_days ?? 0)],
-    [R.last, R.ppl(h.optin_now ?? 0)],
-    [`${R.allbasis} · ${R.twelve}`, h.total_twelve_day || R.notyet],
-    [`${R.allbasis} · ${R.streak}`, R.days(h.total_streak_days ?? 0)],
-    [`${R.allbasis} · ${R.last}`, R.ppl(h.total_optin_now ?? 0)],
+    [R.start, g.first || '—'],
+    [R.twelve, g.okTwelve || R.notyet],
+    [R.streak, R.days(g.okRun)],
+    [R.last, R.ppl(g.okNow)],
+    [`${R.allbasis} · ${R.twelve}`, g.allTwelve || R.notyet],
+    [`${R.allbasis} · ${R.streak}`, R.days(g.allRun)],
+    [`${R.allbasis} · ${R.last}`, R.ppl(g.allNow)],
     [R.testers, `${R.ppl(people)}  (${R.party} ${party} · ${R.trade} ${trades})`],
     [R.gdays, R.days(h.google_days ?? 0)],
     [R.fb, `${R.cnt(fbs.length)}  (${R.replied} ${repliedN})`],
