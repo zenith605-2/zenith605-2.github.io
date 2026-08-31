@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guides — Google Play closed testing | ACT Party</title>
+<meta name="description" content="What Google actually checks for the 12-testers-for-14-days requirement, why testers drop off, and what the numbers really look like.">
+<link rel="canonical" href="https://zenith605-2.github.io/guides/">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">How it works</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap narrow" style="padding-top:30px">
+  <h1 style="font-size:26px;margin:0 0 6px">Guides</h1>
+  <p class="muted" style="margin:0 0 22px">
+    Written from running these tests, not from the docs alone.
+  </p>
+
+  <div class="grid">
+    <a class="card" href="/guides/what-google-checks.html">
+      <p class="app-name">What Google actually checks</p>
+      <p class="muted">12 testers, 14 days — it counts opt-in time, not daily
+        opens. What that means in practice.</p>
+    </a>
+    <a class="card" href="/guides/daily-opens-data.html">
+      <p class="app-name">Nobody opens your app all 14 days</p>
+      <p class="muted">Real numbers from 21 finished trades: the average tester
+        opened the app 10.3 of 14 days.</p>
+    </a>
+    <a class="card" href="/guides/why-testers-drop.html">
+      <p class="app-name">Why testers disappear</p>
+      <p class="muted">The four ways a trade dies, and which ones you can
+        actually prevent.</p>
+    </a>
+  </div>
+</div>
+
+<footer class="bot"><div class="wrap"><p><a href="/">Home</a> · <a href="/">App board</a></p></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

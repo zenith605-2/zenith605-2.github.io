@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apps that made it through closed testing — ACT Party</title>
+<meta name="description" content="Android apps that found their 12 closed testers here and reached production on Google Play.">
+<link rel="canonical" href="https://zenith605-2.github.io/launched.html">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" class="active" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">How it works</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap" style="padding-top:26px">
+  <h1 style="font-size:24px;margin:0 0 4px" data-t="lc_title">
+    Apps that made it through closed testing</h1>
+  <p class="muted" style="margin:0 0 6px" data-t="lc_sub"></p>
+  <p class="muted" id="found" style="margin:0 0 16px"></p>
+  <div class="grid two" id="list"><p class="muted" data-t="loading">Loading…</p></div>
+
+  <div class="cta-reg" style="margin-top:24px">
+    <div>
+      <h3 data-t="cta_reg_h">Looking for testers?</h3>
+      <p data-t="cta_reg_p">Paste one link and your app goes on the board.</p>
+    </div>
+    <a class="btn" href="/console.html?new=1" data-t="register_app">Register an app</a>
+  </div>
+</div>
+
+<footer class="bot"><div class="wrap">
+  <p><a href="/">Home</a> · <a href="/guides/">Guides</a> · <a href="/privacy.html">Privacy</a></p>
+</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { publicApps, iconHtml, esc, ago, mountAuth } from '/assets/api.js';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js';
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+
+// 이 페이지의 쓸모는 증거다 — 여기서 테스터를 구한 앱이 실제로 출시까지 갔다는.
+// 그래서 정렬은 최근 출시 순이고, 스토어 링크를 반드시 건다.
+try {
+  const rows = (await publicApps())
+    .filter(a => !!a.released_at)
+    .sort((a, b) => String(b.released_at).localeCompare(String(a.released_at)));
+
+  document.getElementById('found').textContent =
+    rows.length ? `${rows.length}${t('lc_count')}` : '';
+
+  document.getElementById('list').innerHTML = rows.length ? rows.map(a => {
+    const store = a.package_name
+      ? `https://play.google.com/store/apps/details?id=${encodeURIComponent(a.package_name)}`
+      : null;
+    return `<div class="card app-card">
+      ${iconHtml(a.icon_url, a.name)}
+      <div style="min-width:0;flex:1">
+        <p class="app-name">${esc(a.name)}
+          <span class="tag mint">${t('t_launched')}</span></p>
+        <p class="muted who">${a.owner_icon
+          ? `<img class="dev-icon" src="${esc(a.owner_icon)}" alt="">` : ''
+          }${esc(a.developer_name || t('developer'))}
+          · ${ago(a.released_at)}</p>
+        ${a.description ? `<p class="desc">${esc(a.description)}</p>` : ''}
+        ${store ? `<p style="margin:10px 0 0">
+          <a class="btn ghost sm" href="${store}" target="_blank"
+             rel="nofollow noopener">${t('view_store')} ↗</a></p>` : ''}
+      </div></div>`;
+  }).join('') : `<p class="muted">${t('lc_none')}</p>`;
+} catch (_) {
+  document.getElementById('list').innerHTML = `<p class="muted">${t('load_fail')}</p>`;
+}
+</script>
+</body>
+</html>

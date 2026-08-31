@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is ACT Party — automatic check-ins for Android closed testing</title>
+<meta name="description" content="ACT Party fills the 12 testers Google requires for a closed test. The Android app records daily opens from usage stats — no screenshots, no forms. Free.">
+<link rel="canonical" href="https://zenith605-2.github.io/how.html">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" class="active" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap narrow" style="padding-top:30px">
+
+  <h1 style="font-size:27px;margin:0 0 10px" data-t="hw_h">What is ACT Party?</h1>
+  <p class="lead" data-t="hw_lead"></p>
+
+  <div class="row" style="gap:10px;margin:20px 0 6px">
+    <a class="btn" id="storeBtn" href="#" rel="noopener" data-t="get_app">Get the Android app</a>
+    <a class="btn ghost" href="/console.html?new=1" data-t="register_app">Register an app</a>
+  </div>
+  <p class="muted" style="margin:0 0 8px" data-t="free">Free.</p>
+
+  <!-- 기능은 표로. "무엇을 지원하는가"가 한 줄씩 읽혀야 한다. -->
+  <h2 style="margin-top:34px" data-t="hw_f_h">What it does</h2>
+  <div class="grid feat">
+    <div class="card"><h3 data-t="hw_f_1"></h3><p data-t="hw_f_1p"></p></div>
+    <div class="card"><h3 data-t="hw_f_2"></h3><p data-t="hw_f_2p"></p></div>
+    <div class="card"><h3 data-t="hw_f_3"></h3><p data-t="hw_f_3p"></p></div>
+    <div class="card"><h3 data-t="hw_f_4"></h3><p data-t="hw_f_4p"></p></div>
+    <div class="card"><h3 data-t="hw_f_5"></h3><p data-t="hw_f_5p"></p></div>
+    <div class="card"><h3 data-t="hw_f_6"></h3><p data-t="hw_f_6p"></p></div>
+    <div class="card"><h3 data-t="hw_f_7"></h3><p data-t="hw_f_7p"></p></div>
+    <div class="card"><h3 data-t="hw_f_8"></h3><p data-t="hw_f_8p"></p></div>
+    <div class="card"><h3 data-t="hw_f_9"></h3><p data-t="hw_f_9p"></p></div>
+    <div class="card"><h3 data-t="hw_f_10"></h3><p data-t="hw_f_10p"></p></div>
+  </div>
+
+  <h2 style="margin-top:34px" data-t="hw_run_h">How a trade runs</h2>
+  <ol class="steps">
+    <li data-t="hw_run_1"></li>
+    <li data-t="hw_run_2"></li>
+    <li data-t="hw_run_3"></li>
+    <li data-t="hw_run_4"></li>
+    <li data-t="hw_run_5"></li>
+  </ol>
+
+  <h2 style="margin-top:34px" data-t="hw_split_h">The app and the site do different jobs</h2>
+  <div class="grid two">
+    <div class="card"><p data-t="hw_split_app"></p></div>
+    <div class="card"><p data-t="hw_split_web"></p></div>
+  </div>
+
+  <h2 style="margin-top:34px" data-t="hw_free_h">It does not cost anything</h2>
+  <p class="muted" data-t="hw_free_p"></p>
+
+  <!-- 구글 규칙은 이 서비스의 존재 이유다. 근거를 밝히고 원문으로 보낸다. -->
+  <div class="card" style="margin:26px 0 10px">
+    <h3 style="margin:0 0 8px;font-size:16px" data-t="hw_rule_h">What Google requires</h3>
+    <p class="muted" style="margin:0 0 10px" data-t="hw_rule_p"></p>
+    <a href="/guides/what-google-checks.html" data-t="hw_rule_link">Read the details</a>
+  </div>
+
+  <div class="cta-reg" style="margin-top:24px">
+    <div>
+      <h3 data-t="cta_reg_h">Looking for testers?</h3>
+      <p data-t="cta_reg_p"></p>
+    </div>
+    <a class="btn" href="/console.html?new=1" data-t="register_app">Register an app</a>
+  </div>
+</div>
+
+<footer class="bot"><div class="wrap">
+  <p><a href="/">Home</a> · <a href="/guides/" data-t="nav_guides">Guides</a>
+     · <a href="/privacy.html" data-t="privacy">Privacy</a></p>
+</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { STORE_URL, mountAuth } from '/assets/api.js';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+document.getElementById('storeBtn').href = STORE_URL;
+</script>
+</body>
+</html>

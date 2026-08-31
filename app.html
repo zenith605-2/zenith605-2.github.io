@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App — ACT Party</title>
+<meta name="description" content="An Android app looking for closed testers on ACT Party.">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">How it works</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap narrow" style="padding-top:28px" id="root">
+  <p class="muted">Loading…</p>
+</div>
+
+<footer class="bot">
+  <div class="wrap">
+    <p><a href="/" id="back">Back to the board</a> · <a href="/privacy.html">Privacy</a></p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { publicApps, appTesters, completedTrades, myApps, me, signIn,
+         offerTrade, iconHtml, esc, ago, STORE_URL, mountAuth } from '/assets/api.js';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js';
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+
+const _q = new URLSearchParams(location.search);
+const pkg = _q.get('p') || '';
+// 알림에는 패키지명 없이 app_id 만 실려 오는 경우가 있다
+const appId = _q.get('id') || '';
+
+// 보드에서 넘어왔으면 뒤로 보내야 필터와 페이지가 그대로 남는다.
+// 주소로 바로 들어온 경우(history 가 없다)만 보드 첫 화면으로 보낸다.
+document.getElementById('back')?.addEventListener('click', (ev) => {
+  if (document.referrer && new URL(document.referrer).origin === location.origin) {
+    ev.preventDefault();
+    history.back();
+  }
+});
+const root = document.getElementById('root');
+
+// 링크 이름만 보이면 어디로 가는지 모르고 눌러야 하고, Play Console 이나
+// 채팅에 붙여넣으려면 주소 자체가 필요하다. 원본을 그대로 보여주고 복사 버튼을 단다.
+function linkRow(url) {
+  return `<span class="linkrow">
+    <a href="${esc(url)}" rel="nofollow noopener" target="_blank">${esc(url)}</a>
+    <button class="cp" data-cp="${esc(url)}">${t('copy')}</button></span>`;
+}
+
+function line(label, value) {
+  return `<div style="display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--ink600)">
+    <span class="muted" style="width:150px;flex:none">${label}</span>
+    <span style="flex:1;min-width:0;word-break:break-all">${value}</span></div>`;
+}
+
+try {
+  const apps = await publicApps();
+  const a = appId
+    ? apps.find(x => x.app_id === appId)
+    : apps.find(x => (x.package_name || '') === pkg);
+  if (!a) {
+    root.innerHTML = `<div class="card"><p>This app is not on the board.</p>
+      <p><a href="/">Back to the board</a></p></div>`;
+  } else {
+    document.title = `${a.name} — looking for closed testers | ACT Party`;
+    // 보드와 같은 셈이어야 한다. 앱과 보드는 확인분 + 외부분을 더해서 센다.
+    const act = a.current_testers ?? 0;
+    const ext = a.external_testers ?? 0;
+    const cur = act + ext;
+    const need = a.needed_testers ?? 12;
+    const pct = Math.min(100, Math.round(cur / Math.max(need, 1) * 100));
+    const storeUrl = a.package_name
+      ? `https://play.google.com/store/apps/details?id=${a.package_name}` : null;
+
+    const [testers, done] = await Promise.all([
+      appTesters(a.app_id).catch(() => []),
+      completedTrades(a.owner_id).catch(() => []),
+    ]);
+
+    root.innerHTML = `
+      <div class="card app-card" style="margin-bottom:16px">
+        ${iconHtml(a.icon_url, a.name, 'app-icon')}
+        <div style="min-width:0;flex:1">
+          <h1 class="app-name" style="font-size:22px">${esc(a.name)}
+            ${a.released_at
+              ? `<span class="tag mint">${t('mode_live')}</span>`
+              : `<span class="tag sky">${t('mode_closed')}</span>`}</h1>
+          <p class="muted who">${a.owner_icon
+            ? `<img class="dev-icon" src="${esc(a.owner_icon)}" alt="">` : ''
+            }${a.owner_app_name && a.owner_app_name !== a.name
+              ? esc(a.owner_app_name) + ' · ' : ''
+            }${esc(a.developer_name || 'Developer')}${
+            a.last_seen_at ? ' · active ' + ago(a.last_seen_at) : ''}
+</p>
+          <p class="trust">${(a.owner_completed ?? 0) > 0
+            ? `<span class="ok">✓ ${a.owner_completed} ${t('t_finished')}</span>`
+            : `<span class="dim">${t('trust_new')}</span>`}${
+            (a.owner_left ?? 0) > 0
+              ? `<span class="dim"> · </span><span class="bad">${a.owner_left}${t('t_left')}</span>` : ''
+            }<span class="dim"> · ${t('karma')} ${a.owner_karma ?? 0}</span></p>
+          ${a.description ? `<p class="desc">${esc(a.description)}</p>` : ''}
+          <div class="bar"><i style="width:${pct}%"></i></div>
+          <p class="count"><b>${cur}</b> / ${need} ${t('testers')}${
+            ext > 0 ? ` <span class="muted">(${act} ${t('confirmed')} · ${ext} ${t('outside')})</span>` : ''}
+            ${a.recruiting === false ? '<span class="tag">Not recruiting</span>' : ''}
+            ${a.released_at ? '<span class="tag mint">Launched</span>' : ''}</p>
+        </div>
+      </div>
+
+      ${a.optin_broken ? `<div class="note warn" style="margin-bottom:16px">
+        ⚠ Testers reported that the opt-in link did not let them in
+        (${a.optin_reports || 1}). Ask the developer before you spend time on it.
+      </div>` : ''}
+
+      ${a.screenshot_url || a.long_description ? `<div class="card" style="margin-bottom:16px">
+        ${a.screenshot_url
+          ? `<img class="shot" src="${esc(a.screenshot_url)}" alt="">` : ''}
+        ${a.long_description ? `<details class="more">
+          <summary>${t('more_info')}</summary>
+          <p class="desc pre">${esc(a.long_description)}</p>
+        </details>` : ''}
+      </div>` : ''}
+
+      <div class="card" style="margin-bottom:16px">
+        ${line('Package', esc(a.package_name || '—'))}
+        ${a.google_group_url ? line('Google Group', linkRow(a.google_group_url)) : ''}
+        ${a.opt_in_url ? line('Opt-in', linkRow(a.opt_in_url)) : ''}
+        ${storeUrl ? line('Play Store', linkRow(storeUrl)) : ''}
+      </div>
+
+      ${done.length ? `<div class="card" style="margin-bottom:16px">
+        <h2 style="font-size:16px;margin:0 0 8px">This developer finished</h2>
+        ${done.map(d => `<div style="padding:6px 0;border-top:1px solid var(--ink600)">
+          <b>${esc(d.peer_app_name)}</b>
+          <span class="muted"> · ${esc(d.started_on)} ~ ${esc(d.finished_on)} · ${d.days}d${
+            d.opened != null ? ` · ${d.opened}${t('days_opened')}` : ''}</span>
+        </div>`).join('')}
+      </div>` : ''}
+
+      ${testers.length ? `<div class="card" style="margin-bottom:16px">
+        <h2 style="font-size:16px;margin:0 0 4px">${t('act_testers')} (${testers.length})</h2>
+        <p class="muted" style="margin:0 0 8px">${t('who_testing_p')}</p>
+        ${testers.map(x => `<div class="trow">
+          ${iconHtml(x.icon_url, x.name || '?')}
+          <div style="min-width:0;flex:1">
+            <p style="margin:0;font-size:14px">${esc(x.name || t('developer'))}</p>
+            <p class="muted" style="margin:0">${x.days ?? 0}${t('days_opened')}</p>
+          </div>
+          <span class="tag">${t('src_' + (x.source || 'outside'))}</span>
+        </div>`).join('')}
+        ${ext > 0 ? `<p class="hint" style="margin:12px 0 0">${
+          t('outside_note').replace('{a}', ext)}</p>` : ''}
+      </div>` : ''}
+
+      <div class="card">
+        <h2 style="font-size:16px;margin:0 0 8px">Trade tests with them</h2>
+        <p class="muted" style="font-size:13.5px">
+          You test theirs, they test yours. Daily opens record themselves once
+          you have the Android app.</p>
+        <div class="row" style="margin-top:12px" id="cta"></div>
+      </div>`;
+
+    root.querySelectorAll('[data-cp]').forEach(b => {
+      b.onclick = async () => {
+        const was = b.textContent;
+        try { await navigator.clipboard.writeText(b.dataset.cp); b.textContent = '✓'; }
+        catch (_) { prompt('', b.dataset.cp); }
+        setTimeout(() => { b.textContent = was; }, 1200);
+      };
+    });
+
+    // 로그인 여부에 따라 CTA 가 달라진다 — 보기는 누구나, 신청은 로그인
+    const cta = document.getElementById('cta');
+    const user = await me();
+    if (!user) {
+      cta.innerHTML = `<button class="btn" id="login">Sign in to offer a trade</button>
+        <a class="btn ghost" href="${STORE_URL}" rel="noopener">Get the Android app</a>`;
+      document.getElementById('login').onclick = () => signIn().catch(e => alert(e.message));
+    } else if (a.is_mine) {
+      cta.innerHTML = `<span class="muted">This is your app.</span>
+        <a class="btn ghost" href="/console.html">Manage it</a>`;
+    } else if (a.requested_by_me) {
+      cta.innerHTML = `<span class="tag mint">Offer sent</span>
+        <span class="muted">Waiting for them to accept.</span>`;
+    } else if (a.trading_with_me) {
+      cta.innerHTML = `<span class="tag mint">Already trading</span>`;
+    } else {
+      const mine = await myApps().catch(() => []);
+      const opts = mine.map(m => `<option value="${m.id}">${esc(m.name)}</option>`).join('');
+      cta.innerHTML = `
+        ${mine.length ? `<select id="mineSel" style="width:auto">
+          <option value="">— which app of mine —</option>${opts}</select>` : ''}
+        <button class="btn" id="offer">Offer a trade</button>`;
+      document.getElementById('offer').onclick = async (ev) => {
+        ev.target.disabled = true;
+        try {
+          const sel = document.getElementById('mineSel');
+          await offerTrade(a.app_id, sel ? sel.value || null : null);
+          cta.innerHTML = '<span class="tag mint">Offer sent</span>';
+        } catch (e) {
+          alert(e.message || e);
+          ev.target.disabled = false;
+        }
+      };
+    }
+  }
+} catch (e) {
+  root.innerHTML = `<div class="card"><p class="muted">Could not load this app.</p></div>`;
+}
+</script>
+</body>
+</html>

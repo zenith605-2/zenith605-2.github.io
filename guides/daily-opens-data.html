@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nobody opens your app all 14 days — numbers from 21 closed tests</title>
+<meta name="description" content="Across 21 finished test-for-test trades, the tester opened the app on 10.3 of 14 days on average. Nobody managed all 14. What that means for closed testing.">
+<link rel="canonical" href="https://zenith605-2.github.io/guides/daily-opens-data.html">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">How it works</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" style="padding-top:30px">
+  <h1 style="font-size:28px;margin:0 0 8px">Nobody opens your app all 14 days</h1>
+  <p class="muted" style="margin:0 0 24px">Measured 31 August 2026 · 21 finished trades</p>
+
+  <p>Everyone guesses at this. We can measure it, because the app records daily
+  opens automatically from Android's usage stats rather than asking anyone to
+  report them.</p>
+
+  <p>Here are 21 test-for-test trades that ran their full 14 days, and how many
+  of those days the tester actually opened the app:</p>
+
+  <table>
+    <tr><th>Lowest</th><td>4 / 14</td></tr>
+    <tr><th>Highest</th><td>13 / 14</td></tr>
+    <tr><th>Average</th><td><b>10.3 / 14</b></td></tr>
+    <tr><th>Opened every single day</th><td><b>0 people</b></td></tr>
+  </table>
+
+  <p>Not one. Including the person who built the app.</p>
+
+  <h2>Two things follow from this</h2>
+
+  <h3>Your test is probably fine</h3>
+  <p>Google counts how long a tester stayed opted in, not how often they opened
+  anything. A tester who missed three days has not broken your test — see
+  <a href="/guides/what-google-checks.html">what Google actually checks</a>.
+  If everyone had to hit 14 of 14, nobody would ever pass.</p>
+
+  <h3>But 4 of 14 is not testing</h3>
+  <p>10 of 14 is a person who used your app. 4 of 14 is a person who opted in
+  and forgot. Google may not care about the difference. The developer who
+  installed <em>your</em> app in exchange does.</p>
+
+  <p>That is the number worth being embarrassed about — not Google's.</p>
+
+  <h2>Why this is hard to see</h2>
+
+  <p>Most tools ask testers to prove it by hand: upload a screenshot, fill in a
+  staged feedback form, stay in a locked group. Every one of those adds work,
+  and work is exactly what people stop doing on day five.</p>
+
+  <p>Android already keeps a usage log. Reading it costs the tester nothing —
+  they open the app, and the day is recorded. That is the only way we got these
+  numbers at all.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> is free, and browsing the
+    <a href="/">app board</a> needs no account.
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    Numbers are from trades on one account and are a small sample. They are
+    real measurements, not estimates, but do not read them as an industry
+    average.
+  </p>
+</article>
+
+<footer class="bot"><div class="wrap"><p><a href="/guides/">All guides</a> · <a href="/">App board</a></p></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

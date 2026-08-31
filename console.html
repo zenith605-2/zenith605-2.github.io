@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My apps — ACT Party</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">How it works</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap" style="padding-top:22px" id="root">
+  <p class="muted">Loading…</p>
+</div>
+
+<footer class="bot"><div class="wrap"><p><a href="/">Home</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
+         incomingRequests, acceptRequest, fetchStoreMeta, pkgFromUrl, appTesters, testerEmails, markEmailRegistered,
+         checkGroup, reportOptin, clearOptinFlag, appIdByPackage, uploadShot,
+         myProfile, saveDeveloperName, nudgePeer, uploadImage,
+         sendTradeImage, sendSupportImage, blockUser, reportSomething,
+         deleteApp, deleteExchange, updateExchange,
+         iconHtml, esc, ago, STORE_URL, mountAuth, authReady, cleanUrl,
+         dayStrip, peerCheckDays, peerIdentity, myTradeChats, tradeMessages, sendTradeMessage,
+         markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
+         replyFeedback, closeElapsed, sendTradeFeedback,
+         supportMessages, sendSupportMessage,
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js';
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+
+const root = document.getElementById('root');
+const BASE_TITLE = document.title;
+
+// 구글이 오류를 실어 보내면 조용히 로그인 화면만 뜬다 — 이유를 보여준다.
+const qp = new URLSearchParams(
+  (location.hash.startsWith('#') ? location.hash.slice(1) : '') + '&' +
+  (location.search.startsWith('?') ? location.search.slice(1) : ''));
+const authErr = qp.get('error_description') || qp.get('error');
+// 앱보드에서 "내 앱 등록"으로 들어오면 곧바로 등록 폼을 편다
+const wantNew = qp.has('new');
+
+const user = await authReady();
+const uid = user?.id ?? null;
+cleanUrl();
+
+const TABS = [
+  ['apps', 'tab_myapps'], ['testing', 'tab_testing'], ['offers', 'tab_offers'],
+  ['chats', 'tab_chats'], ['feedback', 'tab_feedback'], ['contact', 'tab_contact'],
+];
+
+let D = {};
+// 알림에서 #chat=<request_id> 로 들어오면 그 방을 바로 연다
+const deepChat = (location.hash.match(/^#chat=(.+)$/) || [])[1] || null;
+let tab = deepChat ? 'chats' : (location.hash || '#apps').slice(1);
+let fbTab = 'in';
+let unwatch = null;
+
+if (!user) {
+  root.innerHTML = `
+    <div class="card narrow" style="margin:40px auto;text-align:center">
+      <h1 style="font-size:22px;margin:0 0 8px">${t('sign_in')}</h1>
+      <p class="muted" style="margin:0 0 18px">${t('app_note')}</p>
+      <button class="btn" id="login">Google</button>
+      ${authErr ? `<p style="margin:14px 0 0;color:var(--rose);font-size:13px">${esc(authErr)}</p>` : ''}
+    </div>`;
+  document.getElementById('login').onclick = () => signIn().catch(e => alert(e.message));
+  // 로그인 왕복 뒤에도 등록 폼을 열어 주려고 표시를 남긴다
+  if (wantNew) sessionStorage.setItem('act_new', '1');
+} else {
+  const openNew = wantNew || sessionStorage.getItem('act_new') === '1';
+  sessionStorage.removeItem('act_new');
+  try {
+    await load();
+    render();
+    if (deepChat) {
+      const c = D.chats.find((x) => x.request_id === deepChat);
+      openChat(deepChat, c?.peer_name || c?.peer_app_name || '');
+    }
+    if (openNew) appForm(null);
+    // 새 신청·메시지가 오면 새로고침 없이 배지가 오른다
+    setInterval(refreshCounts, 45000);
+    addEventListener('focus', refreshCounts);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) refreshCounts();
+    });
+  } catch (e) {
+    root.innerHTML = `<div class="card"><p style="margin:0;color:var(--rose)">
+      ${esc(e?.message || String(e))}</p></div>`;
+    throw e;
+  }
+}
+
+// ---- 데이터 ----
+async function load() {
+  await closeElapsed();
+  const [apps, prog, ex, incoming, chats, fbIn, fbOut, prof] = await Promise.all([
+    myApps().catch(() => []),
+    myAppProgress().catch(() => []),
+    myExchanges().catch(() => []),
+    incomingRequests().then(r => r.filter(x => (x.status ?? 'pending') === 'pending'))
+      .catch(() => []),
+    myTradeChats().catch(() => []),
+    myFeedbacks().catch(() => []),
+    mySentFeedbacks().catch(() => []),
+    myProfile().catch(() => null),
+  ]);
+  // 상대가 내 앱을 연 날 — 상호 인증이면 달력 아래 줄에 파란 칸으로 함께 보인다
+  const pkgs = [...new Set(ex.map(e => e.peer_package).filter(Boolean))];
+  const [peer, peerInfo] = await Promise.all([
+    peerCheckDays(pkgs).catch(() => ({})),
+    peerIdentity(ex.map(e => e.id)).catch(() => ({})),
+  ]);
+  D = { apps, prog: Object.fromEntries(prog.map(p => [p.app_id, p])),
+        ex, incoming, chats, fbIn, fbOut, peer, peerInfo, prof };
+}
+
+// ---- 탭 ----
+/// t() 문구 안의 {a} {b} 를 값으로 바꾼다
+function tf(key, vars) {
+  return Object.entries(vars)
+    .reduce((acc, [k, v]) => acc.replace('{' + k + '}', v), t(key));
+}
+
+function badge(n) {
+  return n > 0 ? `<span class="tag mint" style="margin-left:5px">${n}</span>` : '';
+}
+
+addEventListener('popstate', () => {
+  if (!uid || !D.apps) return;   // 로그인 전에는 그릴 것이 없다
+  const m = location.hash.match(/^#chat=(.+)$/);
+  if (m) {
+    const c = D.chats?.find((x) => x.request_id === m[1]);
+    tab = 'chats';
+    openChat(m[1], c?.peer_name || c?.peer_app_name || '');
+    return;
+  }
+  const h = (location.hash || '#apps').slice(1);
+  if (TABS.some(([k]) => k === h) && h !== tab) { tab = h; render(); }
+});
+
+function countsOf() {
+  return {
+    apps: D.apps.length, testing: D.ex.length, offers: D.incoming.length,
+    chats: D.chats.reduce((a, c) => a + (c.unread || 0), 0),
+    feedback: D.fbIn.filter(f => f.is_new).length,
+  };
+}
+
+/// 안 읽은 것들을 탭 배지와 브라우저 탭 제목에 반영한다.
+/// 제목에도 넣는 이유는, 이 탭을 뒤에 놔둔 채 다른 일을 하기 때문이다.
+function paintCounts() {
+  const c = countsOf();
+  document.querySelectorAll('.tabs [data-tab]').forEach(b => {
+    const n = c[b.dataset.tab] || 0;
+    let dot = b.querySelector('.tag');
+    if (n > 0) {
+      if (!dot) {
+        dot = document.createElement('span');
+        dot.className = 'tag mint';
+        dot.style.marginLeft = '5px';
+        b.appendChild(dot);
+      }
+      dot.textContent = n;
+    } else if (dot) dot.remove();
+  });
+  const news = c.offers + c.chats + c.feedback;
+  document.title = (news > 0 ? `(${news}) ` : '') + BASE_TITLE;
+}
+
+/// 새 신청·메시지·피드백만 가볍게 다시 센다 (앱 목록·달력은 건드리지 않는다)
+async function refreshCounts() {
+  const [incoming, chats, fbIn] = await Promise.all([
+    incomingRequests().then(r => r.filter(x => (x.status ?? 'pending') === 'pending'))
+      .catch(() => D.incoming),
+    myTradeChats().catch(() => D.chats),
+    myFeedbacks().catch(() => D.fbIn),
+  ]);
+  const before = countsOf();
+  D.incoming = incoming; D.chats = chats; D.fbIn = fbIn;
+  const after = countsOf();
+  paintCounts();
+  // 지금 보고 있는 목록에 새 게 생겼으면 그 화면도 다시 그린다
+  if (['offers', 'chats', 'feedback'].includes(tab) && after[tab] !== before[tab]) render();
+}
+
+function render() {
+  if (unwatch) { unwatch(); unwatch = null; }
+  const counts = countsOf();
+  root.innerHTML = `
+    <div class="note" style="margin-bottom:16px">
+      ${t('app_note')} <a href="${STORE_URL}" rel="noopener">${t('get_app')}</a>
+    </div>
+    <div class="tabs">
+      ${TABS.map(([k, key]) =>
+        `<button class="btn ${k === tab ? '' : 'ghost'} sm" data-tab="${k}">${t(key)}${badge(counts[k])}</button>`).join('')}
+    </div>
+    <div id="pane"></div>`;
+
+  root.querySelectorAll('[data-tab]').forEach(b => {
+    b.onclick = () => {
+      tab = b.dataset.tab;
+      if (location.hash.slice(1) !== tab) history.pushState({}, '', '#' + tab);
+      render();
+    };
+
+  });
+
+  const pane = document.getElementById('pane');
+  // 주소에 이상한 해시가 들어와도 죽지 않게
+  ({ apps: paneApps, testing: paneTesting, offers: paneOffers,
+     chats: paneChats, feedback: paneFeedback,
+     contact: paneContact }[tab] || paneApps)(pane);
+  paintCounts();
+}
+
+// ---- 내 앱 (여러 개) ----
+function paneApps(pane) {
+  const who = D.prof?.developer_name || D.prof?.nickname || '';
+  pane.innerHTML = `
+    <div class="card whoami">
+      <div style="min-width:0;flex:1">
+        <p class="muted" style="margin:0">${t('dev_name')}</p>
+        <p style="margin:2px 0 0;font-weight:700" id="whoName">${esc(who)}</p>
+      </div>
+      <button class="btn ghost sm" id="whoEdit">${t('edit')}</button>
+    </div>
+    <p style="margin:14px 0"><button class="btn" id="add">＋ ${t('register_app')}</button></p>
+    <div class="grid" id="mine"></div>`;
+
+  document.getElementById('whoEdit').onclick = async () => {
+    const v = prompt(t('dev_name') + ' — ' + t('dev_name_p'), who);
+    if (v == null) return;
+    try {
+      const saved = await saveDeveloperName(v);
+      D.prof = { ...(D.prof || {}), developer_name: saved };
+      document.getElementById('whoName').textContent = saved;
+      // 헤더에도 같은 이름이 떠 있다
+      const h = document.querySelector('#authSlot a[href="/console.html"]');
+      if (h && !h.classList.contains('mine')) h.textContent = saved;
+      document.querySelectorAll('#authSlot a').forEach((el) => {
+        if (!el.classList.contains('mine') && el.getAttribute('href') === '/console.html') {
+          el.textContent = saved;
+        }
+      });
+    } catch (e) { alert(e.message || e); }
+  };
+
+  document.getElementById('mine').innerHTML = D.apps.length ? D.apps.map(a => {
+    const p = D.prog[a.id] || {};
+    const now = p.testing_now ?? 0;
+    const est = p.trade_estimated ?? 0;
+    return `<div class="card app-card" id="card-${a.id}">
+      ${iconHtml(a.icon_url, a.name)}
+      <div style="min-width:0;flex:1">
+        <p class="app-name">${esc(a.name)}</p>
+        <p class="muted">${esc(a.package_name || '—')}</p>
+        ${a.optin_broken_at ? `<div class="note warn" style="margin-top:8px">
+          <p style="margin:0;font-weight:700">⚠ ${t('optin_fix_h')} (${a.optin_reports || 1})</p>
+          <p style="margin:4px 0 8px">${t('optin_fix_p')}</p>
+          <button class="btn sm" data-fixed="${a.id}">${t('optin_fixed')}</button>
+        </div>` : ''}
+        ${progressLine(p, D.ex.filter(e => e.my_app_id === a.id))}
+        <div class="row" style="margin-top:10px">
+          <label class="chk">
+            <input type="checkbox" data-pub="${a.id}" ${a.is_public !== false ? 'checked' : ''}>
+            ${t('on_board')}
+          </label>
+          <button class="btn ghost sm" data-edit="${a.id}">${t('edit')}</button>
+          <button class="btn ghost sm" data-delapp="${a.id}">${t('delete')}</button>
+          ${a.package_name ? `<a class="btn ghost sm" href="/app.html?p=${encodeURIComponent(a.package_name)}">${t('public_page')}</a>` : ''}
+        </div>
+        ${now > 0 ? `<details class="testers" data-app="${a.id}" data-ext="${est}">
+          <summary>${t('act_testers')} ${now - est}${
+            est > 0 ? ` <span class="muted">· ${t('outside')} ${est}</span>` : ''}</summary>
+          <div class="tbody"><p class="hint">…</p></div>
+        </details>` : ''}
+        <details class="testers emails" data-app="${a.id}">
+          <summary>${t('emails_h')}</summary>
+          <div class="tbody"><p class="hint">…</p></div>
+        </details>
+      </div></div>`;
+  }).join('') : `<p class="muted">${t('no_apps')}</p>`;
+
+  // 테스터 목록은 펼칠 때만 불러온다 — 앱이 여러 개면 매번 다 부르는 건 낭비다.
+  // 이메일 칸도 details.testers 를 같이 쓰고 있어서, 빼지 않으면
+  // [테스터 이메일] 자리에 테스터 목록이 한 번 더 찍힌다.
+  pane.querySelectorAll('details.testers:not(.emails)').forEach(d => {
+    d.addEventListener('toggle', async () => {
+      if (!d.open || d.dataset.loaded) return;
+      d.dataset.loaded = '1';
+      const box = d.querySelector('.tbody');
+      const rows = await appTesters(d.dataset.app).catch(() => []);
+      box.innerHTML = rows.length ? rows.map(r => `<div class="trow">
+        ${iconHtml(r.icon_url, r.name || '?')}
+        <div style="min-width:0;flex:1">
+          <p style="margin:0;font-size:14px">${esc(r.name || t('developer'))}</p>
+          <p class="muted" style="margin:0">${r.days ?? 0}${t('days_opened')}</p>
+        </div>
+        <span class="tag">${t('src_' + (r.source || 'outside'))}</span>
+      </div>`).join('') : `<p class="muted">${t('no_testers')}</p>`;
+      const ext = Number(d.dataset.ext || 0);
+      if (ext > 0) {
+        box.insertAdjacentHTML('beforeend',
+          `<p class="hint" style="margin:10px 0 0">${tf('outside_note', { a: ext })}</p>`);
+      }
+    });
+  });
+
+  // 그룹스 대신 이메일 목록으로 테스터를 받는 앱 — 모바일 요청함과 같은 흐름이다.
+  // 미등록 이메일을 한 번에 복사해서 Play Console 테스터 목록에 붙여넣는다.
+  pane.querySelectorAll('details.emails').forEach(d => {
+    d.addEventListener('toggle', () => { if (d.open) loadEmails(d); });
+  });
+
+  pane.querySelectorAll('[data-pub]').forEach(cb => {
+    cb.onchange = async () => {
+      try { await setAppPublic(cb.dataset.pub, cb.checked); }
+      catch (e) { alert(e.message); cb.checked = !cb.checked; }
+    };
+  });
+  pane.querySelectorAll('[data-fixed]').forEach(b => {
+    b.onclick = async () => {
+      b.disabled = true;
+      try { await clearOptinFlag(b.dataset.fixed); await load(); render(); }
+      catch (e) { alert(e.message); b.disabled = false; }
+    };
+  });
+  pane.querySelectorAll('[data-edit]').forEach(b => {
+    b.onclick = () => appForm(D.apps.find(x => x.id === b.dataset.edit));
+  });
+  pane.querySelectorAll('[data-delapp]').forEach(b => {
+    b.onclick = async () => {
+      if (!confirm(t('del_app_ask'))) return;
+      b.disabled = true;
+      try { await deleteApp(b.dataset.delapp); await load(); render(); }
+      catch (e) { alert(e.message); b.disabled = false; }
+    };
+  });
+  document.getElementById('add').onclick = () => appForm(null);
+}
+
+
+/// 모바일 _ServerAppCard._progressLine 과 같은 구성.
+/// "3명 테스트 중 (확인 2 · 외부 1) · 파티 D+5 · 오늘 5/12 인증 · 품앗이 3건"
+function progressLine(p, exs) {
+  const f = tf;
+  const now = p.testing_now ?? 0;
+  const est = p.trade_estimated ?? 0;
+  const parts = [];
+  if (now > 0) {
+    parts.push(`${now}${t('testers_now')}` +
+      (est > 0 ? ` (${now - est} ${t('confirmed')} · ${est} ${t('outside')})` : ''));
+  }
+  if (p.party_name) {
+    if (p.party_status === 'running' && (p.day_no ?? 0) > 0) {
+      parts.push(`${p.party_name} D+${p.day_no}`);
+      parts.push(f('prog_today', { a: p.verified_today ?? 0, b: p.party_testers ?? 0 }));
+      if ((p.active_testers ?? 0) < (p.party_testers ?? 0)) {
+        parts.push(f('prog_active', { a: p.active_testers ?? 0 }));
+      }
+    } else {
+      const st = { running: 'st_running', recruiting: 'st_recruit' }[p.party_status] || 'st_done';
+      parts.push(`${p.party_name} · ${t(st)}`);
+    }
+  }
+  const trades = exs.length;
+  if (trades > 0) {
+    const done = exs.filter(e => e.status === 'done').length;
+    parts.push(f('prog_trades', { a: trades }) +
+      (done > 0 ? ` (${f('prog_done', { a: done })})` : ''));
+  }
+  const running = parts.length > 0;
+  if (!running) parts.push(t('prog_none'));
+  return `<p class="count prog ${running ? 'on' : ''}">${parts.join(' · ')}</p>`;
+}
+
+
+async function loadEmails(d) {
+  const appId = d.dataset.app;
+  const box = d.querySelector('.tbody');
+  const rows = await testerEmails(appId).catch(() => []);
+  const pending = rows.filter(r => !r.registered);
+  if (!rows.length) { box.innerHTML = `<p class="muted">${t('emails_none')}</p>`; return; }
+  box.innerHTML = `
+    ${pending.length ? `<div class="note" style="margin:8px 0">
+      <p style="margin:0;font-weight:700">${tf('emails_copy', { a: pending.length })}</p>
+      <p class="muted" style="margin:2px 0 8px">${t('emails_copy_p')}</p>
+      <div class="row">
+        <button class="btn sm" id="cp-${appId}">📋 ${pending.length}</button>
+        <a class="btn ghost sm" href="https://play.google.com/console" target="_blank"
+           rel="noopener">${t('emails_open')}</a>
+      </div></div>` : ''}
+    ${rows.map(r => `<div class="trow">
+      <div style="min-width:0;flex:1">
+        <p style="margin:0;font-size:14px;word-break:break-all">${esc(r.email)}</p>
+        <p class="muted" style="margin:0">${r.registered ? t('em_done') : t('em_wait')}</p>
+      </div>
+      <label class="chk"><input type="checkbox" data-em="${r.tester_id}"
+        ${r.registered ? 'checked' : ''}></label>
+    </div>`).join('')}`;
+
+  const cp = box.querySelector(`#cp-${CSS.escape(appId)}`);
+  if (cp) cp.onclick = async () => {
+    const text = pending.map(r => r.email).join(', ');
+    try { await navigator.clipboard.writeText(text); cp.textContent = t('copied'); }
+    catch (_) { prompt(t('emails_copy_p'), text); }
+  };
+  box.querySelectorAll('[data-em]').forEach(cb => {
+    cb.onchange = async () => {
+      try { await markEmailRegistered(appId, cb.dataset.em, cb.checked); }
+      catch (e) { alert(e.message); cb.checked = !cb.checked; }
+    };
+  });
+}
+
+// ---- 테스트 중 (달력) ----
+function paneTesting(pane) {
+  const head = `<p style="margin:0 0 14px">
+    <button class="btn" id="addTrade">＋ ${t('add_trade')}</button></p>`;
+  if (!D.ex.length) {
+    pane.innerHTML = head + `<p class="muted">${t('no_tests')}</p>`;
+    document.getElementById('addTrade').onclick = () => tradeForm();
+    return;
+  }
+  // 그냥 나열하면 어느 앱 대신 테스트 중인지가 안 보인다. 내 앱별로 묶는다.
+  const byApp = new Map();
+  for (const e of D.ex) {
+    const k = e.my_app_id || '';
+    if (!byApp.has(k)) byApp.set(k, []);
+    byApp.get(k).push(e);
+  }
+  const nameOf = (id) => D.apps.find(a => a.id === id)?.name || t('no_my_app');
+  pane.innerHTML = head + [...byApp.entries()].map(([appId, list]) => `
+    <h3 class="grp">${esc(nameOf(appId))}
+      <span class="muted">↔ ${list.length}</span></h3>
+    <div class="grid">${list.map(e => {
+    const days = (e.exchange_checkins || []).length;
+    const total = e.days ?? 14;
+    const pd = D.peer[e.peer_package];
+    const dayNo = e.started_on
+      ? Math.floor((Date.now() - new Date(e.started_on + 'T00:00:00')) / 86400000) + 1 : 0;
+    return `<div class="card">
+      <div class="app-card" style="align-items:center;gap:10px">
+        ${iconHtml(e.peer_icon_url, e.peer_app_name || '?')}
+        <div style="min-width:0;flex:1">
+      <p style="margin:0 0 2px"><b>${esc(e.peer_app_name || '')}</b>
+        ${e.uninstalled_at ? `<span class="tag rose">${t('t_uninstalled')}</span>` : ''}
+        ${e.status === 'done' ? `<span class="tag mint">${t('t_finished')}</span>` : ''}</p>
+      <p class="muted" style="margin:0">D+${dayNo} / ${total}${t('days')} ·
+        ${t('me')} ${days}${t('days')}${pd ? ` · ${t('them')} ${Object.keys(pd).length}${t('days')}` : ''}</p>
+      ${peerLine(e)}
+        </div>
+      </div>
+      ${dayStrip(e, pd)}
+      <p class="strip-note">${t('strip_note')}${pd ? t('strip_note_peer') : ''}</p>
+      <div class="row" style="margin-top:12px">
+        ${/* 버튼을 없애면 그 기능이 있는 줄도 모른다. 자리에 두고 왜 안 되는지 붙인다 */''}
+        ${e.trade_request_id
+          ? `<button class="btn ghost sm" data-tchat="${e.trade_request_id}"
+               data-title="${esc(e.peer_app_name || '')}">${t('open_chat')}</button>`
+          : `<button class="btn ghost sm" disabled
+               title="${esc(t('dis_nochat'))}">${t('open_chat')}</button>`}
+        ${e.peer_package
+          ? `<button class="btn ghost sm" data-tfb="${e.id}"
+               data-pkg="${esc(e.peer_package)}">${t('write_fb')}</button>`
+          : `<button class="btn ghost sm" disabled
+               title="${esc(t('dis_nopkg'))}">${t('write_fb')}</button>`}
+        ${e.status !== 'done'
+          ? `<button class="btn ghost sm" data-nudge="${e.id}"
+               title="${esc(t('nudge_tip'))}">${t('nudge')}</button>`
+          : `<button class="btn ghost sm" disabled
+               title="${esc(t('dis_done'))}">${t('nudge')}</button>`}
+        <button class="btn ghost sm" data-tedit="${e.id}">${t('edit')}</button>
+        <button class="btn ghost sm" data-tdel="${e.id}">${t('delete')}</button>
+      </div>
+      <div class="fbbox" id="fb-${e.id}"></div>
+      ${setupSteps(e)}
+      ${!e.setup_install_done && !days && e.peer_package ? `<div class="gate">
+        <p style="margin:0 0 7px">${t('optin_q')}</p>
+        <div class="row">
+          ${e.peer_optin_url ? `<a class="btn ghost sm" href="${esc(e.peer_optin_url)}"
+             target="_blank" rel="noopener">${t('f_optin')} ↗</a>` : ''}
+          <button class="btn sm" data-oi="1" data-pkg="${esc(e.peer_package)}">${t('optin_yes')}</button>
+          <button class="btn ghost sm" data-oi="0" data-pkg="${esc(e.peer_package)}">${t('optin_no')}</button>
+        </div></div>` : ''}
+    </div>`;
+  }).join('')}</div>`).join('');
+
+  document.getElementById('addTrade').onclick = () => tradeForm();
+
+  pane.querySelectorAll('[data-tchat]').forEach(b => {
+    b.onclick = () => openChat(b.dataset.tchat, b.dataset.title);
+  });
+
+  // 찌르기 — 서버가 조건을 보고 결과를 돌려준다. 왜 안 되는지도 말해 준다.
+  pane.querySelectorAll('[data-nudge]').forEach(b => {
+    b.onclick = async () => {
+      b.disabled = true;
+      try {
+        const r = await nudgePeer(b.dataset.nudge);
+        alert(t({ ok: 'nudge_ok', self: 'nudge_self', already: 'nudge_already',
+                  sent_today: 'nudge_today', nopeer: 'nudge_nopeer' }[r] || 'nudge_ok'));
+      } catch (e) { alert(e.message); }
+      b.disabled = false;
+    };
+  });
+
+  pane.querySelectorAll('[data-tedit]').forEach(b => {
+    b.onclick = () => tradeForm(D.ex.find(x => x.id === b.dataset.tedit));
+  });
+  pane.querySelectorAll('[data-tdel]').forEach(b => {
+    b.onclick = async () => {
+      if (!confirm(t('del_trade_ask'))) return;
+      b.disabled = true;
+      try { await deleteExchange(b.dataset.tdel); await load(); render(); }
+      catch (e) { alert(e.message); b.disabled = false; }
+    };
+  });
+
+  // 테스트하면서 바로 남기는 게 제일 쓸모 있는 피드백이다.
+  // 앱 화면과 같은 자리에 두지 않으면 아무도 안 쓴다.
+  pane.querySelectorAll('[data-tfb]').forEach(b => {
+    b.onclick = async () => {
+      const box = document.getElementById(`fb-${b.dataset.tfb}`);
+      if (box.dataset.open) { box.innerHTML = ''; delete box.dataset.open; return; }
+      box.dataset.open = '1';
+      box.innerHTML = `<p class="hint">…</p>`;
+      const appId = await appIdByPackage(b.dataset.pkg).catch(() => null);
+      if (!appId) { box.innerHTML = `<p class="hint bad">${t('no_app_found')}</p>`; return; }
+      box.innerHTML = `
+        <p class="hint" style="margin:0 0 6px">${t('write_fb_p')}</p>
+        <textarea rows="3" maxlength="2000"></textarea>
+        <p style="margin:8px 0 0"><button class="btn sm">${t('send')}</button></p>`;
+      const ta = box.querySelector('textarea');
+      box.querySelector('button').onclick = async (ev) => {
+        const body = ta.value.trim();
+        if (!body) return;
+        ev.target.disabled = true;
+        try {
+          await sendTradeFeedback(b.dataset.tfb, appId, body);
+          box.innerHTML = `<p class="hint ok">${t('fb_sent')}</p>`;
+          delete box.dataset.open;
+        } catch (e) { alert(e.message || e); ev.target.disabled = false; }
+      };
+    };
+  });
+
+  // 그룹 가입과 옵트인은 웹에서도 끝낼 수 있다
+  pane.querySelectorAll('[data-step]').forEach(cb => {
+    cb.onchange = async () => {
+      try { await setSetupStep(cb.dataset.ex, cb.dataset.step, cb.checked); }
+      catch (err) { alert(err.message); cb.checked = !cb.checked; }
+    };
+  });
+
+  // 옵트인이 되는지는 밖에서 볼 방법이 없다(옵트인 페이지가 정상 앱이든
+  // 아니든 똑같이 응답한다). 첫 테스터가 한 번 눌러 주면 그게 유일한 신호다.
+  pane.querySelectorAll('[data-oi]').forEach(b => {
+    b.onclick = async () => {
+      const box = b.closest('.gate');
+      box.innerHTML = `<p class="hint">…</p>`;
+      const appId = await appIdByPackage(b.dataset.pkg).catch(() => null);
+      if (!appId) { box.remove(); return; }
+      try { await reportOptin(appId, b.dataset.oi === '1'); } catch (_) {}
+      box.innerHTML = b.dataset.oi === '1' ? '' : `<p class="hint ok">${t('optin_thanks')}</p>`;
+    };
+  });
+}
+
+/// 수락한 뒤에 할 일 셋. 그룹 가입과 옵트인은 여기서 링크를 열고 체크하면
+/// 끝나고, 설치만 안드로이드 앱이 확인한다(사용 기록을 읽어야 알 수 있다).
+function setupSteps(e) {
+  if (e.setup_group_done && e.setup_optin_done && e.setup_install_done) return '';
+  const row = (label, done, link, field) => `
+    <div class="stp${done ? ' done' : ''}">
+      ${field
+        ? `<label class="chk"><input type="checkbox" data-ex="${e.id}"
+             data-step="${field}" ${done ? 'checked' : ''}> ${label}</label>`
+        : `<span>${done ? '✓' : '·'} ${label}</span>`}
+      ${link ? `<a class="btn ghost sm" href="${esc(link)}" target="_blank"
+                  rel="noopener">↗</a>` : ''}
+    </div>`;
+  return `<div class="setup">
+    <p class="step" style="margin:0 0 6px">${t('setup_h')}</p>
+    ${row(t('step_group'), !!e.setup_group_done, e.peer_group_url, 'setup_group_done')}
+    ${row(t('step_optin'), !!e.setup_optin_done, e.peer_optin_url, 'setup_optin_done')}
+    ${row(t('step_install'), !!e.setup_install_done, null, null)}
+    ${!e.setup_install_done
+      ? `<p class="hint" style="margin:6px 0 0">${t('step_install_p')}</p>` : ''}
+  </div>`;
+}
+
+/// 테스트할 앱 넣기. [내 앱]에는 내 앱만, 여기에는 테스트할 앱만 넣는다 —
+/// 한 폼에서 둘 다 받으면 매번 무엇을 넣는 화면인지 설명해야 한다.
+function tradeForm(existing) {
+  const x = existing || {};
+  const pane = document.getElementById('pane');
+  document.getElementById('tradeCard')?.remove();
+  const opts = D.apps.map((m) =>
+    `<option value="${m.id}" ${m.id === x.my_app_id ? 'selected' : ''}>${esc(m.name)}</option>`).join('');
+  pane.insertAdjacentHTML('afterbegin', `
+    <div class="card" id="tradeCard" style="margin-bottom:18px">
+      <h2 style="font-size:18px;margin:0 0 4px">${existing ? t('edit') : t('add_trade')}</h2>
+      <p class="muted" style="margin:0">${t('add_trade_p')}</p>
+
+      <!-- 테스터가 실제로 밟는 순서: 그룹 가입 → 옵트인 → 설치 -->
+      <label>${t('f_group')} <span class="muted">${t('optional_h')}</span></label>
+      <div class="row">
+        <input type="url" id="x_group" style="flex:1;min-width:190px"
+               value="${esc(x.peer_group_url || '')}"
+               placeholder="https://groups.google.com/g/...">
+        <button class="btn ghost sm" id="x_gchk">${t('grp_check')}</button>
+      </div>
+      <p class="hint" id="x_gmsg"></p>
+
+      <label>${t('f_optin')} <span class="req">${t('req')}</span></label>
+      <div class="row">
+        <input type="url" id="x_optin" style="flex:1;min-width:190px"
+               value="${esc(x.peer_optin_url || '')}"
+               placeholder="https://play.google.com/apps/testing/com.example.app">
+        <button class="btn sky sm" id="x_fetch">${t('fetch')}</button>
+      </div>
+      <div id="x_prev"></div>
+
+      <label>${t('f_store')} <span class="muted">${t('optional_h')}</span></label>
+      <input type="text" id="x_store" value="${esc(x.peer_package || '')}"
+             placeholder="https://play.google.com/store/apps/details?id=...">
+
+      <label>${t('f_peer_name')} <span class="req">${t('req')}</span></label>
+      <input type="text" id="x_name" value="${esc(x.peer_app_name || '')}">
+
+      <div class="row" style="gap:16px;align-items:flex-end">
+        <div style="flex:1;min-width:150px">
+          <label>${t('f_my_app')}</label>
+          <select id="x_mine">
+            <option value="">${t('f_my_app_no')}</option>${opts}</select>
+        </div>
+        <div style="width:110px">
+          <label>${t('f_days')}</label>
+          <input type="text" id="x_days" value="${x.days ?? 14}" inputmode="numeric">
+        </div>
+      </div>
+
+      <label>${t('f_source')} <span class="muted">${t('optional_h')}</span></label>
+      <input type="text" id="x_source" value="${esc(x.source || '')}"
+             placeholder="reddit, telegram, …">
+
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="x_save">${existing ? t('save') : t('add_trade')}</button>
+        <button class="btn ghost" id="x_cancel">${t('cancel')}</button>
+      </div>
+    </div>`);
+
+  const $ = (id) => document.getElementById(id);
+  $('tradeCard').scrollIntoView({ block: 'nearest' });
+  $('x_cancel').onclick = () => $('tradeCard').remove();
+
+  const fetchNow = async () => {
+    // 옵트인 링크에 패키지명이 들어 있다 — 스토어 링크는 없어도 된다
+    const pkg = pkgFromUrl($('x_optin').value.trim()) ||
+                pkgFromUrl($('x_store').value.trim());
+    if (!pkg) { $('x_prev').innerHTML = `<p class="hint">${t('bad_link')}</p>`; return; }
+    $('x_prev').innerHTML = '<p class="hint">…</p>';
+    if (!$('x_optin').value) $('x_optin').value = `https://play.google.com/apps/testing/${pkg}`;
+    try {
+      const m = await fetchStoreMeta(pkg);
+      if (m?.name) $('x_name').value = m.name;
+      $('x_fetch').dataset.icon = m?.icon || '';
+      $('x_prev').innerHTML = `<div class="app-card" style="margin-top:12px">
+        ${iconHtml(m?.icon, m?.name || pkg)}
+        <div style="min-width:0"><p class="app-name">${esc(m?.name || pkg)}</p>
+          <p class="muted">${esc(pkg)}</p></div></div>`;
+    } catch (_) {
+      $('x_prev').innerHTML = `<p class="hint ok">✓ ${esc(pkg)}</p>`;
+    }
+  };
+  $('x_fetch').onclick = fetchNow;
+  for (const id of ['x_optin', 'x_store']) {
+    $(id).addEventListener('paste', () => setTimeout(fetchNow, 30));
+    $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') fetchNow(); });
+  }
+
+  $('x_gchk').onclick = async () => {
+    const v = $('x_group').value.trim();
+    if (!v) return;
+    $('x_gmsg').textContent = '…';
+    try {
+      const r = await checkGroup(v);
+      $('x_gmsg').className = 'hint ' + (r?.ok ? 'ok' : 'bad');
+      $('x_gmsg').innerHTML = r?.ok ? `✓ ${esc(r.title)}` : `⚠ ${t('grp_bad')}`;
+    } catch (_) { $('x_gmsg').textContent = ''; }
+  };
+
+  $('x_save').onclick = async (ev) => {
+    const name = $('x_name').value.trim();
+    if (!name) { $('x_name').focus(); alert(t('need_name')); return; }
+    ev.target.disabled = true;
+    const row = {
+        peer_app_name: name,
+        peer_package: pkgFromUrl($('x_optin').value) ||
+                      pkgFromUrl($('x_store').value) || null,
+        peer_group_url: $('x_group').value.trim() || null,
+        peer_optin_url: $('x_optin').value.trim() || null,
+        peer_icon_url: $('x_fetch').dataset.icon || null,
+        my_app_id: $('x_mine').value || null,
+        source: $('x_source').value.trim() || null,
+        days: Math.max(1, Math.min(60, Number($('x_days').value) || 14)),
+    };
+    try {
+      if (existing) await updateExchange(existing.id, row);
+      else await addExchange(row);
+      await load(); tab = 'testing'; render();
+    } catch (e) { alert(e.message || e); ev.target.disabled = false; }
+  };
+}
+
+/// 상대가 ACT 사용자인지 — 이게 안 보이면 왜 상대 줄이 비어 있는지,
+/// 왜 대화·노크가 막혀 있는지 알 수가 없다.
+function peerLine(e) {
+  const p = D.peerInfo?.[e.id];
+  if (!p) {
+    return `<p class="muted who" style="margin:2px 0 0">
+      <span class="tag">${t('not_act_user')}</span>
+      <span class="dim">${t('not_act_p')}</span></p>`;
+  }
+  return `<p class="muted who" style="margin:2px 0 0">
+    ${p.icon_url ? `<img class="dev-icon" src="${esc(p.icon_url)}" alt="">` : ''}
+    ${esc(p.developer_name || t('developer'))}
+    <span class="tag mint">${t('act_user')}</span>
+    ${p.usage_access ? `<span class="tag mint">${t('auto_ok')}</span>`
+                     : `<span class="tag rose">${t('auto_off')}</span>`}
+    <span class="sep">·</span>
+    <span class="dim">${t('karma')} ${p.karma ?? 0} · ${p.completed ?? 0}${t('t_finished')}</span>
+    ${p.last_seen_at ? `<span class="sep">·</span>
+      <span class="dim">${t('active')} ${ago(p.last_seen_at)}</span>` : ''}</p>`;
+}
+
+// ---- 받은 신청 ----
+function paneOffers(pane) {
+  if (!D.incoming.length) { pane.innerHTML = `<p class="muted">${t('no_offers')}</p>`; return; }
+  pane.innerHTML = `<div class="grid">${D.incoming.map(r => `<div class="card">
+    <p style="margin:0 0 4px"><b>${esc(r.requester_name || t('developer'))}</b>
+      <span class="muted">→ ${esc(r.app_name || '')}</span></p>
+    <p class="muted" style="margin:0">${esc(r.requester_app_name || '—')} ·
+      ${t('sort_karma')} ${r.requester_karma ?? 0} · ${r.requester_completed ?? 0} ${t('t_finished')}</p>
+    ${r.message ? `<p class="desc">${esc(r.message)}</p>` : ''}
+    <p style="margin:10px 0 0"><button class="btn sm" data-acc="${r.id}">${t('accept')}</button></p>
+  </div>`).join('')}</div>`;
+
+  pane.querySelectorAll('[data-acc]').forEach(b => {
+    b.onclick = async () => {
+      b.disabled = true;
+      try { await acceptRequest(b.dataset.acc); await load(); render(); }
+      catch (e) { alert(e.message); b.disabled = false; }
+    };
+  });
+}
+
+// ---- 대화 목록 ----
+function paneChats(pane) {
+  if (!D.chats.length) { pane.innerHTML = `<p class="muted">${t('no_chats')}</p>`; return; }
+  pane.innerHTML = `<div class="grid">${D.chats.map(c => `<div class="card app-card"
+      style="cursor:pointer" data-chat="${c.request_id}" data-title="${esc(c.peer_name || '')}">
+    ${iconHtml(c.app_icon, c.app_name)}
+    <div style="min-width:0;flex:1">
+      <p class="app-name">${esc(c.peer_name || t('developer'))}${badge(c.unread)}</p>
+      <p class="muted">${esc(c.peer_app_name || c.app_name || '')}${
+        c.last_at ? ' · ' + ago(c.last_at) : ''}</p>
+      ${c.last_body ? `<p class="desc line1">${esc(c.last_body)}</p>` : ''}
+    </div></div>`).join('')}</div>`;
+
+  pane.querySelectorAll('[data-chat]').forEach(b => {
+    b.onclick = () => openChat(b.dataset.chat, b.dataset.title);
+  });
+}
+
+// ---- 채팅방 ----
+async function openChat(requestId, title) {
+  if (unwatch) { unwatch(); unwatch = null; }
+  if (location.hash !== `#chat=${requestId}`) {
+    history.pushState({}, '', `#chat=${requestId}`);
+  }
+  tab = 'chats';
+  const pane = document.getElementById('pane');
+  pane.innerHTML = `<div class="card">
+    <p style="margin:0 0 10px;display:flex;align-items:center;gap:8px">
+      <button class="btn ghost sm" id="backChat">←</button>
+      <b style="flex:1;min-width:0">${esc(title)}</b>
+      <button class="btn ghost sm" id="cReport">${t('report')}</button>
+      <button class="btn ghost sm" id="cBlock">${t('block')}</button></p>
+    <div id="msgs" class="msgs"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn ghost sm" id="mPic">${t('photo')}</button>
+      <input type="file" id="mFile" accept="image/*" hidden>
+      <input type="text" id="mText" placeholder="${t('msg_ph')}" style="flex:1;min-width:150px">
+      <button class="btn sm" id="mSend">${t('send')}</button>
+    </div></div>`;
+
+  document.getElementById('backChat').onclick = () => {
+    history.pushState({}, '', '#chats');
+    render();
+  };
+
+  const peerId = D.chats.find((c) => c.request_id === requestId)?.peer_id || null;
+  document.getElementById('cReport').onclick = async () => {
+    const why = prompt(t('report_ask'));
+    if (!why) return;
+    try { await reportSomething('trade_chat', requestId, peerId, why); alert(t('report_sent')); }
+    catch (e) { alert(e.message); }
+  };
+  document.getElementById('cBlock').onclick = async () => {
+    if (!peerId || !confirm(t('block_ask'))) return;
+    try { await blockUser(peerId); alert(t('blocked')); }
+    catch (e) { alert(e.message); }
+  };
+
+  const box = document.getElementById('msgs');
+  const draw = (rows) => {
+    box.innerHTML = rows.map(m => {
+      const own = m.sender_id === uid;
+      const at = new Date(m.created_at);
+      return `<div class="mrow ${own ? 'own' : ''}">
+        <div class="bubble ${own ? 'own' : ''}">
+          ${m.image_url ? `<img src="${esc(m.image_url)}" class="mimg">` : ''}
+          ${esc(m.body || '')}
+          <span class="mt">${String(at.getHours()).padStart(2, '0')}:${String(at.getMinutes()).padStart(2, '0')}</span>
+        </div></div>`;
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+  };
+
+  const rows = await tradeMessages(requestId).catch(() => []);
+  draw(rows);
+  markTradeRead(requestId);
+  unwatch = watchTrade(requestId, (r) => {
+    if (!rows.some(x => x.id === r.id)) { rows.push(r); draw(rows); }
+  });
+
+  const send = async () => {
+    const el = document.getElementById('mText');
+    const text = el.value.trim();
+    if (!text) return;
+    el.value = '';
+    try {
+      const r = await sendTradeMessage(requestId, text);
+      if (r && !rows.some(x => x.id === r.id)) { rows.push(r); draw(rows); }
+    } catch (e) { alert(e.message); }
+  };
+  document.getElementById('mSend').onclick = send;
+  document.getElementById('mText').addEventListener('keydown',
+    (e) => { if (e.key === 'Enter') send(); });
+
+  // 사진 한 장. 스크린샷으로 설명하는 게 글보다 빠를 때가 많다.
+  document.getElementById('mPic').onclick = () => document.getElementById('mFile').click();
+  document.getElementById('mFile').onchange = async (ev) => {
+    const f = ev.target.files?.[0];
+    if (!f) return;
+    ev.target.value = '';
+    try {
+      const url = await uploadImage('chat-images', f);
+      const r = await sendTradeImage(requestId, url);
+      if (r && !rows.some(x => x.id === r.id)) { rows.push(r); draw(rows); }
+    } catch (e) { alert(e.message || e); }
+  };
+}
+
+// ---- 피드백 ----
+function paneFeedback(pane) {
+  const rows = fbTab === 'in' ? D.fbIn : D.fbOut;
+  pane.innerHTML = `
+    <div class="row" style="gap:6px;margin-bottom:12px">
+      <button class="btn ${fbTab === 'in' ? '' : 'ghost'} sm" data-fb="in">${t('received')} ${D.fbIn.length}</button>
+      <button class="btn ${fbTab === 'out' ? '' : 'ghost'} sm" data-fb="out">${t('sent')} ${D.fbOut.length}</button>
+    </div>
+    <div class="grid">${rows.length ? rows.map(f => `<div class="card">
+      <div class="app-card" style="align-items:center;gap:10px;margin-bottom:6px">
+        ${iconHtml(f.app_icon, f.app_name || '?')}
+        <div style="min-width:0;flex:1">
+          <p style="margin:0"><b>${esc(f.app_name || '')}</b>
+            ${f.is_new ? '<span class="tag mint">new</span>' : ''}</p>
+          <p class="muted who" style="margin:0">
+            ${f.author_icon || f.owner_icon
+              ? `<img class="dev-icon" src="${esc(f.author_icon || f.owner_icon)}" alt="">` : ''}
+            ${esc(f.author_name || f.owner_name || '')} · ${ago(f.created_at)}</p>
+        </div>
+      </div>
+      <p class="desc pre">${esc(f.body || '')}</p>
+      ${(f.images || []).map(u => `<img src="${esc(u)}" class="fbimg">`).join('')}
+      ${(f.replies || []).map(r => `<div class="frep">
+          <span class="muted">${esc(r.author_name || '')}</span> ${esc(r.body || '')}</div>`).join('')}
+      ${fbTab === 'in' ? `<div class="row" style="margin-top:10px">
+        <input type="text" data-rin="${f.id}" placeholder="${t('reply')}" style="flex:1;min-width:140px">
+        <button class="btn sm" data-rbtn="${f.id}">${t('send')}</button></div>` : ''}
+    </div>`).join('') : `<p class="muted">${t('no_feedback')}</p>`}</div>`;
+
+  pane.querySelectorAll('[data-fb]').forEach(b => {
+    b.onclick = () => { fbTab = b.dataset.fb; paneFeedback(pane); };
+  });
+  pane.querySelectorAll('[data-rbtn]').forEach(b => {
+    b.onclick = async () => {
+      const el = pane.querySelector(`[data-rin="${b.dataset.rbtn}"]`);
+      const text = el.value.trim();
+      if (!text) return;
+      b.disabled = true;
+      try { await replyFeedback(b.dataset.rbtn, text); await load(); render(); }
+      catch (e) { alert(e.message); b.disabled = false; }
+    };
+  });
+}
+
+
+// ---- 사진 확대 ----
+// 모바일은 탭하면 커지는데 웹은 아무 일도 안 일어났다.
+document.addEventListener('click', (ev) => {
+  const img = ev.target.closest('.fbimg, .bubble .mimg');
+  if (!img) return;
+  const box = document.createElement('div');
+  box.className = 'lightbox';
+  box.innerHTML = `<img src="${img.src}" alt=""><button class="x" aria-label="close">✕</button>`;
+  box.onclick = () => box.remove();
+  document.body.appendChild(box);
+});
+document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape') document.querySelector('.lightbox')?.remove();
+});
+
+// ---- 관리자 문의 ----
+// 앱의 1:1 문의방과 같은 방(support_messages)이다. 여기서 보낸 글이
+// 관리자 쪽 채팅으로 그대로 들어간다.
+async function paneContact(pane) {
+  pane.innerHTML = `<div class="card">
+    <h2 style="font-size:17px;margin:0 0 4px">${t('contact_h')}</h2>
+    <p class="muted" style="margin:0 0 12px">${t('contact_p')}</p>
+    <div id="sup" class="msgs"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn ghost sm" id="sPic">${t('photo')}</button>
+      <input type="file" id="sFile" accept="image/*" hidden>
+      <input type="text" id="sText" placeholder="${t('contact_ph')}"
+             style="flex:1;min-width:150px">
+      <button class="btn sm" id="sSend">${t('send')}</button>
+    </div></div>`;
+
+  const box = document.getElementById('sup');
+  const draw = (rows) => {
+    box.innerHTML = rows.map(m => {
+      const own = m.sender_id === uid;
+      const at = new Date(m.created_at);
+      return `<div class="mrow ${own ? 'own' : ''}">
+        <div class="bubble ${own ? 'own' : ''}">
+          ${m.image_url ? `<img src="${esc(m.image_url)}" class="mimg">` : ''}
+          ${esc(m.body || '')}
+          <span class="mt">${String(at.getHours()).padStart(2, '0')}:${String(at.getMinutes()).padStart(2, '0')}</span>
+        </div></div>`;
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+  };
+
+  const rows = await supportMessages().catch(() => []);
+  draw(rows);
+  supportMarkRead();
+  if (unwatch) { unwatch(); unwatch = null; }
+  unwatch = watchSupport(uid, (r) => {
+    if (!rows.some(x => x.id === r.id)) { rows.push(r); draw(rows); }
+  });
+
+  const send = async () => {
+    const el = document.getElementById('sText');
+    const text = el.value.trim();
+    if (!text) return;
+    el.value = '';
+    try {
+      const r = await sendSupportMessage(text);
+      if (r && !rows.some(x => x.id === r.id)) { rows.push(r); draw(rows); }
+    } catch (e) { alert(e.message); }
+  };
+  document.getElementById('sSend').onclick = send;
+  document.getElementById('sText').addEventListener('keydown',
+    (e) => { if (e.key === 'Enter') send(); });
+
+  document.getElementById('sPic').onclick = () => document.getElementById('sFile').click();
+  document.getElementById('sFile').onchange = async (ev) => {
+    const f = ev.target.files?.[0];
+    if (!f) return;
+    ev.target.value = '';
+    try {
+      const url = await uploadImage('chat-images', f);
+      const r = await sendSupportImage(url);
+      if (r && !rows.some(x => x.id === r.id)) { rows.push(r); draw(rows); }
+    } catch (e) { alert(e.message || e); }
+  };
+}
+
+// ---- 앱 등록·수정 ----
+// 등록은 이 서비스에서 제일 중요한 절차다. 링크 한 줄이 기본이고,
+// 직접 입력은 그 아래에 접어 둔다.
+function appForm(existing) {
+  const a = existing || {};
+  const pane = document.getElementById('pane');
+  document.getElementById('formCard')?.remove();
+  // 수정은 그 카드 자리에서 열려야 한다. 맨 위로 튀어 올라가면
+  // 앱이 여러 개일 때 어느 앱을 고치는 중인지 알 수가 없다.
+  const card = existing ? document.getElementById(`card-${a.id}`) : null;
+  const put = (html) => {
+    if (card) { card.style.display = 'none'; card.insertAdjacentHTML('afterend', html); }
+    else pane.insertAdjacentHTML('afterbegin', html);
+  };
+  put(`
+    <div class="card" id="formCard" style="margin-bottom:18px">
+      <h2 style="font-size:18px;margin:0 0 14px">${existing ? t('edit') : t('reg_h')}</h2>
+
+      <div class="seg" id="f_mode">
+        <button type="button" data-mode="closed">${t('mode_closed')}</button>
+        <button type="button" data-mode="live">${t('mode_live')}</button>
+      </div>
+      <p class="muted" id="f_modep" style="margin:8px 0 0"></p>
+
+      <!-- 비공개 테스트: 테스터가 실제로 밟는 순서대로 그룹스 → 옵트인 → 스토어 -->
+      <div data-only="closed">
+        <label>${t('f_group')} <span class="muted">${t('optional_h')}</span></label>
+        <div class="row">
+          <input type="url" id="f_group" style="flex:1;min-width:190px"
+                 value="${esc(a.google_group_url || '')}"
+                 placeholder="https://groups.google.com/g/...">
+          <button class="btn ghost sm" id="f_gchk">${t('grp_check')}</button>
+        </div>
+        <p class="hint" id="f_gmsg"></p>
+
+        <label>${t('f_optin')} <span class="req">${t('req')}</span></label>
+        <input type="url" id="f_optin" value="${esc(a.opt_in_url || '')}"
+               placeholder="https://play.google.com/apps/testing/com.example.app">
+      </div>
+
+      <label>${t('f_store')} <span class="muted" data-only="closed">${t('optional_h')}</span></label>
+      <div class="row">
+        <input type="text" id="f_store" style="flex:1;min-width:190px"
+               value="${esc(a.package_name || '')}">
+        <button class="btn sky sm" id="f_fetch">${t('fetch')}</button>
+      </div>
+      <div id="f_prev">${a.icon_url || a.name ? `<div class="app-card" style="margin-top:12px">
+        ${iconHtml(a.icon_url, a.name || '?')}
+        <div style="min-width:0"><p class="app-name">${esc(a.name || '')}</p>
+          <p class="muted">${esc(a.package_name || '')}</p></div></div>` : ''}</div>
+
+      <label>${t('f_name')} <span class="req">${t('req')}</span></label>
+      <input type="text" id="f_name" value="${esc(a.name || '')}">
+
+      <label>${t('f_desc')} <span class="muted">${t('optional_h')}</span></label>
+      <textarea id="f_desc" rows="2" maxlength="100">${esc(a.description || '')}</textarea>
+
+      <label>${t('f_long')} <span class="muted">${t('optional_h')}</span></label>
+      <p class="hint" style="margin:0 0 6px">${t('f_long_p')}</p>
+      <textarea id="f_long" rows="5" maxlength="2000">${esc(a.long_description || '')}</textarea>
+
+      <label>${t('f_shot')} <span class="muted">${t('optional_h')}</span></label>
+      <p class="hint" style="margin:0 0 6px">${t('f_shot_p')}</p>
+      <div class="row">
+        <button class="btn ghost sm" id="f_pick">${t('f_pick')}</button>
+        <button class="btn ghost sm" id="f_drop" ${a.screenshot_url ? '' : 'hidden'}>${t('f_remove')}</button>
+        <input type="file" id="f_file" accept="image/*" hidden>
+      </div>
+      <div id="f_shotbox">${a.screenshot_url
+        ? `<img class="shot" src="${esc(a.screenshot_url)}" alt="">` : ''}</div>
+
+      <p class="muted" style="margin:12px 0 0;font-size:12px">${t('reg_pick_p')}</p>
+
+      <div class="note warn" style="margin-top:14px">${t('all_countries_warn')}</div>
+
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="f_save">${existing ? t('save') : t('register_app')}</button>
+        <button class="btn ghost" id="f_cancel">${t('cancel')}</button>
+      </div>
+    </div>`);
+
+  const $ = (id) => document.getElementById(id);
+
+  // 사진은 한 장만. 여러 장이면 고르고 정렬하는 화면이 또 필요해진다.
+  let shot = a.screenshot_url || '';
+  $('f_pick').onclick = () => $('f_file').click();
+  $('f_drop').onclick = () => {
+    shot = '';
+    $('f_shotbox').innerHTML = '';
+    $('f_drop').hidden = true;
+  };
+  $('f_file').onchange = async () => {
+    const f = $('f_file').files?.[0];
+    if (!f) return;
+    $('f_shotbox').innerHTML = '<p class="hint">…</p>';
+    try {
+      shot = await uploadShot(f);
+      $('f_shotbox').innerHTML = `<img class="shot" src="${esc(shot)}" alt="">`;
+      $('f_drop').hidden = false;
+    } catch (_) {
+      shot = '';
+      $('f_shotbox').innerHTML = `<p class="hint bad">${t('upload_fail')}</p>`;
+    }
+    $('f_file').value = '';
+  };
+
+  // 비공개 테스트냐 출시된 앱이냐로 넣을 링크가 완전히 다르다.
+  // 비공개 테스트 앱은 스토어 페이지가 404 라 자동 채우기가 안 된다.
+  let mode = a.released_at ? 'live' : 'closed';
+  const setMode = (m) => {
+    mode = m;
+    $('f_mode').querySelectorAll('[data-mode]').forEach(b =>
+      b.classList.toggle('on', b.dataset.mode === m));
+    $('f_modep').textContent = t(m === 'live' ? 'reg_p_live' : 'reg_p_closed');
+    $('f_store').placeholder = 'https://play.google.com/store/apps/details?id=com.example.app';
+    $('formCard').querySelectorAll('[data-only="closed"]').forEach(el => {
+      el.style.display = m === 'closed' ? '' : 'none';
+    });
+  };
+  $('f_mode').querySelectorAll('[data-mode]').forEach(b => {
+    b.onclick = () => setMode(b.dataset.mode);
+  });
+  setMode(mode);
+
+  $('formCard').scrollIntoView({ block: 'nearest' });
+  $('f_cancel').onclick = () => {
+    $('formCard').remove();
+    if (card) card.style.display = '';
+  };
+
+  const fetchNow = async () => {
+    const pkg = pkgFromUrl($('f_store').value.trim());
+    if (!pkg) { $('f_prev').innerHTML = `<p class="hint">${t('bad_link')}</p>`; return; }
+    $('f_prev').innerHTML = '<p class="hint">…</p>';
+    try {
+      const m = await fetchStoreMeta(pkg);
+      if (m?.name) $('f_name').value = m.name;
+      if (m?.description) $('f_desc').value = m.description.slice(0, 100);
+      $('f_store').value = pkg;
+      if (!$('f_optin').value) $('f_optin').value = `https://play.google.com/apps/testing/${pkg}`;
+      $('f_fetch').dataset.icon = m?.icon || '';
+      $('f_prev').innerHTML = `<div class="app-card" style="margin-top:12px">
+        ${iconHtml(m?.icon, m?.name || pkg)}
+        <div style="min-width:0"><p class="app-name">${esc(m?.name || pkg)}</p>
+          <p class="muted">${esc(pkg)}</p></div></div>`;
+    } catch (_) {
+      // 비공개 테스트면 스토어에 없는 게 정상이다. 패키지명만 챙기고 넘어간다.
+      $('f_store').value = pkg;
+      if (!$('f_optin').value) $('f_optin').value = `https://play.google.com/apps/testing/${pkg}`;
+      $('f_prev').innerHTML = mode === 'live'
+        ? `<p class="hint bad">${t('fetch_fail')}</p>`
+        : `<p class="hint ok">✓ ${esc(pkg)}</p>`;
+    }
+  };
+  // 그룹이 밖에서 보이는지는 주인 눈으로는 절대 확인이 안 된다.
+  // 익명으로 한 번 열어보고 알려준다.
+  const groupNow = async () => {
+    const v = $('f_group').value.trim();
+    if (!v) { $('f_gmsg').textContent = ''; return; }
+    $('f_gmsg').textContent = '…';
+    try {
+      const r = await checkGroup(v);
+      $('f_gmsg').className = 'hint ' + (r?.ok ? 'ok' : 'bad');
+      $('f_gmsg').innerHTML = r?.ok ? `✓ ${esc(r.title)} — ${t('grp_ok')}` : `⚠ ${t('grp_bad')}`;
+    } catch (_) { $('f_gmsg').textContent = ''; }
+  };
+  $('f_gchk').onclick = groupNow;
+  $('f_group').addEventListener('blur', groupNow);
+  if (a.google_group_url) groupNow();
+
+  $('f_fetch').onclick = fetchNow;
+  $('f_store').addEventListener('keydown', (e) => { if (e.key === 'Enter') fetchNow(); });
+  // 붙여넣기만 해도 알아서 가져온다 — 버튼을 한 번 더 누르게 하지 않는다
+  $('f_store').addEventListener('paste', () => setTimeout(fetchNow, 30));
+
+  $('f_save').onclick = async (ev) => {
+    const name = $('f_name').value.trim();
+    if (!name) { $('f_name').focus(); alert(t('need_name')); return; }
+    const pkg = pkgFromUrl($('f_store').value) || pkgFromUrl($('f_optin').value) || null;
+    if (!pkg) { $('f_optin').focus(); alert(t('need_optin')); return; }
+    ev.target.disabled = true;
+    try {
+      await saveApp({
+        id: a.id, name,
+        description: $('f_desc').value.trim(),
+        long_description: $('f_long').value.trim(),
+        screenshot_url: shot,
+        package_name: pkg,
+        google_group_url: $('f_group').value.trim(),
+        opt_in_url: $('f_optin').value.trim() ||
+          (pkg ? `https://play.google.com/apps/testing/${pkg}` : ''),
+        icon_url: $('f_fetch').dataset.icon || a.icon_url || '',
+        is_public: a.is_public !== false,
+      });
+      await load(); tab = 'apps'; render();
+    } catch (e) { alert(e.message || e); ev.target.disabled = false; }
+  };
+}
+</script>
+</body>
+</html>

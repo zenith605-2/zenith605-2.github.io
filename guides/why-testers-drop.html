@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why testers disappear during closed testing — and what to do</title>
+<meta name="description" content="The four ways a test-for-test trade dies: the country block, the broken group link, the silent uninstall, and the slow fade. Which ones you can prevent.">
+<link rel="canonical" href="https://zenith605-2.github.io/guides/why-testers-drop.html">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">How it works</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" style="padding-top:30px">
+  <h1 style="font-size:28px;margin:0 0 8px">Why testers disappear</h1>
+  <p class="muted" style="margin:0 0 24px">Four failure modes, in the order they bite</p>
+
+  <h2>1. They cannot install it at all</h2>
+  <p>Your closed test is limited to a few countries and the tester is not in
+  one of them. They tap the link, get "not available in your country", and say
+  nothing — you just watch the counter stall.</p>
+  <p><b>Fix:</b> open the test to all countries unless you have a real reason
+  not to. This is the single most common silent drop-off, and it costs you
+  nothing to prevent.</p>
+
+  <h2>2. The group link is broken and you cannot see it</h2>
+  <p>If your Google Group's <em>Who can view conversations</em> is set to
+  "Group members", anyone who is not already a member hits a permission wall.
+  You will never see it yourself — you are the owner, so it looks fine from
+  your side.</p>
+  <p><b>Fix:</b> open your group settings and set both "Who can see group" and
+  "Who can join" to <em>Anyone on the web</em>. Then check the link in a
+  private window.</p>
+
+  <h2>3. They install, then quietly uninstall</h2>
+  <p>Phone storage, a cleanup, or they simply lost interest. The tester list
+  still shows them, so nothing looks wrong. Google still counts them as opted
+  in — but they are not testing, and if you are trading, you are the one
+  holding up your end alone.</p>
+  <p><b>Fix:</b> you cannot prevent it, but you can see it. ACT Party marks a
+  trade when the app is no longer on the phone, so the other side is not left
+  guessing.</p>
+
+  <h2>4. The slow fade</h2>
+  <p>The most common one. Nothing goes wrong; they just stop opening it. Day
+  three is fine, day six is fine, day nine is a maybe. Across
+  <a href="/guides/daily-opens-data.html">21 finished trades we measured</a>,
+  the average was 10.3 opens out of 14 days and nobody hit all 14.</p>
+  <p><b>Fix:</b> reciprocity, not nagging. When someone can see that you opened
+  their app today, they open yours. That loop works better than a reminder,
+  because a reminder from someone who is not doing their own half is just
+  annoying.</p>
+
+  <h2>What none of this is</h2>
+  <p>It is not usually bad faith. Almost every drop-off above is a person who
+  meant to help and hit friction. Design for friction, not for cheating.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> records daily opens automatically, shows both sides who
+    showed up, and flags when someone uninstalls.
+    <a href="/">See how it works</a>
+  </div>
+</article>
+
+<footer class="bot"><div class="wrap"><p><a href="/guides/">All guides</a> · <a href="/">App board</a></p></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

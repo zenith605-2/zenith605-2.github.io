@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Google actually checks for closed testing (12 testers, 14 days)</title>
+<meta name="description" content="Google counts testers who stayed opted in for 14 continuous days — not how many times they opened your app. What the production access form really asks.">
+<link rel="canonical" href="https://zenith605-2.github.io/guides/what-google-checks.html">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">How it works</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" style="padding-top:30px">
+  <h1 style="font-size:28px;margin:0 0 8px">What Google actually checks</h1>
+  <p class="muted" style="margin:0 0 24px">Updated August 2026</p>
+
+  <p>If your personal developer account was created after 13 November 2023, you
+  cannot publish to production until you have run a closed test. The rule, in
+  Google's own words, is this:</p>
+
+  <blockquote>
+    At least 12 testers must be opted in to your closed test when you apply for
+    production access, and they must have been opted in continuously for the
+    preceding 14 days.
+  </blockquote>
+
+  <h2>It counts opt-in time, not opens</h2>
+
+  <p>This is the part most people get wrong. The requirement is about how long
+  someone stayed <em>opted in</em>. It is not a count of how many times they
+  launched your app.</p>
+
+  <p>Play Console words it as "testers who opted in, for N days". If a tester
+  joins your Google Group, taps "Become a tester", and then never installs
+  anything, they still count toward the twelve. Developers report passing with
+  testers who were on iPhones and never installed at all.</p>
+
+  <p>Uninstalling does not remove someone from your tester list either. Once
+  the 14 days are behind you, a tester deleting the app does not undo it.</p>
+
+  <h2>So why does everyone say testers must be active?</h2>
+
+  <p>Two reasons, and only one of them is Google.</p>
+
+  <h3>1. Continuity, not activity</h3>
+  <p>The 14 days must be <em>continuous</em>. If someone opts out — or you
+  remove them from the group — the clock for that tester resets. That is what
+  breaks tests, not a quiet day.</p>
+
+  <h3>2. The application form asks you to explain yourself</h3>
+  <p>After you meet the bar, you apply for production access and answer
+  questions in three sections:</p>
+  <table>
+    <tr><th>Section</th><th>What it wants</th></tr>
+    <tr><td>About your closed test</td><td>How you ran it, who tested, what you learned</td></tr>
+    <tr><td>About your app/game</td><td>What it does, who it is for</td></tr>
+    <tr><td>About your production readiness</td><td>Whether it is finished enough to ship</td></tr>
+  </table>
+  <p>There is no field that requires you to attach tester feedback. But a test
+  where nobody opened anything gives you nothing to write in section one, and
+  reviewers do read it.</p>
+
+  <h2>What this means for you</h2>
+
+  <ul>
+    <li><b>Do not panic over a skipped day.</b> A tester who missed Tuesday has
+      not broken anything.</li>
+    <li><b>Do panic over someone leaving the group.</b> That resets their
+      continuity.</li>
+    <li><b>Keep the test open to all countries</b> unless you have a reason not
+      to. "Not available in my country" is one of the most common ways a tester
+      silently drops out.</li>
+    <li><b>You still want real use.</b> Not because Google counts it, but
+      because you need something honest to write in the form — and because the
+      person who traded with you asked you to test their app, not to sit in a
+      list.</li>
+  </ul>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> records the daily opens for you, straight from Android's
+    usage stats. No screenshots, no forms. When your trading partner uses it
+    too, you can both see who actually showed up.
+    <a href="/">See how it works</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    Source: Play Console Help, "App testing requirements for new personal
+    developer accounts" (article 14151465), read 31 August 2026. Google can
+    change this — check the current page before you rely on it.
+  </p>
+</article>
+
+<footer class="bot"><div class="wrap"><p><a href="/guides/">All guides</a> · <a href="/">App board</a></p></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

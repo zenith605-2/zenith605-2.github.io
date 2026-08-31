@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Board — ACT Party</title>
+<meta name="description" content="Where Android developers running closed tests compare notes: guides, questions, launch stories, and what Google actually asks for.">
+<link rel="canonical" href="https://zenith605-2.github.io/community.html">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" class="active" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap" id="board" style="padding-top:24px">
+  <div id="root"><p class="muted" data-t="loading">Loading…</p></div>
+</div>
+
+<footer class="bot"><div class="wrap">
+  <p><a href="/">Home</a> · <a href="/guides/" data-t="nav_guides">Guides</a>
+     · <a href="/privacy.html" data-t="privacy">Privacy</a></p>
+</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { me, signIn, esc, ago, iconHtml, mountAuth,
+         posts, post, addPost, addComment, deletePost } from '/assets/api.js';
+import { t, applyDom, langPicker, wireLangPicker, catLabel } from '/assets/i18n.js';
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+
+const root = document.getElementById('root');
+const CATS = ['가이드', '잡담', '질문', '고충', '팁', '아이디어',
+              '앱 소개', '출시 후기', '수익화', '심사·정책', '피드백'];
+
+let ME = null;
+let ALL = [];
+let cat = '전체';
+// 같은 글을 여러 언어로 올린 경우가 있다. 기본은 지금 보는 언어만.
+let onlyMyLang = true;
+const MYLANG = () => (document.documentElement.lang || 'en').split('-')[0];
+
+ME = await me().catch(() => null);
+
+async function load() {
+  ALL = await posts().catch(() => []);
+}
+
+function list() {
+  let rows = cat === '전체' ? ALL : ALL.filter((p) => p.category === cat);
+  if (onlyMyLang) {
+    const my = MYLANG();
+    const same = rows.filter((p) => !p.lang || p.lang.split('-')[0] === my);
+    // 내 언어 글이 하나도 없으면 거르지 않는다 — 빈 화면보다는 낫다
+    if (same.length) rows = same;
+  }
+  root.innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:flex-end;gap:12px">
+      <div>
+        <h1 style="font-size:22px;margin:0 0 2px" data-t="board_h">Board</h1>
+        <p class="muted" style="margin:0" data-t="board_p"></p>
+      </div>
+      ${ME ? `<button class="btn" id="write">＋ ${t('write')}</button>`
+           : `<button class="btn" id="loginBtn">${t('sign_in')}</button>`}
+    </div>
+
+    <div class="tabs" style="margin:16px 0">
+      ${['전체', ...CATS].map((c) =>
+        `<button class="btn ${c === cat ? '' : 'ghost'} sm" data-cat="${c}">${catLabel(c)}</button>`).join('')}
+    </div>
+    <p style="margin:0 0 12px">
+      <label class="chk"><input type="checkbox" id="langOnly"
+        ${onlyMyLang ? 'checked' : ''}> ${t('lang_only')}</label></p>
+
+    <div class="grid" id="posts">${rows.length ? rows.map((p) => `
+      <div class="card post" data-open="${p.id}">
+        <p class="app-name">
+          <span class="tag sky">${catLabel(p.category)}</span>
+          ${esc(p.title || '')}</p>
+        <p class="muted who">${iconHtml(p.author_icon, p.author_name || '?', 'dev-icon')}
+          ${esc(p.author_name || t('developer'))} · ${ago(p.created_at)}
+          ${p.comment_count ? `<span class="sep">·</span>
+            <span class="dim">${t('comments')} ${p.comment_count}</span>` : ''}</p>
+        ${p.content ? `<p class="desc line2">${esc(p.content)}</p>` : ''}
+      </div>`).join('') : `<p class="muted">${t('no_posts')}</p>`}</div>`;
+
+  applyDom();
+  document.getElementById('langOnly').onchange = (e) => {
+    onlyMyLang = e.target.checked;
+    list();
+  };
+  root.querySelectorAll('[data-cat]').forEach((b) => {
+    b.onclick = () => { cat = b.dataset.cat; list(); };
+  });
+  root.querySelectorAll('[data-open]').forEach((b) => {
+    b.onclick = () => { history.pushState({}, '', `#post=${b.dataset.open}`); open(b.dataset.open); };
+  });
+  const w = document.getElementById('write');
+  if (w) w.onclick = () => form();
+  const l = document.getElementById('loginBtn');
+  if (l) l.onclick = () => signIn().catch((e) => alert(e.message));
+}
+
+async function open(id) {
+  root.innerHTML = `<p class="muted">${t('loading')}</p>`;
+  const p = await post(id).catch(() => null);
+  if (!p) { back(); return; }
+  root.innerHTML = `
+    <p style="margin:0 0 12px"><button class="btn ghost sm" id="back">←</button></p>
+    <div class="card">
+      <p class="app-name" style="font-size:19px">
+        <span class="tag sky">${catLabel(p.category)}</span> ${esc(p.title || '')}</p>
+      <p class="muted who">${iconHtml(p.author_icon, p.author_name || '?', 'dev-icon')}
+        ${esc(p.author_name || t('developer'))} · ${ago(p.created_at)}</p>
+      <p class="desc pre">${esc(p.content || '')}</p>
+      ${(p.images || []).map((u) => `<img class="shot" src="${esc(u)}" alt="">`).join('')}
+      ${ME && p.author_id === ME.id
+        ? `<p style="margin:14px 0 0"><button class="btn ghost sm" id="del">${t('delete')}</button></p>` : ''}
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <p class="app-name" style="font-size:15px">${t('comments')} ${(p.comments || []).length}</p>
+      <div id="cmts">${(p.comments || []).map((c) => `
+        <div class="frep">
+          <span class="muted">${esc(c.author_name || '')} · ${ago(c.created_at)}</span>
+          <p class="desc pre" style="margin:4px 0 0">${esc(c.body || '')}</p>
+        </div>`).join('') || `<p class="muted">${t('no_comments')}</p>`}</div>
+      ${ME ? `<div class="row" style="margin-top:12px">
+        <input type="text" id="cText" placeholder="${t('comment_ph')}" style="flex:1;min-width:150px">
+        <button class="btn sm" id="cSend">${t('send')}</button>
+      </div>` : `<p class="muted" style="margin-top:12px">${t('comment_login')}</p>`}
+    </div>`;
+
+  document.getElementById('back').onclick = back;
+  const del = document.getElementById('del');
+  if (del) del.onclick = async () => {
+    if (!confirm(t('delete') + '?')) return;
+    try { await deletePost(id); await load(); back(); }
+    catch (e) { alert(e.message); }
+  };
+  const send = document.getElementById('cSend');
+  if (send) {
+    const go = async () => {
+      const el = document.getElementById('cText');
+      const body = el.value.trim();
+      if (!body) return;
+      el.value = '';
+      try { await addComment(id, body); open(id); }
+      catch (e) { alert(e.message); }
+    };
+    send.onclick = go;
+    document.getElementById('cText').addEventListener('keydown',
+      (e) => { if (e.key === 'Enter') go(); });
+  }
+}
+
+function back() {
+  history.pushState({}, '', location.pathname);
+  list();
+}
+
+function form() {
+  root.insertAdjacentHTML('afterbegin', `
+    <div class="card" id="postForm" style="margin-bottom:16px">
+      <h2 style="font-size:17px;margin:0 0 10px">${t('write')}</h2>
+      <label>${t('category')}</label>
+      <select id="p_cat">${CATS.map((c) =>
+        `<option value="${c}">${catLabel(c)}</option>`).join('')}</select>
+      <label>${t('title')}</label>
+      <input type="text" id="p_title" maxlength="120">
+      <label>${t('content')}</label>
+      <textarea id="p_body" rows="7" maxlength="5000"></textarea>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="p_save">${t('write')}</button>
+        <button class="btn ghost" id="p_cancel">${t('cancel')}</button>
+      </div>
+    </div>`);
+  document.getElementById('p_cancel').onclick =
+    () => document.getElementById('postForm').remove();
+  document.getElementById('p_save').onclick = async (ev) => {
+    const title = document.getElementById('p_title').value.trim();
+    const body = document.getElementById('p_body').value.trim();
+    if (!title) { alert(t('need_title')); return; }
+    ev.target.disabled = true;
+    try {
+      await addPost(document.getElementById('p_cat').value, title, body);
+      await load();
+      list();
+    } catch (e) { alert(e.message || e); ev.target.disabled = false; }
+  };
+}
+
+addEventListener('popstate', () => {
+  const m = location.hash.match(/^#post=(.+)$/);
+  if (m) open(m[1]); else list();
+});
+
+await load();
+const m = location.hash.match(/^#post=(.+)$/);
+if (m) open(m[1]); else list();
+</script>
+</body>
+</html>
