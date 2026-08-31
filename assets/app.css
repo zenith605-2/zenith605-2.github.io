@@ -870,6 +870,11 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
   text-align: left; font-weight: 600; font-size: 11px;
   padding-right: 8px; max-width: 130px;
 }
+.gno {
+  display: inline-block; width: 16px; margin-right: 2px;
+  text-align: right; font-style: normal; font-weight: 600;
+  color: var(--ink600); font-variant-numeric: tabular-nums;
+}
 .gtab th.who > span {
   display: inline-block; max-width: 96px; vertical-align: middle;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
