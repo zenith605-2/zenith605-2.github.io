@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=53">
+<link rel="stylesheet" href="/assets/app.css?v=55">
 </head>
 <body>
 
@@ -44,8 +44,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=53';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=53';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=55';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=55';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -1163,10 +1163,12 @@ function gridHtml(rows) {
       ${theirs.length ? `<span><i class="hit out"></i>${t('grid_legend2b')}</span>
       <span><i class="stale"></i>${t('grid_legend4')}</span>` : ''}
     </p>
-    <p class="ggoal">${t('grid_goal')}</p>
     <div class="gwrap"><table class="gtab">
       <thead>${head}</thead>
       <tbody>
+        <tr class="goal"><th class="grp"></th>
+          <th class="who">${t('grid_goal')}</th>
+          <td colspan="${shown.length}"></td></tr>
         ${sum(t('grid_sum_ok'), okN, 'ok-row')}
         ${theirs.length ? sum(t('grid_sum_all'), allN, 'all-row') : ''}
         ${mine.map((r, i) => line(r,
