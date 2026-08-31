@@ -745,9 +745,14 @@ function peerLine(e) {
       <span class="tag">${t('not_act_user')}</span>
       <span class="dim">${t('not_act_p')}</span></p>`;
   }
+  // 개발자명이 앱 이름과 같은 사람이 많다. 바로 윗줄에 이미 있는 이름을
+  // 한 번 더 적으면 줄만 길어진다.
+  const nm = p.developer_name || '';
+  const same = nm && e.peer_app_name &&
+    nm.replace(/\s/g, '').toLowerCase() === e.peer_app_name.replace(/\s/g, '').toLowerCase();
   return `<p class="muted who" style="margin:2px 0 0">
     ${p.icon_url ? `<img class="dev-icon" src="${esc(p.icon_url)}" alt="">` : ''}
-    ${esc(p.developer_name || t('developer'))}
+    ${same ? '' : esc(nm || t('developer'))}
     <span class="tag mint">${t('act_user')}</span>
     ${p.usage_access ? `<span class="tag mint">${t('auto_ok')}</span>`
                      : `<span class="tag rose">${t('auto_off')}</span>`}
