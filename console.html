@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=35">
+<link rel="stylesheet" href="/assets/app.css?v=36">
 </head>
 <body>
 
@@ -43,8 +43,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=35';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=35';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=36';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=36';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -985,7 +985,7 @@ async function paneHistory(pane) {
           ${dline(t('hist_12day'), r.twelve_day)}
           ${dline(t('hist_streak'), r.streak_days
             ? tf('hist_dnum', { n: r.streak_days }) : null)}
-          ${dline(t('hist_last'), r.last_day)}
+          ${dline(t('hist_last'), tf('hist_pnum', { n: r.optin_now ?? 0 }))}
         </div>
         <details class="recs" data-app="${esc(r.app_id)}">
           <summary>${t('hist_open')}</summary>
@@ -1076,12 +1076,13 @@ const COLS = 64;
 const RPT = {
   ko: { report: '테스트 리포트', summary: '요약', period: '기간',
         testers: '테스터', party: '파티', trade: '개인 품앗이',
-        gdays: '12명 이상이 함께한 날', fb: '받은 피드백', replied: '답변함',
+        gdays: '12명 이상 유지한 날', fb: '받은 피드백', replied: '답변함',
         chats: '대화', days: (n) => `${n}일`,
         cnt: (n) => `${n}건`, ppl: (n) => `${n}명`,
         item: '항목', value: '값',
+        basis: '구글이 보는 건 옵트인 유지입니다 — 아래 인원은 그날 앱을 연 사람이 아니라 옵트인을 유지하던 사람 수입니다.',
         start: '테스트 시작', twelve: '12명 달성',
-        streak: '12명 연속 유지', last: '마지막 인증', notyet: '아직',
+        streak: '12명 연속 유지', last: '지금 유지 중', notyet: '아직',
         byver: '버전별', vtesters: '테스터', from: '부터', vfb: '피드백',
         nover: '버전을 모르는 기간',
         novernote: '테스터 폰에서 버전을 확인하기 전에 받은 의견입니다.',
@@ -1103,12 +1104,13 @@ const RPT = {
         madeby: 'ACT Party에서 내보냄' },
   en: { report: 'Test report', summary: 'Summary', period: 'Period',
         testers: 'Testers', party: 'party', trade: 'trades',
-        gdays: 'Days with 12+ testers', fb: 'Feedback received',
+        gdays: 'Days with 12+ opted in', fb: 'Feedback received',
         replied: 'replied', chats: 'Chat messages', days: (n) => `${n} days`,
         cnt: (n) => `${n}`, ppl: (n) => `${n}`,
         item: 'Item', value: 'Value',
+        basis: 'Google counts opt-in retention. The numbers below are people who stayed opted in, not people who opened the app that day.',
         start: 'Testing started', twelve: 'Hit 12 testers',
-        streak: 'Longest 12+ streak', last: 'Last check-in',
+        streak: 'Longest 12+ run', last: 'Opted in now',
         notyet: 'not yet',
         byver: 'By version', vtesters: 'Testers', from: ' onward',
         vfb: 'feedback', nover: 'Version unknown',
@@ -1131,12 +1133,13 @@ const RPT = {
         madeby: 'Exported from ACT Party' },
   ja: { report: 'テストレポート', summary: '概要', period: '期間',
         testers: 'テスター', party: 'パーティ', trade: '個人交換',
-        gdays: '12名以上が同じ日にテストした日', fb: '受けたフィードバック',
+        gdays: '12名以上を維持した日', fb: '受けたフィードバック',
         replied: '返信済み', chats: 'チャット', days: (n) => `${n}日`,
         cnt: (n) => `${n}件`, ppl: (n) => `${n}名`,
         item: '項目', value: '値',
+        basis: 'Googleが見るのはオプトインの維持です。以下の人数はその日開いた人ではなく、オプトインを維持していた人数です。',
         start: 'テスト開始', twelve: '12名達成',
-        streak: '12名連続維持', last: '最後の認証', notyet: 'まだ',
+        streak: '12名連続維持', last: '現在の維持人数', notyet: 'まだ',
         byver: 'バージョン別', vtesters: 'テスター', from: 'から',
         vfb: 'FB', nover: 'バージョン不明',
         novernote: 'テスター端末でバージョンを確認する前の意見です。',
@@ -1161,8 +1164,9 @@ RPT['zh-Hans'] = { ...RPT.en, report: '测试报告', summary: '概要', period:
   testers: '测试者', party: '派对', trade: '互测', gdays: '12 人以上同日测试的天数',
   fb: '收到的反馈', replied: '已回复', chats: '对话', days: (n) => `${n} 天`,
   cnt: (n) => `${n} 条`, ppl: (n) => `${n} 人`, item: '项目', value: '值',
+  basis: 'Google 看的是加入状态的持续，下面的人数是保持加入的人，不是当天打开应用的人。',
   start: '测试开始', twelve: '达标 12 人', streak: '12 人连续保持',
-  last: '最后认证', notyet: '尚未',
+  last: '当前保持', notyet: '尚未',
   byver: '按版本', vtesters: '测试者', from: '起', vfb: '反馈',
   nover: '版本未知', reply: '我的回复', nofb: '该版本没有收到反馈。',
   draft: '给 Play Console 表单的草稿', madeby: '由 ACT Party 导出' };
@@ -1170,8 +1174,9 @@ RPT['zh-Hant'] = { ...RPT['zh-Hans'], report: '測試報告', period: '週期',
   testers: '測試者', party: '派對', trade: '互測', gdays: '12 人以上同日測試的天數',
   fb: '收到的回饋', replied: '已回覆', chats: '對話', byver: '按版本',
   cnt: (n) => `${n} 則`, ppl: (n) => `${n} 人`, item: '項目', value: '值',
+  basis: 'Google 看的是加入狀態的持續，下面的人數是保持加入的人，不是當天打開應用的人。',
   start: '測試開始', twelve: '達標 12 人', streak: '12 人連續保持',
-  last: '最後認證', notyet: '尚未',
+  last: '目前保持', notyet: '尚未',
   vtesters: '測試者', vfb: '回饋', nover: '版本未知', reply: '我的回覆',
   nofb: '該版本沒有收到回饋。', draft: '給 Play Console 表單的草稿',
   madeby: '由 ACT Party 匯出' };
@@ -1303,12 +1308,13 @@ async function exportReport(appId, btn) {
 
   let no = 1;
   L.push(`## ${no}. ${R.summary}`, '');
+  L.push(quote(R.basis), '');
   L.push(mdTable([R.item, R.value], [
     [R.period, span],
     [R.start, h.first_day || '—'],
     [R.twelve, h.twelve_day || R.notyet],
     [R.streak, R.days(h.streak_days ?? 0)],
-    [R.last, h.last_day || '—'],
+    [R.last, R.ppl(h.optin_now ?? 0)],
     [R.testers, `${R.ppl(people)}  (${R.party} ${party} · ${R.trade} ${trades})`],
     [R.gdays, R.days(h.google_days ?? 0)],
     [R.fb, `${R.cnt(fbs.length)}  (${R.replied} ${repliedN})`],
