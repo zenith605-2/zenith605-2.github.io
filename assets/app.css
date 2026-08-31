@@ -614,43 +614,67 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
   #board #list .rank { width: 20px; font-size: 12px; }
 }
 
-/* ===== 보드 카드 다듬기 =====
-   아이콘이 카드에 비해 작고, 순번은 배경에 묻히고, 배지는 이름에 눌려
-   보였다. 크기와 간격만 손본다 — 구조는 그대로다. */
+/* ===== 보드 카드 =====
+   가로 다섯 칸으로 늘어놓으니 좁은 화면마다 눌렸다. 세로로 쌓는다.
+   첫 줄만 [순번][아이콘][이름]이고, 배지·개발자·진행·버튼은 그 아래로
+   아이콘 왼쪽 선에 맞춰 내려간다. */
+#board.wrap { max-width: 900px; }
+
 #board #list .app-card {
-  grid-template-columns: 30px 64px minmax(0, 1fr) 190px 165px;
-  gap: 20px; padding: 22px 24px;
-  /* 아이콘이 64px 이면 가운데 정렬로는 글이 아이콘 한가운데서 시작해
-     따로 노는 두 덩어리로 보인다. 아이콘 윗선에서 같이 시작하게 한다. */
-  align-items: start;
+  display: grid; grid-template-columns: 30px minmax(0, 1fr);
+  gap: 0 14px; align-items: start; padding: 22px 24px;
 }
-#board #list .stats, #board #list .cardact { align-self: center; }
+#board #list .rank {
+  width: 30px; text-align: right; align-self: start; padding-top: 16px;
+  font-size: 15px; font-weight: 700; color: var(--ink300); opacity: .7;
+  font-variant-numeric: tabular-nums;
+}
+#board #list .main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+#board #list .head { display: flex; align-items: center; gap: 16px; min-width: 0; }
+#board #list .head > a:first-child { flex: none; text-decoration: none; }
 #board #list .app-icon { width: 64px; height: 64px; border-radius: 16px; }
 #board #list .app-icon.ph { font-size: 24px; }
-
-/* 순번 — 몇 번째인지 보이라고 붙인 건데 배경색에 가까워 안 읽혔다 */
-#board #list .rank {
-  width: 30px; font-size: 15px; color: var(--ink300); opacity: .75;
-  align-self: start; padding-top: 4px;
+#board #list a.app-name {
+  font-size: 24px; font-weight: 800; line-height: 1.2; margin: 0;
+  color: var(--sky); text-decoration: none; min-width: 0;
 }
+#board #list a.app-name:hover { text-decoration: underline; }
 
-#board #list .app-name {
-  /* 아이콘 높이에 눌리지 않게 이름도 그만큼 키운다 */
-  font-size: 20px; line-height: 1.25; gap: 10px; row-gap: 8px;
-  align-items: center; margin: -2px 0 7px;
+/* 배지도 개발자 줄도 한 줄로 간다. 접히면 카드마다 높이가 달라져
+   목록이 들쭉날쭉해진다. 좁으면 가로로 밀어서 본다. */
+#board #list .badges, #board #list p.who {
+  margin: 0; flex-wrap: nowrap; overflow-x: auto; white-space: nowrap;
+  scrollbar-width: none;
 }
-#board #list .badges { gap: 7px; }
-#board #list p.who { row-gap: 7px; margin-top: 2px; }
-#board #list .desc { margin-top: 10px; }
+#board #list .badges::-webkit-scrollbar,
+#board #list p.who::-webkit-scrollbar { height: 0; }
+#board #list .badges { gap: 8px; }
+#board #list p.who > * { flex: none; }
+#board #list .desc {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#board #list .desc { margin: 0; }
 
-#board #list .stats .count b { font-size: 19px; }
+#board #list .stats { margin: 0; }
+#board #list .stats .bar { margin: 0; }
+#board #list .stats .count { margin-top: 10px; }
+#board #list .stats .count b { font-size: 22px; }
+#board #list .stats .sub { margin: 6px 0 0; font-size: 13px; color: var(--ink300); }
 
-@media (max-width: 900px) {
-  #board #list .app-card {
-    grid-template-columns: 22px 52px minmax(0, 1fr);
-    gap: 14px; padding: 18px;
-  }
+#board #list .cardact {
+  flex-direction: row; align-items: center; gap: 14px;
+  width: auto; max-width: none; margin: 2px 0 0; text-align: left;
+}
+#board #list .cardact .btn { padding: 12px 24px; font-size: 15px; }
+#board #list .cardact .muted { font-size: 13px; text-align: left; }
+#board #list .cardact .state { align-self: center; padding: 0; }
+
+@media (max-width: 560px) {
+  #board #list .app-card { padding: 18px; gap: 0 10px; grid-template-columns: 22px minmax(0, 1fr); }
+  #board #list .rank { width: 22px; font-size: 13px; padding-top: 12px; }
   #board #list .app-icon { width: 52px; height: 52px; border-radius: 14px; }
-  #board #list .rank { width: 22px; font-size: 13px; }
-  #board #list .app-name { font-size: 17px; margin: -1px 0 6px; }
+  #board #list a.app-name { font-size: 19px; }
+  #board #list .head { gap: 12px; }
+  #board #list .cardact { flex-wrap: wrap; gap: 10px; }
 }
