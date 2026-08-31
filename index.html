@@ -9,7 +9,7 @@
 <meta property="og:title" content="Android apps looking for closed testers">
 <meta property="og:description" content="Trade closed tests with other Android devs. Daily opens record themselves.">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="/assets/app.css?v=8">
+<link rel="stylesheet" href="/assets/app.css?v=9">
 </head>
 <body>
 
@@ -141,9 +141,24 @@ function card(a, i) {
         <div class="bar"><i style="width:${pct}%"></i></div>
         <p class="count"><b>${cur}</b> / ${need} ${t('testers')}</p>
         ${ext > 0 ? `<p class="sub">${act} ${t('on_act')} · ${ext} ${t('outside')}</p>` : ''}
+        ${testerFaces(a)}
       </div>
       ${offerBtn(a, href)}
     </div></div>`;
+}
+
+/// 숫자만 있으면 사람이 안 보인다. 지금 이 앱을 테스트 중인 ACT 사용자를
+/// 아이콘으로 늘어놓는다 — 아는 얼굴이 하나라도 있으면 신청이 쉬워진다.
+function testerFaces(a) {
+  const names = a.tester_names || [];
+  if (!names.length) return '';
+  const icons = a.tester_icons || [];
+  const more = Math.max(0, (a.current_testers ?? 0) - names.length);
+  return `<p class="faces" title="${esc(names.join(', '))}">
+    ${names.map((nm, i) => icons[i]
+      ? `<img src="${esc(icons[i])}" alt="${esc(nm)}">`
+      : `<span class="ph">${esc((nm || '?').slice(0, 1))}</span>`).join('')}
+    ${more > 0 ? `<span class="more">+${more}</span>` : ''}</p>`;
 }
 
 /// 로그인해 있으면 보드에서 바로 신청한다. 앱 페이지까지 한 번 더
