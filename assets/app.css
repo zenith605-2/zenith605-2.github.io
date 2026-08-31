@@ -898,3 +898,21 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
   padding-top: 3px;
 }
 .gtab tr.sum td.ok { color: var(--mint); font-weight: 800; }
+
+/* 표 다듬기 — 오늘 열, 구분 띠, 범례 */
+.hdates.alt { margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--ink700); }
+.hdates.alt .hdate span, .hdates.alt .hdate b { color: var(--ink300); }
+.glegend { display: flex; gap: 14px; flex-wrap: wrap; margin: 0 0 10px;
+  font-size: 11px; color: var(--ink300); }
+.glegend span { display: inline-flex; align-items: center; gap: 5px; }
+.glegend i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+.glegend i.keep { background: color-mix(in srgb, var(--mint) 28%, var(--ink800)); }
+.glegend i.hit { background: var(--mint); }
+.glegend i.out { background: var(--ink700); }
+.gtab thead th.now { color: var(--mint); font-weight: 800; }
+.gtab tr.band th.who { font-size: 11px; font-weight: 800; color: var(--ink100);
+  padding: 10px 8px 4px 0; }
+.gtab tr.band td { background: transparent; border: 0; }
+.gtab tr.sum.ok-row th.who { color: var(--mint); }
+.gtab tr.sum.all-row th.who { color: var(--ink300); }
+.gtab tr.sum td { padding-top: 4px; }

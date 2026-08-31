@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=38">
+<link rel="stylesheet" href="/assets/app.css?v=39">
 </head>
 <body>
 
@@ -44,8 +44,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=38';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=38';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=39';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=39';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -988,6 +988,13 @@ async function paneHistory(pane) {
             ? tf('hist_dnum', { n: r.streak_days }) : null)}
           ${dline(t('hist_last'), tf('hist_pnum', { n: r.optin_now ?? 0 }))}
         </div>
+        <div class="hdates alt">
+          ${dline(t('hist_all') + ' · ' + t('hist_12day'), r.total_twelve_day)}
+          ${dline(t('hist_all') + ' · ' + t('hist_streak'), r.total_streak_days
+            ? tf('hist_dnum', { n: r.total_streak_days }) : null)}
+          ${dline(t('hist_all') + ' · ' + t('hist_last'),
+            tf('hist_pnum', { n: r.total_optin_now ?? 0 }))}
+        </div>
         <details class="grid-d" data-grid="${esc(r.app_id)}">
           <summary>${t('grid_open')}</summary>
           <div class="gridbody"><p class="muted">${t('loading')}</p></div>
@@ -1082,12 +1089,14 @@ async function paneHistory(pane) {
 
 /// 사람 × 날짜 표. 숫자 하나로는 왜 12명이 안 되는지 알 수 없다.
 /// 칸이 차 있으면 그날 옵트인을 유지한 것, 진하면 그날 앱까지 연 것.
+///
+/// 표를 둘로 나눠 놨더니 같은 날짜를 두 번 훑어야 했다. 한 판에 붙이고
+/// 아래쪽만 회색으로 둔다 — 합계는 두 줄(확인된 / 전체)로 준다.
 function gridHtml(rows) {
   if (!rows.length) return `<p class="muted">${t('hist_none')}</p>`;
   const key = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1)
     .padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-  // 가장 이른 시작일부터 오늘까지. 너무 길면 최근 30일만.
   const froms = rows.map(r => r.from_day).filter(Boolean).sort();
   const start = new Date(froms[0] || Date.now());
   const today = new Date();
@@ -1095,23 +1104,23 @@ function gridHtml(rows) {
   for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
     days.push(key(d));
   }
-  const shown = days.slice(-30);
+  const shown = days.slice(-35);
+  const now = key(today);
 
   const on = (r, day) => {
     if (!r.from_day || day < r.from_day) return false;
     if (r.to_day && day >= r.to_day) return false;
     return true;
   };
-  const opened = (r, day) => (r.opened || []).includes(day);
-
   const mine = rows.filter(r => r.tracked);
   const theirs = rows.filter(r => !r.tracked);
-  const count = (day) => mine.filter(r => on(r, day)).length;
+  const okN = (d) => mine.filter(r => on(r, d)).length;
+  const allN = (d) => rows.filter(r => on(r, d)).length;
 
   const head = `<tr><th class="who"></th>${shown.map(d => {
     const [, m, dd] = d.split('-');
-    return `<th${dd === '01' ? ' class="mstart"' : ''}>${
-      dd === '01' ? m + '/' : ''}${+dd}</th>`;
+    return `<th class="${dd === '01' ? 'mstart ' : ''}${
+      d === now ? 'now' : ''}">${dd === '01' ? m + '/' : ''}${+dd}</th>`;
   }).join('')}</tr>`;
 
   const line = (r) => `<tr class="${r.tracked ? '' : 'out'}">
@@ -1119,32 +1128,41 @@ function gridHtml(rows) {
       iconHtml(r.icon, r.who || '?', 'gicon')}<span>${
       esc(r.app_name || r.who || '')}</span></th>
     ${shown.map(d => `<td class="${
-      !on(r, d) ? '' : opened(r, d) ? 'hit' : 'keep'}"></td>`).join('')}
+      !on(r, d) ? '' : (r.opened || []).includes(d) ? 'hit' : 'keep'}"></td>`)
+      .join('')}
   </tr>`;
 
+  const sum = (label, fn, cls) => `<tr class="sum ${cls}">
+    <th class="who">${label}</th>
+    ${shown.map(d => {
+      const n = fn(d);
+      return `<td class="${n >= 12 ? 'ok' : ''}">${n || ''}</td>`;
+    }).join('')}</tr>`;
+
+  const band = (label, n) => `<tr class="band"><th class="who">${label}
+    <span class="muted">${n}</span></th>
+    <td colspan="${shown.length}"></td></tr>`;
+
   return `
-    <p class="reckind">${t('grid_tracked')}
-      <span class="muted">${mine.length}</span></p>
-    <p class="muted gnote">${t('grid_note')}</p>
+    <p class="muted gnote">${t('grid_two')}</p>
+    <p class="glegend">
+      <span><i class="keep"></i>${t('grid_legend1')}</span>
+      <span><i class="hit"></i>${t('grid_legend2')}</span>
+      ${theirs.length ? `<span><i class="out"></i>${t('grid_legend3')}</span>` : ''}
+    </p>
     <div class="gwrap"><table class="gtab">
       <thead>${head}</thead>
       <tbody>
+        ${band(t('grid_tracked'), mine.length)}
         ${mine.map(line).join('')}
-        <tr class="sum"><th class="who">${t('grid_total')}</th>
-          ${shown.map(d => {
-            const n = count(d);
-            return `<td class="${n >= 12 ? 'ok' : ''}">${n || ''}</td>`;
-          }).join('')}</tr>
+        ${theirs.length ? band(t('grid_untracked'), theirs.length)
+          + theirs.map(line).join('') : ''}
+        ${sum(t('grid_sum_ok'), okN, 'ok-row')}
+        ${theirs.length ? sum(t('grid_sum_all'), allN, 'all-row') : ''}
       </tbody>
     </table></div>
-    ${theirs.length ? `
-      <p class="reckind" style="margin-top:14px">${t('grid_untracked')}
-        <span class="muted">${theirs.length}</span></p>
-      <p class="muted gnote">${t('grid_untracked_p')}</p>
-      <div class="gwrap"><table class="gtab">
-        <thead>${head}</thead>
-        <tbody>${theirs.map(line).join('')}</tbody>
-      </table></div>` : ''}`;
+    ${theirs.length
+      ? `<p class="muted gnote">${t('grid_untracked_p')}</p>` : ''}`;
 }
 
 // ---- 리포트 내보내기 ----
@@ -1164,6 +1182,8 @@ const RPT = {
         cnt: (n) => `${n}건`, ppl: (n) => `${n}명`,
         item: '항목', value: '값',
         basis: '구글이 보는 건 옵트인 유지입니다 — 아래 인원은 그날 앱을 연 사람이 아니라 옵트인을 유지하던 사람 수입니다.',
+        allbasis: '전체 기준',
+        basis2: '전체 기준은 상대가 ACT에 안 걸어 둔 품앗이까지 넣은 수입니다 — 구글 테스터 목록에는 그 사람들도 있습니다.',
         start: '테스트 시작', twelve: '12명 달성',
         streak: '12명 연속 유지', last: '지금 유지 중', notyet: '아직',
         byver: '버전별', vtesters: '테스터', from: '부터', vfb: '피드백',
@@ -1192,6 +1212,8 @@ const RPT = {
         cnt: (n) => `${n}`, ppl: (n) => `${n}`,
         item: 'Item', value: 'Value',
         basis: 'Google counts opt-in retention. The numbers below are people who stayed opted in, not people who opened the app that day.',
+        allbasis: 'All testers',
+        basis2: 'All testers also counts trades the other side never registered here — your Google tester list includes them.',
         start: 'Testing started', twelve: 'Hit 12 testers',
         streak: 'Longest 12+ run', last: 'Opted in now',
         notyet: 'not yet',
@@ -1221,6 +1243,8 @@ const RPT = {
         cnt: (n) => `${n}件`, ppl: (n) => `${n}名`,
         item: '項目', value: '値',
         basis: 'Googleが見るのはオプトインの維持です。以下の人数はその日開いた人ではなく、オプトインを維持していた人数です。',
+        allbasis: '全体基準',
+        basis2: '全体基準は相手がACTに登録していない交換も含めた数です — Googleのテスター一覧にはその人たちもいます。',
         start: 'テスト開始', twelve: '12名達成',
         streak: '12名連続維持', last: '現在の維持人数', notyet: 'まだ',
         byver: 'バージョン別', vtesters: 'テスター', from: 'から',
@@ -1248,6 +1272,8 @@ RPT['zh-Hans'] = { ...RPT.en, report: '测试报告', summary: '概要', period:
   fb: '收到的反馈', replied: '已回复', chats: '对话', days: (n) => `${n} 天`,
   cnt: (n) => `${n} 条`, ppl: (n) => `${n} 人`, item: '项目', value: '值',
   basis: 'Google 看的是加入状态的持续，下面的人数是保持加入的人，不是当天打开应用的人。',
+  allbasis: '按全部计',
+  basis2: '按全部计还包含对方没有在 ACT 登记的互测 — Google 的测试者名单里也有他们。',
   start: '测试开始', twelve: '达标 12 人', streak: '12 人连续保持',
   last: '当前保持', notyet: '尚未',
   byver: '按版本', vtesters: '测试者', from: '起', vfb: '反馈',
@@ -1258,6 +1284,8 @@ RPT['zh-Hant'] = { ...RPT['zh-Hans'], report: '測試報告', period: '週期',
   fb: '收到的回饋', replied: '已回覆', chats: '對話', byver: '按版本',
   cnt: (n) => `${n} 則`, ppl: (n) => `${n} 人`, item: '項目', value: '值',
   basis: 'Google 看的是加入狀態的持續，下面的人數是保持加入的人，不是當天打開應用的人。',
+  allbasis: '按全部計',
+  basis2: '按全部計還包含對方沒有在 ACT 登記的互測 — Google 的測試者名單裡也有他們。',
   start: '測試開始', twelve: '達標 12 人', streak: '12 人連續保持',
   last: '目前保持', notyet: '尚未',
   vtesters: '測試者', vfb: '回饋', nover: '版本未知', reply: '我的回覆',
@@ -1391,13 +1419,16 @@ async function exportReport(appId, btn) {
 
   let no = 1;
   L.push(`## ${no}. ${R.summary}`, '');
-  L.push(quote(R.basis), '');
+  L.push(quote(R.basis + ' ' + R.basis2), '');
   L.push(mdTable([R.item, R.value], [
     [R.period, span],
     [R.start, h.first_day || '—'],
     [R.twelve, h.twelve_day || R.notyet],
     [R.streak, R.days(h.streak_days ?? 0)],
     [R.last, R.ppl(h.optin_now ?? 0)],
+    [`${R.allbasis} · ${R.twelve}`, h.total_twelve_day || R.notyet],
+    [`${R.allbasis} · ${R.streak}`, R.days(h.total_streak_days ?? 0)],
+    [`${R.allbasis} · ${R.last}`, R.ppl(h.total_optin_now ?? 0)],
     [R.testers, `${R.ppl(people)}  (${R.party} ${party} · ${R.trade} ${trades})`],
     [R.gdays, R.days(h.google_days ?? 0)],
     [R.fb, `${R.cnt(fbs.length)}  (${R.replied} ${repliedN})`],
