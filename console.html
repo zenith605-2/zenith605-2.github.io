@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=33">
+<link rel="stylesheet" href="/assets/app.css?v=34">
 </head>
 <body>
 
@@ -43,8 +43,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=33';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=33';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=34';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=34';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -1322,7 +1322,7 @@ async function exportReport(appId, btn) {
         + (b.v.version_code ? ` (${b.v.version_code})` : ''), '');
       L.push(`${R.vtesters} ${R.ppl(b.v.testers)} · ${ymd(b.v.first_seen)}${R.from}`
         + ` · ${R.vfb} ${R.cnt(b.items.length)}`, '');
-      if (!b.items.length) L.push(`_${R.nofb}_`, '');
+      if (!b.items.length) L.push(R.nofb, '');
       else for (const f of b.items) L.push(...entry(f));
     }
   }
@@ -1341,7 +1341,7 @@ async function exportReport(appId, btn) {
   const changes = fbs.flatMap(f => mine(f).map(r => r.body || ''));
   L.push(changes.length ? changes.slice(-5).map(bullet).join('\n')
     : wrap(R.a4blank), '');
-  L.push('---', `_${R.madeby} · ${ymd(Date.now())}_`);
+  L.push('---', `${R.madeby} · ${ymd(Date.now())}`);
 
   showReport(h.app_name || 'report', L.join('\n'));
 }
