@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=37">
+<link rel="stylesheet" href="/assets/app.css?v=38">
 </head>
 <body>
 
@@ -44,8 +44,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=37';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=37';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=38';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=38';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -1123,6 +1123,8 @@ function gridHtml(rows) {
   </tr>`;
 
   return `
+    <p class="reckind">${t('grid_tracked')}
+      <span class="muted">${mine.length}</span></p>
     <p class="muted gnote">${t('grid_note')}</p>
     <div class="gwrap"><table class="gtab">
       <thead>${head}</thead>
