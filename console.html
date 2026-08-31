@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=10">
+<link rel="stylesheet" href="/assets/app.css?v=11">
 </head>
 <body>
 
@@ -461,13 +461,25 @@ function paneTesting(pane) {
     const pd = D.peer[e.peer_package];
     const dayNo = e.started_on
       ? Math.floor((Date.now() - new Date(e.started_on + 'T00:00:00')) / 86400000) + 1 : 0;
-    return `<div class="card">
+    // 앱과 같은 규칙 — 끝난 품앗이는 눈에 덜 띄게, 중도 이탈은 붉게.
+    // 그리고 "언제까지 두고 언제 지워도 되는지"가 카드에서 제일 급한 정보다.
+    const left = total - dayNo + 1;
+    const until = e.started_on
+      ? new Date(new Date(e.started_on + 'T00:00:00').getTime()
+                 + (total - 1) * 86400000) : null;
+    const untilTxt = until ? `${until.getMonth() + 1}/${until.getDate()}` : '';
+    return `<div class="card trade ${e.status === 'done' ? 'is-done'
+              : e.uninstalled_at ? 'is-gone' : ''}">
+      <p class="keep ${left <= 0 ? 'ok' : ''}">${left <= 0
+        ? `✓ ${t('period_done')}`
+        : tf('keep_until', { d: untilTxt, n: left })}</p>
       <div class="app-card" style="align-items:center;gap:10px">
         ${iconHtml(e.peer_icon_url, e.peer_app_name || '?')}
         <div style="min-width:0;flex:1">
       <p style="margin:0 0 2px"><b>${esc(e.peer_app_name || '')}</b>
         ${e.uninstalled_at ? `<span class="tag rose">${t('t_uninstalled')}</span>` : ''}
-        ${e.status === 'done' ? `<span class="tag mint">${t('t_finished')}</span>` : ''}</p>
+        ${e.status === 'done' ? `<span class="tag mint">${t('t_finished')}</span>` : ''}
+        ${peerStatus(e)}</p>
       <p class="muted" style="margin:0">D+${dayNo} / ${total}${t('days')} ·
         ${t('me')} ${days}${t('days')}${pd ? ` · ${t('them')} ${Object.keys(pd).length}${t('days')}` : ''}</p>
       ${peerLine(e)}
@@ -734,6 +746,14 @@ function tradeForm(existing) {
       await load(); tab = 'testing'; render();
     } catch (e) { alert(e.message || e); ev.target.disabled = false; }
   };
+}
+
+/// 상대가 내 앱을 어떻게 해 줬는가 — 앱의 카드와 같은 말을 쓴다.
+function peerStatus(e) {
+  const k = { done: 'ps_done', confirmed: 'ps_confirmed',
+              ghosted: 'ps_ghosted' }[e.peer_status] || 'ps_pending';
+  const cls = { ps_done: 'mint', ps_confirmed: 'sky', ps_ghosted: 'rose' }[k] || '';
+  return `<span class="tag ${cls}">${t(k)}</span>`;
 }
 
 /// 상대가 ACT 사용자인지 — 이게 안 보이면 왜 상대 줄이 비어 있는지,
