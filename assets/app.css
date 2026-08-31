@@ -488,7 +488,8 @@ p.trust a.dim:hover { color: var(--ink100); text-decoration: underline; }
 }
 #board #list .app-card > .body { min-width: 0; }
 #board #list .app-card > a { text-decoration: none; }
-#board #list .desc { max-width: 70ch; }
+/* 70ch 로 묶어 뒀더니 넓은 화면에서 설명만 절반쯤에서 끊겼다.
+   두 줄까지만 보여 주므로 폭까지 묶을 이유가 없다. */
 
 #board #list .rank {
   width: 24px; text-align: right; align-self: center;
@@ -753,11 +754,9 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
   #board #list .meta .badges, #board #list .meta p.who { flex: 1 1 100%; }
 }
 
-/* 진행 막대가 카드 오른쪽 끝까지 뻗어 신청 버튼 밑을 지나갔다.
-   윗줄(배지·개발자)이 끝나는 근처에서 같이 멈추게 폭을 묶는다. */
-@media (min-width: 900px) {
-  #board #list .stats { max-width: calc(100% - 210px); }
-}
+/* 신청 버튼은 제목 오른쪽(.head)으로 옮겼으니 막대가 그 밑을 지나갈 일이
+   없다. 210px 을 비워 두면 배지·개발자 줄만 끝까지 가고 막대는 중간에서
+   끊겨 보인다 — 같이 끝까지 간다. */
 
 /* 품앗이 카드: 남은 기간을 이름과 같은 줄 오른쪽에 */
 .card.trade p.tname {
