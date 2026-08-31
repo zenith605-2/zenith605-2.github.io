@@ -11,7 +11,72 @@ export const STORE_URL =
 
 // ---- 인증 ----
 // 안드로이드 앱과 같은 Supabase 프로젝트라 같은 계정으로 들어온다.
+const GOOGLE_CLIENT_ID =
+  '57372223483-uhgtngnav5j8ep6kqn97rvaimmifsdn3.apps.googleusercontent.com';
+
+/** 구글 스크립트를 한 번만 불러온다. */
+function loadGis() {
+  if (window.google?.accounts?.id) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const el = document.createElement('script');
+    el.src = 'https://accounts.google.com/gsi/client';
+    el.async = true;
+    el.onload = () => resolve(!!window.google?.accounts?.id);
+    el.onerror = () => resolve(false);
+    document.head.appendChild(el);
+  });
+}
+
+/** nonce 는 원본을 Supabase 에, SHA-256 해시를 구글에 준다 (재생 공격 방지). */
+async function makeNonce() {
+  const raw = crypto.randomUUID();
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+  const hashed = [...new Uint8Array(buf)]
+    .map((b) => b.toString(16).padStart(2, '0')).join('');
+  return { raw, hashed };
+}
+
+/// 구글에서 ID 토큰을 브라우저로 직접 받는다.
+///
+/// 리디렉션 방식은 구글 화면에 "eedqzvckdxfcuoyycivu.supabase.co 로 이동" 이
+/// 뜬다 — 실제로 그리로 넘어가기 때문이다. 이 방식은 넘어가지 않으니 그 줄이
+/// 없다. 안드로이드 앱이 원래 쓰던 방식과 같다.
+async function signInWithGoogleToken() {
+  if (!(await loadGis())) return false;
+  const { raw, hashed } = await makeNonce();
+  return new Promise((resolve) => {
+    let settled = false;
+    const done = (v) => { if (!settled) { settled = true; resolve(v); } };
+    try {
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        nonce: hashed,
+        callback: async (res) => {
+          if (!res?.credential) return done(false);
+          const { error } = await sb.auth.signInWithIdToken({
+            provider: 'google', token: res.credential, nonce: raw,
+          });
+          if (error) return done(false);
+          location.reload();
+          done(true);
+        },
+      });
+      // 프롬프트가 안 뜨면(차단·이전 거절 등) 예전 방식으로 넘긴다
+      window.google.accounts.id.prompt((n) => {
+        if (n.isNotDisplayed?.() || n.isSkippedMoment?.()) done(false);
+      });
+      setTimeout(() => done(false), 12000);
+    } catch (_) { done(false); }
+  });
+}
+
 export async function signIn() {
+  // 먼저 리디렉션 없는 방식을 시도한다. 안 되면 예전 방식으로.
+  if (await signInWithGoogleToken()) return;
+  return signInRedirect();
+}
+
+async function signInRedirect() {
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'google',
     options: { redirectTo: location.origin + location.pathname },
