@@ -934,7 +934,7 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
 .glegend i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
 .glegend i.keep { background: color-mix(in srgb, var(--mint) 45%, var(--ink800)); }
 .glegend i.hit { background: var(--mint); }
-.glegend i.out { background: var(--ink700); }
+.glegend i.out { background: var(--ink600); }
 .gtab thead th.now { color: var(--mint); font-weight: 800; }
 .gtab tr.sum.ok-row th.who { color: var(--mint); }
 .gtab tr.sum.all-row th.who { color: var(--ink300); }
