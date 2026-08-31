@@ -475,7 +475,7 @@ p.trust a.dim:hover { color: var(--ink100); text-decoration: underline; }
 #board.wrap { max-width: 1140px; }
 #board #list .app-card {
   display: grid;
-  grid-template-columns: 24px 52px minmax(0, 1fr) 190px 130px;
+  grid-template-columns: 24px 52px minmax(0, 1fr) 190px 165px;
   align-items: center; gap: 18px;
 }
 #board #list .app-card > .body { min-width: 0; }
@@ -504,19 +504,6 @@ p.trust a.dim:hover { color: var(--ink100); text-decoration: underline; }
 }
 #board #list .cardact .state.on { color: var(--mint); font-weight: 700; }
 
-@media (max-width: 900px) {
-  /* 다섯 칸이 안 들어간다 — 순번·아이콘·본문만 한 줄로 두고 나머지는 아래로 */
-  #board #list .app-card {
-    grid-template-columns: 20px 44px minmax(0, 1fr);
-    gap: 12px; align-items: start;
-  }
-  #board #list .stats, #board #list .cardact { grid-column: 2 / -1; }
-  #board #list .cardact {
-    flex-direction: row; align-items: center; gap: 10px; margin-top: 2px;
-  }
-  #board #list .cardact:empty { display: none; }
-  #board #list .rank { width: 20px; font-size: 12px; }
-}
 
 /* 대표 화면 한 장. 눌러서 크게 볼 수 있다(라이트박스). */
 img.shot {
@@ -538,8 +525,6 @@ header.top .wrap, footer.bot .wrap { max-width: 1140px; }
 .linkrow a, code, .mono, [style*="break-all"] { word-break: break-all; }
 
 /* 카드 동작 칸 — 문구가 두 줄로 접히지 않을 만큼은 준다 */
-#board #list .cardact { width: 165px; }
-#board #list .app-card { grid-template-columns: 24px 52px minmax(0, 1fr) 190px 165px; }
 
 /* 게시판 */
 .card.post { cursor: pointer; }
@@ -608,4 +593,21 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
   #board #list .app-name { gap: 6px; }
   #board #list .app-name > a { flex: 1 1 100%; }
   .wrap { padding: 0 14px; }
+}
+
+/* ===== 좁은 화면 규칙은 항상 파일 맨 끝 =====
+   위쪽에 규칙을 덧붙이면 같은 우선순위끼리 뒤의 것이 이긴다.
+   실제로 나중에 붙인 데스크톱 그리드가 이 블록을 덮어 모바일이 깨졌다. */
+@media (max-width: 900px) {
+  /* 다섯 칸이 안 들어간다 — 순번·아이콘·본문만 한 줄로 두고 나머지는 아래로 */
+  #board #list .app-card {
+    grid-template-columns: 20px 44px minmax(0, 1fr);
+    gap: 12px; align-items: start;
+  }
+  #board #list .stats, #board #list .cardact { grid-column: 2 / -1; }
+  #board #list .cardact {
+    flex-direction: row; align-items: center; gap: 10px; margin-top: 2px;
+  }
+  #board #list .cardact:empty { display: none; }
+  #board #list .rank { width: 20px; font-size: 12px; }
 }
