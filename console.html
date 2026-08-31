@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=49">
+<link rel="stylesheet" href="/assets/app.css?v=50">
 </head>
 <body>
 
@@ -44,8 +44,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=49';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=49';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=50';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=50';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -1072,7 +1072,7 @@ function wireGrids(pane) {
 }
 
 /// 사람 × 날짜 표. 숫자 하나로는 왜 12명이 안 되는지 알 수 없다.
-/// 칸이 차 있으면 그날 옵트인을 유지한 것, 진하면 그날 앱까지 연 것.
+/// 칸이 차 있으면 그날 품앗이가 살아 있던 것, 진하면 그날 앱까지 연 것.
 ///
 /// 표를 둘로 나눠 놨더니 같은 날짜를 두 번 훑어야 했다. 한 판에 붙이고
 /// 아래쪽만 회색으로 둔다 — 합계는 두 줄(확인된 / 전체)로 준다.
@@ -1189,7 +1189,7 @@ const RPT = {
         chats: '대화', days: (n) => `${n}일`,
         cnt: (n) => `${n}건`, ppl: (n) => `${n}명`,
         item: '항목', value: '값',
-        basis: '구글이 보는 건 옵트인 유지입니다 — 아래 인원은 그날 앱을 연 사람이 아니라 옵트인을 유지하던 사람 수입니다.',
+        basis: '구글이 보는 건 매일 열었는지가 아니라 테스터로 남아 있었는지입니다. 아래 인원은 그날 품앗이가 살아 있던 사람 수예요 — 구글 옵트인 상태를 직접 읽지는 못합니다.',
         allbasis: '전체 기준',
         basis2: '전체 기준은 상대가 ACT에 안 걸어 둔 품앗이까지 넣은 수입니다 — 구글 테스터 목록에는 그 사람들도 있습니다.',
         start: '테스트 시작', twelve: '12명 달성',
@@ -1219,7 +1219,7 @@ const RPT = {
         replied: 'replied', chats: 'Chat messages', days: (n) => `${n} days`,
         cnt: (n) => `${n}`, ppl: (n) => `${n}`,
         item: 'Item', value: 'Value',
-        basis: 'Google counts opt-in retention. The numbers below are people who stayed opted in, not people who opened the app that day.',
+        basis: 'Google looks at whether testers stayed on the test, not whether they opened it daily. The numbers below are trades that were still running — we cannot read Google opt-in state directly.',
         allbasis: 'All testers',
         basis2: 'All testers also counts trades the other side never registered here — your Google tester list includes them.',
         start: 'Testing started', twelve: 'Hit 12 testers',
@@ -1250,7 +1250,7 @@ const RPT = {
         replied: '返信済み', chats: 'チャット', days: (n) => `${n}日`,
         cnt: (n) => `${n}件`, ppl: (n) => `${n}名`,
         item: '項目', value: '値',
-        basis: 'Googleが見るのはオプトインの維持です。以下の人数はその日開いた人ではなく、オプトインを維持していた人数です。',
+        basis: 'Googleが見るのは毎日開いたかではなくテスターとして残っていたかです。以下の人数はその日交換が続いていた人数で、Googleのオプトイン状態そのものは読めません。',
         allbasis: '全体基準',
         basis2: '全体基準は相手がACTに登録していない交換も含めた数です — Googleのテスター一覧にはその人たちもいます。',
         start: 'テスト開始', twelve: '12名達成',
