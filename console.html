@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=24">
+<link rel="stylesheet" href="/assets/app.css?v=25">
 </head>
 <body>
 
@@ -42,8 +42,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=24';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=24';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=25';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=25';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -470,16 +470,16 @@ function paneTesting(pane) {
     const untilTxt = until ? `${until.getMonth() + 1}/${until.getDate()}` : '';
     return `<div class="card trade ${e.status === 'done' ? 'is-done'
               : e.uninstalled_at ? 'is-gone' : ''}">
-      <p class="keep ${left <= 0 ? 'ok' : ''}">${left <= 0
-        ? `✓ ${t('period_done')}`
-        : tf('keep_until', { d: untilTxt, n: left })}</p>
       <div class="app-card" style="align-items:center;gap:10px">
         ${iconHtml(e.peer_icon_url, e.peer_app_name || '?')}
         <div style="min-width:0;flex:1">
-      <p style="margin:0 0 2px"><b>${esc(e.peer_app_name || '')}</b>
+      <p class="tname"><b>${esc(e.peer_app_name || '')}</b>
         ${e.uninstalled_at ? `<span class="tag rose">${t('t_uninstalled')}</span>` : ''}
         ${e.status === 'done' ? `<span class="tag mint">${t('t_finished')}</span>` : ''}
-        ${peerStatus(e)}</p>
+        ${peerStatus(e)}
+        <span class="keep ${left <= 0 ? 'ok' : ''}">${left <= 0
+          ? `✓ ${t('period_done')}`
+          : tf('keep_until', { d: untilTxt, n: left })}</span></p>
       ${e.peer_package ? `<p class="muted" style="margin:0;font-size:12px">${esc(e.peer_package)}</p>` : ''}
       <p class="muted" style="margin:0">D+${dayNo} / ${total}${t('days')} ·
         ${t('me')} ${days}${t('days')}${pd ? ` · ${t('them')} ${Object.keys(pd).length}${t('days')}` : ''}</p>
@@ -793,9 +793,10 @@ function peerLine(e) {
   const nm = p.developer_name || '';
   const same = nm && e.peer_app_name &&
     nm.replace(/\s/g, '').toLowerCase() === e.peer_app_name.replace(/\s/g, '').toLowerCase();
+  // 앱 아이콘이 이미 왼쪽에 큼직하게 있다. 여기 또 작은 아이콘을 넣으면
+  // 무엇을 가리키는 그림인지 헷갈린다. 사람은 헤더와 같은 이모지로 통일한다.
   return `<p class="muted who" style="margin:2px 0 0">
-    ${p.icon_url ? `<img class="dev-icon" src="${esc(p.icon_url)}" alt="">` : ''}
-    ${same ? '' : esc(nm || t('developer'))}
+    <span class="emo">🧑</span>${same ? '' : esc(nm || t('developer'))}
     <span class="tag mint">${t('act_user')}</span>
     ${p.usage_access ? `<span class="tag mint">${t('auto_ok')}</span>`
                      : `<span class="tag rose">${t('auto_off')}</span>`}
