@@ -244,11 +244,17 @@ details.testers > summary {
 .trow .app-icon { width: 30px; height: 30px; border-radius: 8px; }
 
 /* 테스트 탭: 내 앱별 묶음 머리 */
-h3.grp {
-  font-size: 14px; margin: 20px 0 8px; color: var(--ink100);
-  padding-bottom: 6px; border-bottom: 1px solid var(--ink600);
+/* 내 앱별 묶음 — 접었다 편다 */
+details.grp { margin: 20px 0 8px; }
+details.grp:first-of-type { margin-top: 0; }
+details.grp > summary {
+  display: flex; align-items: center; gap: 10px; cursor: pointer;
+  font-size: 15px; color: var(--ink100);
+  padding-bottom: 8px; border-bottom: 1px solid var(--ink600);
 }
-h3.grp:first-child { margin-top: 0; }
+details.grp > summary .app-icon { width: 30px; height: 30px; border-radius: 8px; }
+details.grp > summary .muted { margin-left: auto; }
+details.grp > .grid { margin-top: 12px; }
 
 /* ---- 사진 확대 ---- */
 .lightbox {
@@ -762,4 +768,15 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
 .card.trade p.who .emo {
   font-size: 13px;
   font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+/* 아이콘 위에 순번 — 옆에 두면 한 칸을 더 먹는다 */
+.numicon { position: relative; display: inline-flex; flex: none; }
+.numicon > i {
+  position: absolute; top: -6px; left: -6px;
+  min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px;
+  background: var(--ink700); border: 1px solid var(--ink600);
+  color: var(--ink300); font-size: 11px; font-weight: 800; font-style: normal;
+  line-height: 18px; text-align: center;
+  font-variant-numeric: tabular-nums;
 }

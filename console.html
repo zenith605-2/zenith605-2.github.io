@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=26">
+<link rel="stylesheet" href="/assets/app.css?v=27">
 </head>
 <body>
 
@@ -42,8 +42,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=26';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=26';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=27';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=27';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -451,11 +451,17 @@ function paneTesting(pane) {
     if (!byApp.has(k)) byApp.set(k, []);
     byApp.get(k).push(e);
   }
-  const nameOf = (id) => D.apps.find(a => a.id === id)?.name || t('no_my_app');
-  pane.innerHTML = head + [...byApp.entries()].map(([appId, list]) => `
-    <h3 class="grp">${esc(nameOf(appId))}
-      <span class="muted">↔ ${list.length}</span></h3>
-    <div class="grid">${list.map(e => {
+  const appOf = (id) => D.apps.find(a => a.id === id);
+  const nameOf = (id) => appOf(id)?.name || t('no_my_app');
+  // 품앗이가 서른 건이 넘으면 스크롤만 길어진다. 내 앱별로 접었다 편다.
+  pane.innerHTML = head + [...byApp.entries()].map(([appId, list], gi) => `
+    <details class="grp" ${gi === 0 ? 'open' : ''}>
+      <summary>
+        ${iconHtml(appOf(appId)?.icon_url, nameOf(appId))}
+        <b>${esc(nameOf(appId))}</b>
+        <span class="muted">↔ ${list.length}</span>
+      </summary>
+    <div class="grid">${list.map((e, ei) => {
     const days = (e.exchange_checkins || []).length;
     const total = e.days ?? 14;
     const pd = D.peer[e.peer_package];
@@ -471,7 +477,8 @@ function paneTesting(pane) {
     return `<div class="card trade ${e.status === 'done' ? 'is-done'
               : e.uninstalled_at ? 'is-gone' : ''}">
       <div class="app-card" style="align-items:center;gap:10px">
-        ${iconHtml(e.peer_icon_url, e.peer_app_name || '?')}
+        <span class="numicon">${iconHtml(e.peer_icon_url, e.peer_app_name || '?')}
+          <i>${ei + 1}</i></span>
         <div style="min-width:0;flex:1">
       <p class="tname"><b>${esc(e.peer_app_name || '')}</b>
         ${e.uninstalled_at ? `<span class="tag rose">${t('t_uninstalled')}</span>` : ''}
@@ -519,7 +526,7 @@ function paneTesting(pane) {
           <button class="btn ghost sm" data-oi="0" data-pkg="${esc(e.peer_package)}">${t('optin_no')}</button>
         </div></div>` : ''}
     </div>`;
-  }).join('')}</div>`).join('');
+  }).join('')}</div></details>`).join('');
 
   document.getElementById('addTrade').onclick = () => tradeForm();
 

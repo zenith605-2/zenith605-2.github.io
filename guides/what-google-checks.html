@@ -6,7 +6,7 @@
 <title>What Google actually checks for closed testing (12 testers, 14 days)</title>
 <meta name="description" content="Google counts testers who stayed opted in for 14 continuous days — not how many times they opened your app. What the production access form really asks.">
 <link rel="canonical" href="https://zenith605-2.github.io/guides/what-google-checks.html">
-<link rel="stylesheet" href="/assets/app.css?v=26">
+<link rel="stylesheet" href="/assets/app.css?v=27">
 </head>
 <body>
 
@@ -17,14 +17,92 @@
       <a href="/launched.html" data-t="nav_launched">Launched</a>
       <a href="/parties.html" data-t="nav_party">Parties</a>
       <a href="/community.html" data-t="nav_board">Board</a>
-      <a href="/how.html" data-t="nav_how">How it works</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
       <span id="authSlot"></span>
       <span id="langSlot"></span>
     </nav>
   </div>
 </header>
 
-<article class="doc wrap narrow" style="padding-top:30px">
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=27';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=27';
+
+// 본문은 언어마다 통째로 다르다. 문장 단위 키로 쪼개면 번역이 어색해진다.
+const DOC = {
+  ko: `
+  <h1 style="font-size:28px;margin:0 0 8px">구글이 실제로 보는 것</h1>
+  <p class="muted" style="margin:0 0 24px">2026년 8월 기준</p>
+
+  <p>2023년 11월 13일 이후에 만든 개인 개발자 계정은, 비공개 테스트를 거치지
+  않으면 프로덕션에 올릴 수 없습니다. 규칙은 구글의 표현으로 이렇습니다.</p>
+
+  <blockquote>프로덕션 액세스를 신청할 때 최소 12명의 테스터가 비공개 테스트에
+  옵트인해 있어야 하며, 그 직전 14일 동안 연속으로 옵트인 상태여야 합니다.</blockquote>
+
+  <h2>세는 것은 옵트인 기간이지 실행 횟수가 아닙니다</h2>
+
+  <p>여기서 대부분 오해합니다. 요건은 <em>옵트인 상태로 얼마나 오래 있었는가</em>지,
+  앱을 몇 번 열었는가가 아닙니다.</p>
+
+  <p>Play Console은 이걸 "N일 동안 옵트인한 테스터"라고 씁니다. 테스터가 구글
+  그룹에 가입하고 [테스터 되기]를 누른 뒤 아무것도 설치하지 않아도 12명에
+  포함됩니다. 아이폰만 쓰는 사람을 넣고 통과했다는 개발자도 있습니다.</p>
+
+  <p>앱을 지워도 테스터 목록에서 빠지지 않습니다. 14일이 지난 뒤라면 삭제해도
+  이미 쌓인 기간은 사라지지 않습니다.</p>
+
+  <h2>그런데 왜 다들 "활동해야 한다"고 할까</h2>
+
+  <p>이유가 둘인데, 그중 하나만 구글 얘기입니다.</p>
+
+  <h3>1. 활동이 아니라 연속성</h3>
+  <p>14일은 <em>연속</em>이어야 합니다. 누가 옵트아웃하거나 내가 그 사람을 그룹에서
+  빼면 그 테스터의 시계가 0으로 돌아갑니다. 테스트를 깨는 건 이것이지, 하루
+  조용한 게 아닙니다.</p>
+
+  <h3>2. 신청서에 직접 설명을 써야 합니다</h3>
+  <p>기준을 채우면 프로덕션 액세스를 신청하는데, 세 구역에 답을 씁니다.</p>
+  <table>
+    <tr><th>구역</th><th>묻는 것</th></tr>
+    <tr><td>비공개 테스트에 관하여</td><td>어떻게 진행했는지, 누가 테스트했는지, 무엇을 배웠는지</td></tr>
+    <tr><td>앱/게임에 관하여</td><td>무엇을 하는 앱인지, 누구를 위한 것인지</td></tr>
+    <tr><td>프로덕션 준비도에 관하여</td><td>출시할 만큼 완성됐는지</td></tr>
+  </table>
+  <p>테스터 피드백을 첨부하라는 항목은 없습니다. 다만 아무도 열지 않은 테스트는
+  첫 구역에 쓸 말이 없고, 심사자는 그 글을 읽습니다.</p>
+
+  <h2>그래서 어떻게 해야 하나</h2>
+  <ul>
+    <li><b>하루 건너뛴 걸로 겁먹지 마세요.</b> 화요일에 안 연 사람이 뭔가를 깬 게 아닙니다.</li>
+    <li><b>그룹에서 나가는 건 겁내세요.</b> 그건 연속성을 끊습니다.</li>
+    <li><b>특별한 이유가 없으면 모든 국가로 열어 두세요.</b> "내 나라에서 안 받아져요"는
+      테스터가 조용히 빠지는 가장 흔한 이유입니다.</li>
+    <li><b>그래도 진짜로 쓰이길 바라야 합니다.</b> 구글이 세서가 아니라, 신청서에
+      정직하게 쓸 내용이 있어야 하고, 나와 품앗이한 사람은 목록에 앉아 있어 달라고
+      부탁한 게 아니라 앱을 테스트해 달라고 부탁했기 때문입니다.</li>
+  </ul>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b>는 안드로이드 사용 기록에서 매일 연 날을 대신 적어 둡니다.
+    스크린샷도 양식도 없습니다. 상대도 쓰면 서로 누가 나타났는지 보입니다.
+    <a href="/">어떻게 되는지 보기</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    출처: Play Console 고객센터 "신규 개인 개발자 계정의 앱 테스트 요건"
+    (문서 14151465), 2026년 8월 31일 확인. 구글이 바꿀 수 있으니 실제로 기댈
+    때는 원문을 다시 보세요.
+  </p>`,
+
+  en: `
   <h1 style="font-size:28px;margin:0 0 8px">What Google actually checks</h1>
   <p class="muted" style="margin:0 0 24px">Updated August 2026</p>
 
@@ -32,11 +110,9 @@
   cannot publish to production until you have run a closed test. The rule, in
   Google's own words, is this:</p>
 
-  <blockquote>
-    At least 12 testers must be opted in to your closed test when you apply for
-    production access, and they must have been opted in continuously for the
-    preceding 14 days.
-  </blockquote>
+  <blockquote>At least 12 testers must be opted in to your closed test when you
+  apply for production access, and they must have been opted in continuously for
+  the preceding 14 days.</blockquote>
 
   <h2>It counts opt-in time, not opens</h2>
 
@@ -75,7 +151,6 @@
   reviewers do read it.</p>
 
   <h2>What this means for you</h2>
-
   <ul>
     <li><b>Do not panic over a skipped day.</b> A tester who missed Tuesday has
       not broken anything.</li>
@@ -101,15 +176,203 @@
     Source: Play Console Help, "App testing requirements for new personal
     developer accounts" (article 14151465), read 31 August 2026. Google can
     change this — check the current page before you rely on it.
-  </p>
-</article>
+  </p>`,
 
-<footer class="bot"><div class="wrap"><p><a href="/guides/">All guides</a> · <a href="/">App board</a></p></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script type="module">
-import { mountAuth } from '/assets/api.js?v=26';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=26';
+  ja: `
+  <h1 style="font-size:28px;margin:0 0 8px">Googleが実際に見ているもの</h1>
+  <p class="muted" style="margin:0 0 24px">2026年8月時点</p>
+
+  <p>2023年11月13日以降に作成した個人開発者アカウントは、クローズドテストを
+  経ないと本番公開できません。ルールはGoogleの表現でこうです。</p>
+
+  <blockquote>本番アクセスを申請する時点で、少なくとも12名のテスターが
+  クローズドテストにオプトインしており、その直前の14日間、連続して
+  オプトイン状態である必要があります。</blockquote>
+
+  <h2>数えるのはオプトインの期間で、起動回数ではありません</h2>
+
+  <p>ここを多くの人が誤解します。要件は<em>オプトインしていた期間</em>であって、
+  アプリを何回開いたかではありません。</p>
+
+  <p>Play Consoleは「N日間オプトインしたテスター」と表現します。テスターが
+  Googleグループに参加して「テスターになる」を押し、その後何もインストール
+  しなくても12名に数えられます。iPhoneしか持っていない人を入れて通過したと
+  報告する開発者もいます。</p>
+
+  <p>アンインストールしてもテスター一覧からは外れません。14日を過ぎていれば、
+  削除しても積み上がった期間は消えません。</p>
+
+  <h2>ではなぜ「活動が必要」と言われるのか</h2>
+
+  <p>理由は二つあり、Googleの話はそのうち一つだけです。</p>
+
+  <h3>1. 活動ではなく連続性</h3>
+  <p>14日は<em>連続</em>である必要があります。誰かがオプトアウトしたり、こちらが
+  グループから外したりすると、そのテスターの時計はゼロに戻ります。テストを
+  壊すのはこれであって、静かな一日ではありません。</p>
+
+  <h3>2. 申請フォームで自分の言葉で説明する</h3>
+  <p>基準を満たしたら本番アクセスを申請し、3つのセクションに答えます。</p>
+  <table>
+    <tr><th>セクション</th><th>問われること</th></tr>
+    <tr><td>クローズドテストについて</td><td>どう実施し、誰がテストし、何を学んだか</td></tr>
+    <tr><td>アプリ/ゲームについて</td><td>何をするもので、誰のためのものか</td></tr>
+    <tr><td>本番公開の準備について</td><td>出せるだけ完成しているか</td></tr>
+  </table>
+  <p>テスターのフィードバックを添付せよという欄はありません。ただ、誰も開かな
+  かったテストでは最初のセクションに書くことがなく、審査担当はそれを読みます。</p>
+
+  <h2>結局どうすればいいか</h2>
+  <ul>
+    <li><b>一日抜けたくらいで慌てないこと。</b>火曜に開かなかった人が何かを
+      壊したわけではありません。</li>
+    <li><b>グループから抜けることは警戒すること。</b>連続性が切れます。</li>
+    <li><b>理由がなければ全ての国に開いておくこと。</b>「自分の国では入手できない」は
+      テスターが静かに離脱する最も多い原因です。</li>
+    <li><b>それでも実際に使ってほしい。</b>Googleが数えるからではなく、申請書に
+      正直に書ける中身が要るからであり、交換相手はあなたに一覧に座っていて
+      ほしいのではなくアプリをテストしてほしいと頼んだからです。</li>
+  </ul>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b>はAndroidの使用履歴から毎日開いた日を代わりに記録します。
+    スクリーンショットもフォームも不要です。相手も使っていれば、お互いに誰が
+    実際に現れたか見えます。<a href="/">どう動くか見る</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    出典: Play Consoleヘルプ「新しい個人開発者アカウントのアプリテスト要件」
+    (記事 14151465)、2026年8月31日確認。Googleが変更する可能性があるので、
+    実際に頼るときは原文を確認してください。
+  </p>`,
+
+  'zh-Hans': `
+  <h1 style="font-size:28px;margin:0 0 8px">Google 实际检查什么</h1>
+  <p class="muted" style="margin:0 0 24px">2026 年 8 月</p>
+
+  <p>如果你的个人开发者账号是 2023 年 11 月 13 日之后创建的，不做封闭测试就
+  无法发布到正式版。规则用 Google 自己的话说是：</p>
+
+  <blockquote>申请正式版访问权限时，至少要有 12 名测试者已加入封闭测试，并且
+  在此之前的 14 天里持续处于加入状态。</blockquote>
+
+  <h2>算的是加入时长，不是打开次数</h2>
+
+  <p>大多数人在这里理解错了。要求是<em>加入状态持续了多久</em>，不是应用被启动
+  了多少次。</p>
+
+  <p>Play Console 的措辞是"加入了 N 天的测试者"。测试者加入 Google 群组、点了
+  "成为测试者"，之后什么都不装，也照样计入这 12 人。有开发者报告说用只有
+  iPhone、从未安装的人也通过了。</p>
+
+  <p>卸载也不会把人从测试者名单里移除。14 天过去之后，测试者删掉应用并不会
+  抹掉已经累计的时间。</p>
+
+  <h2>那为什么大家都说测试者必须活跃？</h2>
+
+  <p>有两个原因，其中只有一个来自 Google。</p>
+
+  <h3>1. 是连续性，不是活跃度</h3>
+  <p>这 14 天必须<em>连续</em>。如果有人退出，或者你把他移出群组，那位测试者的
+  计时就归零。真正会毁掉测试的是这个，而不是安静的一天。</p>
+
+  <h3>2. 申请表要你自己解释</h3>
+  <p>达到门槛后申请正式版访问权限，需要回答三个部分的问题：</p>
+  <table>
+    <tr><th>部分</th><th>问什么</th></tr>
+    <tr><td>关于你的封闭测试</td><td>怎么做的、谁在测、学到了什么</td></tr>
+    <tr><td>关于你的应用/游戏</td><td>它做什么、给谁用</td></tr>
+    <tr><td>关于上线准备</td><td>是否完成到可以发布</td></tr>
+  </table>
+  <p>没有哪个字段要求你附上测试者反馈。但如果一场测试里没人打开过任何东西，
+  第一部分就无话可写，而审核人会读它。</p>
+
+  <h2>这对你意味着什么</h2>
+  <ul>
+    <li><b>不要为漏掉的一天惊慌。</b>周二没打开的人并没有破坏什么。</li>
+    <li><b>要警惕有人退出群组。</b>那会重置他的连续性。</li>
+    <li><b>如无特殊理由，请开放给所有国家。</b>"我的国家用不了"是测试者悄然
+      流失最常见的方式之一。</li>
+    <li><b>你仍然需要真实使用。</b>不是因为 Google 在数，而是因为申请表里需要
+      写点诚实的东西 —— 也因为跟你互测的人请你测试他的应用，不是请你坐在名单里。</li>
+  </ul>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 直接从 Android 使用记录中替你记下每天的打开。不需要截图，
+    不需要表单。对方也在用时，你们都能看到谁真的出现了。
+    <a href="/">看看怎么运作</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    来源：Play Console 帮助《新个人开发者账号的应用测试要求》(文章 14151465)，
+    2026 年 8 月 31 日查阅。Google 可能会改动 —— 真正依赖前请查看当前页面。
+  </p>`,
+
+  'zh-Hant': `
+  <h1 style="font-size:28px;margin:0 0 8px">Google 實際檢查什麼</h1>
+  <p class="muted" style="margin:0 0 24px">2026 年 8 月</p>
+
+  <p>如果你的個人開發者帳號是 2023 年 11 月 13 日之後建立的，不做封閉測試就
+  無法發布到正式版。規則用 Google 自己的話說是：</p>
+
+  <blockquote>申請正式版存取權時，至少要有 12 名測試者已加入封閉測試，並且
+  在此之前的 14 天裡持續處於加入狀態。</blockquote>
+
+  <h2>算的是加入時長，不是打開次數</h2>
+
+  <p>大多數人在這裡理解錯了。要求是<em>加入狀態持續了多久</em>，不是應用被啟動
+  了多少次。</p>
+
+  <p>Play Console 的措辭是「加入了 N 天的測試者」。測試者加入 Google 群組、點了
+  「成為測試者」，之後什麼都不裝，也照樣計入這 12 人。有開發者報告說用只有
+  iPhone、從未安裝的人也通過了。</p>
+
+  <p>卸載也不會把人從測試者名單裡移除。14 天過去之後，測試者刪掉應用並不會
+  抹掉已經累計的時間。</p>
+
+  <h2>那為什麼大家都說測試者必須活躍？</h2>
+
+  <p>有兩個原因，其中只有一個來自 Google。</p>
+
+  <h3>1. 是連續性，不是活躍度</h3>
+  <p>這 14 天必須<em>連續</em>。如果有人退出，或者你把他移出群組，那位測試者的
+  計時就歸零。真正會毀掉測試的是這個，而不是安靜的一天。</p>
+
+  <h3>2. 申請表要你自己解釋</h3>
+  <p>達到門檻後申請正式版存取權，需要回答三個部分的問題：</p>
+  <table>
+    <tr><th>部分</th><th>問什麼</th></tr>
+    <tr><td>關於你的封閉測試</td><td>怎麼做的、誰在測、學到了什麼</td></tr>
+    <tr><td>關於你的應用/遊戲</td><td>它做什麼、給誰用</td></tr>
+    <tr><td>關於上線準備</td><td>是否完成到可以發布</td></tr>
+  </table>
+  <p>沒有哪個欄位要求你附上測試者回饋。但如果一場測試裡沒人打開過任何東西，
+  第一部分就無話可寫，而審核人會讀它。</p>
+
+  <h2>這對你意味著什麼</h2>
+  <ul>
+    <li><b>不要為漏掉的一天驚慌。</b>週二沒打開的人並沒有破壞什麼。</li>
+    <li><b>要警惕有人退出群組。</b>那會重置他的連續性。</li>
+    <li><b>如無特殊理由，請開放給所有國家。</b>「我的國家用不了」是測試者悄然
+      流失最常見的方式之一。</li>
+    <li><b>你仍然需要真實使用。</b>不是因為 Google 在數，而是因為申請表裡需要
+      寫點誠實的東西 —— 也因為跟你互測的人請你測試他的應用，不是請你坐在名單裡。</li>
+  </ul>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 直接從 Android 使用記錄中替你記下每天的打開。不需要截圖，
+    不需要表單。對方也在用時，你們都能看到誰真的出現了。
+    <a href="/">看看怎麼運作</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    來源：Play Console 說明《新個人開發者帳號的應用測試需求》(文章 14151465)，
+    2026 年 8 月 31 日查閱。Google 可能會改動 —— 真正依賴前請查看當前頁面。
+  </p>`,
+};
+
 document.getElementById('langSlot').innerHTML = langPicker();
+document.getElementById('doc').innerHTML = DOC[LANG] ?? DOC.en;
 applyDom();
 wireLangPicker();
 mountAuth('authSlot', t);

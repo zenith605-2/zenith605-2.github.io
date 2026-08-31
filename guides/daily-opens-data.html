@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nobody opens your app all 14 days — numbers from 21 closed tests</title>
-<meta name="description" content="Across 21 finished test-for-test trades, the tester opened the app on 10.3 of 14 days on average. Nobody managed all 14. What that means for closed testing.">
+<title>Nobody opens your app all 14 days — numbers from 44 closed tests</title>
+<meta name="description" content="Across 44 finished test-for-test trades, the tester opened the app on 8.5 of 14 days on average. Only two managed all 14. What that means for closed testing.">
 <link rel="canonical" href="https://zenith605-2.github.io/guides/daily-opens-data.html">
-<link rel="stylesheet" href="/assets/app.css?v=26">
+<link rel="stylesheet" href="/assets/app.css?v=27">
 </head>
 <body>
 
@@ -17,43 +17,107 @@
       <a href="/launched.html" data-t="nav_launched">Launched</a>
       <a href="/parties.html" data-t="nav_party">Parties</a>
       <a href="/community.html" data-t="nav_board">Board</a>
-      <a href="/how.html" data-t="nav_how">How it works</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
       <span id="authSlot"></span>
       <span id="langSlot"></span>
     </nav>
   </div>
 </header>
 
-<article class="doc wrap narrow" style="padding-top:30px">
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=27';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=27';
+
+const DOC = {
+  ko: `
+  <h1 style="font-size:28px;margin:0 0 8px">14일 내내 앱을 여는 사람은 없어요</h1>
+  <p class="muted" style="margin:0 0 24px">2026년 9월 1일 측정 · 끝난 품앗이 44건</p>
+
+  <p>다들 이걸 짐작으로만 말합니다. 우리는 잴 수 있습니다 — 앱이 안드로이드
+  사용 기록에서 매일 연 날을 자동으로 적기 때문입니다. 아무에게도 보고해
+  달라고 하지 않습니다.</p>
+
+  <p>14일을 다 채운 품앗이 44건에서, 테스터가 실제로 앱을 연 날은 이랬습니다.</p>
+
+  <table>
+    <tr><th>가장 적게</th><td>0 / 14</td></tr>
+    <tr><th>가장 많이</th><td>15 / 14</td></tr>
+    <tr><th>평균</th><td><b>8.5 / 14</b></td></tr>
+    <tr><th>14일을 다 채운 사람</th><td><b>44명 중 2명</b></td></tr>
+  </table>
+
+  <p>한 명은 단 하루도 열지 않았습니다.</p>
+
+  <h2>여기서 두 가지가 따라옵니다</h2>
+
+  <h3>당신의 테스트는 아마 괜찮습니다</h3>
+  <p>구글이 세는 건 테스터가 얼마나 오래 옵트인해 있었는가지, 몇 번 열었는가가
+  아닙니다 — <a href="/guides/what-google-checks.html">구글이 실제로 보는 것</a>을
+  보세요. 사흘 빠진 테스터가 테스트를 깬 게 아닙니다. 모두가 14일 중 14일을
+  채워야 한다면 아무도 통과하지 못합니다.</p>
+
+  <h3>그래도 14일 중 0일은 테스트가 아닙니다</h3>
+  <p>8일은 앱을 써 본 사람입니다. 0일은 옵트인만 하고 잊어버린 사람입니다.
+  구글은 그 차이를 안 볼지 몰라도, 그 대가로 <em>당신 앱</em>을 깐 개발자는 압니다.</p>
+
+  <p>부끄러워해야 할 숫자는 그쪽이지 구글의 숫자가 아닙니다.</p>
+
+  <h2>왜 이게 잘 안 보이나</h2>
+
+  <p>대부분의 도구는 손으로 증명하라고 합니다 — 스크린샷을 올리고, 단계별
+  피드백 양식을 채우고, 잠긴 그룹에 남아 있으라고요. 전부 일거리이고, 사람들이
+  닷새째에 그만두는 게 정확히 그 일거리입니다.</p>
+
+  <p>안드로이드는 이미 사용 기록을 갖고 있습니다. 그걸 읽는 데 테스터가 하는
+  일은 없습니다 — 앱을 열면 그날이 기록됩니다. 애초에 이 숫자들을 얻을 수 있었던
+  것도 그래서입니다.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b>는 무료이고, <a href="/">앱 보드</a>는 로그인 없이 볼 수 있습니다.
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    한 계정에서 맺은 품앗이라 표본이 작습니다. 추정이 아니라 실측이지만
+    업계 평균으로 읽지는 마세요.
+  </p>`,
+
+  en: `
   <h1 style="font-size:28px;margin:0 0 8px">Nobody opens your app all 14 days</h1>
-  <p class="muted" style="margin:0 0 24px">Measured 31 August 2026 · 21 finished trades</p>
+  <p class="muted" style="margin:0 0 24px">Measured 1 September 2026 · 44 finished trades</p>
 
   <p>Everyone guesses at this. We can measure it, because the app records daily
   opens automatically from Android's usage stats rather than asking anyone to
   report them.</p>
 
-  <p>Here are 21 test-for-test trades that ran their full 14 days, and how many
+  <p>Here are 44 test-for-test trades that ran their full 14 days, and how many
   of those days the tester actually opened the app:</p>
 
   <table>
-    <tr><th>Lowest</th><td>4 / 14</td></tr>
-    <tr><th>Highest</th><td>13 / 14</td></tr>
-    <tr><th>Average</th><td><b>10.3 / 14</b></td></tr>
-    <tr><th>Opened every single day</th><td><b>0 people</b></td></tr>
+    <tr><th>Lowest</th><td>0 / 14</td></tr>
+    <tr><th>Highest</th><td>15 / 14</td></tr>
+    <tr><th>Average</th><td><b>8.5 / 14</b></td></tr>
+    <tr><th>Opened every single day</th><td><b>2 of 44</b></td></tr>
   </table>
 
-  <p>Not one. Including the person who built the app.</p>
+  <p>One person never opened it at all.</p>
 
   <h2>Two things follow from this</h2>
 
   <h3>Your test is probably fine</h3>
   <p>Google counts how long a tester stayed opted in, not how often they opened
-  anything. A tester who missed three days has not broken your test — see
-  <a href="/guides/what-google-checks.html">what Google actually checks</a>.
-  If everyone had to hit 14 of 14, nobody would ever pass.</p>
+  anything — see <a href="/guides/what-google-checks.html">what Google actually
+  checks</a>. A tester who missed three days has not broken your test. If
+  everyone had to hit 14 of 14, nobody would ever pass.</p>
 
-  <h3>But 4 of 14 is not testing</h3>
-  <p>10 of 14 is a person who used your app. 4 of 14 is a person who opted in
+  <h3>But 0 of 14 is not testing</h3>
+  <p>Eight of 14 is a person who used your app. Zero is a person who opted in
   and forgot. Google may not care about the difference. The developer who
   installed <em>your</em> app in exchange does.</p>
 
@@ -78,15 +142,156 @@
     Numbers are from trades on one account and are a small sample. They are
     real measurements, not estimates, but do not read them as an industry
     average.
-  </p>
-</article>
+  </p>`,
 
-<footer class="bot"><div class="wrap"><p><a href="/guides/">All guides</a> · <a href="/">App board</a></p></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script type="module">
-import { mountAuth } from '/assets/api.js?v=26';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=26';
+  ja: `
+  <h1 style="font-size:28px;margin:0 0 8px">14日間ずっと開く人はいません</h1>
+  <p class="muted" style="margin:0 0 24px">2026年9月1日計測 · 完了した交換44件</p>
+
+  <p>これは普通、推測でしか語られません。私たちは測れます — アプリがAndroidの
+  使用履歴から毎日開いた日を自動で記録するからです。誰にも報告を頼みません。</p>
+
+  <p>14日を満たした交換44件で、テスターが実際にアプリを開いた日数です。</p>
+
+  <table>
+    <tr><th>最少</th><td>0 / 14</td></tr>
+    <tr><th>最多</th><td>15 / 14</td></tr>
+    <tr><th>平均</th><td><b>8.5 / 14</b></td></tr>
+    <tr><th>14日すべて開いた人</th><td><b>44名中2名</b></td></tr>
+  </table>
+
+  <p>一人は一度も開きませんでした。</p>
+
+  <h2>ここから二つのことが分かります</h2>
+
+  <h3>あなたのテストはたぶん大丈夫です</h3>
+  <p>Googleが数えるのはオプトインしていた期間であって、何回開いたかでは
+  ありません — <a href="/guides/what-google-checks.html">Googleが実際に見ているもの</a>
+  をご覧ください。三日抜けたテスターがテストを壊したわけではありません。
+  全員が14日中14日を満たす必要があるなら、誰も通りません。</p>
+
+  <h3>ただし14日中0日はテストではありません</h3>
+  <p>8日は実際に使った人です。0日はオプトインして忘れた人です。Googleは
+  その差を見ないかもしれませんが、代わりに<em>あなたのアプリ</em>を入れた
+  開発者は分かります。</p>
+
+  <p>恥じるべき数字はそちらで、Googleの数字ではありません。</p>
+
+  <h2>なぜこれが見えにくいのか</h2>
+
+  <p>多くのツールは手作業での証明を求めます — スクリーンショットを上げ、
+  段階別のフィードバック用紙を埋め、ロックされたグループに残る。すべて
+  手間であり、人が5日目にやめるのはまさにその手間です。</p>
+
+  <p>Androidはすでに使用ログを持っています。それを読むのにテスターの手間は
+  ゼロです — 開けばその日が記録されます。そもそもこの数字が取れたのもそのためです。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b>は無料で、<a href="/">アプリボード</a>はログイン不要で見られます。
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    一つのアカウントでの交換なので標本は小さいです。推定ではなく実測ですが、
+    業界平均として読まないでください。
+  </p>`,
+
+  'zh-Hans': `
+  <h1 style="font-size:28px;margin:0 0 8px">没有人会连开 14 天</h1>
+  <p class="muted" style="margin:0 0 24px">2026 年 9 月 1 日测量 · 44 场完成的互测</p>
+
+  <p>大家都只能靠猜。我们可以测 —— 因为应用会从 Android 使用记录中自动记下
+  每天的打开，不需要任何人来汇报。</p>
+
+  <p>这是 44 场跑满 14 天的互测中，测试者实际打开应用的天数：</p>
+
+  <table>
+    <tr><th>最少</th><td>0 / 14</td></tr>
+    <tr><th>最多</th><td>15 / 14</td></tr>
+    <tr><th>平均</th><td><b>8.5 / 14</b></td></tr>
+    <tr><th>每天都打开的人</th><td><b>44 人中 2 人</b></td></tr>
+  </table>
+
+  <p>有一个人一次都没打开过。</p>
+
+  <h2>由此得出两点</h2>
+
+  <h3>你的测试大概率没问题</h3>
+  <p>Google 算的是加入状态持续了多久，不是打开了几次 —— 见
+  <a href="/guides/what-google-checks.html">Google 实际检查什么</a>。漏了三天的
+  测试者并没有毁掉你的测试。如果人人都要 14 天全勤，没人能通过。</p>
+
+  <h3>但 14 天里 0 天不叫测试</h3>
+  <p>14 天里 8 天，是真的用过你应用的人。0 天，是加入后就忘了的人。Google
+  也许不在意这个差别，但作为交换装了<em>你的应用</em>的那位开发者在意。</p>
+
+  <p>该觉得难为情的是这个数字，不是 Google 的。</p>
+
+  <h2>为什么这很难看见</h2>
+
+  <p>大多数工具要求测试者手动证明：上传截图、填写分阶段的反馈表、留在锁定的
+  群组里。每一项都是额外的活儿，而人们在第五天停下来的正是这些活儿。</p>
+
+  <p>Android 本来就有使用记录。读取它对测试者来说毫无成本 —— 打开应用，
+  那一天就被记下了。我们能拿到这些数字，也正是因为如此。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 免费，浏览<a href="/">应用板</a>无需账号。
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    数据来自一个账号的互测，样本很小。这是实测而非估算，但请不要当作行业均值。
+  </p>`,
+
+  'zh-Hant': `
+  <h1 style="font-size:28px;margin:0 0 8px">沒有人會連開 14 天</h1>
+  <p class="muted" style="margin:0 0 24px">2026 年 9 月 1 日測量 · 44 場完成的互測</p>
+
+  <p>大家都只能靠猜。我們可以測 —— 因為應用會從 Android 使用記錄中自動記下
+  每天的打開，不需要任何人來回報。</p>
+
+  <p>這是 44 場跑滿 14 天的互測中，測試者實際打開應用的天數：</p>
+
+  <table>
+    <tr><th>最少</th><td>0 / 14</td></tr>
+    <tr><th>最多</th><td>15 / 14</td></tr>
+    <tr><th>平均</th><td><b>8.5 / 14</b></td></tr>
+    <tr><th>每天都打開的人</th><td><b>44 人中 2 人</b></td></tr>
+  </table>
+
+  <p>有一個人一次都沒打開過。</p>
+
+  <h2>由此得出兩點</h2>
+
+  <h3>你的測試大概率沒問題</h3>
+  <p>Google 算的是加入狀態持續了多久，不是打開了幾次 —— 見
+  <a href="/guides/what-google-checks.html">Google 實際檢查什麼</a>。漏了三天的
+  測試者並沒有毀掉你的測試。如果人人都要 14 天全勤，沒人能通過。</p>
+
+  <h3>但 14 天裡 0 天不叫測試</h3>
+  <p>14 天裡 8 天，是真的用過你應用的人。0 天，是加入後就忘了的人。Google
+  也許不在意這個差別，但作為交換裝了<em>你的應用</em>的那位開發者在意。</p>
+
+  <p>該覺得難為情的是這個數字，不是 Google 的。</p>
+
+  <h2>為什麼這很難看見</h2>
+
+  <p>大多數工具要求測試者手動證明：上傳截圖、填寫分階段的回饋表、留在鎖定的
+  群組裡。每一項都是額外的工作，而人們在第五天停下來的正是這些工作。</p>
+
+  <p>Android 本來就有使用記錄。讀取它對測試者來說毫無成本 —— 打開應用，
+  那一天就被記下了。我們能拿到這些數字，也正是因為如此。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 免費，瀏覽<a href="/">應用板</a>無需帳號。
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    數據來自一個帳號的互測，樣本很小。這是實測而非估算，但請不要當作業界均值。
+  </p>`,
+};
+
 document.getElementById('langSlot').innerHTML = langPicker();
+document.getElementById('doc').innerHTML = DOC[LANG] ?? DOC.en;
 applyDom();
 wireLangPicker();
 mountAuth('authSlot', t);
