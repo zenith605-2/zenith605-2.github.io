@@ -427,6 +427,13 @@ export async function myAppArchives() {
   return data || [];
 }
 
+/// 사람 × 날짜 표 — 어느 날 몇 명이 유지 중이었는지를 그림으로 본다.
+/// tracked=false 는 상대가 우리 쪽에 안 걸린 품앗이다(레딧에서 손으로 맺은 것).
+export async function appOptinGrid(appId) {
+  const { data } = await sb.rpc('app_optin_grid', { p_app_id: appId });
+  return data || [];
+}
+
 /// 버전 타임라인 — 어느 피드백이 어느 버전에서 나왔는지 자르는 기준.
 /// 보고 시각이 아니라 테스터 폰에 그 버전이 깔린 시각을 쓴다.
 export async function appVersionTimeline(appId) {
