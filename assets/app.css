@@ -665,12 +665,14 @@ ol.steps li::marker { color: var(--mint); font-weight: 800; }
 /* 신청은 제목 오른쪽에 둔다. 카드 맨 아래에 있으면 내용을 다 읽고
    내려와야 눌리는데, 실제로는 이름만 보고 누르는 사람이 많다. */
 #board #list .head .cardact {
-  flex-direction: row; align-items: center; gap: 12px;
-  width: auto; max-width: none; margin: 0 0 0 auto; text-align: left;
+  /* 안내 문구는 버튼 아래로. 옆에 두면 버튼과 같은 무게로 읽혀
+     무엇이 눌리는 것인지 한 번 더 판단해야 한다. */
+  flex-direction: column; align-items: stretch; gap: 6px;
+  width: auto; max-width: 200px; margin: 0 0 0 auto; text-align: center;
   flex: none;
 }
 #board #list .cardact .btn { padding: 11px 22px; font-size: 15px; white-space: nowrap; }
-#board #list .cardact .muted { font-size: 12.5px; text-align: left; }
+#board #list .cardact .muted { font-size: 12px; text-align: center; line-height: 1.4; }
 #board #list .cardact .state { align-self: center; padding: 0; white-space: nowrap; }
 
 /* ---- 넓은 화면(900px 이상): 오른쪽에 진행·버튼 ----
