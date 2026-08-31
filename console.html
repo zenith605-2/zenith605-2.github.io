@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=29">
+<link rel="stylesheet" href="/assets/app.css?v=30">
 </head>
 <body>
 
@@ -43,8 +43,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=29';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=29';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=30';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=30';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -1049,7 +1049,7 @@ const RPT = {
         a2: '앱 안의 피드백 기능과 1:1 대화로 받았습니다. 피드백 {f}건, 대화 {c}건이 남아 있습니다.',
         q3: '어떤 의견을 받았나', q4: '무엇을 바꿨나',
         a4blank: '[받은 의견별로 무엇을 고쳤는지 쓰세요 — 위 답변에 이미 적은 내용이 있습니다]',
-        vernote: '버전 구간은 테스터 폰에 그 버전이 설치된 시각으로 잘랐습니다.',
+        vernote: '버전 구간은 그 빌드가 테스터 폰에서 처음 확인된 시각으로 잘랐습니다. 테스터 수는 지금 그 버전을 쓰고 있는 사람 수입니다.',
         madeby: 'ACT Party에서 내보냄' },
   en: { period: 'Period', testers: 'Testers', party: 'Party', trade: 'Trades',
         total: 'Total', gdays: 'Days with 12+ testers together', unit_p: '',
@@ -1066,7 +1066,7 @@ const RPT = {
         a2: 'In-app feedback and 1:1 chat. {f} feedback items and {c} chat messages are on record.',
         q3: 'What feedback did you receive', q4: 'What did you change',
         a4blank: '[Write what you fixed for each item above]',
-        vernote: 'Version windows are cut at the time the build appeared on a tester phone.',
+        vernote: 'Windows are cut when the build first appeared on a tester phone. The count is who is on that version now.',
         madeby: 'Exported from ACT Party' },
   ja: { period: '期間', testers: 'テスター', party: 'パーティ', trade: '個人交換',
         total: '合計', gdays: '12名以上が同じ日にテストした日', unit_p: '名',
@@ -1083,7 +1083,7 @@ const RPT = {
         a2: 'アプリ内のフィードバックと1:1チャットです。フィードバック{f}件、チャット{c}件が残っています。',
         q3: 'どんな意見を受けたか', q4: '何を変えたか',
         a4blank: '[各意見に対して何を直したか書いてください]',
-        vernote: 'バージョン区間は端末にそのビルドが入った時刻で区切っています。',
+        vernote: 'バージョン区間はそのビルドが端末で最初に確認された時刻で区切ります。人数は今そのバージョンを使っている人です。',
         madeby: 'ACT Party から出力' },
 };
 RPT['zh-Hans'] = { ...RPT.en, period: '周期', testers: '测试者', party: '派对',
