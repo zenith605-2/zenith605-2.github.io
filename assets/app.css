@@ -893,7 +893,9 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
   width: 15px; height: 15px; border: 1px solid var(--ink900);
   background: var(--ink800); border-radius: 3px;
 }
-.gtab tbody td.keep { background: color-mix(in srgb, var(--mint) 28%, var(--ink800)); }
+/* 세 단계가 한눈에 갈려야 한다 — 빈칸 / 유지 / 그날 엶.
+   유지가 빈칸에 가까우면 '아무것도 없는 날'로 읽힌다. */
+.gtab tbody td.keep { background: color-mix(in srgb, var(--mint) 45%, var(--ink800)); }
 .gtab tbody td.hit  { background: var(--mint); }
 .gtab tr.out td.keep { background: var(--ink700); }
 .gtab tr.out td.hit  { background: var(--ink600); }
@@ -930,7 +932,7 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
   font-size: 11px; color: var(--ink300); }
 .glegend span { display: inline-flex; align-items: center; gap: 5px; }
 .glegend i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
-.glegend i.keep { background: color-mix(in srgb, var(--mint) 28%, var(--ink800)); }
+.glegend i.keep { background: color-mix(in srgb, var(--mint) 45%, var(--ink800)); }
 .glegend i.hit { background: var(--mint); }
 .glegend i.out { background: var(--ink700); }
 .gtab thead th.now { color: var(--mint); font-weight: 800; }

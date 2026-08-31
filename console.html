@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=45">
+<link rel="stylesheet" href="/assets/app.css?v=46">
 </head>
 <body>
 
@@ -44,8 +44,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=45';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=45';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=46';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=46';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -294,7 +294,7 @@ function paneApps(pane) {
           <button class="btn ghost sm" data-delapp="${a.id}">${t('delete')}</button>
           ${a.package_name ? `<a class="btn ghost sm" href="/app.html?p=${encodeURIComponent(a.package_name)}">${t('public_page')}</a>` : ''}
         </div>
-        <details class="grid-d" data-grid="${a.id}">
+        <details class="grid-d" data-grid="${a.id}" open>
           <summary>${t('grid_open')}</summary>
           <div class="gridbody"><p class="muted">${t('loading')}</p></div>
         </details>
@@ -971,7 +971,7 @@ async function paneHistory(pane) {
           ${dline(t('hist_all') + ' · ' + t('hist_last'),
             tf('hist_pnum', { n: r.total_optin_now ?? 0 }))}
         </div>
-        <details class="grid-d" data-grid="${esc(r.app_id)}">
+        <details class="grid-d" data-grid="${esc(r.app_id)}" open>
           <summary>${t('grid_open')}</summary>
           <div class="gridbody"><p class="muted">${t('loading')}</p></div>
         </details>
@@ -1056,14 +1056,18 @@ async function paneHistory(pane) {
 
 /// 표는 펼칠 때만 받는다 — 앱마다 수백 칸이다. 내 앱 탭과 이력 탭이 같이 쓴다.
 function wireGrids(pane) {
+  // 기본으로 펼쳐 두므로 toggle 만 기다리면 영영 안 받는다 —
+  // 열려 있는 건 바로 받고, 접었다 다시 펴는 경우만 toggle 로 받는다.
+  const load = async (d) => {
+    if (d.dataset.done) return;
+    d.dataset.done = '1';
+    let rows = [];
+    try { rows = await appOptinGrid(d.dataset.grid); } catch (_) {}
+    d.querySelector('.gridbody').innerHTML = gridHtml(rows);
+  };
   pane.querySelectorAll('details.grid-d').forEach(d => {
-    d.addEventListener('toggle', async () => {
-      if (!d.open || d.dataset.done) return;
-      d.dataset.done = '1';
-      let rows = [];
-      try { rows = await appOptinGrid(d.dataset.grid); } catch (_) {}
-      d.querySelector('.gridbody').innerHTML = gridHtml(rows);
-    });
+    d.addEventListener('toggle', () => { if (d.open) load(d); });
+    if (d.open) load(d);
   });
 }
 
