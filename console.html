@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=22">
+<link rel="stylesheet" href="/assets/app.css?v=23">
 </head>
 <body>
 
@@ -42,8 +42,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=22';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=22';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=23';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=23';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -619,9 +619,17 @@ function setupSteps(e) {
     <p class="step" style="margin:0 0 6px">${t('setup_h')}</p>
     ${row(t('step_group'), !!e.setup_group_done, e.peer_group_url, 'setup_group_done')}
     ${row(t('step_optin'), !!e.setup_optin_done, e.peer_optin_url, 'setup_optin_done')}
-    ${row(t('step_install'), !!e.setup_install_done, null, null)}
-    ${!e.setup_install_done
-      ? `<p class="hint" style="margin:6px 0 0">${t('step_install_p')}</p>` : ''}
+    ${row(t('step_install'), !!e.setup_install_done,
+          e.peer_package
+            ? `https://play.google.com/store/apps/details?id=${encodeURIComponent(e.peer_package)}`
+            : null, null)}
+    ${!e.setup_install_done ? `
+      <p class="hint" style="margin:6px 0 0">${t('step_install_p')}</p>
+      ${e.peer_package ? `<p style="margin:8px 0 0">
+        <a class="btn ghost sm"
+           href="https://play.google.com/store/apps/details?id=${encodeURIComponent(e.peer_package)}"
+           target="_blank" rel="noopener">${t('step_install_web')} ↗</a></p>
+        <p class="hint" style="margin:6px 0 0">${t('step_install_web_p')}</p>` : ''}` : ''}
   </div>`;
 }
 
