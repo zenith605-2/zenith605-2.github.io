@@ -899,6 +899,23 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
 }
 .gtab tr.sum td.ok { color: var(--mint); font-weight: 800; }
 
+/* 묶음 이름 — 왼쪽 첫 열에 세로로. 띠로 얹으면 줄 하나를 통째로 먹는다 */
+.gtab th.grp {
+  position: sticky; left: 0; z-index: 2; background: var(--ink900);
+  vertical-align: middle; padding: 0 6px 0 0; width: 1px; white-space: nowrap;
+}
+.gtab th.grp > span {
+  /* 한글은 vertical-rl 만으로 위에서 아래로 바로 읽힌다.
+     rotate(180deg) 를 걸면 글자가 뒤집힌다. */
+  writing-mode: vertical-rl; text-orientation: mixed;
+  display: inline-block; font-size: 10.5px; font-weight: 700;
+  color: var(--ink300); letter-spacing: .02em; line-height: 1.2;
+}
+.gtab th.grp > span b { color: var(--ink100); }
+.gtab tr.out th.grp > span { color: var(--ink600); }
+.gtab tr.out th.grp > span b { color: var(--ink300); }
+.gtab th.who { left: 22px; }
+
 /* 표 다듬기 — 오늘 열, 구분 띠, 범례 */
 .hdates.alt { margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--ink700); }
 .hdates.alt .hdate span, .hdates.alt .hdate b { color: var(--ink300); }
@@ -910,9 +927,6 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
 .glegend i.hit { background: var(--mint); }
 .glegend i.out { background: var(--ink700); }
 .gtab thead th.now { color: var(--mint); font-weight: 800; }
-.gtab tr.band th.who { font-size: 11px; font-weight: 800; color: var(--ink100);
-  padding: 10px 8px 4px 0; }
-.gtab tr.band td { background: transparent; border: 0; }
 .gtab tr.sum.ok-row th.who { color: var(--mint); }
 .gtab tr.sum.all-row th.who { color: var(--ink300); }
 .gtab tr.sum td { padding-top: 4px; }
