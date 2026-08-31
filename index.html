@@ -9,7 +9,7 @@
 <meta property="og:title" content="Android apps looking for closed testers">
 <meta property="og:description" content="Trade closed tests with other Android devs. Daily opens record themselves.">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="/assets/app.css?v=14">
+<link rel="stylesheet" href="/assets/app.css?v=15">
 </head>
 <body>
 
@@ -86,8 +86,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth } from '/assets/api.js?v=14';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=14';
+import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth } from '/assets/api.js?v=15';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=15';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -137,13 +137,13 @@ function card(a, i) {
       <p class="muted who">${devIcon(a)}${devName(a)}${
         a.last_seen_at ? ` · ${t('active')} ` + ago(a.last_seen_at) : ''}
         <span class="sep">·</span>${trust(a)}</p>
-      ${a.description ? `<p class="desc">${esc(a.description)}</p>` : ''}
       <div class="stats">
         <div class="bar"><i style="width:${pct}%"></i></div>
         <p class="count"><b>${cur}</b> / ${need} ${t('testers')}${
           ext > 0 ? ` <span class="sub">(${act} ${t('on_act')} · ${ext} ${t('outside')})</span>` : ''}</p>
         ${testerFaces(a)}
       </div>
+      ${a.description ? `<p class="desc">${esc(a.description)}</p>` : ''}
     </div></div>`;
 }
 
