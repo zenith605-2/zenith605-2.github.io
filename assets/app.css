@@ -992,3 +992,7 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
 /* 반려된 날 — 회차를 나누는 금. 앞 기록은 지우지 않고 남긴다 */
 .gtab td.cut, .gtab th.cut { border-left: 2px solid var(--rose) !important; }
 .gtab thead th.cut { color: var(--rose); font-weight: 800; }
+
+/* 내가 한 말은 살짝 다르게 — 상대 말과 섞이면 누가 했는지 흐려진다 */
+.rec.mine { background: color-mix(in srgb, var(--mint) 8%, var(--ink800)); }
+.rec.mine .recwho b { color: var(--mint); }
