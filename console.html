@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=25">
+<link rel="stylesheet" href="/assets/app.css?v=26">
 </head>
 <body>
 
@@ -42,8 +42,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=25';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=25';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=26';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=26';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -788,15 +788,13 @@ function peerLine(e) {
       <span class="tag">${t('not_act_user')}</span>
       <span class="dim">${t('not_act_p')}</span></p>`;
   }
-  // 개발자명이 앱 이름과 같은 사람이 많다. 바로 윗줄에 이미 있는 이름을
-  // 한 번 더 적으면 줄만 길어진다.
+  // 앱 이름과 같아도 그냥 적는다. 숨겨 봤더니 이모지만 덩그러니 남아서
+  // 개발자명을 안 넣은 사람처럼 보였다.
   const nm = p.developer_name || '';
-  const same = nm && e.peer_app_name &&
-    nm.replace(/\s/g, '').toLowerCase() === e.peer_app_name.replace(/\s/g, '').toLowerCase();
   // 앱 아이콘이 이미 왼쪽에 큼직하게 있다. 여기 또 작은 아이콘을 넣으면
   // 무엇을 가리키는 그림인지 헷갈린다. 사람은 헤더와 같은 이모지로 통일한다.
   return `<p class="muted who" style="margin:2px 0 0">
-    <span class="emo">🧑</span>${same ? '' : esc(nm || t('developer'))}
+    <span class="emo">🧑</span>${esc(nm || t('developer'))}
     <span class="tag mint">${t('act_user')}</span>
     ${p.usage_access ? `<span class="tag mint">${t('auto_ok')}</span>`
                      : `<span class="tag rose">${t('auto_off')}</span>`}
