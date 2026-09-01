@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=68">
+<link rel="stylesheet" href="/assets/app.css?v=69">
 </head>
 <body>
 
@@ -44,8 +44,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=68';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=68';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=69';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=69';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -292,8 +292,13 @@ function paneApps(pane) {
           </label>
           <button class="btn ghost sm" data-edit="${a.id}">${t('edit')}</button>
           <button class="btn ghost sm" data-delapp="${a.id}">${t('delete')}</button>
-          ${a.package_name ? `<a class="btn ghost sm" href="/app.html?p=${encodeURIComponent(a.package_name)}">${t('public_page')}</a>` : ''}
+          ${a.package_name ? `<a class="btn ghost sm" target="_blank"
+            href="/a/${encodeURIComponent(a.package_name)}/">${t('public_page')}</a>
+          <button class="btn ghost sm" data-copy="${esc(a.package_name)}">${
+            t('copy_link')}</button>` : ''}
         </div>
+        ${a.package_name ? `<p class="hint" style="margin:8px 0 0">${
+          t('share_hint')}</p>` : ''}
         <div class="grid-d" data-grid="${a.id}">
           <div class="gridbody"><p class="muted">${t('loading')}</p></div>
         </div>
@@ -303,6 +308,18 @@ function paneApps(pane) {
         </details>
       </div></div>`;
   }).join('') : `<p class="muted">${t('no_apps')}</p>`;
+
+  // 링크 하나가 홍보 도구다 — 앱마다 미리보기가 붙는 주소가 이미 있다.
+  // 개발자 24명이 각자 뿌리는 게 우리가 혼자 알리는 것보다 넓다.
+  pane.querySelectorAll('[data-copy]').forEach(b => {
+    b.onclick = async () => {
+      const url = `${location.origin}/a/${encodeURIComponent(b.dataset.copy)}/`;
+      try { await navigator.clipboard.writeText(url); } catch (_) {}
+      const was = b.textContent;
+      b.textContent = t('copied');
+      setTimeout(() => { b.textContent = was; }, 1500);
+    };
+  });
 
   wireGrids(pane);
 
