@@ -792,7 +792,7 @@ export async function myProfile() {
   const uid = (await me())?.id;
   if (!uid) return null;
   const { data } = await sb.from('profiles')
-    .select('id, developer_name, nickname, country, karma, completed_count')
+    .select('id, developer_name, nickname, country, karma, completed_count, usage_access')
     .eq('id', uid).maybeSingle();
   return data ?? null;
 }
