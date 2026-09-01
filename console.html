@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=71">
+<link rel="stylesheet" href="/assets/app.css?v=72">
 </head>
 <body>
 
@@ -45,8 +45,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=71';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=71';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=72';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=72';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -245,6 +245,27 @@ function render() {
 // ---- 내 앱 (여러 개) ----
 /// 웹만 쓰는 사람은 인증이 안 잡힌다 — 상대 화면에 [기록 없음]으로 뜬다.
 /// 성실히 테스트해도 못 미더운 사람이 되는 자리라, 여기가 제일 큰 누수다.
+/// 앱 등록을 막 끝낸 사람에게. 여기까지 온 사람은 의지가 있는 사람이라
+/// 이 순간이 앱을 깔 확률이 제일 높다. 다시 입력할 게 없다는 걸 못 박는다.
+function regDone() {
+  const box = document.createElement('div');
+  box.className = 'lb';
+  box.innerHTML = `
+    <div class="rptbox" style="max-width:460px" onclick="event.stopPropagation()">
+      <p style="margin:0 0 8px;font-weight:800;font-size:16px">${t('reg_done_h')}</p>
+      <p class="muted" style="margin:0 0 16px;font-size:13px;line-height:1.6">${
+        t('reg_done_p')}</p>
+      <div class="row" style="gap:8px">
+        <a class="btn" href="${STORE_URL}" target="_blank" rel="noopener">${
+          t('noapp_btn')}</a>
+        <button class="btn ghost" id="regLater">${t('reg_done_no')}</button>
+      </div>
+    </div>`;
+  box.onclick = () => box.remove();
+  document.body.appendChild(box);
+  box.querySelector('#regLater').onclick = () => box.remove();
+}
+
 function noAppBanner() {
   if (D.prof?.usage_access) return '';
   return `<div class="note warn" style="margin-bottom:14px">
@@ -2015,6 +2036,8 @@ function appForm(existing) {
         is_public: a.is_public !== false,
       });
       await load(); tab = 'apps'; render();
+      // 등록만 하고 앱을 안 깔면 인증이 0으로 남는다 — 그 자리에서 알려 준다
+      if (!D.prof?.usage_access) regDone();
     } catch (e) { alert(e.message || e); ev.target.disabled = false; }
   };
 }
