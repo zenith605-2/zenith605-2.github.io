@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=70">
+<link rel="stylesheet" href="/assets/app.css?v=71">
 </head>
 <body>
 
@@ -40,12 +40,13 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          iconHtml, esc, ago, STORE_URL, mountAuth, authReady, cleanUrl,
          myAppHistory, myAppArchives, appDetailRecords, appVersionTimeline,
          appOptinGrid, myAppReviews, addAppReview, deleteAppReview,
+         myOneSided, offerTrade,
          dayStrip, peerCheckDays, peerIdentity, myTradeChats, tradeMessages, sendTradeMessage,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=70';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=70';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=71';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=71';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -129,6 +130,8 @@ async function load() {
     mySentFeedbacks().catch(() => []),
     myProfile().catch(() => null),
   ]);
+  // 한쪽만 걸린 품앗이 — 상대가 열어도 기록될 자리가 없는 것들
+  const oneSided = await myOneSided().catch(() => []);
   // 상대가 내 앱을 연 날 — 상호 인증이면 달력 아래 줄에 파란 칸으로 함께 보인다
   const pkgs = [...new Set(ex.map(e => e.peer_package).filter(Boolean))];
   const [peer, peerInfo] = await Promise.all([
@@ -136,7 +139,8 @@ async function load() {
     peerIdentity(ex.map(e => e.id)).catch(() => ({})),
   ]);
   D = { apps, prog: Object.fromEntries(prog.map(p => [p.app_id, p])),
-        ex, incoming, chats, fbIn, fbOut, peer, peerInfo, prof };
+        ex, incoming, chats, fbIn, fbOut, peer, peerInfo, prof,
+        oneSided: Object.fromEntries(oneSided.map(o => [o.exchange_id, o])) };
 }
 
 // ---- 탭 ----
@@ -503,6 +507,7 @@ function paneTesting(pane) {
       ${peerLine(e)}
         </div>
       </div>
+      ${oneSidedNote(e)}
       ${dayStrip(e, pd)}
       <p class="strip-note">${t('strip_note')}${pd ? t('strip_note_peer') : ''}</p>
       <div class="row" style="margin-top:12px">
@@ -539,6 +544,17 @@ function paneTesting(pane) {
   }).join('')}</div></details>`).join('');
 
   document.getElementById('addTrade').onclick = () => tradeForm();
+
+  // 신청을 보내면 상대가 수락할 때 서버가 양쪽을 만들어 준다
+  pane.querySelectorAll('[data-offer]').forEach(b => {
+    b.onclick = async () => {
+      b.disabled = true;
+      try {
+        await offerTrade(b.dataset.offer, b.dataset.my || null, '');
+        b.outerHTML = `<span class="muted" style="font-size:12px">${t('os_done')}</span>`;
+      } catch (err) { b.disabled = false; alert(err.message || err); }
+    };
+  });
 
   pane.querySelectorAll('[data-tchat]').forEach(b => {
     b.onclick = () => openChat(b.dataset.tchat, b.dataset.title);
@@ -782,6 +798,20 @@ function tradeForm(existing) {
 }
 
 /// 상대가 내 앱을 어떻게 해 줬는가 — 앱의 카드와 같은 말을 쓴다.
+/// 상대 쪽에 내 앱이 안 걸려 있으면 그쪽이 아무리 열어도 잴 자리가 없다.
+/// 남의 계정에 몰래 만들 수는 없으니 신청만 보낸다 — 수락은 그쪽이 한다.
+function oneSidedNote(e) {
+  const o = D.oneSided?.[e.id];
+  if (!o || e.status === 'done') return '';
+  return `<div class="note warn" style="margin:10px 0 0;padding:10px 12px">
+    <p style="margin:0;font-size:12.5px">${t('os_warn')}</p>
+    <p style="margin:8px 0 0">${o.already_sent
+      ? `<span class="muted" style="font-size:12px">${t('os_sent')}</span>`
+      : `<button class="btn sm" data-offer="${esc(o.peer_app_id)}"
+           data-my="${esc(e.my_app_id || '')}">${t('os_send')}</button>`}</p>
+  </div>`;
+}
+
 function peerStatus(e) {
   const k = { done: 'ps_done', confirmed: 'ps_confirmed',
               ghosted: 'ps_ghosted' }[e.peer_status] || 'ps_pending';

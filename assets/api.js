@@ -432,6 +432,13 @@ export async function myAppArchives() {
   return data || [];
 }
 
+/// 한쪽만 걸린 품앗이 — 상대가 우리 쪽에 내 앱을 안 걸어 둔 것.
+/// 그러면 상대가 아무리 열어도 잴 자리가 없다.
+export async function myOneSided() {
+  const { data } = await sb.rpc('my_one_sided');
+  return data || [];
+}
+
 /// 프로덕션 신청 결과 — 우리가 알 방법이 없으니 본인이 적는다.
 /// 반려되면 14일을 처음부터 다시 세므로 표의 시작점도 그 날로 옮긴다.
 export async function myAppReviews(appId) {
