@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=74">
+<link rel="stylesheet" href="/assets/app.css?v=75">
 </head>
 <body>
 
@@ -45,8 +45,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=74';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=74';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=75';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=75';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -880,6 +880,9 @@ function paneOffers(pane) {
       <span class="muted">→ ${esc(r.app_name || '')}</span></p>
     <p class="muted" style="margin:0">${esc(r.requester_app_name || '—')} ·
       ${t('sort_karma')} ${r.requester_karma ?? 0} · ${r.requester_completed ?? 0} ${t('t_finished')}</p>
+    <p class="muted" style="margin:2px 0 0">${t('asked')} ${
+      String(r.created_at || '').slice(0, 10)}${
+      r.created_at ? ` · ${ago(r.created_at)}` : ''}</p>
     ${r.message ? `<p class="desc">${esc(r.message)}</p>` : ''}
     <p style="margin:10px 0 0"><button class="btn sm" data-acc="${r.id}">${t('accept')}</button></p>
   </div>`).join('')}</div>`;
