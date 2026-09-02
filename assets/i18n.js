@@ -38,6 +38,7 @@ const T = {
   testers:      ['명 테스트 중', 'testers', '名テスト中', '名测试中', '名測試中'],
   on_act:       ['확인', 'on ACT', '確認', '已确认', '已確認'],
   outside:      ['외부', 'outside', '外部', '外部', '外部'],
+  onesided:     ['한쪽만', 'one-sided', '片側のみ', '单向', '單向'],
   developer:    ['개발자', 'Developer', '開発者', '开发者', '開發者'],
   active:       ['활동', 'active', 'アクティブ', '活跃', '活躍'],
 
