@@ -116,6 +116,8 @@ header.top nav a.btn.ghost, header.top nav a.btn.ghost:hover { color: var(--ink1
 .tag.mint { color: var(--mint); border-color: rgba(61,220,151,.45); }
 .tag.rose { color: var(--rose); border-color: rgba(255,110,120,.45); }
 .tag.sky { color: var(--sky); border-color: rgba(90,169,255,.45); }
+.tag.amber { color: var(--amber); border-color: rgba(255,183,77,.45);
+  background: rgba(255,183,77,.10); }
 
 /* ---- 폼 ---- */
 label { display: block; font-size: 13px; color: var(--ink300); margin: 14px 0 6px; }
