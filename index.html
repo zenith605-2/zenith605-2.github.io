@@ -9,7 +9,7 @@
 <meta property="og:title" content="Android apps looking for closed testers">
 <meta property="og:description" content="Trade closed tests with other Android devs. Daily opens record themselves.">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="/assets/app.css?v=84">
+<link rel="stylesheet" href="/assets/app.css?v=85">
 </head>
 <body>
 
@@ -86,8 +86,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters } from '/assets/api.js?v=84';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=84';
+import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters } from '/assets/api.js?v=85';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=85';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -319,14 +319,18 @@ function bindWho() {
       let rows = [];
       try { rows = await appTesters(d.dataset.who); } catch (_) {}
       if (!rows.length) { body.textContent = t('no_one_yet'); return; }
+      // 앱과 같은 일곱 묶음. '한쪽만' 하나로 묶었더니 완주한 상대까지 섞였다.
       const groups = [
-        ['grp_testing',  'mint',  rows.filter(r => r.source === 'trade' || r.source === 'party')],
-        ['grp_pending',  '',      rows.filter(r => r.source === 'pending')],
-        ['grp_onesided', 'amber', rows.filter(r => r.source === 'onesided')],
-        ['grp_outside',  'amber', rows.filter(r => r.source === 'outside')],
+        ['grp_testing',   'mint',  rows.filter(r => r.source === 'trade' || r.source === 'party')],
+        ['grp_pending',   '',      rows.filter(r => r.source === 'pending')],
+        ['grp_request',   'sky',   rows.filter(r => r.source === 'request')],
+        ['grp_peer_done', 'mint',  rows.filter(r => r.source === 'peer_done')],
+        ['grp_peer_drop', 'rose',  rows.filter(r => r.source === 'peer_dropped')],
+        ['grp_peer_none', 'amber', rows.filter(r => r.source === 'peer_none')],
+        ['grp_outside',   'amber', rows.filter(r => r.source === 'outside')],
       ];
       body.innerHTML = groups.filter(g => g[2].length).map(([key, tone, items]) => `
-        <p style="margin:8px 0 4px;font-weight:700;color:${tone === 'mint' ? 'var(--mint)' : tone === 'amber' ? 'var(--amber)' : 'inherit'}">${t(key)} · ${items.length}</p>
+        <p style="margin:8px 0 4px;font-weight:700;color:${({mint:'var(--mint)',amber:'var(--amber)',rose:'var(--rose)',sky:'var(--sky)'})[tone] ?? 'inherit'}">${t(key)} · ${items.length}</p>
         <p style="margin:0;display:flex;flex-wrap:wrap;gap:6px">${items.map(r => `
           <span class="tag" style="${key === 'grp_testing' ? '' : 'opacity:.6'}">${esc(r.name || '?')}${
             key === 'grp_testing' ? ` <b style="color:var(--mint)">${r.days ?? 0}d</b>` : ''}</span>`).join('')}</p>`).join('');
