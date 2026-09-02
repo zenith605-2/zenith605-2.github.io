@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My apps — ACT Party</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/app.css?v=75">
+<link rel="stylesheet" href="/assets/app.css?v=76">
 </head>
 <body>
 
@@ -45,8 +45,8 @@ import { signIn, myApps, myAppProgress, myExchanges, saveApp, setAppPublic,
          markTradeRead, watchTrade, myFeedbacks, mySentFeedbacks,
          replyFeedback, closeElapsed, sendTradeFeedback,
          supportMessages, sendSupportMessage,
-         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=75';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=75';
+         supportMarkRead, watchSupport, setSetupStep, addExchange } from '/assets/api.js?v=76';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=76';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -901,7 +901,7 @@ function paneChats(pane) {
   if (!D.chats.length) { pane.innerHTML = `<p class="muted">${t('no_chats')}</p>`; return; }
   pane.innerHTML = `<div class="grid">${D.chats.map(c => `<div class="card app-card"
       style="cursor:pointer" data-chat="${c.request_id}" data-title="${esc(c.peer_name || '')}">
-    ${iconHtml(c.app_icon, c.app_name)}
+    ${iconHtml(c.peer_app_icon || c.app_icon, c.peer_app_name || c.app_name)}
     <div style="min-width:0;flex:1">
       <p class="app-name">${esc(c.peer_name || t('developer'))}${badge(c.unread)}</p>
       <p class="muted">${esc(c.peer_app_name || c.app_name || '')}${
