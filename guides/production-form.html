@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The 10 questions in the Play production form — and where the answers come from</title>
-<meta name="description" content="Google asks 10 questions when you apply for production. Two of them decide it: what feedback you got, and what you changed. Where those answers come from.">
+<title>The 9 questions in the Play production form — and where the answers come from</title>
+<meta name="description" content="Google asks 9 questions when you apply for production. Two of them decide it: what feedback you got, and what you changed. Where those answers come from.">
 <link rel="canonical" href="https://actparty.app/guides/production-form.html">
-<link rel="stylesheet" href="/assets/app.css?v=76">
+<link rel="stylesheet" href="/assets/app.css?v=77">
 </head>
 <body>
 
@@ -32,13 +32,13 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=76';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=76';
+import { mountAuth } from '/assets/api.js?v=77';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=77';
 
 // 본문은 언어마다 통째로 다르다. 문장 단위 키로 쪼개면 번역이 어색해진다.
 const DOC = {
   ko: `
-  <h1 style="font-size:28px;margin:0 0 8px">프로덕션 신청서 10문항</h1>
+  <h1 style="font-size:28px;margin:0 0 8px">프로덕션 신청서 9문항</h1>
   <p class="muted" style="margin:0 0 24px">두 문항이 승인과 반려를 가릅니다</p>
 
   <p>테스터 12명으로 14일을 채우면 프로덕션 신청을 할 수 있습니다. 그런데
@@ -48,27 +48,47 @@ const DOC = {
   <p>여기서 많이들 막힙니다. 14일을 채운 것과 그 14일에 무슨 일이 있었는지를
   쓰는 건 다른 일이니까요.</p>
 
-  <h2>무엇을 묻나</h2>
+    <h2>무엇을 묻나</h2>
 
-  <p>문구는 조금씩 바뀌지만 묻는 것은 대체로 이렇습니다.</p>
+  <p>신청 버튼을 누르면 3단계짜리 설문이 뜹니다. 아홉 문항이고, 서술형 칸은
+  <b>정확히 300자</b>까지만 들어갑니다. 두 문항은 선택형입니다.</p>
+
+  <p><b>1단계 · 비공개 테스트 정보</b></p>
 
   <ul>
-    <li>테스터를 어떻게 모았나</li>
-    <li>모으는 게 얼마나 어려웠나</li>
-    <li>테스터들이 얼마나 참여했나</li>
-    <li><b>어떤 의견을 받았나</b></li>
-    <li>그 의견을 어떻게 받았나(수집 방법)</li>
-    <li><b>그래서 무엇을 바꿨나</b></li>
-    <li>이 앱은 누구를 위한 것인가</li>
+    <li>테스터를 어떻게 모집했나 — 친구·가족에게 부탁했는지, 유료 업체를 썼는지를 예로 듭니다</li>
+    <li>얼마나 쉽게 모집했나 <i>(매우 어려웠음 ~ 매우 쉬웠음)</i></li>
+    <li>테스터의 참여도 — 모든 기능을 썼는지, 그리고 그 사용 방식이 실제 사용자와 같은지</li>
+    <li><b>받은 의견 요약과 그 의견을 수집한 방법</b> — 둘을 한 칸에 씁니다</li>
+  </ul>
+
+  <p><b>2단계 · 앱 정보</b></p>
+
+  <ul>
+    <li>이 앱의 주요 대상은 누구인가</li>
     <li>사용자에게 어떤 가치를 주나</li>
-    <li>설치 수를 얼마로 예상하나</li>
-    <li>출시 준비가 됐다고 보는 근거는</li>
+    <li>첫해 설치 수 예상 <i>(0~1만 / 1만~10만 / 10만~1백만 / 1백만 이상 / 모름)</i></li>
+  </ul>
+
+  <p><b>3단계 · 프로덕션 준비</b></p>
+
+  <ul>
+    <li><b>테스트에서 알게 된 것을 바탕으로 무엇을 바꿨나</b></li>
+    <li>출시 준비가 됐다고 판단한 근거는</li>
   </ul>
 
   <p>굵게 표시한 둘이 실제로 갈리는 지점입니다. 나머지는 앱을 만든 사람이면
   막힘없이 쓸 수 있는 것들이고요.</p>
 
-  <h2>왜 그 둘에서 막히나</h2>
+  <p>참여도 문항은 품앗이로 테스터를 구한 사람에게 특히 껄끄럽습니다.
+  "사용 방식이 실제 사용자와 일치하는지"를 묻고, 다르면 어떻게 다른지 쓰라고
+  합니다. 여기서는 솔직한 편이 낫습니다 — 개발자끼리 서로 테스트했고 실사용자와
+  이렇게 다를 것이라고 쓰면, 지어낸 문장보다 앞뒤가 맞습니다.</p>
+
+  <p class="muted">답변은 Play 스토어에 공개되지 않습니다. 심사에만 쓰인다고
+  화면에 적혀 있으니, 홍보 문구처럼 쓸 필요가 없습니다.</p>
+
+<h2>왜 그 둘에서 막히나</h2>
 
   <p>2주가 지난 뒤에 "무슨 의견을 받았더라"를 떠올리려면 대개 기억이 없습니다.
   그러면 그럴듯한 문장을 짓게 됩니다 — "테스터들이 UI가 직관적이라고
@@ -131,7 +151,7 @@ const DOC = {
   </p>`,
 
   en: `
-  <h1 style="font-size:28px;margin:0 0 8px">The 10 questions in the production form</h1>
+  <h1 style="font-size:28px;margin:0 0 8px">The 9 questions in the production form</h1>
   <p class="muted" style="margin:0 0 24px">Two of them decide it</p>
 
   <p>Once 12 testers have been opted in for 14 days you can apply for production.
@@ -141,27 +161,49 @@ const DOC = {
   <p>This is where people stall. Finishing 14 days and describing what happened
   during those 14 days are two different jobs.</p>
 
-  <h2>What it asks</h2>
+    <h2>What it asks</h2>
 
-  <p>The wording shifts, but it comes down to this.</p>
+  <p>The button opens a three-step form. Nine questions, and every free-text
+  box is capped at <b>exactly 300 characters</b>. Two of them are multiple
+  choice.</p>
+
+  <p><b>Step 1 &middot; Closed testing</b></p>
 
   <ul>
-    <li>How did you recruit your testers</li>
-    <li>How hard was recruiting</li>
-    <li>How engaged were the testers</li>
-    <li><b>What feedback did you receive</b></li>
-    <li>How did you collect that feedback</li>
-    <li><b>What did you change because of it</b></li>
-    <li>Who is this app for</li>
-    <li>What value does it give them</li>
-    <li>How many installs do you expect</li>
-    <li>Why do you consider it ready</li>
+    <li>How did you recruit testers — it gives friends/family and paid services as examples</li>
+    <li>How easy was recruiting <i>(very hard ~ very easy)</i></li>
+    <li>Tester engagement — did they use every feature, and does their usage match real users</li>
+    <li><b>Summarise the feedback you got, and how you collected it</b> — both in one box</li>
   </ul>
 
-  <p>The two in bold are the ones that decide it. The rest you can answer off
-  the top of your head if you built the thing.</p>
+  <p><b>Step 2 &middot; App info</b></p>
 
-  <h2>Why those two are hard</h2>
+  <ul>
+    <li>Who is this app mainly for</li>
+    <li>What value does it give users</li>
+    <li>Expected installs in year one <i>(0-10K / 10K-100K / 100K-1M / 1M+ / don't know)</i></li>
+  </ul>
+
+  <p><b>Step 3 &middot; Production readiness</b></p>
+
+  <ul>
+    <li><b>What did you change based on what the test taught you</b></li>
+    <li>How did you decide it was ready</li>
+  </ul>
+
+  <p>The two in bold are where it is actually decided. The rest you can write
+  without stopping if you built the app.</p>
+
+  <p>The engagement question is the awkward one if you found your testers by
+  trading. It asks whether their usage matches what real users would do, and to
+  explain the difference if not. Honesty reads better here — saying developers
+  tested each other and how that differs from real use holds together better
+  than an invented sentence.</p>
+
+  <p class="muted">Your answers are not shown on the Play listing. The form says
+  so on screen, so there is no reason to write them like marketing copy.</p>
+
+<h2>Why those two are hard</h2>
 
   <p>Two weeks later, "what feedback did I get" usually returns nothing. So you
   write something plausible — "testers found the UI intuitive and offered a few
@@ -221,36 +263,57 @@ const DOC = {
   </p>`,
 
   ja: `
-  <h1 style="font-size:28px;margin:0 0 8px">製品版申請フォームの10問</h1>
+  <h1 style="font-size:28px;margin:0 0 8px">製品版申請フォームの9問</h1>
   <p class="muted" style="margin:0 0 24px">そのうち二つが結果を分けます</p>
 
   <p>テスター12名で14日を満たすと製品版を申請できます。ただし申請を押すと
-  すぐ審査に行くのではなく、<b>まずフォームが出ます。</b>10問、ほとんどが記述式、
+  すぐ審査に行くのではなく、<b>まずフォームが出ます。</b>9問、ほとんどが記述式、
   1問あたり300字程度です。</p>
 
   <p>ここで詰まる人が多いです。14日を満たすことと、その14日に何があったかを
   書くことは別の作業だからです。</p>
 
-  <h2>何を聞かれるか</h2>
+    <h2>何を聞かれるか</h2>
 
-  <p>表現は変わりますが、聞かれるのはおおむね次のことです。</p>
+  <p>申請ボタンを押すと3ステップのフォームが出ます。9問あり、記述欄は
+  <b>ちょうど300文字</b>までです。2問は選択式です。</p>
+
+  <p><b>ステップ1 &middot; 非公開テスト情報</b></p>
 
   <ul>
-    <li>テスターをどう集めたか</li>
-    <li>集めるのはどれくらい大変だったか</li>
-    <li>テスターはどれくらい参加したか</li>
-    <li><b>どんな意見を受けたか</b></li>
-    <li>その意見をどう集めたか</li>
-    <li><b>それで何を変えたか</b></li>
-    <li>このアプリは誰のためのものか</li>
-    <li>どんな価値を提供するか</li>
-    <li>インストール数をどれくらい見込むか</li>
-    <li>公開の準備ができたと考える根拠は</li>
+    <li>テスターをどう集めたか — 友人・家族に頼んだか、有料業者を使ったかを例に挙げます</li>
+    <li>集めるのはどれくらい簡単だったか <i>(とても難しかった～とても簡単だった)</i></li>
+    <li>テスターの参加度 — 全機能を使ったか、その使い方が実際のユーザーと一致するか</li>
+    <li><b>受け取った意見の要約と、その集め方</b> — 一つの欄に両方</li>
   </ul>
 
-  <p>太字の二つが実際に結果を分けます。残りは作った本人なら詰まらずに書けます。</p>
+  <p><b>ステップ2 &middot; アプリ情報</b></p>
 
-  <h2>なぜその二つで詰まるのか</h2>
+  <ul>
+    <li>このアプリの主な対象は誰か</li>
+    <li>ユーザーにどんな価値を与えるか</li>
+    <li>初年度のインストール数の見込み <i>(0～1万 / 1万～10万 / 10万～100万 / 100万以上 / わからない)</i></li>
+  </ul>
+
+  <p><b>ステップ3 &middot; 製品版の準備</b></p>
+
+  <ul>
+    <li><b>テストで分かったことをもとに何を変えたか</b></li>
+    <li>製品版の準備ができたと判断した根拠</li>
+  </ul>
+
+  <p>太字の二つが実際に結果を分ける場所です。残りはアプリを作った人なら
+  詰まらずに書けるものです。</p>
+
+  <p>参加度の設問は、交換でテスターを集めた人には特にやりにくい問いです。
+  「使い方が実際のユーザーと一致するか」を聞き、違うなら何が違うかを書かせます。
+  ここは正直な方が通ります — 開発者同士でテストし、実際の利用とこう違う、と
+  書く方が、作った文章より筋が通ります。</p>
+
+  <p class="muted">回答はPlayストアには表示されません。審査だけに使うと画面に
+  書かれているので、宣伝文のように書く必要はありません。</p>
+
+<h2>なぜその二つで詰まるのか</h2>
 
   <p>2週間経ってから「どんな意見をもらったか」を思い出そうとしても、たいてい
   出てきません。それでもっともらしい文を作ることになります —「テスターからUIが
@@ -302,32 +365,53 @@ const DOC = {
   </p>`,
 
   'zh-Hans': `
-  <h1 style="font-size:28px;margin:0 0 8px">正式版申请表的 10 个问题</h1>
+  <h1 style="font-size:28px;margin:0 0 8px">正式版申请表的 9 个问题</h1>
   <p class="muted" style="margin:0 0 24px">其中两个决定成败</p>
 
   <p>12 位测试者保持加入 14 天后就可以申请正式版。但点了申请并不会直接进入审核，
-  <b>会先出现一张表单。</b>10 个问题，大多是问答题，每题 300 字左右。</p>
+  <b>会先出现一张表单。</b>9 个问题，大多是问答题，每题 300 字左右。</p>
 
   <p>很多人卡在这里。跑完 14 天和写出这 14 天发生了什么，是两件事。</p>
 
-  <h2>它问什么</h2>
+    <h2>它问什么</h2>
+
+  <p>点击申请会打开一个三步表单。共九个问题，每个文本框上限
+  <b>正好 300 字符</b>，其中两个是选择题。</p>
+
+  <p><b>第 1 步 &middot; 封闭测试信息</b></p>
 
   <ul>
-    <li>你如何招募测试者</li>
-    <li>招募有多难</li>
-    <li>测试者参与度如何</li>
-    <li><b>你收到了什么反馈</b></li>
-    <li>你如何收集这些反馈</li>
-    <li><b>你因此改了什么</b></li>
-    <li>这个应用是给谁用的</li>
-    <li>它带来什么价值</li>
-    <li>你预期多少安装量</li>
-    <li>你凭什么认为可以上线了</li>
+    <li>你如何招募测试者 — 表单举例问是否找了亲友，或用了付费服务</li>
+    <li>招募有多容易 <i>(非常难～非常容易)</i></li>
+    <li>测试者的参与度 — 是否用了全部功能，其使用方式是否与真实用户一致</li>
+    <li><b>总结收到的反馈，以及你如何收集的</b> — 两者写在同一个框里</li>
   </ul>
 
-  <p>加粗的两个才是关键。其余的，做过这个应用的人都写得出来。</p>
+  <p><b>第 2 步 &middot; 应用信息</b></p>
 
-  <h2>为什么卡在这两个</h2>
+  <ul>
+    <li>这个应用主要面向谁</li>
+    <li>给用户带来什么价值</li>
+    <li>第一年的预计安装量 <i>(0-1万 / 1万-10万 / 10万-100万 / 100万以上 / 不清楚)</i></li>
+  </ul>
+
+  <p><b>第 3 步 &middot; 正式版准备</b></p>
+
+  <ul>
+    <li><b>根据测试中学到的，你改了什么</b></li>
+    <li>你凭什么判断它已经可以上线</li>
+  </ul>
+
+  <p>加粗的两个才是真正决定成败的地方。其余的，做过这个应用的人都能一口气写完。</p>
+
+  <p>参与度那题对靠互测找人的开发者最难写。它问使用方式是否和真实用户一致，
+  不一致就说明差在哪。这里坦白反而更好 —— 写清楚是开发者互相测试、和真实使用
+  有哪些差别，比编一句漂亮话更站得住。</p>
+
+  <p class="muted">你的回答不会显示在 Play 商店页面上。表单里就这么写着，
+  所以没必要按宣传文案来写。</p>
+
+<h2>为什么卡在这两个</h2>
 
   <p>两周后回想「收到过什么反馈」，通常什么也想不起来。于是开始编写听起来
   合理的句子——「测试者认为界面直观，并提出了一些改进建议」。审核的人一天要
@@ -379,24 +463,45 @@ const DOC = {
 
   <p>很多人卡在這裡。跑完 14 天和写出這 14 天發生了什麼，是兩件事。</p>
 
-  <h2>它問什麼</h2>
+    <h2>它問什麼</h2>
+
+  <p>點擊申請會打開一個三步表單。共九個問題，每個文字框上限
+  <b>正好 300 字元</b>，其中兩個是選擇題。</p>
+
+  <p><b>第 1 步 &middot; 封閉測試資訊</b></p>
 
   <ul>
-    <li>你如何招募測試者</li>
-    <li>招募有多难</li>
-    <li>測試者參與度如何</li>
-    <li><b>你收到了什麼回饋</b></li>
-    <li>你如何收集這些回饋</li>
-    <li><b>你因此改了什麼</b></li>
-    <li>這個應用是給誰用的</li>
-    <li>它帶來什麼價值</li>
-    <li>你預期多少安裝量</li>
-    <li>你憑什麼認為可以上線了</li>
+    <li>你如何招募測試者 — 表單舉例問是否找了親友，或用了付費服務</li>
+    <li>招募有多容易 <i>(非常難～非常容易)</i></li>
+    <li>測試者的參與度 — 是否用了全部功能，其使用方式是否與真實使用者一致</li>
+    <li><b>總結收到的意見，以及你如何收集的</b> — 兩者寫在同一個框裡</li>
   </ul>
 
-  <p>加粗的兩個才是關鍵。其餘的，做過這個應用的人都寫得出來。</p>
+  <p><b>第 2 步 &middot; 應用程式資訊</b></p>
 
-  <h2>為什麼卡在這兩個</h2>
+  <ul>
+    <li>這個應用程式主要面向誰</li>
+    <li>給使用者帶來什麼價值</li>
+    <li>第一年的預計安裝量 <i>(0-1萬 / 1萬-10萬 / 10萬-100萬 / 100萬以上 / 不清楚)</i></li>
+  </ul>
+
+  <p><b>第 3 步 &middot; 正式版準備</b></p>
+
+  <ul>
+    <li><b>根據測試中學到的，你改了什麼</b></li>
+    <li>你憑什麼判斷它已經可以上線</li>
+  </ul>
+
+  <p>加粗的兩個才是真正決定成敗的地方。其餘的，做過這個應用程式的人都能一口氣寫完。</p>
+
+  <p>參與度那題對靠互測找人的開發者最難寫。它問使用方式是否和真實使用者一致，
+  不一致就說明差在哪。這裡坦白反而更好 —— 寫清楚是開發者互相測試、和真實使用
+  有哪些差別，比編一句漂亮話更站得住。</p>
+
+  <p class="muted">你的回答不會顯示在 Play 商店頁面上。表單裡就這麼寫著，
+  所以沒必要按宣傳文案來寫。</p>
+
+<h2>為什麼卡在這兩個</h2>
 
   <p>兩週後回想「收到過什麼回饋」，通常什麼也想不起來。於是開始編寫聽起來
   合理的句子——「測試者認為介面直觀，並提出了一些改進建議」。審核的人一天要
