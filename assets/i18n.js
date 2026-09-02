@@ -480,7 +480,7 @@ const T = {
   who_testing:  ['테스트 중인 사람', 'Who is testing', 'テスト中の人', '正在测试的人', '正在測試的人'],
   no_one_yet:   ['아직 없어요', 'No one yet', 'まだいません', '还没有人', '還沒有人'],
   grp_testing:  ['테스트 중', 'Testing', 'テスト中', '测试中', '測試中'],
-  grp_pending:  ['설치 전 — 그 사람이 이 앱을 아직 안 깔았어요', 'Not installed — they have not installed this app yet',
+  grp_pending:  ['설치 전 — 상대방이 이 앱을 아직 안 깔았어요', 'Not installed — they have not installed this app yet',
                  '未インストール — 相手がまだこのアプリを入れていません', '未安装 — 对方还没有安装这个应用', '未安裝 — 對方還沒有安裝這個應用程式'],
   grp_request:  ['신청 — 수락 대기 중', 'Requested — waiting for you to accept', '申請 — 承認待ち',
                  '申请 — 等待你接受', '申請 — 等待你接受'],
