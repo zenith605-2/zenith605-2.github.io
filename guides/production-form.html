@@ -6,7 +6,7 @@
 <title>The 9 questions in the Play production form — and where the answers come from</title>
 <meta name="description" content="Google asks 9 questions when you apply for production. Two of them decide it: what feedback you got, and what you changed. Where those answers come from.">
 <link rel="canonical" href="https://actparty.app/guides/production-form.html">
-<link rel="stylesheet" href="/assets/app.css?v=78">
+<link rel="stylesheet" href="/assets/app.css?v=79">
 </head>
 <body>
 
@@ -32,8 +32,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=78';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=78';
+import { mountAuth } from '/assets/api.js?v=79';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=79';
 
 // 본문은 언어마다 통째로 다르다. 문장 단위 키로 쪼개면 번역이 어색해진다.
 const DOC = {
@@ -48,42 +48,53 @@ const DOC = {
   <p>여기서 많이들 막힙니다. 14일을 채운 것과 그 14일에 무슨 일이 있었는지를
   쓰는 건 다른 일이니까요.</p>
 
-    <h2>무엇을 묻나</h2>
+      <h2>무엇을 묻나</h2>
 
   <p>신청 버튼을 누르면 3단계짜리 설문이 뜹니다. 아홉 문항이고, 서술형 칸은
-  <b>정확히 300자</b>까지만 들어갑니다. 두 문항은 선택형입니다.</p>
+  <b>정확히 300자</b>까지만 들어갑니다. 두 문항은 선택형입니다.
+  아래는 화면에 적힌 문장 그대로입니다.</p>
 
   <p><b>1단계 · 비공개 테스트 정보</b></p>
 
-  <ul>
-    <li>테스터를 어떻게 모집했나 — 친구·가족에게 부탁했는지, 유료 업체를 썼는지를 예로 듭니다</li>
-    <li>얼마나 쉽게 모집했나 <i>(매우 어려웠음 ~ 매우 쉬웠음)</i></li>
-    <li>테스터의 참여도 — 모든 기능을 썼는지, 그리고 그 사용 방식이 실제 사용자와 같은지</li>
-    <li><b>받은 의견 요약과 그 의견을 수집한 방법</b> — 둘을 한 칸에 씁니다</li>
-  </ul>
+  <ol>
+    <li>비공개 테스트에 참여할 사용자를 어떻게 모집하셨나요? 예를 들어 친구나
+    가족에게 부탁하셨나요? 아니면 유료 테스트 제공업체를 이용하셨나요?</li>
+
+    <li>앱 테스터를 얼마나 쉽게 모집했나요?
+    <span class="muted">(매우 어려웠음 / 어려웠음 / 보통이었음 / 쉬웠음 / 매우 쉬웠음)</span></li>
+
+    <li>비공개 테스트 중 테스터의 참여도에 대해 설명해 주세요.
+    <span class="muted">테스터가 앱의 모든 기능을 활용했는지, 테스터의 사용 방식이
+    실제 사용자에게서 예상되는 앱 사용 방식과 일치하는지 여부도 알려주세요.
+    일치하지 않는다면 어떤 차이가 있을 것으로 예상되는지 설명하세요.</span></li>
+
+    <li><b>테스터로부터 받은 의견을 요약하여 제공하세요. 의견을 수집한 방법도
+    알려주세요.</b></li>
+  </ol>
 
   <p><b>2단계 · 앱 정보</b></p>
 
-  <ul>
-    <li>이 앱의 주요 대상은 누구인가</li>
-    <li>사용자에게 어떤 가치를 주나</li>
-    <li>첫해 설치 수 예상 <i>(0~1만 / 1만~10만 / 10만~1백만 / 1백만 이상 / 모름)</i></li>
-  </ul>
+  <ol start="5">
+    <li>앱의 주요 대상은 누구인가요?</li>
+    <li>앱이 사용자에게 어떤 가치를 제공하는지 설명하세요.</li>
+    <li>첫해에 앱이 몇 회 설치될 것으로 예상하시나요?
+    <span class="muted">(0~1만 / 1만~10만 / 10만~1백만 / 1백만 이상 / 모름)</span></li>
+  </ol>
 
   <p><b>3단계 · 프로덕션 준비</b></p>
 
-  <ul>
-    <li><b>테스트에서 알게 된 것을 바탕으로 무엇을 바꿨나</b></li>
-    <li>출시 준비가 됐다고 판단한 근거는</li>
-  </ul>
+  <ol start="8">
+    <li><b>비공개 테스트에서 알게 된 내용을 바탕으로 앱을 어떻게 변경했나요?</b></li>
+    <li>앱이 프로덕션용으로 준비되었다고 어떻게 판단했나요?</li>
+  </ol>
 
-  <p>굵게 표시한 둘이 실제로 갈리는 지점입니다. 나머지는 앱을 만든 사람이면
-  막힘없이 쓸 수 있는 것들이고요.</p>
+  <p>굵게 표시한 4번과 8번이 실제로 갈리는 지점입니다. 나머지는 앱을 만든
+  사람이면 막힘없이 쓸 수 있는 것들이고요.</p>
 
-  <p>참여도 문항은 품앗이로 테스터를 구한 사람에게 특히 껄끄럽습니다.
-  "사용 방식이 실제 사용자와 일치하는지"를 묻고, 다르면 어떻게 다른지 쓰라고
-  합니다. 여기서는 솔직한 편이 낫습니다 — 개발자끼리 서로 테스트했고 실사용자와
-  이렇게 다를 것이라고 쓰면, 지어낸 문장보다 앞뒤가 맞습니다.</p>
+  <p>3번은 품앗이로 테스터를 구한 사람에게 특히 껄끄럽습니다. "사용 방식이 실제
+  사용자와 일치하는지"를 묻고, 다르면 어떻게 다른지 쓰라고 합니다. 여기서는
+  솔직한 편이 낫습니다 — 개발자끼리 서로 테스트했고 실사용자와 이렇게 다를
+  것이라고 쓰면, 지어낸 문장보다 앞뒤가 맞습니다.</p>
 
   <p class="muted">답변은 Play 스토어에 공개되지 않습니다. 심사에만 쓰인다고
   화면에 적혀 있으니, 홍보 문구처럼 쓸 필요가 없습니다.</p>
@@ -161,44 +172,57 @@ const DOC = {
   <p>This is where people stall. Finishing 14 days and describing what happened
   during those 14 days are two different jobs.</p>
 
-    <h2>What it asks</h2>
+      <h2>What it asks</h2>
 
-  <p>The button opens a three-step form. Nine questions, and every free-text
-  box is capped at <b>exactly 300 characters</b>. Two of them are multiple
-  choice.</p>
+  <p>The button opens a three-step form. Nine questions, and every free-text box
+  is capped at <b>exactly 300 characters</b>. Two are multiple choice. Below is
+  each question in full — translated from the Korean form, so Google's own
+  English wording may differ slightly.</p>
 
   <p><b>Step 1 &middot; Closed testing</b></p>
 
-  <ul>
-    <li>How did you recruit testers — it gives friends/family and paid services as examples</li>
-    <li>How easy was recruiting <i>(very hard ~ very easy)</i></li>
-    <li>Tester engagement — did they use every feature, and does their usage match real users</li>
-    <li><b>Summarise the feedback you got, and how you collected it</b> — both in one box</li>
-  </ul>
+  <ol>
+    <li>How did you recruit the users who took part in your closed test? For
+    example, did you ask friends or family? Or did you use a paid testing
+    service?</li>
+
+    <li>How easy was it to recruit testers for your app?
+    <span class="muted">(very hard / hard / neutral / easy / very easy)</span></li>
+
+    <li>Describe how engaged your testers were during the closed test.
+    <span class="muted">Tell us whether testers used all of the app's features,
+    and whether the way they used it matches how you expect real users to use it.
+    If it does not match, explain what differences you expect.</span></li>
+
+    <li><b>Summarise the feedback you received from testers. Also tell us how you
+    collected it.</b></li>
+  </ol>
 
   <p><b>Step 2 &middot; App info</b></p>
 
-  <ul>
-    <li>Who is this app mainly for</li>
-    <li>What value does it give users</li>
-    <li>Expected installs in year one <i>(0-10K / 10K-100K / 100K-1M / 1M+ / don't know)</i></li>
-  </ul>
+  <ol start="5">
+    <li>Who is the main audience for your app?</li>
+    <li>Describe the value your app provides to users.</li>
+    <li>How many installs do you expect in the first year?
+    <span class="muted">(0-10K / 10K-100K / 100K-1M / 1M+ / don't know)</span></li>
+  </ol>
 
   <p><b>Step 3 &middot; Production readiness</b></p>
 
-  <ul>
-    <li><b>What did you change based on what the test taught you</b></li>
-    <li>How did you decide it was ready</li>
-  </ul>
+  <ol start="8">
+    <li><b>How did you change the app based on what you learned in the closed
+    test?</b></li>
+    <li>How did you decide the app is ready for production?</li>
+  </ol>
 
-  <p>The two in bold are where it is actually decided. The rest you can write
-  without stopping if you built the app.</p>
+  <p>Questions 4 and 8, in bold, are where it is actually decided. The rest you
+  can write without stopping if you built the app.</p>
 
-  <p>The engagement question is the awkward one if you found your testers by
-  trading. It asks whether their usage matches what real users would do, and to
-  explain the difference if not. Honesty reads better here — saying developers
-  tested each other and how that differs from real use holds together better
-  than an invented sentence.</p>
+  <p>Question 3 is the awkward one if you found your testers by trading. It asks
+  whether their usage matches what real users would do, and to explain the
+  difference if not. Honesty reads better here — saying developers tested each
+  other and how that differs from real use holds together better than an invented
+  sentence.</p>
 
   <p class="muted">Your answers are not shown on the Play listing. The form says
   so on screen, so there is no reason to write them like marketing copy.</p>
@@ -273,42 +297,53 @@ const DOC = {
   <p>ここで詰まる人が多いです。14日を満たすことと、その14日に何があったかを
   書くことは別の作業だからです。</p>
 
-    <h2>何を聞かれるか</h2>
+      <h2>何を聞かれるか</h2>
 
   <p>申請ボタンを押すと3ステップのフォームが出ます。9問あり、記述欄は
-  <b>ちょうど300文字</b>までです。2問は選択式です。</p>
+  <b>ちょうど300文字</b>までです。2問は選択式です。以下は各設問の全文です
+  （韓国語版フォームからの訳なので、実際の日本語表記とは多少異なることがあります）。</p>
 
   <p><b>ステップ1 &middot; 非公開テスト情報</b></p>
 
-  <ul>
-    <li>テスターをどう集めたか — 友人・家族に頼んだか、有料業者を使ったかを例に挙げます</li>
-    <li>集めるのはどれくらい簡単だったか <i>(とても難しかった～とても簡単だった)</i></li>
-    <li>テスターの参加度 — 全機能を使ったか、その使い方が実際のユーザーと一致するか</li>
-    <li><b>受け取った意見の要約と、その集め方</b> — 一つの欄に両方</li>
-  </ul>
+  <ol>
+    <li>非公開テストに参加したユーザーをどのように募集しましたか。たとえば友人や
+    家族に頼みましたか。それとも有料のテスト提供業者を利用しましたか。</li>
+
+    <li>アプリのテスターをどれくらい簡単に募集できましたか。
+    <span class="muted">(とても難しかった / 難しかった / 普通 / 簡単だった / とても簡単だった)</span></li>
+
+    <li>非公開テスト中のテスターの参加度について説明してください。
+    <span class="muted">テスターがアプリのすべての機能を使ったか、また その使い方が
+    実際のユーザーに想定される使い方と一致するかも教えてください。一致しない場合は
+    どのような違いが予想されるか説明してください。</span></li>
+
+    <li><b>テスターから受け取った意見を要約してください。意見を収集した方法も
+    教えてください。</b></li>
+  </ol>
 
   <p><b>ステップ2 &middot; アプリ情報</b></p>
 
-  <ul>
-    <li>このアプリの主な対象は誰か</li>
-    <li>ユーザーにどんな価値を与えるか</li>
-    <li>初年度のインストール数の見込み <i>(0～1万 / 1万～10万 / 10万～100万 / 100万以上 / わからない)</i></li>
-  </ul>
+  <ol start="5">
+    <li>アプリの主な対象は誰ですか。</li>
+    <li>アプリがユーザーにどんな価値を提供するか説明してください。</li>
+    <li>初年度にアプリが何回インストールされると予想しますか。
+    <span class="muted">(0～1万 / 1万～10万 / 10万～100万 / 100万以上 / わからない)</span></li>
+  </ol>
 
   <p><b>ステップ3 &middot; 製品版の準備</b></p>
 
-  <ul>
-    <li><b>テストで分かったことをもとに何を変えたか</b></li>
-    <li>製品版の準備ができたと判断した根拠</li>
-  </ul>
+  <ol start="8">
+    <li><b>非公開テストで分かったことをもとに、アプリをどう変更しましたか。</b></li>
+    <li>アプリが製品版の準備ができたとどのように判断しましたか。</li>
+  </ol>
 
-  <p>太字の二つが実際に結果を分ける場所です。残りはアプリを作った人なら
+  <p>太字の4番と8番が実際に結果を分ける場所です。残りはアプリを作った人なら
   詰まらずに書けるものです。</p>
 
-  <p>参加度の設問は、交換でテスターを集めた人には特にやりにくい問いです。
-  「使い方が実際のユーザーと一致するか」を聞き、違うなら何が違うかを書かせます。
-  ここは正直な方が通ります — 開発者同士でテストし、実際の利用とこう違う、と
-  書く方が、作った文章より筋が通ります。</p>
+  <p>3番は交換でテスターを集めた人には特にやりにくい問いです。「使い方が実際の
+  ユーザーと一致するか」を聞き、違うなら何が違うかを書かせます。ここは正直な方が
+  通ります — 開発者同士でテストし、実際の利用とこう違う、と書く方が、作った文章より
+  筋が通ります。</p>
 
   <p class="muted">回答はPlayストアには表示されません。審査だけに使うと画面に
   書かれているので、宣伝文のように書く必要はありません。</p>
@@ -373,38 +408,48 @@ const DOC = {
 
   <p>很多人卡在这里。跑完 14 天和写出这 14 天发生了什么，是两件事。</p>
 
-    <h2>它问什么</h2>
+      <h2>它问什么</h2>
 
   <p>点击申请会打开一个三步表单。共九个问题，每个文本框上限
-  <b>正好 300 字符</b>，其中两个是选择题。</p>
+  <b>正好 300 字符</b>，其中两个是选择题。以下是每题全文（译自韩文版表单，
+  谷歌的中文原句可能略有不同）。</p>
 
   <p><b>第 1 步 &middot; 封闭测试信息</b></p>
 
-  <ul>
-    <li>你如何招募测试者 — 表单举例问是否找了亲友，或用了付费服务</li>
-    <li>招募有多容易 <i>(非常难～非常容易)</i></li>
-    <li>测试者的参与度 — 是否用了全部功能，其使用方式是否与真实用户一致</li>
-    <li><b>总结收到的反馈，以及你如何收集的</b> — 两者写在同一个框里</li>
-  </ul>
+  <ol>
+    <li>你是如何招募参加封闭测试的用户的？例如，你是请了朋友或家人，还是使用了
+    付费测试服务商？</li>
+
+    <li>为你的应用招募测试者有多容易？
+    <span class="muted">(非常难 / 难 / 一般 / 容易 / 非常容易)</span></li>
+
+    <li>请说明封闭测试期间测试者的参与程度。
+    <span class="muted">请同时告诉我们测试者是否使用了应用的全部功能，以及他们的
+    使用方式是否与真实用户的预期使用方式一致。如果不一致，请说明你预计存在哪些差异。</span></li>
+
+    <li><b>请总结你从测试者那里收到的反馈，并说明你是如何收集的。</b></li>
+  </ol>
 
   <p><b>第 2 步 &middot; 应用信息</b></p>
 
-  <ul>
-    <li>这个应用主要面向谁</li>
-    <li>给用户带来什么价值</li>
-    <li>第一年的预计安装量 <i>(0-1万 / 1万-10万 / 10万-100万 / 100万以上 / 不清楚)</i></li>
-  </ul>
+  <ol start="5">
+    <li>你的应用主要面向谁？</li>
+    <li>请说明你的应用为用户提供了什么价值。</li>
+    <li>你预计第一年应用会被安装多少次？
+    <span class="muted">(0-1万 / 1万-10万 / 10万-100万 / 100万以上 / 不清楚)</span></li>
+  </ol>
 
   <p><b>第 3 步 &middot; 正式版准备</b></p>
 
-  <ul>
-    <li><b>根据测试中学到的，你改了什么</b></li>
-    <li>你凭什么判断它已经可以上线</li>
-  </ul>
+  <ol start="8">
+    <li><b>基于封闭测试中了解到的情况，你对应用做了哪些改动？</b></li>
+    <li>你是如何判断应用已经可以进入正式版的？</li>
+  </ol>
 
-  <p>加粗的两个才是真正决定成败的地方。其余的，做过这个应用的人都能一口气写完。</p>
+  <p>加粗的第 4 题和第 8 题才是真正决定成败的地方。其余的，做过这个应用的人
+  都能一口气写完。</p>
 
-  <p>参与度那题对靠互测找人的开发者最难写。它问使用方式是否和真实用户一致，
+  <p>第 3 题对靠互测找人的开发者最难写。它问使用方式是否和真实用户一致，
   不一致就说明差在哪。这里坦白反而更好 —— 写清楚是开发者互相测试、和真实使用
   有哪些差别，比编一句漂亮话更站得住。</p>
 
@@ -463,38 +508,48 @@ const DOC = {
 
   <p>很多人卡在這裡。跑完 14 天和写出這 14 天發生了什麼，是兩件事。</p>
 
-    <h2>它問什麼</h2>
+      <h2>它問什麼</h2>
 
   <p>點擊申請會打開一個三步表單。共九個問題，每個文字框上限
-  <b>正好 300 字元</b>，其中兩個是選擇題。</p>
+  <b>正好 300 字元</b>，其中兩個是選擇題。以下是每題全文（譯自韓文版表單，
+  Google 的中文原句可能略有不同）。</p>
 
   <p><b>第 1 步 &middot; 封閉測試資訊</b></p>
 
-  <ul>
-    <li>你如何招募測試者 — 表單舉例問是否找了親友，或用了付費服務</li>
-    <li>招募有多容易 <i>(非常難～非常容易)</i></li>
-    <li>測試者的參與度 — 是否用了全部功能，其使用方式是否與真實使用者一致</li>
-    <li><b>總結收到的意見，以及你如何收集的</b> — 兩者寫在同一個框裡</li>
-  </ul>
+  <ol>
+    <li>你是如何招募參加封閉測試的使用者的？例如，你是請了朋友或家人，還是使用了
+    付費測試服務商？</li>
+
+    <li>為你的應用程式招募測試者有多容易？
+    <span class="muted">(非常難 / 難 / 一般 / 容易 / 非常容易)</span></li>
+
+    <li>請說明封閉測試期間測試者的參與程度。
+    <span class="muted">請同時告訴我們測試者是否使用了應用程式的全部功能，以及他們的
+    使用方式是否與真實使用者的預期使用方式一致。若不一致，請說明你預計存在哪些差異。</span></li>
+
+    <li><b>請總結你從測試者那裡收到的意見，並說明你是如何收集的。</b></li>
+  </ol>
 
   <p><b>第 2 步 &middot; 應用程式資訊</b></p>
 
-  <ul>
-    <li>這個應用程式主要面向誰</li>
-    <li>給使用者帶來什麼價值</li>
-    <li>第一年的預計安裝量 <i>(0-1萬 / 1萬-10萬 / 10萬-100萬 / 100萬以上 / 不清楚)</i></li>
-  </ul>
+  <ol start="5">
+    <li>你的應用程式主要面向誰？</li>
+    <li>請說明你的應用程式為使用者提供了什麼價值。</li>
+    <li>你預計第一年應用程式會被安裝多少次？
+    <span class="muted">(0-1萬 / 1萬-10萬 / 10萬-100萬 / 100萬以上 / 不清楚)</span></li>
+  </ol>
 
   <p><b>第 3 步 &middot; 正式版準備</b></p>
 
-  <ul>
-    <li><b>根據測試中學到的，你改了什麼</b></li>
-    <li>你憑什麼判斷它已經可以上線</li>
-  </ul>
+  <ol start="8">
+    <li><b>基於封閉測試中了解到的情況，你對應用程式做了哪些改動？</b></li>
+    <li>你是如何判斷應用程式已經可以進入正式版的？</li>
+  </ol>
 
-  <p>加粗的兩個才是真正決定成敗的地方。其餘的，做過這個應用程式的人都能一口氣寫完。</p>
+  <p>加粗的第 4 題和第 8 題才是真正決定成敗的地方。其餘的，做過這個應用程式的人
+  都能一口氣寫完。</p>
 
-  <p>參與度那題對靠互測找人的開發者最難寫。它問使用方式是否和真實使用者一致，
+  <p>第 3 題對靠互測找人的開發者最難寫。它問使用方式是否和真實使用者一致，
   不一致就說明差在哪。這裡坦白反而更好 —— 寫清楚是開發者互相測試、和真實使用
   有哪些差別，比編一句漂亮話更站得住。</p>
 
