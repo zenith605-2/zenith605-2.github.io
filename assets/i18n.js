@@ -128,6 +128,7 @@ const T = {
   no_app:       ['ACT 미설치', 'No ACT app', 'ACT 未導入', '未安装 ACT', '未安裝 ACT'],
   same_dev:     ['같은 개발자 앱 {n}개', '{n} apps by this dev', '同じ開発者のアプリ{n}個',
                  '同一开发者 {n} 个应用', '同一開發者 {n} 個應用'],
+  same_dev_on:  ['{a} 진행 중', '{a} in progress', '{a} 進行中', '{a} 进行中', '{a} 進行中'],
   same_dev_warn:['이 개발자의 다른 앱을 이미 테스트하고 있어요. 수락되면 14일짜리가 하나 더 늘고, 상대는 당신 앱 하나만 봅니다. 계속할까요?',
                  "You're already testing another app by this developer. Accepting adds another 14 days for you, while they still only test one of yours. Continue?",
                  'この開発者の別のアプリをすでにテストしています。承認されると14日がもう一つ増えますが、相手はあなたのアプリ一つだけです。続けますか？',
