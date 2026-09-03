@@ -9,7 +9,7 @@
 <meta property="og:title" content="Android apps looking for closed testers">
 <meta property="og:description" content="Trade closed tests with other Android devs. Daily opens record themselves.">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="/assets/app.css?v=93">
+<link rel="stylesheet" href="/assets/app.css?v=94">
 </head>
 <body>
 
@@ -86,8 +86,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters } from '/assets/api.js?v=93';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=93';
+import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters } from '/assets/api.js?v=94';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=94';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -123,6 +123,11 @@ function card(a, i) {
     // 테스터가 [문제 있어요]를 누른 앱. 내리지 않고 표시만 한다 —
     // 다음 사람이 같은 데서 막히기 전에 보이게 (2026-09-03).
     a.problem_reported ? `<span class="tag rose">${t('problem_flag')}</span>` : '',
+    // 그룹이면 테스터가 혼자 가입해 끝내고, 이메일이면 개발자가 콘솔에
+    // 넣어 줄 때까지 기다린다. 신청 전에 알아야 할 차이다.
+    a.google_group_url
+      ? `<span class="tag">${t('mode_group')}</span>`
+      : `<span class="tag">${t('mode_email')}</span>`,
     // 한 사람이 앱을 여러 개 올리면 모르고 다 신청한 쪽이 손해다.
     // 막지 않고 보이게만 한다 — 믿는 사람 앱은 셋도 해줄 수 있다.
     // 배지 두 개로 나눠 달았더니 상태 배지 셋과 섞여서 아무것도 안 읽혔다.
