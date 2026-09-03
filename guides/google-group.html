@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Google Group for your testers — create it, connect it, publish</title>
+<meta name="description" content="Make a Google Group, set who can join, connect it to your closed test, and publish a build. Miss one of these and testers only see App not available.">
+<link rel="canonical" href="https://actparty.app/guides/google-group.html">
+<link rel="stylesheet" href="/assets/app.css?v=94">
+<style>
+  /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; border: 1px solid #e3e6ea;
+    border-radius: 10px; display: block;
+  }
+  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=94';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=94';
+
+const SHOT = (src, cap) =>
+  '<figure><img src="' + src + '" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
+const NOT_AVAILABLE =
+  '<p class="note">App not available — A testing version of this app hasn\'t ' +
+  'been published yet or isn\'t available for this account.</p>';
+
+const DOC = {
+  ko: `
+  <h1 style="font-size:28px;margin:0 0 8px">테스터용 구글 그룹 만들기</h1>
+  <p class="muted" style="margin:0 0 24px">만들고, 연결하고, 버전을 올리기까지</p>
+
+  <p>비공개 테스트에 사람을 넣는 방법은 두 가지입니다. <b>이메일 목록</b>과
+  <b>구글 그룹</b>이요. 차이는 하나뿐인데, 그 하나가 큽니다.</p>
+
+  <ul>
+    <li><b>이메일 목록</b> — 테스터가 이메일을 보내오면 개발자가 콘솔에 직접 넣습니다. 한 명 올 때마다 한 번씩요.</li>
+    <li><b>구글 그룹</b> — 주소만 주면 테스터가 알아서 가입합니다. 개발자는 아무것도 안 해도 됩니다.</li>
+  </ul>
+
+  <p>12명을 모아야 하니 그룹 쪽이 훨씬 편합니다. 다만 막히는 데가 세 군데
+  있어서, 순서대로 짚겠습니다.</p>
+
+  <h2>1. 그룹 만들기</h2>
+
+  <p><a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a>
+  에서 [그룹 만들기]를 누릅니다. 이름은 아무렇게나 지어도 되고, 이메일
+  앞부분이 나중에 나눠 줄 주소가 됩니다.</p>
+
+  ${SHOT('/img/guide-group-1.png', '이메일 앞부분이 그룹 주소가 됩니다 — myapp-testers@googlegroups.com')}
+
+  <h2>2. 여기서 대부분 틀립니다</h2>
+
+  <p>다음 화면이 진짜입니다. 기본값 그대로 두면 <b>아무도 못 들어옵니다.</b></p>
+
+  ${SHOT('/img/guide-group-2.png', '이 두 개를 바꿔야 합니다. 기본값은 [그룹 멤버]와 [초대된 사용자만]입니다')}
+
+  <ul>
+    <li><b>그룹을 검색할 수 있는 사용자</b> → 웹의 모든 사용자에게 공개</li>
+    <li><b>그룹에 가입할 수 있는 사용자</b> → 누구나 가입할 수 있음</li>
+  </ul>
+
+  <p>기본값이면 테스터가 링크를 눌러도 <b>"콘텐츠를 사용할 수 없음"</b>만 봅니다.
+  그 사람은 뭘 잘못했는지 모르고, 개발자도 왜 아무도 안 들어오는지 모릅니다.
+  이미 만든 그룹이라면 그룹 설정에서 같은 항목을 고치면 됩니다.</p>
+
+  <p class="muted">회사 도메인 그룹(groups.google.com/<b>a/도메인</b>/g/...)은 외부
+  계정 가입을 막아 둔 경우가 많습니다. 테스터를 밖에서 구할 거라면 개인 구글
+  계정으로 만드는 편이 안전합니다.</p>
+
+  <h2>3. 콘솔에 연결하기</h2>
+
+  <p>Play Console → 테스트 및 출시 → 테스트 → <b>비공개 테스트</b> → 트랙 관리 →
+  <b>테스터</b> 탭입니다.</p>
+
+  ${SHOT('/img/guide-console-testers.png', '[Google 그룹스]를 고르고 그룹 이메일 주소를 그대로 넣습니다')}
+
+  <p>넣고 나면 오른쪽 아래 <b>[저장]</b>을 꼭 누르세요. 안 누르면 아무 일도
+  일어나지 않습니다.</p>
+
+  <h2>4. 저장만으로는 안 열립니다</h2>
+
+  <p>여기가 두 번째 함정입니다. 그룹을 연결해도 <b>그 트랙에 출시된 버전이
+  없으면</b> 옵트인 링크는 열리지 않습니다. 테스터에게는 이렇게 보입니다.</p>
+
+  ${NOT_AVAILABLE}
+
+  <p>그룹 가입까지 마친 사람에게도 이 화면이 뜹니다. 그래서 순서가 중요합니다.</p>
+
+  <ol>
+    <li>그룹 만들고 공개 설정 두 개 바꾸기</li>
+    <li>콘솔 테스터 탭에 연결하고 [저장]</li>
+    <li><b>비공개 테스트 트랙에 버전(AAB)을 올리고 검토를 통과시키기</b></li>
+    <li>그다음에야 테스터를 부르기</li>
+  </ol>
+
+  <h2>5. 링크 두 개 챙기기</h2>
+
+  ${SHOT('/img/guide-console-link.png', '같은 테스터 탭 아래쪽 — Android용과 웹용 링크가 따로 있습니다')}
+
+  <p>테스터에게 줄 옵트인 링크입니다. 보통
+  <code>play.google.com/apps/testing/패키지명</code> 형태입니다. ACT Party에 앱을
+  등록할 때 <b>그룹 주소</b>와 <b>옵트인 링크</b>를 둘 다 넣어 두면, 신청한
+  사람에게 순서대로 안내가 나갑니다.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b>는 이 두 주소를 앱마다 저장해 두고, 테스터가 가입·옵트인·설치를
+    어디까지 했는지 대신 세어 줍니다.
+    <a href="/">actparty.app에서 무료로 쓰기</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">화면은 2026년 9월 기준입니다. 구글이
+  문구를 종종 바꾸므로 위치가 조금 다를 수 있습니다.</p>`,
+
+  en: `
+  <h1 style="font-size:28px;margin:0 0 8px">A Google Group for your testers</h1>
+  <p class="muted" style="margin:0 0 24px">Create it, connect it, then publish a build</p>
+
+  <p>There are two ways to let people into a closed test: an <b>email list</b> or a
+  <b>Google Group</b>. One difference separates them, and it is a big one.</p>
+
+  <ul>
+    <li><b>Email list</b> — testers send you their address and you add each one in the console, by hand, every time.</li>
+    <li><b>Google Group</b> — you hand out one address and testers join themselves. You do nothing.</li>
+  </ul>
+
+  <p>You need twelve of them, so the group is far less work. Three things trip
+  people up; here they are in order.</p>
+
+  <h2>1. Create the group</h2>
+
+  <p>At <a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a>,
+  click Create group. The name is free-form; the email prefix becomes the address
+  you hand out.</p>
+
+  ${SHOT('/img/guide-group-1.png', 'The email prefix becomes the group address — myapp-testers@googlegroups.com')}
+
+  <h2>2. This is where most people get it wrong</h2>
+
+  <p>The next screen is the one that matters. Leave the defaults and
+  <b>nobody can get in.</b></p>
+
+  ${SHOT('/img/guide-group-2.png', 'Change these two. They default to "Group members" and "Invited users only"')}
+
+  <ul>
+    <li><b>Who can search for the group</b> → Anyone on the web</li>
+    <li><b>Who can join the group</b> → Anyone can join</li>
+  </ul>
+
+  <p>On the defaults a tester who clicks your link only sees
+  <b>"Content unavailable"</b>. They cannot tell what they did wrong, and you
+  cannot tell why nobody is joining. For a group you already made, the same two
+  settings sit under group settings.</p>
+
+  <p class="muted">A Workspace group (groups.google.com/<b>a/yourdomain</b>/g/...)
+  usually refuses accounts outside the domain. If your testers come from outside,
+  make the group on a personal Google account.</p>
+
+  <h2>3. Connect it in the console</h2>
+
+  <p>Play Console → Test and release → Testing → <b>Closed testing</b> → Manage
+  track → <b>Testers</b> tab.</p>
+
+  ${SHOT('/img/guide-console-testers.png', 'Pick Google Groups and paste the group email address')}
+
+  <p>Then press <b>Save</b> at the bottom right. Nothing happens until you do.</p>
+
+  <h2>4. Saving is not enough</h2>
+
+  <p>Here is the second trap. Even with the group connected, the opt-in link stays
+  shut until <b>a build is published on that track</b>. Testers see this:</p>
+
+  ${NOT_AVAILABLE}
+
+  <p>They get that screen even after joining the group, which is why the order
+  matters.</p>
+
+  <ol>
+    <li>Create the group and fix the two access settings</li>
+    <li>Connect it on the Testers tab and press Save</li>
+    <li><b>Upload a build to the closed track and get it through review</b></li>
+    <li>Only then invite testers</li>
+  </ol>
+
+  <h2>5. Grab both links</h2>
+
+  ${SHOT('/img/guide-console-link.png', 'Lower on the same tab — separate links for Android and web')}
+
+  <p>That is the opt-in link, usually
+  <code>play.google.com/apps/testing/your.package</code>. When you register your
+  app on ACT Party, fill in <b>both</b> the group address and the opt-in link, and
+  whoever requests a trade is walked through them in order.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> keeps both addresses per app and counts how far each tester
+    got — joined, opted in, installed.
+    <a href="/">Use it free at actparty.app</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">Screens are from September 2026 and in
+  Korean; Google moves this wording around, so yours may sit slightly
+  differently.</p>`,
+
+  ja: `
+  <h1 style="font-size:28px;margin:0 0 8px">テスター用のGoogleグループ</h1>
+  <p class="muted" style="margin:0 0 24px">作成し、連携し、ビルドを公開するまで</p>
+
+  <p>非公開テストに人を入れる方法は二つです。<b>メールリスト</b>と
+  <b>Googleグループ</b>。違いは一つですが、それが大きい。</p>
+
+  <ul>
+    <li><b>メールリスト</b> — テスターからメールが届くたび、開発者がコンソールに手で追加します。</li>
+    <li><b>Googleグループ</b> — アドレスを渡せばテスターが自分で参加します。開発者は何もしません。</li>
+  </ul>
+
+  <p>12人集めるので、グループの方がずっと楽です。詰まる場所が三つあるので順に。</p>
+
+  <h2>1. グループを作る</h2>
+
+  <p><a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a>
+  で［グループを作成］。名前は自由で、メールの前半が後で配るアドレスになります。</p>
+
+  ${SHOT('/img/guide-group-1.png', 'メールの前半がグループのアドレスになります — myapp-testers@googlegroups.com')}
+
+  <h2>2. ここでほとんどの人がつまずく</h2>
+
+  <p>次の画面が本番です。既定のままだと<b>誰も入れません。</b></p>
+
+  ${SHOT('/img/guide-group-2.png', 'この二つを変えます。既定は「グループのメンバー」と「招待されたユーザーのみ」です')}
+
+  <ul>
+    <li><b>グループを検索できるユーザー</b> → ウェブ上の全員</li>
+    <li><b>グループに参加できるユーザー</b> → 誰でも参加できる</li>
+  </ul>
+
+  <p>既定のままだと、テスターがリンクを開いても<b>「コンテンツを利用できません」</b>
+  としか出ません。相手は何が悪いのか分からず、開発者もなぜ誰も来ないのか
+  分かりません。作成済みのグループなら、グループ設定の同じ項目を直します。</p>
+
+  <p class="muted">会社ドメインのグループ（groups.google.com/<b>a/ドメイン</b>/g/...）は
+  外部アカウントの参加を拒む設定が多いです。外からテスターを集めるなら個人の
+  Googleアカウントで作る方が安全です。</p>
+
+  <h2>3. コンソールに連携する</h2>
+
+  <p>Play Console → テストとリリース → テスト → <b>非公開テスト</b> → トラックの管理 →
+  <b>テスター</b>タブ。</p>
+
+  ${SHOT('/img/guide-console-testers.png', '［Googleグループ］を選び、グループのメールアドレスを貼り付けます')}
+
+  <p>入力したら右下の<b>［保存］</b>を必ず押してください。押すまで何も起きません。</p>
+
+  <h2>4. 保存だけでは開かない</h2>
+
+  <p>二つ目の落とし穴です。グループを連携しても、<b>そのトラックに公開済みの
+  ビルドがない</b>限り参加リンクは開きません。テスターにはこう表示されます。</p>
+
+  ${NOT_AVAILABLE}
+
+  <p>グループに参加済みの人にも同じ画面が出ます。だから順番が大事です。</p>
+
+  <ol>
+    <li>グループを作り、公開設定を二つ変える</li>
+    <li>テスタータブで連携して［保存］</li>
+    <li><b>非公開テストトラックにビルド（AAB）を上げて審査を通す</b></li>
+    <li>そのあとでテスターを呼ぶ</li>
+  </ol>
+
+  <h2>5. リンクを二つとも控える</h2>
+
+  ${SHOT('/img/guide-console-link.png', '同じタブの下の方 — Android用とウェブ用が別々にあります')}
+
+  <p>テスターに渡す参加リンクで、たいてい
+  <code>play.google.com/apps/testing/パッケージ名</code> の形です。ACT Party に
+  アプリを登録するとき、<b>グループのアドレス</b>と<b>参加リンク</b>の両方を
+  入れておくと、申し込んだ相手に順番どおり案内が出ます。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> はこの二つをアプリごとに保存し、各テスターがどこまで進んだかを
+    代わりに数えます。
+    <a href="/">actparty.app で無料で使う</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">画面は2026年9月時点の韓国語版です。
+  Googleは文言をよく変えるので、位置が少し違うことがあります。</p>`,
+
+  'zh-Hans': `
+  <h1 style="font-size:28px;margin:0 0 8px">给测试者用的 Google 群组</h1>
+  <p class="muted" style="margin:0 0 24px">创建、连接，再发布一个版本</p>
+
+  <p>让人加入封闭测试有两种方式：<b>邮箱列表</b>和 <b>Google 群组</b>。
+  区别只有一个，但很关键。</p>
+
+  <ul>
+    <li><b>邮箱列表</b> — 测试者把邮箱发给你，你在控制台里一个一个手动添加。</li>
+    <li><b>Google 群组</b> — 你给出一个地址，测试者自己加入，你什么都不用做。</li>
+  </ul>
+
+  <p>你需要凑够 12 人，所以群组省事得多。有三处容易卡住，按顺序说。</p>
+
+  <h2>1. 创建群组</h2>
+
+  <p>在 <a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a>
+  点击［创建群组］。名称随意，邮箱前缀就是你之后要发出去的地址。</p>
+
+  ${SHOT('/img/guide-group-1.png', '邮箱前缀就是群组地址 — myapp-testers@googlegroups.com')}
+
+  <h2>2. 大多数人在这一步弄错</h2>
+
+  <p>下一屏才是关键。保持默认设置，<b>谁也进不来。</b></p>
+
+  ${SHOT('/img/guide-group-2.png', '要改这两项。默认是「群组成员」和「仅受邀用户」')}
+
+  <ul>
+    <li><b>谁可以搜索到群组</b> → 网络上的所有人</li>
+    <li><b>谁可以加入群组</b> → 任何人都可以加入</li>
+  </ul>
+
+  <p>保持默认的话，测试者点开链接只会看到<b>「内容不可用」</b>。
+  他不知道自己做错了什么，你也不知道为什么没人加入。
+  已经建好的群组，在群组设置里改同样两项。</p>
+
+  <p class="muted">公司域名下的群组（groups.google.com/<b>a/你的域名</b>/g/...）
+  通常不允许域外账号加入。如果测试者来自外部，用个人 Google 账号建群更稳妥。</p>
+
+  <h2>3. 在控制台里连接</h2>
+
+  <p>Play Console → 测试和发布 → 测试 → <b>封闭测试</b> → 管理轨道 → <b>测试者</b>标签页。</p>
+
+  ${SHOT('/img/guide-console-testers.png', '选择［Google 群组］，粘贴群组邮箱地址')}
+
+  <p>填完一定要按右下角的<b>［保存］</b>。不按就什么都没发生。</p>
+
+  <h2>4. 光保存还不够</h2>
+
+  <p>第二个坑在这里。即使连接了群组，只要<b>该轨道上没有已发布的版本</b>，
+  加入链接就打不开。测试者看到的是：</p>
+
+  ${NOT_AVAILABLE}
+
+  <p>哪怕他已经加入了群组，还是这一屏。所以顺序很重要。</p>
+
+  <ol>
+    <li>建群，并改好那两项权限</li>
+    <li>在测试者标签页里连接，然后按［保存］</li>
+    <li><b>把版本（AAB）上传到封闭测试轨道并通过审核</b></li>
+    <li>之后再叫测试者来</li>
+  </ol>
+
+  <h2>5. 两个链接都要拿</h2>
+
+  ${SHOT('/img/guide-console-link.png', '同一标签页下方 — Android 和网页各有一个链接')}
+
+  <p>这就是给测试者的加入链接，通常是
+  <code>play.google.com/apps/testing/你的包名</code>。在 ACT Party 登记应用时，
+  把<b>群组地址</b>和<b>加入链接</b>都填上，申请互测的人就会按顺序看到指引。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 会为每个应用保存这两个地址，并替你统计每位测试者走到了哪一步。
+    <a href="/">在 actparty.app 免费使用</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">截图为 2026 年 9 月的韩语界面。
+  Google 时常调整措辞，位置可能略有不同。</p>`,
+
+  'zh-Hant': `
+  <h1 style="font-size:28px;margin:0 0 8px">給測試者用的 Google 群組</h1>
+  <p class="muted" style="margin:0 0 24px">建立、連接，再發布一個版本</p>
+
+  <p>讓人加入封閉測試有兩種方式：<b>郵箱清單</b>和 <b>Google 群組</b>。
+  差別只有一個，但很關鍵。</p>
+
+  <ul>
+    <li><b>郵箱清單</b> — 測試者把信箱寄給你，你在主控台裡一個一個手動加入。</li>
+    <li><b>Google 群組</b> — 你給出一個地址，測試者自己加入，你什麼都不用做。</li>
+  </ul>
+
+  <p>你需要湊滿 12 人，所以群組省事得多。有三處容易卡住，按順序說。</p>
+
+  <h2>1. 建立群組</h2>
+
+  <p>在 <a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a>
+  點擊［建立群組］。名稱隨意，信箱前綴就是你之後要發出去的地址。</p>
+
+  ${SHOT('/img/guide-group-1.png', '信箱前綴就是群組地址 — myapp-testers@googlegroups.com')}
+
+  <h2>2. 多數人在這一步弄錯</h2>
+
+  <p>下一頁才是關鍵。保持預設值，<b>誰也進不來。</b></p>
+
+  ${SHOT('/img/guide-group-2.png', '要改這兩項。預設是「群組成員」和「僅受邀使用者」')}
+
+  <ul>
+    <li><b>誰可以搜尋到群組</b> → 網路上的所有人</li>
+    <li><b>誰可以加入群組</b> → 任何人都可以加入</li>
+  </ul>
+
+  <p>保持預設的話，測試者點開連結只會看到<b>「內容無法使用」</b>。
+  他不知道自己做錯了什麼，你也不知道為什麼沒人加入。
+  已經建好的群組，在群組設定裡改同樣兩項。</p>
+
+  <p class="muted">公司網域下的群組（groups.google.com/<b>a/你的網域</b>/g/...）
+  通常不允許網域外帳號加入。如果測試者來自外部，用個人 Google 帳號建群更穩妥。</p>
+
+  <h2>3. 在主控台裡連接</h2>
+
+  <p>Play Console → 測試與發布 → 測試 → <b>封閉測試</b> → 管理測試群組 → <b>測試者</b>分頁。</p>
+
+  ${SHOT('/img/guide-console-testers.png', '選擇［Google 群組］，貼上群組信箱地址')}
+
+  <p>填完一定要按右下角的<b>［儲存］</b>。不按就什麼都沒發生。</p>
+
+  <h2>4. 光儲存還不夠</h2>
+
+  <p>第二個坑在這裡。即使連接了群組，只要<b>該測試群組上沒有已發布的版本</b>，
+  加入連結就打不開。測試者看到的是：</p>
+
+  ${NOT_AVAILABLE}
+
+  <p>就算他已經加入群組，還是這一頁。所以順序很重要。</p>
+
+  <ol>
+    <li>建群，並改好那兩項權限</li>
+    <li>在測試者分頁裡連接，然後按［儲存］</li>
+    <li><b>把版本（AAB）上傳到封閉測試並通過審查</b></li>
+    <li>之後再找測試者</li>
+  </ol>
+
+  <h2>5. 兩個連結都要拿</h2>
+
+  ${SHOT('/img/guide-console-link.png', '同一分頁下方 — Android 和網頁各有一個連結')}
+
+  <p>這就是給測試者的加入連結，通常是
+  <code>play.google.com/apps/testing/你的套件名稱</code>。在 ACT Party 登記應用程式時，
+  把<b>群組地址</b>和<b>加入連結</b>都填上，申請互測的人就會按順序看到指引。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 會為每個應用程式保存這兩個地址，並替你統計每位測試者走到了哪一步。
+    <a href="/">在 actparty.app 免費使用</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">螢幕截圖為 2026 年 9 月的韓文介面。
+  Google 時常調整措辭，位置可能略有不同。</p>`,
+};
+
+document.getElementById('langSlot').innerHTML = langPicker();
+document.getElementById('doc').innerHTML = DOC[LANG] ?? DOC.en;
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>
