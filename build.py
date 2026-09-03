@@ -37,6 +37,7 @@ STATIC_PAGES = [
     ('/guides/daily-opens-data.html', '0.8'),
     ('/guides/why-testers-drop.html', '0.7'),
     ('/guides/production-form.html', '0.8'),
+    ('/guides/google-group.html', '0.8'),
 ]
 
 
@@ -167,6 +168,10 @@ def main():
     apps = public_apps()
     listed = [a for a in apps if a.get('package_name')]
     urls = [f'{SITE}{p}' for p, _ in STATIC_PAGES]
+    # 언어별 가이드 (i18n_build.py 가 만든다). 없으면 영어만 올라간다.
+    i18n = os.path.join(BASE, 'i18n_pages.json')
+    if os.path.exists(i18n):
+        urls += [f'{SITE}{p}' for p in json.load(open(i18n, encoding='utf-8'))]
 
     for a in listed:
         pkg = a['package_name']

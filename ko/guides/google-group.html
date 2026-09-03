@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>테스터용 구글 그룹 만들기 | ACT Party</title>
+<meta name="description" content="만들고, 연결하고, 버전을 올리기까지">
+<link rel="canonical" href="https://actparty.app/ko/guides/google-group.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/google-group.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/google-group.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/google-group.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/google-group.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/google-group.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/google-group.html">
+<link rel="stylesheet" href="/assets/app.css?v=96">
+<style>
+  /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; border: 1px solid #e3e6ea;
+    border-radius: 10px; display: block;
+  }
+  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+  /* 여기서 다들 멈춘다 — 그룹까지 다 해 놓고 버전을 안 올려서
+     테스터에게 "App not available" 이 뜬다. 눈에 걸리게 둔다. */
+  #doc ol li.hot {
+    background: #fff1f2; border-left: 3px solid #e11d48;
+    border-radius: 6px; padding: 9px 12px; margin: 10px 0;
+    color: #9f1239; list-style-position: outside;
+  }
+  #doc ol li.hot b { color: #be123c }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/google-group.html" hreflang="en">English</a> · <b>한국어</b> · <a href="/ja/guides/google-group.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/guides/google-group.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/guides/google-group.html" hreflang="zh-Hant">繁體中文</a></p>
+  <h1 style="font-size:28px;margin:0 0 8px">테스터용 구글 그룹 만들기</h1>
+  <p class="muted" style="margin:0 0 24px">만들고, 연결하고, 버전을 올리기까지</p>
+
+  <p>비공개 테스트에 사람을 넣는 방법은 두 가지입니다. <b>이메일 목록</b>과
+  <b>구글 그룹</b>이요. 차이는 하나뿐인데, 그 하나가 큽니다.</p>
+
+  <ul>
+    <li><b>이메일 목록</b> — 테스터가 이메일을 보내오면 개발자가 콘솔에 직접 넣습니다. 한 명 올 때마다 한 번씩요.</li>
+    <li><b>구글 그룹</b> — 주소만 주면 테스터가 알아서 가입합니다. 개발자는 아무것도 안 해도 됩니다.</li>
+  </ul>
+
+  <p>12명을 모아야 하니 그룹 쪽이 훨씬 편합니다. 다만 막히는 데가 세 군데
+  있어서, 순서대로 짚겠습니다.</p>
+
+  <h2>1. 그룹 만들기</h2>
+
+  <p><a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a>
+  에서 [그룹 만들기]를 누릅니다. 이름은 아무렇게나 지어도 되고, 이메일
+  앞부분이 나중에 나눠 줄 주소가 됩니다.</p>
+
+  <figure><img src="/img/guide-group-1.png" alt="" loading="lazy"><figcaption>이메일 앞부분이 그룹 주소가 됩니다 — myapp-testers@googlegroups.com</figcaption></figure>
+
+  <h2>2. 여기서 대부분 틀립니다</h2>
+
+  <p>다음 화면이 진짜입니다. 기본값 그대로 두면 <b>아무도 못 들어옵니다.</b></p>
+
+  <figure><img src="/img/guide-group-2.png" alt="" loading="lazy"><figcaption>이 두 개를 바꿔야 합니다. 기본값은 [그룹 멤버]와 [초대된 사용자만]입니다</figcaption></figure>
+
+  <ul>
+    <li><b>그룹을 검색할 수 있는 사용자</b> → 웹의 모든 사용자에게 공개</li>
+    <li><b>그룹에 가입할 수 있는 사용자</b> → 누구나 가입할 수 있음</li>
+  </ul>
+
+  <p>기본값이면 테스터가 링크를 눌러도 <b>"콘텐츠를 사용할 수 없음"</b>만 봅니다.
+  그 사람은 뭘 잘못했는지 모르고, 개발자도 왜 아무도 안 들어오는지 모릅니다.
+  이미 만든 그룹이라면 그룹 설정에서 같은 항목을 고치면 됩니다.</p>
+
+  <p class="muted">회사 도메인 그룹(groups.google.com/<b>a/도메인</b>/g/...)은 외부
+  계정 가입을 막아 둔 경우가 많습니다. 테스터를 밖에서 구할 거라면 개인 구글
+  계정으로 만드는 편이 안전합니다.</p>
+
+  <h2>3. 콘솔에 연결하기</h2>
+
+  <p>Play Console → 테스트 및 출시 → 테스트 → <b>비공개 테스트</b> → 트랙 관리 →
+  <b>테스터</b> 탭입니다.</p>
+
+  <figure><img src="/img/guide-console-testers.png" alt="" loading="lazy"><figcaption>[Google 그룹스]를 고르고 그룹 이메일 주소를 그대로 넣습니다</figcaption></figure>
+
+  <p>넣고 나면 오른쪽 아래 <b>[저장]</b>을 꼭 누르세요. 안 누르면 아무 일도
+  일어나지 않습니다.</p>
+
+  <h2>4. 저장만으로는 안 열립니다</h2>
+
+  <p>여기가 두 번째 함정입니다. 그룹을 연결해도 <b>그 트랙에 출시된 버전이
+  없으면</b> 옵트인 링크는 열리지 않습니다. 테스터에게는 이렇게 보입니다.</p>
+
+  <p class="note">App not available — A testing version of this app hasn't been published yet or isn't available for this account.</p>
+
+  <p>그룹 가입까지 마친 사람에게도 이 화면이 뜹니다. 그래서 순서가 중요합니다.</p>
+
+  <ol>
+    <li>그룹 만들고 공개 설정 두 개 바꾸기</li>
+    <li>콘솔 테스터 탭에 연결하고 [저장]</li>
+    <li class="hot"><b>비공개 테스트 트랙에 버전(AAB)을 올리고 검토를 통과시키기</b></li>
+    <li>그다음에야 테스터를 부르기</li>
+  </ol>
+
+  <h2>5. 링크 두 개 챙기기</h2>
+
+  <figure><img src="/img/guide-console-link.png" alt="" loading="lazy"><figcaption>같은 테스터 탭 아래쪽 — Android용과 웹용 링크가 따로 있습니다</figcaption></figure>
+
+  <p>테스터에게 줄 옵트인 링크입니다. 보통
+  <code>play.google.com/apps/testing/패키지명</code> 형태입니다. ACT Party에 앱을
+  등록할 때 <b>그룹 주소</b>와 <b>옵트인 링크</b>를 둘 다 넣어 두면, 신청한
+  사람에게 순서대로 안내가 나갑니다.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b>는 이 두 주소를 앱마다 저장해 두고, 테스터가 가입·옵트인·설치를
+    어디까지 했는지 대신 세어 줍니다.
+    <a href="/">actparty.app에서 무료로 쓰기</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">화면은 2026년 9월 기준입니다. 구글이
+  문구를 종종 바꾸므로 위치가 조금 다를 수 있습니다.</p></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=96';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=96';
+
+const SHOT = (src, cap) =>
+  '<figure><img src="' + src + '" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
+const NOT_AVAILABLE =
+  '<p class="note">App not available — A testing version of this app hasn\'t ' +
+  'been published yet or isn\'t available for this account.</p>';
+
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

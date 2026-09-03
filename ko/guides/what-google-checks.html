@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>구글이 실제로 보는 것 | ACT Party</title>
+<meta name="description" content="2026년 8월 기준">
+<link rel="canonical" href="https://actparty.app/ko/guides/what-google-checks.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/what-google-checks.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/what-google-checks.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/what-google-checks.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/what-google-checks.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/what-google-checks.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/what-google-checks.html">
+<link rel="stylesheet" href="/assets/app.css?v=92">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/what-google-checks.html" hreflang="en">English</a> · <b>한국어</b> · <a href="/ja/guides/what-google-checks.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/guides/what-google-checks.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/guides/what-google-checks.html" hreflang="zh-Hant">繁體中文</a></p>
+  <h1 style="font-size:28px;margin:0 0 8px">구글이 실제로 보는 것</h1>
+  <p class="muted" style="margin:0 0 24px">2026년 8월 기준</p>
+
+  <p>2023년 11월 13일 이후에 만든 개인 개발자 계정은, 비공개 테스트를 거치지
+  않으면 프로덕션에 올릴 수 없습니다. 규칙은 구글의 표현으로 이렇습니다.</p>
+
+  <blockquote>프로덕션 액세스를 신청할 때 최소 12명의 테스터가 비공개 테스트에
+  옵트인해 있어야 하며, 그 직전 14일 동안 연속으로 옵트인 상태여야 합니다.</blockquote>
+
+  <h2>세는 것은 옵트인 기간이지 실행 횟수가 아닙니다</h2>
+
+  <p>여기서 대부분 오해합니다. 요건은 <em>옵트인 상태로 얼마나 오래 있었는가</em>지,
+  앱을 몇 번 열었는가가 아닙니다.</p>
+
+  <p>Play Console은 이걸 "N일 동안 옵트인한 테스터"라고 씁니다. 테스터가 구글
+  그룹에 가입하고 [테스터 되기]를 누른 뒤 아무것도 설치하지 않아도 12명에
+  포함됩니다. 아이폰만 쓰는 사람을 넣고 통과했다는 개발자도 있습니다.</p>
+
+  <p>앱을 지워도 테스터 목록에서 빠지지 않습니다. 14일이 지난 뒤라면 삭제해도
+  이미 쌓인 기간은 사라지지 않습니다.</p>
+
+  <h2>그런데 왜 다들 "활동해야 한다"고 할까</h2>
+
+  <p>이유가 둘인데, 그중 하나만 구글 얘기입니다.</p>
+
+  <h3>1. 활동이 아니라 연속성</h3>
+  <p>14일은 <em>연속</em>이어야 합니다. 누가 옵트아웃하거나 내가 그 사람을 그룹에서
+  빼면 그 테스터의 시계가 0으로 돌아갑니다. 테스트를 깨는 건 이것이지, 하루
+  조용한 게 아닙니다.</p>
+
+  <h3>2. 신청서에 직접 설명을 써야 합니다</h3>
+  <p>기준을 채우면 프로덕션 액세스를 신청하는데, 세 구역에 답을 씁니다.</p>
+  <table>
+    <tr><th>구역</th><th>묻는 것</th></tr>
+    <tr><td>비공개 테스트에 관하여</td><td>어떻게 진행했는지, 누가 테스트했는지, 무엇을 배웠는지</td></tr>
+    <tr><td>앱/게임에 관하여</td><td>무엇을 하는 앱인지, 누구를 위한 것인지</td></tr>
+    <tr><td>프로덕션 준비도에 관하여</td><td>출시할 만큼 완성됐는지</td></tr>
+  </table>
+  <p>테스터 피드백을 첨부하라는 항목은 없습니다. 다만 아무도 열지 않은 테스트는
+  첫 구역에 쓸 말이 없고, 심사자는 그 글을 읽습니다.</p>
+
+  <h2>그래서 어떻게 해야 하나</h2>
+  <ul>
+    <li><b>하루 건너뛴 걸로 겁먹지 마세요.</b> 화요일에 안 연 사람이 뭔가를 깬 게 아닙니다.</li>
+    <li><b>그룹에서 나가는 건 겁내세요.</b> 그건 연속성을 끊습니다.</li>
+    <li><b>특별한 이유가 없으면 모든 국가로 열어 두세요.</b> "내 나라에서 안 받아져요"는
+      테스터가 조용히 빠지는 가장 흔한 이유입니다.</li>
+    <li><b>그래도 진짜로 쓰이길 바라야 합니다.</b> 구글이 세서가 아니라, 신청서에
+      정직하게 쓸 내용이 있어야 하고, 나와 품앗이한 사람은 목록에 앉아 있어 달라고
+      부탁한 게 아니라 앱을 테스트해 달라고 부탁했기 때문입니다.</li>
+  </ul>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b>는 안드로이드 사용 기록에서 매일 연 날을 대신 적어 둡니다.
+    스크린샷도 양식도 없습니다. 상대도 쓰면 서로 누가 나타났는지 보입니다.
+    <a href="/">actparty.app 에서 보기</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    출처: Play Console 고객센터 "신규 개인 개발자 계정의 앱 테스트 요건"
+    (문서 14151465), 2026년 8월 31일 확인. 구글이 바꿀 수 있으니 실제로 기댈
+    때는 원문을 다시 보세요.
+  </p></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=92';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=92';
+
+// 본문은 언어마다 통째로 다르다. 문장 단위 키로 쪼개면 번역이 어색해진다.
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ガイド | ACT Party</title>
+<meta name="description" content="ドキュメントだけでなく、実際に回してみて書いた記事です。">
+<link rel="canonical" href="https://actparty.app/ja/guides/">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/">
+<link rel="stylesheet" href="/assets/app.css?v=92">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/" hreflang="en">English</a> · <a href="/ko/guides/" hreflang="ko">한국어</a> · <b>日本語</b> · <a href="/zh-Hans/guides/" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/guides/" hreflang="zh-Hant">繁體中文</a></p>
+  <h1 style="font-size:28px;margin:0 0 6px">ガイド</h1>
+  <p class="muted" style="margin:0 0 20px">ドキュメントだけでなく、実際に回してみて書いた記事です。</p>
+  <div class="grid">
+    <a class="card guide" href="/ja/guides/what-google-checks.html">
+      <h2 style="font-size:17px;margin:0 0 4px">Googleが実際に見ているもの</h2>
+      <p class="muted" style="margin:0">テスター12名×14日 — 数えるのはオプトイン期間で、毎日開いたかではありません。</p>
+    </a>
+    <a class="card guide" href="/ja/guides/daily-opens-data.html">
+      <h2 style="font-size:17px;margin:0 0 4px">14日間ずっと開く人はいません</h2>
+      <p class="muted" style="margin:0">完了交換44件の実測: 平均14日中8.5日、皆勤は2名。</p>
+    </a>
+    <a class="card guide" href="/ja/guides/why-testers-drop.html">
+      <h2 style="font-size:17px;margin:0 0 4px">テスターが消える理由</h2>
+      <p class="muted" style="margin:0">交換が壊れる四つの形と、そのうち防げるもの。</p>
+    </a>
+    <a class="card guide" href="/ja/guides/production-form.html">
+      <h2 style="font-size:17px;margin:0 0 4px">製品版申請フォームの9問</h2>
+      <p class="muted" style="margin:0">そのうち二つが結果を分けます — その答えはどこから来るのか。</p>
+    </a>
+    <a class="card guide" href="/ja/guides/google-group.html">
+      <h2 style="font-size:17px;margin:0 0 4px">Googleグループを作って連携する</h2>
+      <p class="muted" style="margin:0">テスターが自分で参加できるように — 二つの公開設定と、保存だけでは開かない理由。</p>
+    </a>
+  </div></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=92';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=92';
+
+// 본문은 언어마다 통째로 다르다. 문장 단위 키로 쪼개면 번역이 어색해진다.
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

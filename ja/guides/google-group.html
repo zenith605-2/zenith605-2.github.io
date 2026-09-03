@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>テスター用のGoogleグループ | ACT Party</title>
+<meta name="description" content="作成し、連携し、ビルドを公開するまで">
+<link rel="canonical" href="https://actparty.app/ja/guides/google-group.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/google-group.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/google-group.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/google-group.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/google-group.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/google-group.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/google-group.html">
+<link rel="stylesheet" href="/assets/app.css?v=96">
+<style>
+  /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; border: 1px solid #e3e6ea;
+    border-radius: 10px; display: block;
+  }
+  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+  /* 여기서 다들 멈춘다 — 그룹까지 다 해 놓고 버전을 안 올려서
+     테스터에게 "App not available" 이 뜬다. 눈에 걸리게 둔다. */
+  #doc ol li.hot {
+    background: #fff1f2; border-left: 3px solid #e11d48;
+    border-radius: 6px; padding: 9px 12px; margin: 10px 0;
+    color: #9f1239; list-style-position: outside;
+  }
+  #doc ol li.hot b { color: #be123c }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/google-group.html" hreflang="en">English</a> · <a href="/ko/guides/google-group.html" hreflang="ko">한국어</a> · <b>日本語</b> · <a href="/zh-Hans/guides/google-group.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/guides/google-group.html" hreflang="zh-Hant">繁體中文</a></p>
+  <h1 style="font-size:28px;margin:0 0 8px">テスター用のGoogleグループ</h1>
+  <p class="muted" style="margin:0 0 24px">作成し、連携し、ビルドを公開するまで</p>
+
+  <p>非公開テストに人を入れる方法は二つです。<b>メールリスト</b>と
+  <b>Googleグループ</b>。違いは一つですが、それが大きい。</p>
+
+  <ul>
+    <li><b>メールリスト</b> — テスターからメールが届くたび、開発者がコンソールに手で追加します。</li>
+    <li><b>Googleグループ</b> — アドレスを渡せばテスターが自分で参加します。開発者は何もしません。</li>
+  </ul>
+
+  <p>12人集めるので、グループの方がずっと楽です。詰まる場所が三つあるので順に。</p>
+
+  <h2>1. グループを作る</h2>
+
+  <p><a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a>
+  で［グループを作成］。名前は自由で、メールの前半が後で配るアドレスになります。</p>
+
+  <figure><img src="/img/guide-group-1.png" alt="" loading="lazy"><figcaption>メールの前半がグループのアドレスになります — myapp-testers@googlegroups.com</figcaption></figure>
+
+  <h2>2. ここでほとんどの人がつまずく</h2>
+
+  <p>次の画面が本番です。既定のままだと<b>誰も入れません。</b></p>
+
+  <figure><img src="/img/guide-group-2.png" alt="" loading="lazy"><figcaption>この二つを変えます。既定は「グループのメンバー」と「招待されたユーザーのみ」です</figcaption></figure>
+
+  <ul>
+    <li><b>グループを検索できるユーザー</b> → ウェブ上の全員</li>
+    <li><b>グループに参加できるユーザー</b> → 誰でも参加できる</li>
+  </ul>
+
+  <p>既定のままだと、テスターがリンクを開いても<b>「コンテンツを利用できません」</b>
+  としか出ません。相手は何が悪いのか分からず、開発者もなぜ誰も来ないのか
+  分かりません。作成済みのグループなら、グループ設定の同じ項目を直します。</p>
+
+  <p class="muted">会社ドメインのグループ（groups.google.com/<b>a/ドメイン</b>/g/...）は
+  外部アカウントの参加を拒む設定が多いです。外からテスターを集めるなら個人の
+  Googleアカウントで作る方が安全です。</p>
+
+  <h2>3. コンソールに連携する</h2>
+
+  <p>Play Console → テストとリリース → テスト → <b>非公開テスト</b> → トラックの管理 →
+  <b>テスター</b>タブ。</p>
+
+  <figure><img src="/img/guide-console-testers.png" alt="" loading="lazy"><figcaption>［Googleグループ］を選び、グループのメールアドレスを貼り付けます</figcaption></figure>
+
+  <p>入力したら右下の<b>［保存］</b>を必ず押してください。押すまで何も起きません。</p>
+
+  <h2>4. 保存だけでは開かない</h2>
+
+  <p>二つ目の落とし穴です。グループを連携しても、<b>そのトラックに公開済みの
+  ビルドがない</b>限り参加リンクは開きません。テスターにはこう表示されます。</p>
+
+  <p class="note">App not available — A testing version of this app hasn't been published yet or isn't available for this account.</p>
+
+  <p>グループに参加済みの人にも同じ画面が出ます。だから順番が大事です。</p>
+
+  <ol>
+    <li>グループを作り、公開設定を二つ変える</li>
+    <li>テスタータブで連携して［保存］</li>
+    <li class="hot"><b>非公開テストトラックにビルド（AAB）を上げて審査を通す</b></li>
+    <li>そのあとでテスターを呼ぶ</li>
+  </ol>
+
+  <h2>5. リンクを二つとも控える</h2>
+
+  <figure><img src="/img/guide-console-link.png" alt="" loading="lazy"><figcaption>同じタブの下の方 — Android用とウェブ用が別々にあります</figcaption></figure>
+
+  <p>テスターに渡す参加リンクで、たいてい
+  <code>play.google.com/apps/testing/パッケージ名</code> の形です。ACT Party に
+  アプリを登録するとき、<b>グループのアドレス</b>と<b>参加リンク</b>の両方を
+  入れておくと、申し込んだ相手に順番どおり案内が出ます。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> はこの二つをアプリごとに保存し、各テスターがどこまで進んだかを
+    代わりに数えます。
+    <a href="/">actparty.app で無料で使う</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">画面は2026年9月時点の韓国語版です。
+  Googleは文言をよく変えるので、位置が少し違うことがあります。</p></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=96';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=96';
+
+const SHOT = (src, cap) =>
+  '<figure><img src="' + src + '" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
+const NOT_AVAILABLE =
+  '<p class="note">App not available — A testing version of this app hasn\'t ' +
+  'been published yet or isn\'t available for this account.</p>';
+
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

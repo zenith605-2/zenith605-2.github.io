@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>測試者為什麼會消失 | ACT Party</title>
+<meta name="description" content="按發作順序排的四種">
+<link rel="canonical" href="https://actparty.app/zh-Hant/guides/why-testers-drop.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/why-testers-drop.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/why-testers-drop.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/why-testers-drop.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/why-testers-drop.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/why-testers-drop.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/why-testers-drop.html">
+<link rel="stylesheet" href="/assets/app.css?v=92">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/why-testers-drop.html" hreflang="en">English</a> · <a href="/ko/guides/why-testers-drop.html" hreflang="ko">한국어</a> · <a href="/ja/guides/why-testers-drop.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/guides/why-testers-drop.html" hreflang="zh-Hans">简体中文</a> · <b>繁體中文</b></p>
+  <h1 style="font-size:28px;margin:0 0 8px">測試者為什麼會消失</h1>
+  <p class="muted" style="margin:0 0 24px">按發作順序排的四種</p>
+
+  <h2>1. 根本裝不上</h2>
+  <p>你的封閉測試只開放給少數幾個國家，而測試者不在其中。他點開連結，看到
+  「你所在的國家/地區無法使用」，然後什麼也不說 —— 你只看到數字停住了。</p>
+  <p><b>解決：</b>如無真正理由，請開放給所有國家。這是最常見的悄然流失，
+  而預防它不花你一分錢。</p>
+
+  <h2>2. 群組連結是壞的，而你看不到</h2>
+  <p>如果你的 Google 群組把<em>誰可以查看對話</em>設成了「群組成員」，那麼還不是
+  成員的人會撞上權限牆。你永遠看不到 —— 你是所有者，從你這邊看一切正常。</p>
+  <p><b>解決：</b>打開群組設定，把「誰可以查看群組」和「誰可以加入」都改為
+  <em>網路上的任何人</em>。然後用無痕視窗檢查連結。</p>
+
+  <h2>3. 裝了，然後悄悄卸載</h2>
+  <p>手機空間、整理，或者單純失去興趣。測試者名單裡他還在，所以看起來一切正常。
+  Google 仍算他加入著 —— 但他沒在測試，而如果是互測，就只有你一個人在履約。</p>
+  <p><b>解決：</b>你無法阻止，但可以看見。ACT Party 會在應用從手機上消失時給
+  那場互測做標記，好讓對方不用一直猜。</p>
+
+  <h2>4. 慢慢淡掉</h2>
+  <p>最常見的一種。什麼都沒出錯，他只是不再打開了。第三天沒問題，第六天也
+  沒問題，第九天就說不準了。在
+  <a href="/zh-Hant/guides/daily-opens-data.html">我們測量的 44 場完成互測</a>中，
+  平均是 14 天裡 8.5 天，只有兩個人達成了全部 14 天。</p>
+  <p><b>解決：</b>靠互惠，不是靠催。當對方能看到你今天打開了他的應用，他也會
+  打開你的。這個循環比提醒管用，因為來自一個自己沒做那一半的人的提醒，
+  只會讓人厭煩。</p>
+
+  <h2>這些都不是什麼</h2>
+  <p>通常不是惡意。上面幾乎每一種流失，都是本想幫忙的人撞上了摩擦。請按
+  摩擦來設計，而不是按作弊。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 自動記錄每天的打開，向雙方展示誰真的出現了，並在有人卸載時
+    做出標記。<a href="/">看看怎麼運作 — actparty.app</a>
+  </div></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=92';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=92';
+
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>
