@@ -172,6 +172,10 @@ def main():
     i18n = os.path.join(BASE, 'i18n_pages.json')
     if os.path.exists(i18n):
         urls += [f'{SITE}{p}' for p in json.load(open(i18n, encoding='utf-8'))]
+    # 검색어 랜딩 페이지 (landing_build.py 가 만든다)
+    landing = os.path.join(BASE, 'landing_pages.json')
+    if os.path.exists(landing):
+        urls += [f'{SITE}{p}' for p in json.load(open(landing, encoding='utf-8'))]
 
     for a in listed:
         pkg = a['package_name']

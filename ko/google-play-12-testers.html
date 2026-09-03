@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>구글 플레이 테스터 12명, 어떻게 구하나 — 비공개 테스트 14일 통과법 | ACT Party</title>
+<meta name="description" content="새 개발자 계정은 테스터 12명이 14일 동안 비공개 테스트에 참여해야 출시할 수 있습니다. 구글이 알려주지 않는 테스터 구하는 법과, 개발자끼리 무료로 교환하는 방법.">
+<link rel="canonical" href="https://actparty.app/ko/google-play-12-testers.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/google-play-12-testers.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/google-play-12-testers.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/google-play-12-testers.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/google-play-12-testers.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/google-play-12-testers.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/google-play-12-testers.html">
+<meta property="og:title" content="구글 플레이 테스터 12명, 어떻게 구하나 — 비공개 테스트 14일 통과법 | ACT Party">
+<meta property="og:description" content="새 개발자 계정은 테스터 12명이 14일 동안 비공개 테스트에 참여해야 출시할 수 있습니다. 구글이 알려주지 않는 테스터 구하는 법과, 개발자끼리 무료로 교환하는 방법.">
+<meta property="og:url" content="https://actparty.app/ko/google-play-12-testers.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=96">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "테스터가 14일 동안 매일 앱을 열어야 하나요?", "acceptedAnswer": {"@type": "Answer", "text": "아닙니다. 구글은 옵트인 상태가 14일 이어졌는지를 봅니다. 실측 44건에서 테스터는 평균 8.5일만 열었고 심사는 통과했습니다."}}, {"@type": "Question", "name": "12명 중 한 명이 중간에 나가면 처음부터 다시인가요?", "acceptedAnswer": {"@type": "Answer", "text": "아닙니다. 남은 사람의 기간은 그대로 쌓이고, 새 테스터가 들어오면 그 사람만 14일을 채우면 됩니다."}}, {"@type": "Question", "name": "테스터에게 돈을 줘도 되나요?", "acceptedAnswer": {"@type": "Answer", "text": "구글 정책상 금지는 아니지만, 유료 테스터는 실제 사용자와 다르다는 점을 프로덕션 신청 설문에서 설명해야 합니다. 개발자 교환은 이 문제가 없습니다."}}, {"@type": "Question", "name": "ACT Party는 유료인가요?", "acceptedAnswer": {"@type": "Answer", "text": "무료입니다. 개발자끼리 서로 테스트하는 구조라 비용이 없습니다."}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/google-play-12-testers.html" hreflang="en">English</a> · <b>한국어</b> · <a href="/ja/google-play-12-testers.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/google-play-12-testers.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/google-play-12-testers.html" hreflang="zh-Hant">繁體中文</a></p>
+<h1 style="font-size:28px;margin:0 0 8px">구글 플레이 테스터 12명, 어디서 구하나</h1>
+<p class="muted" style="margin:0 0 24px">새 개발자 계정이 처음 만나는 벽 — 그리고 그 벽을 넘는 세 가지 길</p>
+
+<p>2023년 11월부터 새로 만든 개인 개발자 계정은 앱을 바로 출시할 수 없습니다.
+먼저 <b>테스터 12명이 비공개 테스트에 옵트인하고 14일을 채워야</b> 프로덕션 신청
+버튼이 열립니다. 콘솔에는 조건만 적혀 있고, 그 12명을 어디서 구하는지는 한 줄도
+없습니다.</p>
+
+<h2>구글이 실제로 세는 것</h2>
+<p>테스터가 앱을 매일 열었는지가 아니라, <b>옵트인 상태가 14일 이어졌는지</b>를
+봅니다. 끝난 테스트 44건을 실측했을 때 테스터는 평균 14일 중 8.5일만 앱을
+열었고, 그래도 심사는 통과했습니다. 자세한 숫자는
+<a href="/ko/guides/what-google-checks.html">구글이 실제로 보는 것</a>과
+<a href="/ko/guides/daily-opens-data.html">14일 내내 앱을 여는 사람은 없어요</a>에
+있습니다.</p>
+
+<h2>테스터를 구하는 세 가지 길</h2>
+<ol class="steps">
+  <li><b>지인 12명</b> — 가장 빠르지만 대부분 3~4명에서 멈춥니다. 14일 동안
+  옵트인을 유지해 달라는 부탁이 생각보다 큽니다.</li>
+  <li><b>유료 테스터 서비스</b> — 건당 2~5만 원. 옵트인 유지는 되지만 실제로
+  앱을 쓰는 사람은 아닙니다.</li>
+  <li><b>개발자끼리 교환</b> — 같은 벽에 막힌 개발자가 매주 수천 명 생깁니다.
+  서로 앱을 테스트해 주면 둘 다 12명을 채웁니다. 무료이고, 상대도 개발자라
+  피드백이 남습니다.</li>
+</ol>
+
+<h2>교환이 잘 안 되는 이유와 해결</h2>
+<p>레딧이나 디스코드에서 "내 앱 테스트해 주면 네 것도 해줄게"를 올리는 게 보통의
+방법인데, 상대가 정말 매일 여는지 알 수 없고, 14일 뒤에 조용히 사라지는 사람이
+많습니다. <b>ACT Party</b>는 이 교환을 앱이 대신 관리합니다. 상대 앱을 열면 그날
+인증이 자동으로 기록되고, 서로의 진행이 보드에 보입니다. 아무도 서로를 믿을
+필요가 없습니다.</p>
+
+<h2>시작 순서</h2>
+<ol class="steps">
+  <li>Play Console에서 비공개 테스트 트랙을 만들고 <a href="/ko/guides/google-group.html">구글 그룹을 연결</a>합니다. 여기서 절반이 막힙니다.</li>
+  <li>트랙에 버전(AAB)을 올려 검토를 통과시킵니다. 이게 없으면 옵트인 링크가 안 열립니다.</li>
+  <li>ACT Party에 앱을 등록하고, 보드에서 다른 개발자 앱을 골라 테스트를 시작합니다.</li>
+  <li>14일 뒤 프로덕션 신청 — <a href="/ko/guides/production-form.html">설문 9문항</a>은 미리 읽어 두세요.</li>
+</ol>
+<h2>자주 묻는 질문</h2>
+<dl class="faq">
+<dt>테스터가 14일 동안 매일 앱을 열어야 하나요?</dt><dd>아닙니다. 구글은 옵트인 상태가 14일 이어졌는지를 봅니다. 실측 44건에서 테스터는 평균 8.5일만 열었고 심사는 통과했습니다.</dd><dt>12명 중 한 명이 중간에 나가면 처음부터 다시인가요?</dt><dd>아닙니다. 남은 사람의 기간은 그대로 쌓이고, 새 테스터가 들어오면 그 사람만 14일을 채우면 됩니다.</dd><dt>테스터에게 돈을 줘도 되나요?</dt><dd>구글 정책상 금지는 아니지만, 유료 테스터는 실제 사용자와 다르다는 점을 프로덕션 신청 설문에서 설명해야 합니다. 개발자 교환은 이 문제가 없습니다.</dd><dt>ACT Party는 유료인가요?</dt><dd>무료입니다. 개발자끼리 서로 테스트하는 구조라 비용이 없습니다.</dd>
+</dl>
+<div class="note" style="margin:26px 0"><b>ACT Party</b>에는 지금 테스터를 찾는 앱이 항상 20~40개 올라와 있습니다. 내 앱을 등록하고 하나 골라 시작하면 됩니다. <a href="/">보드 보기</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party">앱 받기</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/ko/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=96';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=96';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>
