@@ -392,6 +392,7 @@ const T = {
   optin_thanks: ['알려줘서 고마워요. 앱 주인에게 전했어요.', 'Thanks — we told the app owner.', 'ありがとうございます。アプリの持ち主に伝えました。', '谢谢，已通知应用所有者。', '謝謝，已通知應用所有者。'],
   optin_flag:   ['옵트인 확인 필요', 'Opt-in needs a fix', 'オプトイン要確認', '加入测试需修复', '加入測試需修復'],
   problem_flag: ['문제가 있어요', 'Something is wrong', '問題があります', '有问题', '有問題'],
+  hw_12_link:   ['테스터 12명을 어디서 구하는지부터 보기 →', 'Start here: where to find 12 testers →', 'まずはテスター12人をどこで集めるかから →', '先看：12 名测试者去哪里找 →', '先看：12 名測試者去哪裡找 →'],
   mode_group:   ['그룹 가입', 'Group', 'グループ', '群组', '群組'],
   mode_email:   ['이메일 등록', 'Email', 'メール', '邮箱', '郵箱'],
   optin_fix_h:  ['테스터가 못 들어갔어요', 'A tester could not get in', 'テスターが参加できませんでした', '有测试者无法加入', '有測試者無法加入'],

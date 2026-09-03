@@ -16,7 +16,7 @@
 <meta property="og:description" content="新的開發者帳號必須有 12 名測試者加入封閉測試並保持 14 天才能發布。Google 沒有告訴你怎麼找到他們；這裡是找測試者的方法，以及開發者之間免費互測的方式。">
 <meta property="og:url" content="https://actparty.app/zh-Hant/google-play-12-testers.html">
 <meta property="og:type" content="article">
-<link rel="stylesheet" href="/assets/app.css?v=96">
+<link rel="stylesheet" href="/assets/app.css?v=97">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "測試者必須連續 14 天每天打開應用程式嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不必。Google 看的是加入狀態是否持續 14 天。實測 44 次中測試者平均只打開 8.5 天，審核通過。"}}, {"@type": "Question", "name": "12 人裡有人中途退出，要從頭再來嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不用。留下的人天數照常累計，新補的測試者只需自己滿 14 天。"}}, {"@type": "Question", "name": "可以付錢給測試者嗎？", "acceptedAnswer": {"@type": "Answer", "text": "Google 政策不禁止，但正式版申請表會問你測試者的使用方式與真實使用者有何不同，付費加入很難解釋。開發者互測沒有這個問題。"}}, {"@type": "Question", "name": "ACT Party 收費嗎？", "acceptedAnswer": {"@type": "Answer", "text": "免費。開發者之間互相測試，沒有需要收費的地方。"}}]}</script>
 <style>
   #doc h2 { margin-top: 30px }
@@ -90,8 +90,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=96';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=96';
+import { mountAuth } from '/assets/api.js?v=97';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=97';
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
 wireLangPicker();
