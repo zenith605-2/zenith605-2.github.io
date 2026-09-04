@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nobody opens your app all 14 days — numbers from 44 closed tests</title>
-<meta name="description" content="Across 44 finished test-for-test trades, the tester opened the app on 8.5 of 14 days on average. Only two managed all 14. What that means for closed testing.">
+<title>Nobody opens your app all 14 days — numbers from 47 closed tests</title>
+<meta name="description" content="Across 47 finished test-for-test trades, the tester opened the app on 8.1 of 14 days on average. Only one managed all 14. What that means for closed testing.">
 <link rel="canonical" href="https://actparty.app/guides/daily-opens-data.html">
 <link rel="alternate" hreflang="en" href="https://actparty.app/guides/daily-opens-data.html">
 <link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/daily-opens-data.html">
@@ -44,19 +44,19 @@ import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v
 const DOC = {
   ko: `
   <h1 style="font-size:28px;margin:0 0 8px">14일 내내 앱을 여는 사람은 없어요</h1>
-  <p class="muted" style="margin:0 0 24px">2026년 9월 1일 측정 · 끝난 품앗이 44건</p>
+  <p class="muted" style="margin:0 0 24px">2026년 9월 4일 측정 · 끝난 품앗이 47건</p>
 
   <p>다들 이걸 짐작으로만 말합니다. 우리는 잴 수 있습니다 — 앱이 안드로이드
   사용 기록에서 매일 연 날을 자동으로 적기 때문입니다. 아무에게도 보고해
   달라고 하지 않습니다.</p>
 
-  <p>14일을 다 채운 품앗이 44건에서, 테스터가 실제로 앱을 연 날은 이랬습니다.</p>
+  <p>14일을 다 채운 품앗이 47건에서, 테스터가 실제로 앱을 연 날은 이랬습니다.</p>
 
   <table>
     <tr><th>가장 적게</th><td>0 / 14</td></tr>
-    <tr><th>가장 많이</th><td>15 / 14</td></tr>
-    <tr><th>평균</th><td><b>8.5 / 14</b></td></tr>
-    <tr><th>14일을 다 채운 사람</th><td><b>44명 중 2명</b></td></tr>
+    <tr><th>가장 많이</th><td>14 / 14</td></tr>
+    <tr><th>평균</th><td><b>8.1 / 14</b></td></tr>
+    <tr><th>14일을 다 채운 사람</th><td><b>47명 중 1명</b></td></tr>
   </table>
 
   <p>한 명은 단 하루도 열지 않았습니다.</p>
@@ -96,20 +96,20 @@ const DOC = {
 
   en: `
   <h1 style="font-size:28px;margin:0 0 8px">Nobody opens your app all 14 days</h1>
-  <p class="muted" style="margin:0 0 24px">Measured 1 September 2026 · 44 finished trades</p>
+  <p class="muted" style="margin:0 0 24px">Measured 4 September 2026 · 47 finished trades</p>
 
   <p>Everyone guesses at this. We can measure it, because the app records daily
   opens automatically from Android's usage stats rather than asking anyone to
   report them.</p>
 
-  <p>Here are 44 test-for-test trades that ran their full 14 days, and how many
+  <p>Here are 47 test-for-test trades that ran their full 14 days, and how many
   of those days the tester actually opened the app:</p>
 
   <table>
     <tr><th>Lowest</th><td>0 / 14</td></tr>
-    <tr><th>Highest</th><td>15 / 14</td></tr>
-    <tr><th>Average</th><td><b>8.5 / 14</b></td></tr>
-    <tr><th>Opened every single day</th><td><b>2 of 44</b></td></tr>
+    <tr><th>Highest</th><td>14 / 14</td></tr>
+    <tr><th>Average</th><td><b>8.1 / 14</b></td></tr>
+    <tr><th>Opened every single day</th><td><b>1 of 47</b></td></tr>
   </table>
 
   <p>One person never opened it at all.</p>
@@ -152,18 +152,18 @@ const DOC = {
 
   ja: `
   <h1 style="font-size:28px;margin:0 0 8px">14日間ずっと開く人はいません</h1>
-  <p class="muted" style="margin:0 0 24px">2026年9月1日計測 · 完了した交換44件</p>
+  <p class="muted" style="margin:0 0 24px">2026年9月4日計測 · 完了した交換47件</p>
 
   <p>これは普通、推測でしか語られません。私たちは測れます — アプリがAndroidの
   使用履歴から毎日開いた日を自動で記録するからです。誰にも報告を頼みません。</p>
 
-  <p>14日を満たした交換44件で、テスターが実際にアプリを開いた日数です。</p>
+  <p>14日を満たした交換47件で、テスターが実際にアプリを開いた日数です。</p>
 
   <table>
     <tr><th>最少</th><td>0 / 14</td></tr>
-    <tr><th>最多</th><td>15 / 14</td></tr>
-    <tr><th>平均</th><td><b>8.5 / 14</b></td></tr>
-    <tr><th>14日すべて開いた人</th><td><b>44名中2名</b></td></tr>
+    <tr><th>最多</th><td>14 / 14</td></tr>
+    <tr><th>平均</th><td><b>8.1 / 14</b></td></tr>
+    <tr><th>14日すべて開いた人</th><td><b>47名中1名</b></td></tr>
   </table>
 
   <p>一人は一度も開きませんでした。</p>
@@ -203,18 +203,18 @@ const DOC = {
 
   'zh-Hans': `
   <h1 style="font-size:28px;margin:0 0 8px">没有人会连开 14 天</h1>
-  <p class="muted" style="margin:0 0 24px">2026 年 9 月 1 日测量 · 44 场完成的互测</p>
+  <p class="muted" style="margin:0 0 24px">2026 年 9 月 4 日测量 · 47 场完成的互测</p>
 
   <p>大家都只能靠猜。我们可以测 —— 因为应用会从 Android 使用记录中自动记下
   每天的打开，不需要任何人来汇报。</p>
 
-  <p>这是 44 场跑满 14 天的互测中，测试者实际打开应用的天数：</p>
+  <p>这是 47 场跑满 14 天的互测中，测试者实际打开应用的天数：</p>
 
   <table>
     <tr><th>最少</th><td>0 / 14</td></tr>
-    <tr><th>最多</th><td>15 / 14</td></tr>
-    <tr><th>平均</th><td><b>8.5 / 14</b></td></tr>
-    <tr><th>每天都打开的人</th><td><b>44 人中 2 人</b></td></tr>
+    <tr><th>最多</th><td>14 / 14</td></tr>
+    <tr><th>平均</th><td><b>8.1 / 14</b></td></tr>
+    <tr><th>每天都打开的人</th><td><b>47 人中 1 人</b></td></tr>
   </table>
 
   <p>有一个人一次都没打开过。</p>
@@ -250,18 +250,18 @@ const DOC = {
 
   'zh-Hant': `
   <h1 style="font-size:28px;margin:0 0 8px">沒有人會連開 14 天</h1>
-  <p class="muted" style="margin:0 0 24px">2026 年 9 月 1 日測量 · 44 場完成的互測</p>
+  <p class="muted" style="margin:0 0 24px">2026 年 9 月 4 日測量 · 47 場完成的互測</p>
 
   <p>大家都只能靠猜。我們可以測 —— 因為應用會從 Android 使用記錄中自動記下
   每天的打開，不需要任何人來回報。</p>
 
-  <p>這是 44 場跑滿 14 天的互測中，測試者實際打開應用的天數：</p>
+  <p>這是 47 場跑滿 14 天的互測中，測試者實際打開應用的天數：</p>
 
   <table>
     <tr><th>最少</th><td>0 / 14</td></tr>
-    <tr><th>最多</th><td>15 / 14</td></tr>
-    <tr><th>平均</th><td><b>8.5 / 14</b></td></tr>
-    <tr><th>每天都打開的人</th><td><b>44 人中 2 人</b></td></tr>
+    <tr><th>最多</th><td>14 / 14</td></tr>
+    <tr><th>平均</th><td><b>8.1 / 14</b></td></tr>
+    <tr><th>每天都打開的人</th><td><b>47 人中 1 人</b></td></tr>
   </table>
 
   <p>有一個人一次都沒打開過。</p>
