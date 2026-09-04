@@ -410,8 +410,13 @@ visible on the board. Nobody has to trust anybody.</p>
     }[lang]
 
 
+from landing_14days import p_14days   # noqa: E402  (모듈 로드 뒤 import — 순환 방지)
+from landing_find import p_find       # noqa: E402
+
 PAGES = {
     'google-play-12-testers': p_12,
+    'closed-testing-14-days': p_14days,
+    'find-android-app-testers': p_find,
 }
 
 

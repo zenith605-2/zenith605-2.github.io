@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google Play 封閉測試的 14 天 — 實際會發生什麼 | ACT Party</title>
+<meta name="description" content="12 名測試者必須保持加入狀態 14 天才能發布。Google 到底在數什麼、測試者真正打開應用程式的天數、人會在第幾天流失、第 14 天怎麼申請。來自 44 次已完成的測試。">
+<link rel="canonical" href="https://actparty.app/zh-Hant/closed-testing-14-days.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/closed-testing-14-days.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/closed-testing-14-days.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/closed-testing-14-days.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/closed-testing-14-days.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/closed-testing-14-days.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/closed-testing-14-days.html">
+<meta property="og:title" content="Google Play 封閉測試的 14 天 — 實際會發生什麼 | ACT Party">
+<meta property="og:description" content="12 名測試者必須保持加入狀態 14 天才能發布。Google 到底在數什麼、測試者真正打開應用程式的天數、人會在第幾天流失、第 14 天怎麼申請。來自 44 次已完成的測試。">
+<meta property="og:url" content="https://actparty.app/zh-Hant/closed-testing-14-days.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=97">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "14 天從什麼時候開始算？", "acceptedAnswer": {"@type": "Answer", "text": "按每個測試者各自加入的那天算。12 個人不必同一天加入，但必須有連續 14 天同時有 12 人處於加入狀態。"}}, {"@type": "Question", "name": "測試者不打開應用程式會審核不過嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不會。Google 看的是加入時長。實測 44 次平均只打開 8.5 天，都通過了。不過申請表會問參與度，完全不打開也不好看。"}}, {"@type": "Question", "name": "已經 14 天了按鈕還是鎖著", "acceptedAnswer": {"@type": "Answer", "text": "檢查是否連續 14 天都有 12 人同時處於加入狀態。哪天有人退出只剩 11 人，那天就不算。"}}, {"@type": "Question", "name": "內部測試算嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不算。必須是封閉測試（Closed testing）。內部測試不在要求之內。"}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/closed-testing-14-days.html" hreflang="en">English</a> · <a href="/ko/closed-testing-14-days.html" hreflang="ko">한국어</a> · <a href="/ja/closed-testing-14-days.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/closed-testing-14-days.html" hreflang="zh-Hans">简体中文</a> · <b>繁體中文</b></p>
+<h1 style="font-size:28px;margin:0 0 8px">封閉測試的 14 天，實際是這樣過的</h1>
+<p class="muted" style="margin:0 0 24px">44 次已完成測試的逐日記錄</p>
+
+<p>Google Play Console 對新開發者帳號的要求是<b>12 名測試者、14 天</b>。
+規則只有一行，這 14 天裡該做什麼、到底在數什麼，哪裡都沒寫。
+在一個開發者互測的看板上，我們記錄了 44 次已完成測試的每日資料。</p>
+
+<h2>Google 數的是「加入時長」，不是打開次數</h2>
+<p>問題不在於測試者是否每天打開應用程式，而在於他是否<b>保持加入狀態滿 14 天</b>。
+幾天不打開不影響審核；退出測試則那個人的計時停止。依據見
+<a href="/zh-Hant/guides/what-google-checks.html">Google 實際檢查什麼</a>。</p>
+
+<h2>測試者在 14 天裡只打開 8.5 天</h2>
+<p>這是 44 次的平均值。14 天全部打開的測試者，44 人裡只有 2 個。流失不在最後，
+而在<b>第 2～3 天</b>。人們出於好奇打開兩三次，然後就忘了。完整數字見
+<a href="/zh-Hant/guides/daily-opens-data.html">沒有人會連開 14 天</a>。</p>
+
+<h2>按天來看</h2>
+<ol class="steps">
+  <li><b>第 1 天</b> — 加入與安裝。一半的問題出在這裡：連結打不開、群組進不去、測試群組上沒有版本。
+  先看<a href="/zh-Hant/guides/google-group.html">Google 群組指南</a>。</li>
+  <li><b>第 2～3 天</b> — 流失最多的區間。沒有理由打開應用程式的測試者會在這裡消失。</li>
+  <li><b>第 4～13 天</b> — 平靜期。只要加入狀態保持，要求就在被滿足。</li>
+  <li><b>第 14 天</b> — 正式版申請按鈕打開。先別按，先讀<a href="/zh-Hant/guides/production-form.html">那 9 個問題</a>。其中兩個決定結果。</li>
+</ol>
+
+<h2>中途有人退出怎麼辦</h2>
+<p>不用從頭再來。其他人的天數照常累計，補進來的人只需滿自己的 14 天。
+但少於 12 人的那些天不計入，所以留 13～14 人更穩妥。他們為什麼會走，見
+<a href="/zh-Hant/guides/why-testers-drop.html">測試者為什麼會消失</a>。</p>
+
+<h2>讓 14 天變短的辦法</h2>
+<p>人工確認測試者每天有沒有打開，意味著兩週裡來回傳截圖，誰都會累。
+用 <b>ACT Party</b>，打開對方的應用程式就自動記下當天打卡。開發者在看板上看到誰打開了幾天，
+測試者什麼都不用回報。</p>
+<h2>常見問題</h2>
+<dl class="faq">
+<dt>14 天從什麼時候開始算？</dt><dd>按每個測試者各自加入的那天算。12 個人不必同一天加入，但必須有連續 14 天同時有 12 人處於加入狀態。</dd><dt>測試者不打開應用程式會審核不過嗎？</dt><dd>不會。Google 看的是加入時長。實測 44 次平均只打開 8.5 天，都通過了。不過申請表會問參與度，完全不打開也不好看。</dd><dt>已經 14 天了按鈕還是鎖著</dt><dd>檢查是否連續 14 天都有 12 人同時處於加入狀態。哪天有人退出只剩 11 人，那天就不算。</dd><dt>內部測試算嗎？</dt><dd>不算。必須是封閉測試（Closed testing）。內部測試不在要求之內。</dd>
+</dl>
+<div class="note" style="margin:26px 0"><b>ACT Party</b> 讓開發者互相測試應用程式，並替你記錄每天的打開情況。免費。<a href="/">查看看板</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party">取得應用程式</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/zh-Hant/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=97';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=97';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

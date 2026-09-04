@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>怎麼給 Android 應用程式找測試者 — 熟人、付費、Reddit、互測比較 | ACT Party</title>
+<meta name="description" content="找封閉測試者的四種方式，按成本、速度、留存率比較：找熟人、付費服務、Reddit 發文、開發者互測。每種在哪一步會斷，附真實數據。">
+<link rel="canonical" href="https://actparty.app/zh-Hant/find-android-app-testers.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/find-android-app-testers.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/find-android-app-testers.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/find-android-app-testers.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/find-android-app-testers.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/find-android-app-testers.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/find-android-app-testers.html">
+<meta property="og:title" content="怎麼給 Android 應用程式找測試者 — 熟人、付費、Reddit、互測比較 | ACT Party">
+<meta property="og:description" content="找封閉測試者的四種方式，按成本、速度、留存率比較：找熟人、付費服務、Reddit 發文、開發者互測。每種在哪一步會斷，附真實數據。">
+<meta property="og:url" content="https://actparty.app/zh-Hant/find-android-app-testers.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=97">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "付錢給測試者違規嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不違反 Google 政策。但正式版申請表會問測試者的使用方式與真實使用者有何不同，付費加入在那裡很難解釋。"}}, {"@type": "Question", "name": "測試者可以超過 12 人嗎？", "acceptedAnswer": {"@type": "Answer", "text": "可以，13～14 人更穩。有人中途退出只剩 11 人的那天不計入。"}}, {"@type": "Question", "name": "測試者必須每天打開應用程式嗎？", "acceptedAnswer": {"@type": "Answer", "text": "Google 數的是加入時長，不是打開次數。實測 44 次平均只打開 8.5 天，都通過了。"}}, {"@type": "Question", "name": "互測的話我也得打開對方的應用程式 14 天？", "acceptedAnswer": {"@type": "Answer", "text": "是的，這就是互測。對方打開你的多少，你也打開對方的多少。一天一次，幾秒鐘。"}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/find-android-app-testers.html" hreflang="en">English</a> · <a href="/ko/find-android-app-testers.html" hreflang="ko">한국어</a> · <a href="/ja/find-android-app-testers.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/find-android-app-testers.html" hreflang="zh-Hans">简体中文</a> · <b>繁體中文</b></p>
+<h1 style="font-size:28px;margin:0 0 8px">Android 應用程式的測試者怎麼找</h1>
+<p class="muted" style="margin:0 0 24px">四種方式，按成本、速度和真正留下來的人數比較</p>
+
+<p>新開發者帳號要發布應用程式，必須有 <b>12 名測試者在封閉測試裡待滿 14 天</b>。
+方法大體四種。每種能走多遠、在哪斷掉，照實寫。</p>
+
+<h2>1. 找熟人</h2>
+<p>所有人都從這裡開始，大多停在三四個人。「點這個連結裝上，兩週別刪」是個比想像中
+大的人情，而且這些人不會打開應用程式。零成本、快、留存差。靠這個湊到 12 人的幾乎沒見過。</p>
+
+<h2>2. 付費測試服務</h2>
+<p>每次約 20～50 美元。加入狀態穩，不費力。但沒人真的用你的應用程式，沒有回饋；
+正式版申請表問「測試者的使用方式是否與真實使用者一致」時，不好回答。急、有預算，可以用。</p>
+
+<h2>3. Reddit、Discord 發文</h2>
+<p>在 r/AndroidAppTesters 之類的地方發「測我的，我也測你的」。每天幾十條，回覆是有的，
+但<b>說到做到的少</b>。你不知道對方是否真的每天打開，很多人幾天後就沒聲了。
+零成本、速度一般、留存靠運氣。</p>
+
+<h2>4. 有記錄的互測</h2>
+<p>和第 3 種一樣是互測，但由應用程式來管。打開對方的應用程式，當天打卡自動記錄，雙方進度都在看板上。
+誰消失了一眼就看到，誰做完了有完成記錄。44 次已完成的互測裡，測試者平均在 14 天中打開 8.5 天，
+審核通過。零成本、速度一般、留存看得見。</p>
+
+<h2>一眼看完</h2>
+<ol class="steps">
+  <li><b>熟人</b> — 快，但很難到 12 人</li>
+  <li><b>付費</b> — 穩，但花錢，申請表上要解釋</li>
+  <li><b>Reddit 發文</b> — 免費，但得信陌生人</li>
+  <li><b>有記錄的互測</b> — 免費、不用信任，但你也得打開別人的應用程式</li>
+</ol>
+
+<h2>不管選哪種，先做這個</h2>
+<p>門得先開著：Google 群組設為公開、測試群組上有已發布的版本、加入連結能打開。
+缺一個，無論怎麼找來的人都會卡在第一天。先看
+<a href="/zh-Hant/guides/google-group.html">建群並連接</a>。至於怎麼湊夠 12 人，
+<a href="/zh-Hant/google-play-12-testers.html">12 名測試者去哪裡找</a>寫得更細。</p>
+<h2>常見問題</h2>
+<dl class="faq">
+<dt>付錢給測試者違規嗎？</dt><dd>不違反 Google 政策。但正式版申請表會問測試者的使用方式與真實使用者有何不同，付費加入在那裡很難解釋。</dd><dt>測試者可以超過 12 人嗎？</dt><dd>可以，13～14 人更穩。有人中途退出只剩 11 人的那天不計入。</dd><dt>測試者必須每天打開應用程式嗎？</dt><dd>Google 數的是加入時長，不是打開次數。實測 44 次平均只打開 8.5 天，都通過了。</dd><dt>互測的話我也得打開對方的應用程式 14 天？</dt><dd>是的，這就是互測。對方打開你的多少，你也打開對方的多少。一天一次，幾秒鐘。</dd>
+</dl>
+<div class="note" style="margin:26px 0"><b>ACT Party</b> 看板上隨時有 20～40 個應用程式在找測試者。登記你的應用程式，挑一個開始。<a href="/">查看看板</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party">取得應用程式</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/zh-Hant/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=97';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=97';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>
