@@ -145,6 +145,30 @@ const DOC = {
   등록할 때 <b>그룹 주소</b>와 <b>옵트인 링크</b>를 둘 다 넣어 두면, 신청한
   사람에게 순서대로 안내가 나갑니다.</p>
 
+  <h2>테스터가 "콘텐츠 사용 불가"를 봤다면</h2>
+
+  <p>그룹 주소를 눌렀는데 이 화면만 나오는 경우입니다. 원인이 셋인데,
+  주소만 보면 어느 쪽인지 거의 가려집니다.</p>
+
+  <ol>
+    <li><b>주소에 <code>/a/도메인/g/</code> 가 있다</b> — 회사(Workspace) 도메인
+      그룹입니다. 외부 구글 계정은 아예 못 들어갑니다. 주인이 개인 계정으로
+      다시 만들어야 합니다.</li>
+    <li><b>없다면, 다른 구글 계정으로 같은 주소를 열어 본다</b> — 브라우저는
+      로그인된 첫 번째 계정으로 엽니다. 다른 계정에서 열리면 계정 문제입니다.
+      화면에 뜨는 [계정을 전환]이 그 얘기입니다.</li>
+    <li class="hot"><b>어느 계정으로도 똑같다면 주인의 그룹 설정입니다</b> —
+      위 2번의 두 항목이 기본값으로 남아 있는 것입니다.</li>
+  </ol>
+
+  <p>3번이 대부분입니다. 주인은 자기 화면에서 멀쩡히 보이니 뭐가 잘못됐는지
+  모릅니다. 이렇게 전해 주면 빠릅니다.</p>
+
+  <p class="note">그룹 링크가 "콘텐츠 사용 불가"로 뜹니다. 그룹 설정에서
+  <b>그룹을 검색할 수 있는 사용자 → 웹의 모든 사용자</b>,
+  <b>그룹에 가입할 수 있는 사용자 → 누구나 가입할 수 있음</b>
+  으로 바꿔 주시겠어요? 주인 계정에서는 정상으로 보이실 거예요.</p>
+
   <div class="note" style="margin:26px 0">
     <b>ACT Party</b>는 이 두 주소를 앱마다 저장해 두고, 테스터가 가입·옵트인·설치를
     어디까지 했는지 대신 세어 줍니다.
@@ -233,6 +257,31 @@ const DOC = {
   app on ACT Party, fill in <b>both</b> the group address and the opt-in link, and
   whoever requests a trade is walked through them in order.</p>
 
+  <h2>When a tester sees "Content not available"</h2>
+
+  <p>They tapped the group link and got nothing else. Three causes, and the
+  URL alone usually tells you which one.</p>
+
+  <ol>
+    <li><b>The URL contains <code>/a/yourdomain/g/</code></b> — that is a
+      Workspace group. Outside Google accounts cannot join it at all. The owner
+      has to remake it on a personal account.</li>
+    <li><b>If not, open the same link on a different Google account</b> — the
+      browser opens with whichever account signed in first. If it works there,
+      it was the account. That is what the "switch accounts" line on the error
+      page means.</li>
+    <li class="hot"><b>Same on every account? Then it is the owner's group
+      settings</b> — the two options from step 2 are still on their defaults.</li>
+  </ol>
+
+  <p>Number three is most of them. The owner sees their own group just fine, so
+  they have no idea anything is wrong. Sending them this gets it fixed fastest.</p>
+
+  <p class="note">Your group link shows "Content not available" for me. In the
+  group settings, could you set <b>Who can search for group → Anyone on the
+  web</b> and <b>Who can join group → Anyone can ask</b>? It looks normal from
+  your own account.</p>
+
   <div class="note" style="margin:26px 0">
     <b>ACT Party</b> keeps both addresses per app and counts how far each tester
     got — joined, opted in, installed.
@@ -317,6 +366,30 @@ const DOC = {
   アプリを登録するとき、<b>グループのアドレス</b>と<b>参加リンク</b>の両方を
   入れておくと、申し込んだ相手に順番どおり案内が出ます。</p>
 
+  <h2>テスターに「コンテンツを利用できません」と出たら</h2>
+
+  <p>グループのリンクを開いてもこの画面しか出ない場合です。原因は三つで、
+  URL を見ればだいたい切り分けられます。</p>
+
+  <ol>
+    <li><b>URL に <code>/a/ドメイン/g/</code> がある</b> — 会社（Workspace）の
+      グループです。外部の Google アカウントは参加できません。作成者が個人
+      アカウントで作り直す必要があります。</li>
+    <li><b>そうでなければ別の Google アカウントで同じリンクを開く</b> —
+      ブラウザは最初にログインしたアカウントで開きます。別アカウントで開けたなら
+      アカウントの問題です。エラー画面の「アカウントを切り替える」はこの話です。</li>
+    <li class="hot"><b>どのアカウントでも同じなら、作成者のグループ設定です</b> —
+      手順2の二つが初期値のままです。</li>
+  </ol>
+
+  <p>ほとんどが3番です。作成者は自分の画面では普通に見えるので、何かが
+  おかしいことに気づきません。こう伝えると早いです。</p>
+
+  <p class="note">グループのリンクが「コンテンツを利用できません」になります。
+  グループ設定で<b>グループを検索できるユーザー → ウェブ上の全員</b>、
+  <b>グループに参加できるユーザー → 誰でも参加をリクエストできる</b>
+  に変更していただけますか。作成者のアカウントでは正常に見えるはずです。</p>
+
   <div class="note" style="margin:26px 0">
     <b>ACT Party</b> はこの二つをアプリごとに保存し、各テスターがどこまで進んだかを
     代わりに数えます。
@@ -397,6 +470,26 @@ const DOC = {
   <code>play.google.com/apps/testing/你的包名</code>。在 ACT Party 登记应用时，
   把<b>群组地址</b>和<b>加入链接</b>都填上，申请互测的人就会按顺序看到指引。</p>
 
+  <h2>测试者看到「无法使用此内容」时</h2>
+
+  <p>点了群组链接却只有这一页。原因有三个，看 URL 基本就能分辨。</p>
+
+  <ol>
+    <li><b>URL 里有 <code>/a/你的域名/g/</code></b> — 这是公司（Workspace）群组，
+      外部 Google 账号根本进不去。需要群主用个人账号重建。</li>
+    <li><b>没有的话，换一个 Google 账号打开同一个链接</b> — 浏览器会用第一个
+      登录的账号打开。换账号能进就是账号问题，错误页上的「切换账号」说的就是这个。</li>
+    <li class="hot"><b>换哪个账号都一样，那就是群主的设置</b> — 第2步那两项
+      还停在默认值。</li>
+  </ol>
+
+  <p>绝大多数是第三种。群主在自己屏幕上看一切正常，根本不知道出了问题。
+  这样告诉他最快。</p>
+
+  <p class="note">你的群组链接对我显示「无法使用此内容」。能否在群组设置里把
+  <b>谁可以搜索群组 → 网络上的所有人</b>、
+  <b>谁可以加入群组 → 任何人都可以申请</b>？在你自己的账号看是正常的。</p>
+
   <div class="note" style="margin:26px 0">
     <b>ACT Party</b> 会为每个应用保存这两个地址，并替你统计每位测试者走到了哪一步。
     <a href="/">在 actparty.app 免费使用</a>
@@ -475,6 +568,26 @@ const DOC = {
   <p>這就是給測試者的加入連結，通常是
   <code>play.google.com/apps/testing/你的套件名稱</code>。在 ACT Party 登記應用程式時，
   把<b>群組地址</b>和<b>加入連結</b>都填上，申請互測的人就會按順序看到指引。</p>
+
+  <h2>測試者看到「無法使用這項內容」時</h2>
+
+  <p>按了群組連結卻只有這一頁。原因有三個，看 URL 基本就能分辨。</p>
+
+  <ol>
+    <li><b>URL 裡有 <code>/a/你的網域/g/</code></b> — 這是公司（Workspace）群組，
+      外部 Google 帳戶根本進不去。需要群組管理員用個人帳戶重建。</li>
+    <li><b>沒有的話，換一個 Google 帳戶開同一個連結</b> — 瀏覽器會用第一個
+      登入的帳戶開啟。換帳戶能進就是帳戶問題，錯誤頁上的「切換帳戶」說的就是這個。</li>
+    <li class="hot"><b>換哪個帳戶都一樣，那就是管理員的設定</b> — 第2步那兩項
+      還停在預設值。</li>
+  </ol>
+
+  <p>絕大多數是第三種。管理員在自己畫面上看一切正常，根本不知道出了問題。
+  這樣告訴他最快。</p>
+
+  <p class="note">你的群組連結對我顯示「無法使用這項內容」。能否在群組設定裡把
+  <b>誰可以搜尋群組 → 網路上的所有人</b>、
+  <b>誰可以加入群組 → 任何人都可以要求加入</b>？在你自己的帳戶看是正常的。</p>
 
   <div class="note" style="margin:26px 0">
     <b>ACT Party</b> 會為每個應用程式保存這兩個地址，並替你統計每位測試者走到了哪一步。
