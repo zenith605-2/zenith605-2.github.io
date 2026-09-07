@@ -38,6 +38,7 @@ STATIC_PAGES = [
     ('/guides/why-testers-drop.html', '0.7'),
     ('/guides/production-form.html', '0.8'),
     ('/guides/google-group.html', '0.8'),
+    ('/guides/country-availability.html', '0.8'),
 ]
 
 

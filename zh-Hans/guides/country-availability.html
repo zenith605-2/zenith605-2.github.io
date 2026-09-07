@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>把封闭测试开放到所有国家 | ACT Party</title>
+<meta name="description" content="测试者一声不吭消失的最常见原因">
+<link rel="canonical" href="https://actparty.app/zh-Hans/guides/country-availability.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/country-availability.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/country-availability.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/country-availability.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/country-availability.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/country-availability.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/country-availability.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/country-availability.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/country-availability.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/country-availability.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/country-availability.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/country-availability.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/country-availability.html">
+<link rel="stylesheet" href="/assets/app.css?v=97">
+<style>
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+  /* 여기서 막히면 테스터는 아무 말 없이 사라진다 — 눈에 걸리게 둔다 */
+  #doc ol li.hot {
+    background: #fff1f2; border-left: 3px solid #e11d48;
+    border-radius: 6px; padding: 9px 12px; margin: 10px 0;
+    color: #9f1239; list-style-position: outside;
+  }
+  #doc ol li.hot b { color: #be123c }
+  #doc table { border-collapse: collapse; margin: 16px 0; font-size: 14px }
+  #doc th, #doc td { border: 1px solid #e3e6ea; padding: 7px 12px; text-align: left }
+  #doc th { background: #f6f7f9; font-weight: 700 }
+  #doc td.n { text-align: right; font-variant-numeric: tabular-nums }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/country-availability.html" hreflang="en">English</a> · <a href="/ko/guides/country-availability.html" hreflang="ko">한국어</a> · <a href="/ja/guides/country-availability.html" hreflang="ja">日本語</a> · <b>简体中文</b> · <a href="/zh-Hant/guides/country-availability.html" hreflang="zh-Hant">繁體中文</a></p>
+  <h1 style="font-size:28px;margin:0 0 8px">把封闭测试开放到所有国家</h1>
+  <p class="muted" style="margin:0 0 24px">测试者一声不吭消失的最常见原因</p>
+
+  <p>你找到了测试者，他加入了群组，也点了加入测试。可是装不上。商店页面根本
+  打不开，或者打开后只有这一句。</p>
+
+  <p class="note">This item isn't available in your country — Play 스토어에서 테스터에게 보이는 화면입니다.</p>
+
+  <p>这个人通常什么都不会说，他以为是自己弄错了。在你这边看来只是又少了一个人，
+  几天后你才开始纳闷为什么凑不满12个。</p>
+
+  <h2>这有多常见</h2>
+
+  <p>ACT Party 上的72个应用里，<b>22个</b>至少收到过一次这样的报告，大约三分之一。
+  其中20件至今没有解决。</p>
+
+  <table>
+    <tr><th>测试者所在国</th><th>仍被挡住</th></tr>
+    <tr><td>英国 (GB)</td><td class="n">9</td></tr>
+    <tr><td>巴西 (BR)</td><td class="n">4</td></tr>
+    <tr><td>瑞典 (SE)</td><td class="n">2</td></tr>
+    <tr><td>瑞士、美国、韩国、日本、印度</td><td class="n">各 1</td></tr>
+  </table>
+
+  <p class="muted" style="font-size:13px">截至 2026 年 9 月 7 日。只统计了在应用内
+  实际报告过的人，默默离开的不在其中。</p>
+
+  <h2>最容易漏掉的一点：测试轨道和正式版是分开的</h2>
+
+  <p>这才是真正的坑。即使正式版已经开放到所有国家，<b>封闭测试轨道有自己的
+  国家列表。</b>新应用的默认值往往只有本国，只改了正式版的话，测试轨道还留在
+  原地。</p>
+
+  <h2>修改步骤</h2>
+
+  <ol>
+    <li>Play Console →「测试和发布」→「测试」→「封闭测试」</li>
+    <li>打开上方的「<b>国家/地区</b>」标签</li>
+    <li>点击「<b>添加国家/地区</b>」</li>
+    <li>勾选列表<b>标题行的复选框</b>即可全选，不用一个个点</li>
+    <li class="hot"><b>点「添加国家/地区」确认</b> — 不做这一步什么都不会变</li>
+    <li>如果还用了公开测试、内部测试或正式版，<b>每条轨道都要做一遍</b></li>
+  </ol>
+
+  <p>完成后轨道摘要会显示「<b>所有国家/地区（177）</b>」之类的字样。数字小就说明
+  还没做完。</p>
+
+  <p class="muted">生效需要时间。刚改完就让测试者去试可能还是不行，让他一小时后
+  再试一次。</p>
+
+  <h2>全部开放安全吗</h2>
+
+  <p>对封闭测试来说通常是安全的。那条轨道只有加入测试的人才看得到，放宽国家
+  并不会让陌生人进来。不该放宽的理由通常是这三类。</p>
+
+  <ul>
+    <li>法律或监管限制 — 金融、医疗、博彩</li>
+    <li>服务器只在一个地区，别的国家用不了</li>
+    <li>付费应用 — 有些国家需要账号里有付款资料</li>
+  </ul>
+
+  <p>都不属于的话就开放吧。以后在正式版再收窄也来得及。</p>
+
+  <h2>已经错过的人怎么办</h2>
+
+  <p>放宽之后要主动去告诉他们再试一次，没有人会自己重试。一个装过一次没成功的
+  应用，三天后不会有人再点开。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 会在测试者点下「我的国家装不了」时立刻通知开发者，并列出谁在
+    哪个国家被挡住。如果同一国家的另一个人后来真的装上了，这条报告会自动撤销。
+    <a href="/">在 actparty.app 免费使用</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">界面名称为 2026 年 9 月的版本。
+  找不到时请查阅
+  <a href="https://support.google.com/googleplay/android-developer/answer/7550024" target="_blank" rel="noopener">Play Console 帮助</a>。</p></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=97';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=97';
+
+const NOT_AVAILABLE =
+  '<p class="note">This item isn\'t available in your country — ' +
+  'Play 스토어에서 테스터에게 보이는 화면입니다.</p>';
+
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

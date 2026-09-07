@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open your closed test to all countries — and why testers vanish without it</title>
+<meta name="description" content="A tester who sees Not available in your country just disappears. Where the country setting lives in Play Console, why the test track is separate from production, and what we measured across 72 apps.">
+<link rel="canonical" href="https://actparty.app/guides/country-availability.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/country-availability.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/country-availability.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/country-availability.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/country-availability.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/country-availability.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/country-availability.html">
+<link rel="stylesheet" href="/assets/app.css?v=97">
+<style>
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+  /* 여기서 막히면 테스터는 아무 말 없이 사라진다 — 눈에 걸리게 둔다 */
+  #doc ol li.hot {
+    background: #fff1f2; border-left: 3px solid #e11d48;
+    border-radius: 6px; padding: 9px 12px; margin: 10px 0;
+    color: #9f1239; list-style-position: outside;
+  }
+  #doc ol li.hot b { color: #be123c }
+  #doc table { border-collapse: collapse; margin: 16px 0; font-size: 14px }
+  #doc th, #doc td { border: 1px solid #e3e6ea; padding: 7px 12px; text-align: left }
+  #doc th { background: #f6f7f9; font-weight: 700 }
+  #doc td.n { text-align: right; font-variant-numeric: tabular-nums }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=97';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=97';
+
+const NOT_AVAILABLE =
+  '<p class="note">This item isn\'t available in your country — ' +
+  'Play 스토어에서 테스터에게 보이는 화면입니다.</p>';
+
+const DOC = {
+  ko: `
+  <h1 style="font-size:28px;margin:0 0 8px">배포 국가를 모든 국가로 열기</h1>
+  <p class="muted" style="margin:0 0 24px">테스터가 아무 말 없이 사라지는 가장 흔한 이유</p>
+
+  <p>테스터를 구했고, 그룹에도 들어왔고, 옵트인도 눌렀습니다. 그런데 설치가
+  안 됩니다. 스토어 페이지가 아예 안 열리거나, 열려도 이렇게만 뜹니다.</p>
+
+  ${NOT_AVAILABLE}
+
+  <p>이 사람은 대부분 아무 말도 하지 않습니다. 자기가 뭘 잘못했나 싶어서요.
+  개발자 쪽에서는 그냥 한 명이 안 들어온 것으로 보입니다. 며칠 뒤에야
+  "왜 12명이 안 차지" 하게 됩니다.</p>
+
+  <h2>얼마나 흔한가</h2>
+
+  <p>ACT Party에 올라온 앱 72개를 봤더니, <b>22개</b>가 최소 한 명한테서
+  이 신고를 받았습니다. 세 개 중 하나꼴입니다. 그중 아직 안 풀린 게 20건이고,
+  막힌 사람의 국적은 이렇습니다.</p>
+
+  <table>
+    <tr><th>테스터 국가</th><th>아직 막힌 건수</th></tr>
+    <tr><td>영국 (GB)</td><td class="n">9</td></tr>
+    <tr><td>브라질 (BR)</td><td class="n">4</td></tr>
+    <tr><td>스웨덴 (SE)</td><td class="n">2</td></tr>
+    <tr><td>스위스·미국·한국·일본·인도</td><td class="n">각 1</td></tr>
+  </table>
+
+  <p class="muted" style="font-size:13px">2026년 9월 7일 기준. 테스터가 앱에서
+  직접 신고한 건수만 셌으니, 말 없이 사라진 사람은 여기 없습니다.</p>
+
+  <p>한국 개발자에게는 양쪽으로 옵니다. 한국만 열어 두면 해외 테스터를 못
+  받고, 해외 앱이 한국을 안 열어 뒀으면 내가 그 앱을 못 깝니다. 앞의 표에서
+  한국이 1건뿐인 건 우리가 안 겪어서가 아니라, 한국 테스터가 주로 한국 앱을
+  받기 때문입니다.</p>
+
+  <h2>가장 많이 놓치는 것: 테스트 트랙은 프로덕션과 별개입니다</h2>
+
+  <p>여기가 진짜 함정입니다. 프로덕션에서 국가를 다 열어 뒀어도
+  <b>비공개 테스트 트랙의 국가 설정은 따로 있습니다.</b> 앱을 처음 만들 때
+  기본값이 자기 나라 하나인 경우가 많고, 프로덕션만 손보고 넘어가면
+  테스트 트랙은 그대로 남습니다.</p>
+
+  <h2>바꾸는 순서</h2>
+
+  <ol>
+    <li>Play Console → <b>테스트 및 출시</b> → <b>테스트</b> → <b>비공개 테스트</b></li>
+    <li>위쪽 탭에서 <b>[국가/지역]</b></li>
+    <li><b>[국가/지역 추가]</b>를 누릅니다</li>
+    <li>목록 맨 위 <b>제목 줄의 체크박스</b>를 누르면 전체가 선택됩니다. 하나씩
+      고를 필요 없습니다</li>
+    <li class="hot"><b>[국가/지역 추가]로 확정</b> — 여기까지 안 하면 아무것도 안 바뀝니다</li>
+    <li>공개 테스트·내부 테스트·프로덕션을 쓰고 있다면 <b>트랙마다 따로</b> 같은 걸 합니다</li>
+  </ol>
+
+  <p>다 하고 나면 트랙 요약에 <b>"모든 국가/지역(177개)"</b> 같은 표시가 뜹니다.
+  숫자가 작으면 아직 덜 된 것입니다.</p>
+
+  <p class="muted">반영에는 시간이 걸립니다. 바꾼 직후에 테스터가 눌러 보면
+  여전히 안 될 수 있어요. 한 시간쯤 뒤에 다시 해 보라고 하세요.</p>
+
+  <h2>다 열어도 되나</h2>
+
+  <p>비공개 테스트에서는 대체로 그렇습니다. 그 트랙은 옵트인한 사람에게만
+  보이니까, 국가를 넓힌다고 아무나 받는 게 아닙니다. 넓히지 말아야 할 이유가
+  있다면 보통 이런 것들입니다.</p>
+
+  <ul>
+    <li>법·규제상 특정 국가에 낼 수 없는 앱 (금융·의료·도박 등)</li>
+    <li>서버가 한 지역에만 있어 다른 나라에서는 쓸 수 없는 경우</li>
+    <li>유료 앱 — 개발자 계정에 결제 프로필이 필요한 나라가 있습니다</li>
+  </ul>
+
+  <p>이런 게 아니라면 열어 두는 편이 낫습니다. 나중에 프로덕션에서 다시
+  좁히면 됩니다. 테스트 단계에서 좁혀 둘 이유는 없습니다.</p>
+
+  <h2>이미 놓친 사람은 어떻게 하나</h2>
+
+  <p>국가를 연 뒤에 그 사람에게 다시 해 보라고 말해 줘야 합니다. 안 그러면
+  아무도 다시 시도하지 않습니다. 한 번 안 되고 만 앱을 며칠 뒤에 다시
+  눌러 보는 사람은 없습니다.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b>는 테스터가 [내 나라에서 설치가 안 돼요]를 누르면 개발자에게
+    바로 알리고, 누가 어느 나라에서 막혔는지 목록으로 보여 줍니다. 나중에 같은
+    나라의 다른 사람이 실제로 설치하면 그 신고는 자동으로 취소됩니다.
+    <a href="/">actparty.app 에서 무료로</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">화면 이름은 2026년 9월 기준입니다.
+  구글이 표현과 위치를 수시로 바꾸니, 안 보이면
+  <a href="https://support.google.com/googleplay/android-developer/answer/7550024" target="_blank" rel="noopener">Play Console 고객센터</a>를 보세요.</p>`,
+
+  en: `
+  <h1 style="font-size:28px;margin:0 0 8px">Open your closed test to all countries</h1>
+  <p class="muted" style="margin:0 0 24px">The most common reason a tester disappears without a word</p>
+
+  <p>You found a tester. They joined the group, they clicked the opt-in link.
+  And then nothing installs. The store page will not open at all, or it opens
+  and says only this.</p>
+
+  ${NOT_AVAILABLE}
+
+  <p>That person usually says nothing. They assume they did something wrong.
+  From your side it just looks like one more tester who never showed up, and
+  days later you are wondering why the count is stuck at nine.</p>
+
+  <h2>How common is it</h2>
+
+  <p>Across the 72 apps on ACT Party, <b>22</b> have had at least one tester
+  report this. Roughly one app in three. Twenty of those reports are still
+  unresolved, and this is where the blocked testers were.</p>
+
+  <table>
+    <tr><th>Tester country</th><th>Still blocked</th></tr>
+    <tr><td>United Kingdom (GB)</td><td class="n">9</td></tr>
+    <tr><td>Brazil (BR)</td><td class="n">4</td></tr>
+    <tr><td>Sweden (SE)</td><td class="n">2</td></tr>
+    <tr><td>Switzerland, US, Korea, Japan, India</td><td class="n">1 each</td></tr>
+  </table>
+
+  <p class="muted" style="font-size:13px">As of 7 September 2026. These are only
+  the people who bothered to report it in the app, so the ones who quietly left
+  are not counted here.</p>
+
+  <h2>The part everyone misses: the test track is separate from production</h2>
+
+  <p>This is the real trap. Even if production is open everywhere,
+  <b>a closed testing track has its own country list.</b> New apps often default
+  to a single country, and if you only fixed production, the test track is still
+  sitting where it started.</p>
+
+  <h2>How to change it</h2>
+
+  <ol>
+    <li>Play Console → <b>Test and release</b> → <b>Testing</b> → <b>Closed testing</b></li>
+    <li>Open the <b>Countries / regions</b> tab</li>
+    <li>Click <b>Add countries / regions</b></li>
+    <li>Tick the <b>checkbox in the header row</b> of the list — that selects
+      every country at once. You do not have to click them one by one</li>
+    <li class="hot"><b>Confirm with Add countries / regions</b> — nothing changes until you do</li>
+    <li>If you also use open testing, internal testing or production,
+      <b>repeat it per track</b></li>
+  </ol>
+
+  <p>When it is done the track summary reads something like
+  <b>"All countries / regions (177)"</b>. A smaller number means you are not
+  finished.</p>
+
+  <p class="muted">It takes a while to propagate. If your tester tries again
+  immediately it may still fail — tell them to retry in an hour.</p>
+
+  <h2>Is opening everything safe</h2>
+
+  <p>For a closed test, usually yes. That track is only visible to people who
+  opted in, so a wider country list does not let strangers in. Reasons not to
+  open it are usually one of these.</p>
+
+  <ul>
+    <li>Legal or regulatory limits — finance, health, gambling</li>
+    <li>Your servers only exist in one region and the app is unusable elsewhere</li>
+    <li>Paid apps — some countries require a payments profile on your account</li>
+  </ul>
+
+  <p>If none of those apply, open it. You can narrow production later. There is
+  no reason to be narrow while you are still testing.</p>
+
+  <h2>What about the people you already lost</h2>
+
+  <p>After you widen the list you have to go back and tell them to try again.
+  Nobody retries on their own. An app that failed once does not get a second
+  tap three days later.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> notifies you the moment a tester taps "it is not available
+    in my country", and shows you who was blocked and where. If someone else in
+    that same country later installs it, the report is revoked automatically.
+    <a href="/">Free at actparty.app</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">Screen names are as of September 2026.
+  Google moves and renames things often; if you cannot find it, check the
+  <a href="https://support.google.com/googleplay/android-developer/answer/7550024" target="_blank" rel="noopener">Play Console Help</a>.</p>`,
+
+  ja: `
+  <h1 style="font-size:28px;margin:0 0 8px">配信国をすべての国に開く</h1>
+  <p class="muted" style="margin:0 0 24px">テスターが何も言わずに消える、いちばん多い理由</p>
+
+  <p>テスターが見つかり、グループにも入り、オプトインも押しました。なのに
+  インストールできません。ストアのページが開かないか、開いてもこれだけです。</p>
+
+  ${NOT_AVAILABLE}
+
+  <p>その人はたいてい何も言いません。自分が間違えたと思うからです。開発者から
+  見れば「また一人来なかった」だけで、数日後に「なぜ12人にならないのか」と
+  悩むことになります。</p>
+
+  <h2>どれくらい多いのか</h2>
+
+  <p>ACT Party に登録された72本のアプリのうち、<b>22本</b>が少なくとも一人から
+  この報告を受けています。3本に1本です。うち20件はまだ解決していません。</p>
+
+  <table>
+    <tr><th>テスターの国</th><th>未解決</th></tr>
+    <tr><td>イギリス (GB)</td><td class="n">9</td></tr>
+    <tr><td>ブラジル (BR)</td><td class="n">4</td></tr>
+    <tr><td>スウェーデン (SE)</td><td class="n">2</td></tr>
+    <tr><td>スイス・米国・韓国・日本・インド</td><td class="n">各1</td></tr>
+  </table>
+
+  <p class="muted" style="font-size:13px">2026年9月7日時点。アプリ内で実際に報告
+  された分だけです。黙って離れた人は含まれていません。</p>
+
+  <h2>いちばん見落とされる点：テストトラックは本番とは別です</h2>
+
+  <p>ここが本当の落とし穴です。本番ですべての国を開いていても、
+  <b>クローズドテストのトラックには別の国リストがあります。</b>
+  新規アプリは自国だけが初期値のことが多く、本番だけ直して終わると
+  テストトラックはそのままです。</p>
+
+  <h2>変更の手順</h2>
+
+  <ol>
+    <li>Play Console →「テストとリリース」→「テスト」→「クローズドテスト」</li>
+    <li>上部のタブから「<b>国 / 地域</b>」</li>
+    <li>「<b>国 / 地域を追加</b>」を押す</li>
+    <li>リスト最上部の<b>見出し行のチェックボックス</b>で全件を選択できます</li>
+    <li class="hot"><b>「国 / 地域を追加」で確定</b> — ここまでやらないと何も変わりません</li>
+    <li>オープンテスト・内部テスト・本番を使っているなら<b>トラックごとに</b>同じ操作を</li>
+  </ol>
+
+  <p>終わるとトラック概要に「<b>すべての国 / 地域（177）</b>」のように表示されます。
+  数字が小さければまだ途中です。</p>
+
+  <p class="muted">反映には時間がかかります。直後に試すとまだ失敗することが
+  あるので、1時間ほど置いて再試行してもらってください。</p>
+
+  <h2>全部開いて大丈夫か</h2>
+
+  <p>クローズドテストならたいてい大丈夫です。そのトラックはオプトインした人
+  にしか見えないので、国を広げても誰でも入れるわけではありません。広げない
+  理由は普通この三つです。</p>
+
+  <ul>
+    <li>法規制上、特定の国に出せないアプリ（金融・医療・ギャンブルなど）</li>
+    <li>サーバーが一地域にしかなく、他国では使えない場合</li>
+    <li>有料アプリ — 国によってはお支払いプロファイルが必要です</li>
+  </ul>
+
+  <p>そうでなければ開けておきましょう。本番で後から狭めれば済みます。</p>
+
+  <h2>すでに逃した人には</h2>
+
+  <p>国を広げたら、その人に「もう一度試して」と伝える必要があります。自分から
+  再挑戦する人はいません。一度ダメだったアプリを数日後にもう一度押す人は
+  いないのです。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> はテスターが「自分の国でインストールできない」を押した
+    その場で開発者に知らせ、誰がどの国で止まったかを一覧で見せます。同じ国の
+    別の人が後で実際にインストールすれば、その報告は自動的に取り消されます。
+    <a href="/">actparty.app で無料</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">画面名は2026年9月時点です。
+  <a href="https://support.google.com/googleplay/android-developer/answer/7550024" target="_blank" rel="noopener">Play Console ヘルプ</a>もご確認ください。</p>`,
+
+  'zh-Hans': `
+  <h1 style="font-size:28px;margin:0 0 8px">把封闭测试开放到所有国家</h1>
+  <p class="muted" style="margin:0 0 24px">测试者一声不吭消失的最常见原因</p>
+
+  <p>你找到了测试者，他加入了群组，也点了加入测试。可是装不上。商店页面根本
+  打不开，或者打开后只有这一句。</p>
+
+  ${NOT_AVAILABLE}
+
+  <p>这个人通常什么都不会说，他以为是自己弄错了。在你这边看来只是又少了一个人，
+  几天后你才开始纳闷为什么凑不满12个。</p>
+
+  <h2>这有多常见</h2>
+
+  <p>ACT Party 上的72个应用里，<b>22个</b>至少收到过一次这样的报告，大约三分之一。
+  其中20件至今没有解决。</p>
+
+  <table>
+    <tr><th>测试者所在国</th><th>仍被挡住</th></tr>
+    <tr><td>英国 (GB)</td><td class="n">9</td></tr>
+    <tr><td>巴西 (BR)</td><td class="n">4</td></tr>
+    <tr><td>瑞典 (SE)</td><td class="n">2</td></tr>
+    <tr><td>瑞士、美国、韩国、日本、印度</td><td class="n">各 1</td></tr>
+  </table>
+
+  <p class="muted" style="font-size:13px">截至 2026 年 9 月 7 日。只统计了在应用内
+  实际报告过的人，默默离开的不在其中。</p>
+
+  <h2>最容易漏掉的一点：测试轨道和正式版是分开的</h2>
+
+  <p>这才是真正的坑。即使正式版已经开放到所有国家，<b>封闭测试轨道有自己的
+  国家列表。</b>新应用的默认值往往只有本国，只改了正式版的话，测试轨道还留在
+  原地。</p>
+
+  <h2>修改步骤</h2>
+
+  <ol>
+    <li>Play Console →「测试和发布」→「测试」→「封闭测试」</li>
+    <li>打开上方的「<b>国家/地区</b>」标签</li>
+    <li>点击「<b>添加国家/地区</b>」</li>
+    <li>勾选列表<b>标题行的复选框</b>即可全选，不用一个个点</li>
+    <li class="hot"><b>点「添加国家/地区」确认</b> — 不做这一步什么都不会变</li>
+    <li>如果还用了公开测试、内部测试或正式版，<b>每条轨道都要做一遍</b></li>
+  </ol>
+
+  <p>完成后轨道摘要会显示「<b>所有国家/地区（177）</b>」之类的字样。数字小就说明
+  还没做完。</p>
+
+  <p class="muted">生效需要时间。刚改完就让测试者去试可能还是不行，让他一小时后
+  再试一次。</p>
+
+  <h2>全部开放安全吗</h2>
+
+  <p>对封闭测试来说通常是安全的。那条轨道只有加入测试的人才看得到，放宽国家
+  并不会让陌生人进来。不该放宽的理由通常是这三类。</p>
+
+  <ul>
+    <li>法律或监管限制 — 金融、医疗、博彩</li>
+    <li>服务器只在一个地区，别的国家用不了</li>
+    <li>付费应用 — 有些国家需要账号里有付款资料</li>
+  </ul>
+
+  <p>都不属于的话就开放吧。以后在正式版再收窄也来得及。</p>
+
+  <h2>已经错过的人怎么办</h2>
+
+  <p>放宽之后要主动去告诉他们再试一次，没有人会自己重试。一个装过一次没成功的
+  应用，三天后不会有人再点开。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 会在测试者点下「我的国家装不了」时立刻通知开发者，并列出谁在
+    哪个国家被挡住。如果同一国家的另一个人后来真的装上了，这条报告会自动撤销。
+    <a href="/">在 actparty.app 免费使用</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">界面名称为 2026 年 9 月的版本。
+  找不到时请查阅
+  <a href="https://support.google.com/googleplay/android-developer/answer/7550024" target="_blank" rel="noopener">Play Console 帮助</a>。</p>`,
+
+  'zh-Hant': `
+  <h1 style="font-size:28px;margin:0 0 8px">把封閉測試開放到所有國家</h1>
+  <p class="muted" style="margin:0 0 24px">測試者一聲不響消失的最常見原因</p>
+
+  <p>你找到了測試者，他加入了群組，也按了加入測試。可是裝不上。商店頁面根本
+  打不開，或者打開後只有這一句。</p>
+
+  ${NOT_AVAILABLE}
+
+  <p>這個人通常什麼都不會說，他以為是自己弄錯了。在你這邊看來只是又少了一個人，
+  幾天後你才開始納悶為什麼湊不滿12個。</p>
+
+  <h2>這有多常見</h2>
+
+  <p>ACT Party 上的72個應用程式裡，<b>22個</b>至少收到過一次這樣的回報，大約三分
+  之一。其中20件至今沒有解決。</p>
+
+  <table>
+    <tr><th>測試者所在國</th><th>仍被擋住</th></tr>
+    <tr><td>英國 (GB)</td><td class="n">9</td></tr>
+    <tr><td>巴西 (BR)</td><td class="n">4</td></tr>
+    <tr><td>瑞典 (SE)</td><td class="n">2</td></tr>
+    <tr><td>瑞士、美國、韓國、日本、印度</td><td class="n">各 1</td></tr>
+  </table>
+
+  <p class="muted" style="font-size:13px">截至 2026 年 9 月 7 日。只統計了在應用程式
+  內實際回報過的人，默默離開的不在其中。</p>
+
+  <h2>最容易漏掉的一點：測試群組和正式版是分開的</h2>
+
+  <p>這才是真正的坑。即使正式版已經開放到所有國家，<b>封閉測試軌道有自己的
+  國家清單。</b>新應用程式的預設值往往只有本國，只改了正式版的話，測試軌道還
+  留在原地。</p>
+
+  <h2>修改步驟</h2>
+
+  <ol>
+    <li>Play Console →「測試與發布」→「測試」→「封閉測試」</li>
+    <li>開啟上方的「<b>國家/地區</b>」分頁</li>
+    <li>按「<b>新增國家/地區</b>」</li>
+    <li>勾選清單<b>標題列的核取方塊</b>即可全選，不必一個個點</li>
+    <li class="hot"><b>按「新增國家/地區」確認</b> — 不做這一步什麼都不會變</li>
+    <li>如果還用了公開測試、內部測試或正式版，<b>每條軌道都要做一遍</b></li>
+  </ol>
+
+  <p>完成後軌道摘要會顯示「<b>所有國家/地區（177）</b>」之類的字樣。數字小就表示
+  還沒做完。</p>
+
+  <p class="muted">生效需要時間。剛改完就讓測試者去試可能還是不行，請他一小時後
+  再試一次。</p>
+
+  <h2>全部開放安全嗎</h2>
+
+  <p>對封閉測試來說通常是安全的。那條軌道只有加入測試的人才看得到，放寬國家
+  並不會讓陌生人進來。不該放寬的理由通常是這三類。</p>
+
+  <ul>
+    <li>法律或法規限制 — 金融、醫療、博弈</li>
+    <li>伺服器只在一個地區，其他國家無法使用</li>
+    <li>付費應用程式 — 有些國家需要帳號裡有付款資料</li>
+  </ul>
+
+  <p>都不屬於的話就開放吧。以後在正式版再收窄也來得及。</p>
+
+  <h2>已經錯過的人怎麼辦</h2>
+
+  <p>放寬之後要主動去告訴他們再試一次，沒有人會自己重試。一個裝過一次沒成功的
+  應用程式，三天後不會有人再點開。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 會在測試者按下「我的國家裝不了」時立刻通知開發者，並列出誰在
+    哪個國家被擋住。如果同一國家的另一個人後來真的裝上了，這則回報會自動撤銷。
+    <a href="/">在 actparty.app 免費使用</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">介面名稱為 2026 年 9 月的版本。
+  找不到時請查閱
+  <a href="https://support.google.com/googleplay/android-developer/answer/7550024" target="_blank" rel="noopener">Play Console 說明</a>。</p>`,
+};
+
+document.getElementById('langSlot').innerHTML = langPicker();
+document.getElementById('doc').innerHTML = DOC[LANG] ?? DOC.en;
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>
