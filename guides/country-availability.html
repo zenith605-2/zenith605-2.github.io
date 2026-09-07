@@ -114,9 +114,13 @@ const DOC = {
       않습니다. 여기서는 못 고칩니다. <b>프로덕션</b>의 국가를 넓히면 이 트랙도
       같이 따라오고, 테스트만 따로 넓히고 싶으면 <b>[동기화 해제]</b>를 먼저
       누릅니다.</li>
-    <li><b>그 줄이 없다</b> — 이 트랙이 자기 국가 목록을 갖고 있습니다.
-      <b>[국가/지역 수정]</b>으로 바로 넓히면 됩니다.</li>
+    <li><b>“동기화되지 않았습니다 · 프로덕션과 별도로 이 트랙의 국가 및 지역을
+      관리합니다” 라고 나온다</b> — 이 트랙이 자기 국가 목록을 갖고 있습니다.
+      <b>[국가/지역 수정]</b>이 파란색으로 살아나니 바로 넓히면 됩니다.</li>
   </ul>
+
+  <p class="muted">동기화를 풀어도 되돌릴 수 있습니다. 풀고 나면 같은 자리에
+  <b>[동기화]</b> 링크가 생기고, 그걸 누르면 다시 프로덕션을 따라갑니다.</p>
 
   <p>프로덕션에 아직 아무것도 안 올린 앱이라면 묶일 대상이 없으니 대개
   뒤쪽입니다. 어느 쪽이든 <b>화면의 저 줄 하나로 판단</b>하면 됩니다.</p>
@@ -125,10 +129,14 @@ const DOC = {
 
   <ol>
     <li><b>[국가/지역 수정]</b>을 누릅니다 (동기화 중이면 위 순서를 먼저)</li>
-    <li>목록에서 <b>전체 선택</b>합니다 — 하나씩 고를 필요 없습니다</li>
-    <li class="hot"><b>저장·확정까지 누릅니다</b> — 고르기만 하고 나오면 아무것도 안 바뀝니다</li>
+    <li>나라 이름 앞에 <b>체크박스</b>가 생깁니다. 맨 위 <b>제목 줄의 체크박스</b>를
+      누르면 전부 선택됩니다 — 하나씩 고를 필요 없습니다</li>
+    <li class="hot"><b>화면 아래 저장까지 누릅니다</b> — 고르기만 하고 나오면 아무것도 안 바뀝니다</li>
     <li>공개 테스트·내부 테스트·프로덕션을 따로 쓰고 있다면 <b>트랙마다</b> 확인합니다</li>
   </ol>
+
+  <p class="muted">수정 모드에 들어가면 [동기화]와 [국가/지역 수정]은 회색으로
+  바뀝니다. 정상입니다 — 고르는 중이라는 뜻입니다.</p>
 
   <p>다 되면 국가/지역 표 위에 <b>[타겟팅됨(177개)]</b> 같은 표시가 뜨고,
   "176개의 국가/지역 및 기타 국가가 활성화되었습니다"로 읽힙니다.
@@ -220,9 +228,14 @@ const DOC = {
       is greyed out. You cannot change it here. Widen <b>production</b> and this
       track follows, or press <b>Unsync</b> first if you want the test track to
       differ.</li>
-    <li><b>No such line</b> — this track keeps its own list. Use <b>Edit
-      countries / regions</b> and widen it directly.</li>
+    <li><b>It says "Not synced with Production · This track manages its own
+      countries and regions separately"</b> — this track keeps its own list, and
+      <b>Edit countries / regions</b> is live. Widen it right there.</li>
   </ul>
+
+  <p class="muted">Unsyncing is reversible. Once unsynced, a <b>Sync</b> link
+  appears in the same spot, and pressing it puts the track back on production's
+  list.</p>
 
   <p>If you have never shipped anything to production there is nothing to sync
   with, so it is usually the second case. Either way, <b>that one line on the
@@ -232,11 +245,16 @@ const DOC = {
 
   <ol>
     <li>Press <b>Edit countries / regions</b> (if it is synced, do the step above first)</li>
-    <li><b>Select all</b> in the list — you do not have to click them one by one</li>
-    <li class="hot"><b>Save and confirm</b> — selecting and walking away changes nothing</li>
+    <li>A <b>checkbox</b> appears in front of every country. The one in the
+      <b>header row</b> selects them all — you do not have to click them one by one</li>
+    <li class="hot"><b>Save at the bottom of the page</b> — selecting and walking
+      away changes nothing</li>
     <li>If you run open testing, internal testing or production separately,
       <b>check each track</b></li>
   </ol>
+
+  <p class="muted">While you are in edit mode the Sync and Edit links go grey.
+  That is normal — it just means you are in the middle of choosing.</p>
 
   <p>When it is done you get a chip above the table reading something like
   <b>Targeted (177)</b>, and a line saying 176 countries / regions and other
@@ -324,9 +342,13 @@ const DOC = {
     <li><b>同期されている</b> — 右の「<b>国 / 地域を編集</b>」がグレーで押せません。
       ここでは変えられないので、<b>本番</b>の国を広げればこのトラックも追随します。
       テストだけ広げたいなら先に「<b>同期を解除</b>」を押します。</li>
-    <li><b>その行がない</b> — このトラックが自前の国リストを持っています。
-      「<b>国 / 地域を編集</b>」からそのまま広げてください。</li>
+    <li><b>「同期されていません・このトラックの国と地域を個別に管理します」と出る</b>
+      — このトラックが自前の国リストを持っています。「<b>国 / 地域を編集</b>」が
+      青くなっているのでそのまま広げてください。</li>
   </ul>
+
+  <p class="muted">同期を解除しても戻せます。解除すると同じ場所に
+  「<b>同期</b>」リンクが現れ、押せばまた本番に合わせられます。</p>
 
   <p>本番にまだ何も出していないアプリは同期する相手がないので、たいてい後者です。
   いずれにせよ<b>画面のその一行で判断</b>できます。</p>
@@ -335,10 +357,14 @@ const DOC = {
 
   <ol>
     <li>「<b>国 / 地域を編集</b>」を押す（同期中なら先に上の手順を）</li>
-    <li>リストで<b>全件を選択</b> — 一つずつ選ぶ必要はありません</li>
-    <li class="hot"><b>保存・確定まで押す</b> — 選んだだけで抜けると何も変わりません</li>
+    <li>国名の前に<b>チェックボックス</b>が出ます。一番上の<b>見出し行のチェックボックス</b>で
+      全件選択できます — 一つずつ選ぶ必要はありません</li>
+    <li class="hot"><b>画面下の保存まで押す</b> — 選んだだけで抜けると何も変わりません</li>
     <li>オープンテスト・内部テスト・本番を別々に使っているなら<b>トラックごとに</b>確認を</li>
   </ol>
+
+  <p class="muted">編集中は「同期」と「国 / 地域を編集」がグレーになります。
+  選んでいる途中というだけで、問題ありません。</p>
 
   <p>終わると表の上に「<b>ターゲット（177）</b>」のような表示が出て、
   「176の国 / 地域とその他の国が有効」と読めます。数字が小さければまだ途中です。</p>
@@ -421,8 +447,12 @@ const DOC = {
     <li><b>已同步</b> — 右边的「<b>修改国家/地区</b>」是灰的，点不动。这里改不了。
       把<b>正式版</b>的国家放宽，这条轨道会跟着变；只想放宽测试的话，先按
       「<b>解除同步</b>」。</li>
-    <li><b>没有那一行</b> — 这条轨道有自己的列表，直接用「<b>修改国家/地区</b>」放宽。</li>
+    <li><b>写着「未与正式版同步·单独管理此轨道的国家和地区」</b> —
+      这条轨道有自己的列表，「<b>修改国家/地区</b>」是蓝的，直接放宽就行。</li>
   </ul>
+
+  <p class="muted">解除同步是可以恢复的。解除后同一位置会出现「<b>同步</b>」链接，
+  点一下就又跟着正式版走了。</p>
 
   <p>正式版还什么都没发过的应用没有可同步的对象，通常属于后一种。无论哪种，
   <b>看屏幕上那一行就能判断</b>。</p>
@@ -431,10 +461,13 @@ const DOC = {
 
   <ol>
     <li>点「<b>修改国家/地区</b>」（如果在同步中，先做上一步）</li>
-    <li>在列表里<b>全选</b> — 不用一个个点</li>
-    <li class="hot"><b>一直点到保存/确认</b> — 只勾选就退出等于没改</li>
+    <li>国家名前会出现<b>复选框</b>。最上面<b>标题行的复选框</b>可以全选 — 不用一个个点</li>
+    <li class="hot"><b>点到页面底部的保存</b> — 只勾选就退出等于没改</li>
     <li>如果公开测试、内部测试、正式版是分开的，<b>每条轨道都要看</b></li>
   </ol>
+
+  <p class="muted">编辑时「同步」和「修改国家/地区」会变灰。这是正常的 —
+  只是表示你正在选。</p>
 
   <p>做完后表格上方会出现「<b>已定位（177）</b>」之类的标记，并写着 176 个国家/地区
   和其他国家已启用。数字小就说明还没做完。</p>
@@ -515,8 +548,12 @@ const DOC = {
     <li><b>已同步</b> — 右邊的「<b>修改國家/地區</b>」是灰的，按不動。這裡改不了。
       把<b>正式版</b>的國家放寬，這條軌道會跟著變；只想放寬測試的話，先按
       「<b>解除同步</b>」。</li>
-    <li><b>沒有那一行</b> — 這條軌道有自己的清單，直接用「<b>修改國家/地區</b>」放寬。</li>
+    <li><b>寫著「未與正式版同步·單獨管理此軌道的國家和地區」</b> —
+      這條軌道有自己的清單，「<b>修改國家/地區</b>」是藍的，直接放寬就行。</li>
   </ul>
+
+  <p class="muted">解除同步是可以恢復的。解除後同一位置會出現「<b>同步</b>」連結，
+  按一下就又跟著正式版走了。</p>
 
   <p>正式版還什麼都沒發過的應用程式沒有可同步的對象，通常屬於後一種。無論哪種，
   <b>看畫面上那一行就能判斷</b>。</p>
@@ -525,10 +562,13 @@ const DOC = {
 
   <ol>
     <li>按「<b>修改國家/地區</b>」（如果在同步中，先做上一步）</li>
-    <li>在清單裡<b>全選</b> — 不必一個個點</li>
-    <li class="hot"><b>一路按到儲存/確認</b> — 只勾選就離開等於沒改</li>
+    <li>國家名前會出現<b>核取方塊</b>。最上面<b>標題列的核取方塊</b>可以全選 — 不必一個個點</li>
+    <li class="hot"><b>按到頁面底部的儲存</b> — 只勾選就離開等於沒改</li>
     <li>如果公開測試、內部測試、正式版是分開的，<b>每條軌道都要看</b></li>
   </ol>
+
+  <p class="muted">編輯時「同步」和「修改國家/地區」會變灰。這是正常的 —
+  只是表示你正在選。</p>
 
   <p>做完後表格上方會出現「<b>已鎖定目標（177）</b>」之類的標記，並寫著 176 個
   國家/地區和其他國家已啟用。數字小就表示還沒做完。</p>
