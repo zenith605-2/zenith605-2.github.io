@@ -12,7 +12,7 @@
 <meta property="og:title" content="Android apps looking for closed testers">
 <meta property="og:description" content="Trade closed tests with other Android devs. Daily opens record themselves.">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="/assets/app.css?v=97">
+<link rel="stylesheet" href="/assets/app.css?v=98">
 </head>
 <body>
 
@@ -41,6 +41,14 @@
       </p>
     </div>
     <a class="btn sm" id="storeBtn" href="#" data-t="get_app">Get the Android app</a>
+  </div>
+
+  <!-- 여기 처음 온 사람은 이게 돌아가는 곳인지를 모른다. 보드가 조용한 날에는
+       더 그렇다. 숫자를 먼저 보여 준다 — 특히 '자동 기록'은 웹 기반 경쟁
+       서비스가 낼 수 없는 숫자다. 못 받아 오면 통째로 숨긴다. -->
+  <div class="proof" id="proof" hidden>
+    <div class="nums" id="proofNums"></div>
+    <p class="src" data-t="proof_note"></p>
   </div>
 
   <!-- 보드를 보러 온 사람 절반은 테스터가 아니라 테스터를 찾는 개발자다.
@@ -89,8 +97,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters } from '/assets/api.js?v=97';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=97';
+import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters, publicStats } from '/assets/api.js?v=98';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=98';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -99,6 +107,20 @@ mountAuth('authSlot', t);
 for (const id of ['storeBtn', 'storeBtn3']) document.getElementById(id).href = STORE_URL;
 
 let all = [];
+
+// 증거 줄. 보드보다 먼저 뜨는 게 낫지만 보드를 막지는 않는다 (await 없이 띄운다).
+(async () => {
+  const s = await publicStats();
+  if (!s || !s.opens) return;                 // 못 받아 왔으면 조용히 없던 일로
+  const n = (v) => Number(v).toLocaleString();
+  document.getElementById('proofNums').innerHTML = [
+    ['key', s.reached, 'proof_reached'],
+    ['key', s.opens,   'proof_opens'],
+    ['',    s.devs,    'proof_devs'],
+  ].map(([cls, v, key]) =>
+    `<div class="num ${cls}"><b>${n(v)}</b><span>${esc(t(key))}</span></div>`).join('');
+  document.getElementById('proof').hidden = false;
+})();
 
 function card(a, i) {
   // ACT 안에서 확인된 인원 + 밖에서 구한 인원. 앱 보드와 같은 규칙으로 더한다 —

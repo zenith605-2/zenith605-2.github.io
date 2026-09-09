@@ -343,6 +343,20 @@ const T = {
   lc_count:     ['개 출시', ' launched', '件公開', ' 个已上架', ' 個已上架'],
   view_store:   ['스토어에서 보기', 'View on Play Store', 'ストアで見る',
                  '在商店查看', '在商店查看'],
+  // 증거 줄. 라벨은 짧게, 숫자가 먼저 읽혀야 한다.
+  // '기록'은 우리만 낼 수 있는 숫자다 — 사람이 체크한 게 아니라 폰이 올린 것이라
+  // 라벨에 '자동'을 반드시 남긴다. 빼면 남들 숫자와 구별이 안 된다.
+  proof_reached: ['12명을 채운 앱', 'apps got their 12 testers', '12人を集めたアプリ',
+                  '已凑齐 12 名测试者的应用', '已湊齊 12 名測試者的應用'],
+  proof_opens:  ['자동으로 기록된 일일 사용', 'daily opens recorded automatically',
+                 '自動記録された日々の利用', '自动记录的每日打开', '自動記錄的每日開啟'],
+  proof_devs:   ['서로 테스트해 준 개발자', 'developers testing each other',
+                 '互いにテストした開発者', '互相测试的开发者', '互相測試的開發者'],
+  proof_note:   ['체크박스가 아니라 안드로이드 사용 기록에서 옵니다',
+                 'From Android usage stats — not a checkbox someone ticked.',
+                 'チェックボックスではなく Android の利用状況から取っています',
+                 '来自 Android 使用记录，不是谁勾选的复选框',
+                 '來自 Android 使用紀錄，不是誰勾選的核取方塊'],
   cta_reg_h:    ['테스터를 찾고 계신가요?', 'Looking for testers?', 'テスターをお探しですか？', '在找测试者吗？', '在找測試者嗎？'],
   cta_reg_p:    ['링크 하나 붙여넣으면 여기 앱보드에 올라가요. 무료예요.', 'Paste one link and your app goes on this board. It is free.', 'リンクを1つ貼るだけでこのボードに載ります。無料です。', '粘贴一个链接就能上架到这个板块。免费。', '貼上一個連結就能上架到這個板塊。免費。'],
   reg_h:        ['앱 등록', 'Register an app', 'アプリ登録', '注册应用', '註冊應用'],

@@ -147,6 +147,13 @@ export async function appTesters(appId) {
   return data ?? [];
 }
 
+// 랜딩 증거 줄. 실패하면 그냥 안 그린다 — 없다고 페이지가 망가지진 않는다.
+export async function publicStats() {
+  const { data, error } = await sb.rpc('public_stats');
+  if (error) return null;
+  return data ?? null;
+}
+
 export async function completedTrades(ownerId) {
   const { data } = await sb.rpc('completed_trades', { p_owner: ownerId });
   return data ?? [];
