@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>テスターが詰まる5つの画面 | ACT Party</title>
+<meta name="description" content="画面ごとに原因が違います。リンクを送り直しても直りません。">
+<link rel="canonical" href="https://actparty.app/ja/guides/blocked-screens.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/blocked-screens.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/blocked-screens.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/blocked-screens.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/blocked-screens.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/blocked-screens.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/blocked-screens.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/blocked-screens.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/blocked-screens.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/blocked-screens.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/blocked-screens.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/blocked-screens.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/blocked-screens.html">
+<link rel="stylesheet" href="/assets/app.css?v=99">
+<style>
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+  /* 화면 캡처가 글보다 먼저 읽힌다 — 본문 폭을 넘지 않게만 잡아 준다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; display: block; border-radius: 10px;
+    border: 1px solid #e3e6ea; background: #fff;
+  }
+  #doc figcaption {
+    font-size: 13px; color: #5b6672; margin-top: 8px; line-height: 1.6;
+  }
+  #doc h2 { margin-top: 34px }
+  #doc li.hot {
+    background: #fff1f2; border-left: 3px solid #e11d48;
+    border-radius: 6px; padding: 9px 12px; margin: 10px 0; color: #9f1239;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/blocked-screens.html" hreflang="en">English</a> · <a href="/ko/guides/blocked-screens.html" hreflang="ko">한국어</a> · <b>日本語</b> · <a href="/zh-Hans/guides/blocked-screens.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/guides/blocked-screens.html" hreflang="zh-Hant">繁體中文</a></p>
+  <h1 style="font-size:28px;margin:0 0 8px">テスターが詰まる5つの画面</h1>
+  <p class="muted" style="margin:0 0 24px">画面ごとに原因が違います。リンクを送り直しても直りません。</p>
+
+  <p>入れなかったテスターは、たいてい何も言いません。言ってくれても「入れません」
+  だけで原因は分かりません。でも画面はそれぞれ違う見た目をしています。</p>
+
+  <p>当サービスに届いた「リンクが開かない」報告<b>105件</b>のうち<b>87件</b>は、
+  同じ時間に他の人が問題なく入れていました。リンクではなく、その人の環境だった
+  ということです。この5枚を見せて「どれでしたか？」と聞けば原因が分かれます。</p>
+
+  <h2>1. グループ — 「コンテンツを利用できません」</h2>
+  <figure><img src="/img/guide/guide-err-group-private.png" alt="" loading="lazy"><figcaption>Googleグループのページ。招待されていないアカウントには内容も参加ボタンも見えません。</figcaption></figure>
+  <p>グループが非公開か、ブラウザにログイン中のアカウントがスマホのPlayストアの
+  アカウントと違います。画面の「アカウントを切り替える」はそういう意味です。</p>
+  <ol>
+    <li>まず<b>Playストアにログイン中のアカウント</b>で同じリンクを開きます。</li>
+    <li>同じなら、アプリの持ち主がグループ設定を直す必要があります —
+      <b>グループを検索できるユーザー → ウェブ上の全員</b>、
+      <b>グループに参加できるユーザー → 誰でも参加をリクエストできる</b>。</li>
+    <li class="hot">持ち主の画面では常に正常に見えます。自力では見つけられません。</li>
+  </ol>
+  <p>設定の場所は<a href="/ja/guides/google-group.html">テスター用Googleグループの作り方</a>に。</p>
+
+  <h2>2. オプトイン — 「App not available」</h2>
+  <figure><img src="/img/guide/guide-err-optin-unavailable.png" alt="" loading="lazy"><figcaption>オプトインのページ。テスト版が未公開か、このアカウントでは利用できない状態。</figcaption></figure>
+  <p>原因は3つのどれかです。</p>
+  <ol>
+    <li><b>アカウント違い。</b> スマホのPlayストアのアカウントで開く必要があります。</li>
+    <li><b>グループが先。</b> グループ方式では、参加せずにオプトインすると弾かれます。</li>
+    <li><b>テスト版がまだない。</b> トラックのビルドが審査を通るまでリンクは開きません。</li>
+  </ol>
+
+  <h2>3. ストア — 「項目が見つかりません」</h2>
+  <figure><img src="/img/guide/guide-err-store-notfound.png" alt="" loading="lazy"><figcaption>オプトイン済みなのにインストールページが出ない状態。</figcaption></figure>
+  <p>オプトイン後、ストアに反映されるまで<b>最大30分</b>ほどかかります。多くは待てば
+  解決します。30分たっても同じなら、国の制限かアカウント違いです —
+  <a href="/ja/guides/country-availability.html">配信国をすべての国に開く</a>を参照。</p>
+
+  <h2>4. コンソール — 「追加のテストが必要」</h2>
+  <figure><img src="/img/guide/guide-err-console-reject.png" alt="" loading="lazy"><figcaption>製品版アクセス申請が却下された画面。14日は審査日から数え直しになります。</figcaption></figure>
+  <p>これはテスターではなく<b>アプリの持ち主が見る画面</b>です。重要なのは最後の行 —
+  「<b>審査日から</b>12名以上でさらに14日」。申請前に貯めた日数は引き継がれません。
+  早く申請するほど遅くなります。</p>
+
+  <h2>5. 却下メール — 理由は2つ</h2>
+  <figure><img src="/img/guide/guide-err-reject-mail.png" alt="" loading="lazy"><figcaption>却下メール。理由が2行で書かれています。</figcaption></figure>
+  <ul>
+    <li><b>テスターがアプリを利用しなかった。</b> オプトインだけで開かない人が多いと該当します。</li>
+    <li><b>アップデートで意見を集めて対応していない。</b> 14日間ビルドを一度も上げて
+      いないとこの行が付きます。</li>
+  </ul>
+  <p>つまり<b>実際に開かれた日</b>と<b>フィードバックを受けて出した更新</b>の記録が必要です。
+  どちらも申請フォームに書く数字です —
+  <a href="/ja/guides/production-form.html">製品版申請の9問</a>。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> はテスターにどの画面で詰まったかを選ばせ、開発者側の問題のときだけ
+    通知します。毎日の起動はAndroidの使用状況から自動で記録されます。
+    <a href="/">actparty.app で無料で使う</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">画面は2026年9月時点のものです。Googleは表現を
+  よく変えるため、位置が多少異なる場合があります。</p></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=99';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=99';
+
+const SHOT = (src, cap) =>
+  '<figure><img src="' + src + '" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
+const G = '/img/guide/guide-err-group-private.png';
+const O = '/img/guide/guide-err-optin-unavailable.png';
+const S = '/img/guide/guide-err-store-notfound.png';
+const C = '/img/guide/guide-err-console-reject.png';
+const M = '/img/guide/guide-err-reject-mail.png';
+
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

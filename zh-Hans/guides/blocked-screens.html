@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡住测试者的五个画面 | ACT Party</title>
+<meta name="description" content="每个画面的原因都不同，重发链接一个也解决不了。">
+<link rel="canonical" href="https://actparty.app/zh-Hans/guides/blocked-screens.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/blocked-screens.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/blocked-screens.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/blocked-screens.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/blocked-screens.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/blocked-screens.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/blocked-screens.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/blocked-screens.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/blocked-screens.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/blocked-screens.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/blocked-screens.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/blocked-screens.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/blocked-screens.html">
+<link rel="stylesheet" href="/assets/app.css?v=99">
+<style>
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+  /* 화면 캡처가 글보다 먼저 읽힌다 — 본문 폭을 넘지 않게만 잡아 준다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; display: block; border-radius: 10px;
+    border: 1px solid #e3e6ea; background: #fff;
+  }
+  #doc figcaption {
+    font-size: 13px; color: #5b6672; margin-top: 8px; line-height: 1.6;
+  }
+  #doc h2 { margin-top: 34px }
+  #doc li.hot {
+    background: #fff1f2; border-left: 3px solid #e11d48;
+    border-radius: 6px; padding: 9px 12px; margin: 10px 0; color: #9f1239;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/blocked-screens.html" hreflang="en">English</a> · <a href="/ko/guides/blocked-screens.html" hreflang="ko">한국어</a> · <a href="/ja/guides/blocked-screens.html" hreflang="ja">日本語</a> · <b>简体中文</b> · <a href="/zh-Hant/guides/blocked-screens.html" hreflang="zh-Hant">繁體中文</a></p>
+  <h1 style="font-size:28px;margin:0 0 8px">卡住测试者的五个画面</h1>
+  <p class="muted" style="margin:0 0 24px">每个画面的原因都不同，重发链接一个也解决不了。</p>
+
+  <p>进不去的测试者通常什么也不说。就算说了也只是"打不开"，看不出原因。但这些画面
+  长得完全不一样。</p>
+
+  <p>我们收到的 <b>105</b> 次"链接打不开"反馈里，有 <b>87</b> 次同一时间别人都能正常
+  进入。问题不在链接，而在那个人的环境。把这五张图给他看，问"你看到的是哪一个"，
+  原因就分开了。</p>
+
+  <h2>1. 群组 — "无法使用此内容"</h2>
+  <figure><img src="/img/guide/guide-err-group-private.png" alt="" loading="lazy"><figcaption>Google 群组页面。未受邀请的账号看不到内容，也没有加入按钮。</figcaption></figure>
+  <p>群组是私密的，或者浏览器登录的账号与手机 Play 商店的账号不一致。页面上的
+  "切换账号"指的就是这个。</p>
+  <ol>
+    <li>先用<b>手机 Play 商店登录的账号</b>打开同一个链接。</li>
+    <li>如果还是一样，就要由应用所有者改群组设置 —
+      <b>谁可以搜索群组 → 网络上的所有人</b>，
+      <b>谁可以加入群组 → 任何人都可申请</b>。</li>
+    <li class="hot">在所有者自己的屏幕上永远是正常的，他自己发现不了。</li>
+  </ol>
+  <p>设置位置见<a href="/zh-Hans/guides/google-group.html">为测试者创建 Google 群组</a>。</p>
+
+  <h2>2. 加入测试 — "App not available"</h2>
+  <figure><img src="/img/guide/guide-err-optin-unavailable.png" alt="" loading="lazy"><figcaption>加入测试页面：测试版尚未发布，或此账号不可用。</figcaption></figure>
+  <p>三种可能之一。</p>
+  <ol>
+    <li><b>账号不对。</b> 必须用手机 Play 商店登录的账号。</li>
+    <li><b>要先加入群组。</b> 群组方式下，没加入就点加入测试会被拦。</li>
+    <li><b>还没有测试版。</b> 轨道上的版本要通过审核，链接才会打开。</li>
+  </ol>
+
+  <h2>3. 商店 — "找不到该项目"</h2>
+  <figure><img src="/img/guide/guide-err-store-notfound.png" alt="" loading="lazy"><figcaption>已加入测试，但安装页面仍然没有出现。</figcaption></figure>
+  <p>加入测试后，商店同步大约需要 <b>30 分钟</b>。多数情况下等一等就好。超过 30 分钟
+  还一样，就是国家限制或账号不对 —
+  见<a href="/zh-Hans/guides/country-availability.html">把封闭测试开放到所有国家</a>。</p>
+
+  <h2>4. 控制台 — "需要更多测试"</h2>
+  <figure><img src="/img/guide/guide-err-console-reject.png" alt="" loading="lazy"><figcaption>生产环境访问申请被驳回。14 天要从审核日期重新算。</figcaption></figure>
+  <p>这个画面不是给测试者的，是<b>应用所有者看到的</b>。关键是最后一行 —
+  12 位测试者、<b>从审核日期起</b>再测 14 天。申请前积累的天数不会延续。
+  申请得越早，反而越晚。</p>
+
+  <h2>5. 驳回邮件 — 两条理由</h2>
+  <figure><img src="/img/guide/guide-err-reject-mail.png" alt="" loading="lazy"><figcaption>驳回邮件，理由写成两行。</figcaption></figure>
+  <ul>
+    <li><b>测试期间测试者没有使用应用。</b> 只加入却从不打开的人多了就会被判定。</li>
+    <li><b>没有通过更新收集并处理反馈。</b> 14 天内一次都没有上传新版本就会出现这条。</li>
+  </ul>
+  <p>所以需要留下<b>实际打开的天数</b>和<b>根据反馈发布的更新</b>。这两项也正是申请表
+  要填的数字 — 见<a href="/zh-Hans/guides/production-form.html">生产环境申请的九个问题</a>。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> 会让测试者选择卡在哪个画面，只有属于开发者一侧的问题才通知他。
+    每天的打开记录由 Android 使用情况自动记录。
+    <a href="/">在 actparty.app 免费使用</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">画面为 2026 年 9 月的版本。Google 经常调整措辞，
+  位置可能略有不同。</p></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=99';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=99';
+
+const SHOT = (src, cap) =>
+  '<figure><img src="' + src + '" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
+const G = '/img/guide/guide-err-group-private.png';
+const O = '/img/guide/guide-err-optin-unavailable.png';
+const S = '/img/guide/guide-err-store-notfound.png';
+const C = '/img/guide/guide-err-console-reject.png';
+const M = '/img/guide/guide-err-reject-mail.png';
+
+
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>
