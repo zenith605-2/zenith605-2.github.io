@@ -76,7 +76,8 @@ def title_and_desc(doc_html, fallback_title, fallback_desc):
 def localize_links(doc_html, lang):
     """본문 안의 /guides/... 링크는 같은 언어판으로 보낸다. 랜딩 페이지도."""
     doc_html = re.sub(r'href="/guides/', f'href="/{lang}/guides/', doc_html)
-    for slug in ('google-play-12-testers', 'closed-testing-14-days', 'find-android-app-testers'):
+    for slug in ('google-play-12-testers', 'closed-testing-14-days', 'find-android-app-testers',
+                 'android-closed-testing-data'):
         doc_html = doc_html.replace(f'href="/{slug}.html"', f'href="/{lang}/{slug}.html"')
     return doc_html
 

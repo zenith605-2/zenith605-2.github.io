@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>안드로이드 비공개 테스트, 참여 1,862건 실측 데이터 | ACT Party</title>
+<meta name="description" content="안드로이드 비공개 테스트 14일을 참여 1,862건 돌려 본 결과. 완주율 27.6%, 이탈은 10~13일에 몰린다, &quot;설치가 안 돼요&quot; 105건 중 87건은 링크가 멀쩡했다.">
+<link rel="canonical" href="https://actparty.app/ko/android-closed-testing-data.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/android-closed-testing-data.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/android-closed-testing-data.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/android-closed-testing-data.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/android-closed-testing-data.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/android-closed-testing-data.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/android-closed-testing-data.html">
+<meta property="og:title" content="안드로이드 비공개 테스트, 참여 1,862건 실측 데이터 | ACT Party">
+<meta property="og:description" content="안드로이드 비공개 테스트 14일을 참여 1,862건 돌려 본 결과. 완주율 27.6%, 이탈은 10~13일에 몰린다, &quot;설치가 안 돼요&quot; 105건 중 87건은 링크가 멀쩡했다.">
+<meta property="og:url" content="https://actparty.app/ko/android-closed-testing-data.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=99">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "안드로이드 비공개 테스트는 테스터가 매일 앱을 열어야 하나요?", "acceptedAnswer": {"@type": "Answer", "text": "구글이 보는 건 옵트인 상태가 14일 이어졌는지입니다. 매일 실행은 구글 요건이 아닙니다. 다만 한 번도 안 여는 테스터가 섞이면 프로덕션 신청 설문에서 설명하기 어려워집니다."}}, {"@type": "Question", "name": "12명 중 한 명이 중간에 나가면 처음부터 다시인가요?", "acceptedAnswer": {"@type": "Answer", "text": "아닙니다. 남은 사람의 기간은 그대로 쌓이고, 새로 들어온 테스터만 14일을 채우면 됩니다."}}, {"@type": "Question", "name": "테스터가 \"앱을 찾을 수 없다\"고 하는데 링크는 정상입니다.", "acceptedAnswer": {"@type": "Answer", "text": "실측 105건 중 87건이 그 경우였습니다. 국가 미개방, 로그인 계정과 플레이스토어 계정 불일치, 그룹 미가입 순으로 흔합니다. 국가부터 확인하세요."}}, {"@type": "Question", "name": "테스터는 몇 명을 모아야 안전한가요?", "acceptedAnswer": {"@type": "Answer", "text": "완주율이 27.6%였습니다. 12명이 필요하면 그보다 넉넉하게 모으고, 12~13일째에 리마인드를 보내는 편이 확실합니다."}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/android-closed-testing-data.html" hreflang="en">English</a> · <b>한국어</b> · <a href="/ja/android-closed-testing-data.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/android-closed-testing-data.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/android-closed-testing-data.html" hreflang="zh-Hant">繁體中文</a></p>
+<h1 style="font-size:28px;margin:0 0 8px">안드로이드 비공개 테스트, 실제로 돌려 보면 이렇게 됩니다</h1>
+<p class="muted" style="margin:0 0 24px">참여 1,862건 · 인증 8,054건에서 나온 숫자 (2026년 8월 16일 ~ 9월 10일)</p>
+
+<p>안드로이드 비공개 테스트를 어떻게 하는지 설명하는 글은 많습니다. 그런데
+<b>실제로 12명을 모아 14일을 돌리면 어떻게 되는지</b>를 숫자로 쓴 글은 없습니다.
+저희는 개발자끼리 비공개 테스트를 교환하는 서비스를 운영하고 있어서 그 데이터가
+쌓였습니다. 그대로 공개합니다.</p>
+
+<p class="muted" style="font-size:13px">집계 범위 — 2026년 8월 16일 ~ 9월 10일 ·
+개발자 144명 · 앱 115개 · 테스트 참여 1,862건 · 일일 인증 기록 8,054건</p>
+
+<h2>1. 14일을 다 채우는 사람은 4명 중 1명입니다</h2>
+<p>시작한 지 14일이 <b>실제로 지난</b> 참여 116건만 셌습니다. 아직 5일째인 건을
+중도 포기로 세면 안 되니까요.</p>
+<ul class="steps">
+  <li>14일 완주 — <b>32건 (27.6%)</b></li>
+  <li>중도 이탈 — 78건</li>
+  <li>한 번도 안 연 사람 — 6건 (5.2%)</li>
+  <li>평균 인증 일수 — <b>10.3일</b></li>
+</ul>
+<p>12명을 모았다고 12명이 끝까지 가지 않습니다. 넉넉하게 모아야 합니다.</p>
+
+<h2>2. 그런데 사람들은 초반에 그만두지 않습니다</h2>
+<p>이탈 78건이 며칠째에 멈췄는지 세어 봤습니다. 예상은 "1~3일에 우수수 빠진다"
+였는데 정반대였습니다.</p>
+<ul class="steps">
+  <li>1~5일에 멈춘 사람 — 19건</li>
+  <li>6~9일 — 9건</li>
+  <li><b>10~13일 — 50건</b></li>
+</ul>
+<p>이탈의 <b>3분의 2가 마지막 나흘</b>에 몰려 있습니다. 이 사람들은 마음이 식은 게
+아닙니다. 열흘 넘게 매일 열다가 하루를 빠뜨린 겁니다. 바빴거나, 폰을 바꿨거나,
+알림을 껐거나.</p>
+<p>그래서 <b>12일째·13일째의 리마인드 한 번</b>이 초반 안내 열 번보다 낫습니다.
+자세한 이야기는 <a href="/ko/guides/why-testers-drop.html">테스터가 중간에 빠지는 이유</a>에
+있습니다.</p>
+
+<h2>3. "설치가 안 돼요"의 83%는 링크 문제가 아닙니다</h2>
+<p>테스터가 "링크가 안 열려요"라고 신고한 게 <b>105건</b> 있었습니다. 그때마다
+같은 앱에 다른 사람이 최근 7일 안에 들어간 기록이 있는지 자동으로 확인했습니다.</p>
+<p><b>105건 중 87건은 다른 사람들이 멀쩡히 들어가고 있었습니다.</b> 링크는
+정상이고 그 사람만 못 들어간 겁니다. 원인은 셋 중 하나였습니다.</p>
+
+<h3>① 국가가 안 열려 있다 — 신고 61건</h3>
+<p>가장 흔합니다. 비공개 테스트의 국가 설정이 좁으면 다른 나라 테스터는 스토어에서
+앱 자체를 못 봅니다. <code>이 앱은 사용자의 국가에서 제공되지 않습니다</code>만
+뜨고 끝입니다. 신고가 들어온 국가는 이렇습니다.</p>
+<p class="muted">GB 13 · KR 12 · IN 6 · BR 6 · SE 6 · JP 5 · FR 4 · US 4</p>
+<p>한국 개발자가 한국에만 열어 두고 해외 테스터를 모으면 그 사람들은 아무것도
+못 합니다. <b>테스터를 모으기 전에 국가를 전체로 열어 두세요.</b> Play Console →
+비공개 테스트 → 국가/지역. 확인법은
+<a href="/ko/guides/country-availability.html">국가 때문에 설치가 안 될 때</a>에 있습니다.</p>
+
+<h3>② 로그인 계정과 플레이스토어 계정이 다르다</h3>
+<p>잘 안 보이는 함정입니다. 그룹 가입과 옵트인은 <b>폰의 플레이스토어에 로그인된
+계정</b>으로 해야 동작합니다. 구글 계정을 여러 개 쓰는 사람은 여기서 갈립니다.</p>
+<p>테스터에게 이메일을 받을 때 "쓰시는 이메일"이 아니라 <b>"폰 플레이스토어에
+로그인된 계정"</b>이라고 물어야 합니다. 한 글자 차이인데 결과가 다릅니다.</p>
+
+<h3>③ 그룹에 가입하지 않고 옵트인 링크부터 눌렀다</h3>
+<p>구글 그룹으로 테스터를 관리하면 순서가 있습니다. <b>그룹 가입 → 옵트인 →
+설치</b>. 옵트인부터 누르면 <code>이 프로그램에 참여할 수 없습니다</code>가 뜹니다.
+그런데 이 화면에는 "그룹에 먼저 가입하세요"라는 말이 없습니다. 그래서 테스터는
+링크가 깨진 줄 압니다. 순서와 화면은
+<a href="/ko/guides/google-group.html">구글 그룹 연결하기</a>에 정리해 뒀습니다.</p>
+
+<h2>4. 그리고 반영에 시간이 걸립니다</h2>
+<p>옵트인을 눌러도 스토어에 바로 안 뜹니다. 최대 30분쯤 걸립니다. 이걸 모르면
+"역시 안 되네" 하고 그냥 닫습니다. 테스터에게 미리 말해 두세요.</p>
+
+<h2>모으기 전에 확인할 것</h2>
+<ol class="steps">
+  <li>비공개 테스트 <b>국가를 전체로</b> 열었는가</li>
+  <li>테스터에게 <b>"폰 플레이스토어 계정"</b>이라고 명시해서 이메일을 받았는가</li>
+  <li>그룹 방식이면 <b>그룹 가입 → 옵트인 → 설치</b> 순서를 안내했는가</li>
+  <li>옵트인 후 <b>최대 30분</b> 걸린다고 미리 알렸는가</li>
+  <li>12명이 아니라 <b>넉넉하게</b> 모았는가 (완주율 27.6%)</li>
+  <li><b>12~13일째 리마인드</b>를 준비했는가</li>
+</ol>
+<p>앞의 네 개만 지켜도 "설치가 안 돼요" 문의가 대부분 사라집니다.</p>
+<h2>자주 묻는 질문</h2>
+<dl class="faq">
+<dt>안드로이드 비공개 테스트는 테스터가 매일 앱을 열어야 하나요?</dt><dd>구글이 보는 건 옵트인 상태가 14일 이어졌는지입니다. 매일 실행은 구글 요건이 아닙니다. 다만 한 번도 안 여는 테스터가 섞이면 프로덕션 신청 설문에서 설명하기 어려워집니다.</dd><dt>12명 중 한 명이 중간에 나가면 처음부터 다시인가요?</dt><dd>아닙니다. 남은 사람의 기간은 그대로 쌓이고, 새로 들어온 테스터만 14일을 채우면 됩니다.</dd><dt>테스터가 &quot;앱을 찾을 수 없다&quot;고 하는데 링크는 정상입니다.</dt><dd>실측 105건 중 87건이 그 경우였습니다. 국가 미개방, 로그인 계정과 플레이스토어 계정 불일치, 그룹 미가입 순으로 흔합니다. 국가부터 확인하세요.</dd><dt>테스터는 몇 명을 모아야 안전한가요?</dt><dd>완주율이 27.6%였습니다. 12명이 필요하면 그보다 넉넉하게 모으고, 12~13일째에 리마인드를 보내는 편이 확실합니다.</dd>
+</dl>
+<div class="note" style="margin:26px 0">이 숫자는 <b>ACT Party</b>에서 나왔습니다. 개발자끼리 비공개 테스트를 품앗이하는 서비스이고, 앱을 열었는지는 안드로이드 사용 정보로 자동 기록됩니다. <a href="/">보드 보기</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party">앱 받기</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/ko/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=99';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=99';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

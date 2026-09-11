@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Android closed testing: what 1,862 real test runs look like | ACT Party</title>
+<meta name="description" content="Data from 1,862 Android closed-testing runs. 27.6% finish all 14 days, most drop-offs land on days 10-13, and 83% of &quot;the link is broken&quot; reports were not about the link.">
+<link rel="canonical" href="https://actparty.app/android-closed-testing-data.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/android-closed-testing-data.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/android-closed-testing-data.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/android-closed-testing-data.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/android-closed-testing-data.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/android-closed-testing-data.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/android-closed-testing-data.html">
+<meta property="og:title" content="Android closed testing: what 1,862 real test runs look like | ACT Party">
+<meta property="og:description" content="Data from 1,862 Android closed-testing runs. 27.6% finish all 14 days, most drop-offs land on days 10-13, and 83% of &quot;the link is broken&quot; reports were not about the link.">
+<meta property="og:url" content="https://actparty.app/android-closed-testing-data.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=99">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do testers have to open the app every day?", "acceptedAnswer": {"@type": "Answer", "text": "Google looks at whether the opt-in lasted 14 days. Daily opens are not a Google requirement. That said, testers who never open it at all are hard to explain on the production questionnaire."}}, {"@type": "Question", "name": "If one of the 12 leaves, do I start over?", "acceptedAnswer": {"@type": "Answer", "text": "No. The remaining testers keep their elapsed time; only a replacement needs their own 14 days."}}, {"@type": "Question", "name": "A tester says the app cannot be found, but the link works for me.", "acceptedAnswer": {"@type": "Answer", "text": "That was 87 of the 105 reports we measured. In order of frequency: country not open, login account differs from the Play Store account, group not joined. Check the country first."}}, {"@type": "Question", "name": "How many testers should I recruit to be safe?", "acceptedAnswer": {"@type": "Answer", "text": "27.6% finished all 14 days in our data. If you need 12, recruit with slack and send a reminder on day 12 or 13."}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><b>English</b> · <a href="/ko/android-closed-testing-data.html" hreflang="ko">한국어</a> · <a href="/ja/android-closed-testing-data.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/android-closed-testing-data.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/android-closed-testing-data.html" hreflang="zh-Hant">繁體中文</a></p>
+<h1 style="font-size:28px;margin:0 0 8px">Android closed testing, measured</h1>
+<p class="muted" style="margin:0 0 24px">1,862 test runs · 8,054 daily check-ins (16 Aug – 10 Sep 2026)</p>
+
+<p>Plenty of posts explain how Android closed testing works. Almost none say
+<b>what happens when you actually run 12 testers for 14 days</b>. We operate a
+service where developers test each other's apps, so we have that data. Here it is.</p>
+
+<p class="muted" style="font-size:13px">Period — 16 Aug to 10 Sep 2026 ·
+144 developers · 115 apps · 1,862 test runs · 8,054 daily check-ins</p>
+
+<h2>1. One in four testers finishes all 14 days</h2>
+<p>Counting only the 116 runs that <b>actually passed the 14-day mark</b>. A run
+still on day 5 is not a drop-out.</p>
+<ul class="steps">
+  <li>Finished 14 days — <b>32 (27.6%)</b></li>
+  <li>Dropped out — 78</li>
+  <li>Never opened it once — 6 (5.2%)</li>
+  <li>Average days logged — <b>10.3</b></li>
+</ul>
+<p>Recruiting 12 does not mean 12 finish. Recruit with slack.</p>
+
+<h2>2. But people do not quit early</h2>
+<p>We checked which day each of the 78 drop-offs stopped on. We expected a rush
+of quitters in the first three days. It was the opposite.</p>
+<ul class="steps">
+  <li>Stopped on days 1–5 — 19</li>
+  <li>Days 6–9 — 9</li>
+  <li><b>Days 10–13 — 50</b></li>
+</ul>
+<p><b>Two thirds of drop-offs happen in the last four days.</b> These people did
+not lose interest. They opened the app daily for over a week and then missed one
+day — busy, new phone, notifications off.</p>
+<p>So <b>one reminder on day 12 or 13</b> beats ten onboarding messages. More in
+<a href="/guides/why-testers-drop.html">Why testers drop out</a>.</p>
+
+<h2>3. 83% of "I can't install it" is not the link</h2>
+<p>Testers filed <b>105 reports</b> saying an opt-in link would not open. Each
+time we checked automatically whether anyone else had entered that same app in
+the previous 7 days.</p>
+<p><b>In 87 of the 105, other people were getting in fine.</b> The link worked;
+that one person could not use it. Three causes covered nearly all of them.</p>
+
+<h3>1. The country is not open — 61 reports</h3>
+<p>The most common by far. If the closed test's country list is narrow, testers
+elsewhere cannot even see the app in the store. They get
+<code>This app is not available in your country</code> and nothing else. The
+countries the reports came from:</p>
+<p class="muted">GB 13 · KR 12 · IN 6 · BR 6 · SE 6 · JP 5 · FR 4 · US 4</p>
+<p><b>Open the country list before you recruit</b> — Play Console → closed
+testing → Countries / regions. See
+<a href="/guides/country-availability.html">When a country blocks the install</a>.</p>
+
+<h3>2. Their login is not their Play Store account</h3>
+<p>Joining the group and opting in only work from the <b>Google account signed
+into the Play Store on the phone</b>. Anyone with several Google accounts splits
+here.</p>
+<p>When you ask a tester for an email, ask for <b>"the account signed into your
+Play Store"</b>, not "your email". Same question, different answer.</p>
+
+<h3>3. They hit the opt-in link before joining the group</h3>
+<p>With a Google Group the order matters: <b>join the group → opt in →
+install</b>. Opting in first shows <code>You are not able to join this
+program</code>, and that screen never says "join the group first". The tester
+concludes the link is broken. Screens and order are in
+<a href="/guides/google-group.html">Connecting a Google Group</a>.</p>
+
+<h2>4. And it takes time to propagate</h2>
+<p>Opting in does not put the app in the store immediately — it can take about
+30 minutes. Testers who do not know this close the page and give up. Tell them
+up front.</p>
+
+<h2>Checklist before recruiting</h2>
+<ol class="steps">
+  <li>Closed test <b>open to all countries</b>?</li>
+  <li>Asked for the <b>Play Store account</b>, in those words?</li>
+  <li>If using a group, explained <b>join → opt in → install</b>?</li>
+  <li>Warned them about the <b>~30 minute</b> delay?</li>
+  <li>Recruited <b>more than 12</b>? (27.6% finish)</li>
+  <li>Reminder ready for <b>day 12–13</b>?</li>
+</ol>
+<p>The first four alone remove most "it will not install" messages.</p>
+<h2>Frequently asked</h2>
+<dl class="faq">
+<dt>Do testers have to open the app every day?</dt><dd>Google looks at whether the opt-in lasted 14 days. Daily opens are not a Google requirement. That said, testers who never open it at all are hard to explain on the production questionnaire.</dd><dt>If one of the 12 leaves, do I start over?</dt><dd>No. The remaining testers keep their elapsed time; only a replacement needs their own 14 days.</dd><dt>A tester says the app cannot be found, but the link works for me.</dt><dd>That was 87 of the 105 reports we measured. In order of frequency: country not open, login account differs from the Play Store account, group not joined. Check the country first.</dd><dt>How many testers should I recruit to be safe?</dt><dd>27.6% finished all 14 days in our data. If you need 12, recruit with slack and send a reminder on day 12 or 13.</dd>
+</dl>
+<div class="note" style="margin:26px 0">These numbers come from <b>ACT Party</b>, where developers trade closed tests with each other and daily opens are recorded automatically from Android usage stats. <a href="/">See the board</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party">Get the app</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=99';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=99';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

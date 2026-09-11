@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>安卓封闭测试：1,862 次真实运行的数据 | ACT Party</title>
+<meta name="description" content="来自 1,862 次安卓封闭测试的实测数据。27.6% 完成全部 14 天，流失集中在第 10-13 天，&quot;装不上&quot;的 105 次反馈中有 87 次并非链接问题。">
+<link rel="canonical" href="https://actparty.app/zh-Hans/android-closed-testing-data.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/android-closed-testing-data.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/android-closed-testing-data.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/android-closed-testing-data.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/android-closed-testing-data.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/android-closed-testing-data.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/android-closed-testing-data.html">
+<meta property="og:title" content="安卓封闭测试：1,862 次真实运行的数据 | ACT Party">
+<meta property="og:description" content="来自 1,862 次安卓封闭测试的实测数据。27.6% 完成全部 14 天，流失集中在第 10-13 天，&quot;装不上&quot;的 105 次反馈中有 87 次并非链接问题。">
+<meta property="og:url" content="https://actparty.app/zh-Hans/android-closed-testing-data.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=99">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "测试者必须每天打开应用吗？", "acceptedAnswer": {"@type": "Answer", "text": "Google 看的是加入测试的状态是否持续了 14 天。每天打开并不是 Google 的要求。不过如果有测试者一次都没打开，在生产环境申请问卷里会比较难解释。"}}, {"@type": "Question", "name": "12 人里有一个退出，要从头再来吗？", "acceptedAnswer": {"@type": "Answer", "text": "不用。其余测试者已积累的时间照常保留，只有新加入的人需要自己跑满 14 天。"}}, {"@type": "Question", "name": "测试者说找不到应用，但链接在我这里是好的。", "acceptedAnswer": {"@type": "Answer", "text": "我们统计的 105 次里有 87 次就是这种情况。按常见程度排序：国家未开放、登录账号与 Play 商店账号不一致、没有加入群组。先查国家。"}}, {"@type": "Question", "name": "招多少测试者才保险？", "acceptedAnswer": {"@type": "Answer", "text": "我们的数据里完成率是 27.6%。如果需要 12 人，请留出余量，并在第 12 或 13 天发一次提醒。"}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/android-closed-testing-data.html" hreflang="en">English</a> · <a href="/ko/android-closed-testing-data.html" hreflang="ko">한국어</a> · <a href="/ja/android-closed-testing-data.html" hreflang="ja">日本語</a> · <b>简体中文</b> · <a href="/zh-Hant/android-closed-testing-data.html" hreflang="zh-Hant">繁體中文</a></p>
+<h1 style="font-size:28px;margin:0 0 8px">安卓封闭测试，用数据说话</h1>
+<p class="muted" style="margin:0 0 24px">1,862 次测试 · 8,054 条每日记录（2026 年 8 月 16 日 – 9 月 10 日）</p>
+
+<p>讲解封闭测试怎么做的文章很多，但几乎没有人写
+<b>真正凑齐 12 位测试者、跑满 14 天之后会发生什么</b>。我们运营着一个开发者互相
+测试彼此应用的服务，数据就在这里，原样公开。</p>
+
+<p class="muted" style="font-size:13px">统计范围 — 2026 年 8 月 16 日至 9 月 10 日 ·
+开发者 144 人 · 应用 115 个 · 测试参与 1,862 次 · 每日记录 8,054 条</p>
+
+<h2>1. 每四个人里只有一个跑满 14 天</h2>
+<p>只统计<b>确实已经过了 14 天</b>的 116 次。还在第 5 天的不能算作放弃。</p>
+<ul class="steps">
+  <li>完成 14 天 — <b>32 次（27.6%）</b></li>
+  <li>中途流失 — 78 次</li>
+  <li>一次都没打开 — 6 次（5.2%）</li>
+  <li>平均记录天数 — <b>10.3 天</b></li>
+</ul>
+<p>招到 12 人不等于 12 人跑到最后。要留出余量。</p>
+
+<h2>2. 但人们并不会在前期放弃</h2>
+<p>我们统计了 78 次流失分别停在第几天。原以为会集中在前三天，结果正相反。</p>
+<ul class="steps">
+  <li>第 1–5 天停止 — 19 次</li>
+  <li>第 6–9 天 — 9 次</li>
+  <li><b>第 10–13 天 — 50 次</b></li>
+</ul>
+<p><b>三分之二的流失发生在最后四天。</b>这些人不是失去兴趣，而是连续打开十几天后
+漏掉了一天 —— 忙、换手机、关了通知。</p>
+<p>所以<b>第 12、13 天的一次提醒</b>，胜过前期十次说明。详见
+<a href="/zh-Hans/guides/why-testers-drop.html">测试者中途退出的原因</a>。</p>
+
+<h2>3. "装不上"里有 83% 不是链接的问题</h2>
+<p>测试者提交了 <b>105 次</b>"链接打不开"的反馈。每一次我们都会自动检查：最近 7 天
+内是否有别人成功进入了同一个应用。</p>
+<p><b>105 次里有 87 次，别人都进得去。</b>链接是好的，只有那个人进不去。原因几乎
+都是下面三种。</p>
+
+<h3>① 没有开放该国家 — 61 次</h3>
+<p>最常见。如果封闭测试的国家范围很窄，其他国家的测试者在商店里根本看不到应用，
+只会看到<code>此应用在您所在的国家/地区不可用</code>。反馈来自这些国家：</p>
+<p class="muted">GB 13 · KR 12 · IN 6 · BR 6 · SE 6 · JP 5 · FR 4 · US 4</p>
+<p><b>招募之前先把国家开放。</b>Play Console → 封闭测试 → 国家/地区。详见
+<a href="/zh-Hans/guides/country-availability.html">国家限制导致无法安装时</a>。</p>
+
+<h3>② 登录账号不是 Play 商店账号</h3>
+<p>加入群组和加入测试，都必须用<b>手机 Play 商店当前登录的那个 Google 账号</b>。
+有多个账号的人就卡在这里。</p>
+<p>向测试者要邮箱时，问的应该是<b>"你手机 Play 商店登录的账号"</b>，而不是
+"你的邮箱"。</p>
+
+<h3>③ 没加入群组就先点了测试链接</h3>
+<p>用 Google 群组管理测试者时有顺序：<b>加入群组 → 加入测试 → 安装</b>。先点测试
+链接会显示<code>您无法加入此计划</code>，而那个页面并不会提示"请先加入群组"，
+测试者便以为链接坏了。见<a href="/zh-Hans/guides/google-group.html">连接 Google 群组</a>。</p>
+
+<h2>4. 生效需要时间</h2>
+<p>加入测试之后商店不会立刻出现该应用，大约需要 30 分钟。不知道这一点的人会直接
+关掉页面。请提前告诉他们。</p>
+
+<h2>招募前的检查清单</h2>
+<ol class="steps">
+  <li>封闭测试是否<b>开放所有国家</b></li>
+  <li>是否明确按<b>"Play 商店账号"</b>索要邮箱</li>
+  <li>用群组的话，是否说明<b>加入群组 → 加入测试 → 安装</b>的顺序</li>
+  <li>是否提前告知<b>约 30 分钟</b>的延迟</li>
+  <li>是否招募了<b>多于 12 人</b>（完成率 27.6%）</li>
+  <li>是否准备了<b>第 12–13 天的提醒</b></li>
+</ol>
+<h2>常见问题</h2>
+<dl class="faq">
+<dt>测试者必须每天打开应用吗？</dt><dd>Google 看的是加入测试的状态是否持续了 14 天。每天打开并不是 Google 的要求。不过如果有测试者一次都没打开，在生产环境申请问卷里会比较难解释。</dd><dt>12 人里有一个退出，要从头再来吗？</dt><dd>不用。其余测试者已积累的时间照常保留，只有新加入的人需要自己跑满 14 天。</dd><dt>测试者说找不到应用，但链接在我这里是好的。</dt><dd>我们统计的 105 次里有 87 次就是这种情况。按常见程度排序：国家未开放、登录账号与 Play 商店账号不一致、没有加入群组。先查国家。</dd><dt>招多少测试者才保险？</dt><dd>我们的数据里完成率是 27.6%。如果需要 12 人，请留出余量，并在第 12 或 13 天发一次提醒。</dd>
+</dl>
+<div class="note" style="margin:26px 0">这些数据来自 <b>ACT Party</b> —— 开发者之间互相进行封闭测试的服务，是否打开过应用由 Android 使用情况自动记录。<a href="/">查看看板</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party">获取应用</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/zh-Hans/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=99';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=99';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Androidクローズドテスト、1,862件の実測データ | ACT Party</title>
+<meta name="description" content="Androidクローズドテスト14日間を1,862件回した実測。完走率27.6%、離脱は10〜13日目に集中、「インストールできない」105件のうち87件はリンクの問題ではなかった。">
+<link rel="canonical" href="https://actparty.app/ja/android-closed-testing-data.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/android-closed-testing-data.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/android-closed-testing-data.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/android-closed-testing-data.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/android-closed-testing-data.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/android-closed-testing-data.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/android-closed-testing-data.html">
+<meta property="og:title" content="Androidクローズドテスト、1,862件の実測データ | ACT Party">
+<meta property="og:description" content="Androidクローズドテスト14日間を1,862件回した実測。完走率27.6%、離脱は10〜13日目に集中、「インストールできない」105件のうち87件はリンクの問題ではなかった。">
+<meta property="og:url" content="https://actparty.app/ja/android-closed-testing-data.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=99">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "テスターは毎日アプリを開く必要がありますか？", "acceptedAnswer": {"@type": "Answer", "text": "Googleが見るのはオプトイン状態が14日続いたかです。毎日の起動はGoogleの要件ではありません。ただし一度も開かないテスターが混ざると、製品版申請のアンケートで説明しづらくなります。"}}, {"@type": "Question", "name": "12人のうち1人が抜けたら最初からやり直しですか？", "acceptedAnswer": {"@type": "Answer", "text": "いいえ。残った人の期間はそのまま積み上がり、新しく入ったテスターだけが14日を満たせば大丈夫です。"}}, {"@type": "Question", "name": "テスターが「アプリが見つからない」と言いますが、リンクは正常です。", "acceptedAnswer": {"@type": "Answer", "text": "実測105件のうち87件がその状況でした。国が開いていない、ログインとPlayストアのアカウント不一致、グループ未参加の順に多いです。まず国を確認してください。"}}, {"@type": "Question", "name": "テスターは何人集めれば安全ですか？", "acceptedAnswer": {"@type": "Answer", "text": "完走率は27.6%でした。12人必要なら余裕をもって集め、12〜13日目にリマインドを送るのが確実です。"}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/android-closed-testing-data.html" hreflang="en">English</a> · <a href="/ko/android-closed-testing-data.html" hreflang="ko">한국어</a> · <b>日本語</b> · <a href="/zh-Hans/android-closed-testing-data.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/android-closed-testing-data.html" hreflang="zh-Hant">繁體中文</a></p>
+<h1 style="font-size:28px;margin:0 0 8px">Androidクローズドテスト、実際に回すとこうなります</h1>
+<p class="muted" style="margin:0 0 24px">テスト参加1,862件・日次記録8,054件（2026年8月16日〜9月10日）</p>
+
+<p>クローズドテストのやり方を説明する記事は多くあります。しかし
+<b>実際に12人を集めて14日間回すとどうなるのか</b>を数字で書いた記事はありません。
+私たちは開発者同士がクローズドテストを交換するサービスを運営しており、そのデータが
+貯まりました。そのまま公開します。</p>
+
+<p class="muted" style="font-size:13px">集計期間 — 2026年8月16日〜9月10日 ·
+開発者144名 · アプリ115本 · テスト参加1,862件 · 日次記録8,054件</p>
+
+<h2>1. 14日間を完走するのは4人に1人</h2>
+<p>開始から14日が<b>実際に経過した</b>116件のみを数えました。まだ5日目の件を
+離脱として数えるわけにはいきません。</p>
+<ul class="steps">
+  <li>14日完走 — <b>32件（27.6%）</b></li>
+  <li>途中離脱 — 78件</li>
+  <li>一度も開かなかった人 — 6件（5.2%）</li>
+  <li>平均認証日数 — <b>10.3日</b></li>
+</ul>
+<p>12人集めても12人が最後まで行くわけではありません。余裕をもって集めてください。</p>
+
+<h2>2. しかし人は序盤では辞めません</h2>
+<p>離脱78件が何日目で止まったかを数えました。予想は「1〜3日目に一気に抜ける」
+でしたが、正反対でした。</p>
+<ul class="steps">
+  <li>1〜5日目で停止 — 19件</li>
+  <li>6〜9日目 — 9件</li>
+  <li><b>10〜13日目 — 50件</b></li>
+</ul>
+<p>離脱の<b>3分の2が最後の4日間</b>に集中しています。この人たちは飽きたのでは
+ありません。10日以上毎日開いていて、1日だけ抜けたのです。忙しかったか、機種変更か、
+通知を切ったか。</p>
+<p>つまり<b>12日目・13日目のリマインド1回</b>が、序盤の案内10回より効きます。
+詳しくは<a href="/ja/guides/why-testers-drop.html">テスターが途中で抜ける理由</a>に。</p>
+
+<h2>3.「インストールできない」の83%はリンクの問題ではない</h2>
+<p>テスターから「リンクが開かない」という報告が<b>105件</b>ありました。その都度、
+同じアプリに直近7日以内に他の人が入れているかを自動で確認しました。</p>
+<p><b>105件のうち87件は、他の人は問題なく入れていました。</b>リンクは正常で、
+その人だけが入れなかったのです。原因は次の3つでした。</p>
+
+<h3>① 国が開いていない — 報告61件</h3>
+<p>最も多い原因です。クローズドテストの国設定が狭いと、他国のテスターはストアで
+アプリ自体を見られません。<code>このアプリはお住まいの国では提供されていません</code>
+だけが表示されます。報告のあった国は次のとおりです。</p>
+<p class="muted">GB 13 · KR 12 · IN 6 · BR 6 · SE 6 · JP 5 · FR 4 · US 4</p>
+<p><b>テスターを集める前に国を全体に開いてください。</b>Play Console → クローズド
+テスト → 国/地域。詳しくは<a href="/ja/guides/country-availability.html">国が原因でインストールできないとき</a>に。</p>
+
+<h3>② ログインアカウントとPlayストアのアカウントが違う</h3>
+<p>見えにくい落とし穴です。グループ参加とオプトインは<b>スマホのPlayストアに
+ログインしているアカウント</b>で行う必要があります。Googleアカウントを複数使う人は
+ここで分かれます。</p>
+<p>テスターにメールを聞くときは「お使いのメール」ではなく
+<b>「スマホのPlayストアにログイン中のアカウント」</b>と聞いてください。</p>
+
+<h3>③ グループに参加せずオプトインリンクを先に押した</h3>
+<p>Googleグループでテスターを管理する場合は順番があります。<b>グループ参加 →
+オプトイン → インストール</b>。オプトインから押すと
+<code>このプログラムには参加できません</code>と表示されますが、その画面には
+「先にグループに参加してください」とは書かれていません。だからテスターはリンクが
+壊れていると思います。<a href="/ja/guides/google-group.html">Googleグループの連携</a>にまとめました。</p>
+
+<h2>4. 反映には時間がかかります</h2>
+<p>オプトインしてもストアにすぐは出ません。最大30分ほどかかります。これを知らないと
+「やっぱりダメだ」と閉じてしまいます。事前に伝えてください。</p>
+
+<h2>集める前に確認すること</h2>
+<ol class="steps">
+  <li>クローズドテストの<b>国を全体に</b>開いたか</li>
+  <li>テスターに<b>「Playストアのアカウント」</b>と明示して聞いたか</li>
+  <li>グループ方式なら<b>参加 → オプトイン → インストール</b>の順を案内したか</li>
+  <li>オプトイン後<b>最大30分</b>かかると伝えたか</li>
+  <li>12人ではなく<b>余裕をもって</b>集めたか（完走率27.6%）</li>
+  <li><b>12〜13日目のリマインド</b>を用意したか</li>
+</ol>
+<h2>よくある質問</h2>
+<dl class="faq">
+<dt>テスターは毎日アプリを開く必要がありますか？</dt><dd>Googleが見るのはオプトイン状態が14日続いたかです。毎日の起動はGoogleの要件ではありません。ただし一度も開かないテスターが混ざると、製品版申請のアンケートで説明しづらくなります。</dd><dt>12人のうち1人が抜けたら最初からやり直しですか？</dt><dd>いいえ。残った人の期間はそのまま積み上がり、新しく入ったテスターだけが14日を満たせば大丈夫です。</dd><dt>テスターが「アプリが見つからない」と言いますが、リンクは正常です。</dt><dd>実測105件のうち87件がその状況でした。国が開いていない、ログインとPlayストアのアカウント不一致、グループ未参加の順に多いです。まず国を確認してください。</dd><dt>テスターは何人集めれば安全ですか？</dt><dd>完走率は27.6%でした。12人必要なら余裕をもって集め、12〜13日目にリマインドを送るのが確実です。</dd>
+</dl>
+<div class="note" style="margin:26px 0">この数字は<b>ACT Party</b>から出ています。開発者同士でクローズドテストを交換するサービスで、アプリを開いたかはAndroidの使用状況から自動で記録されます。<a href="/">ボードを見る</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party">アプリを入手</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/ja/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=99';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=99';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>
