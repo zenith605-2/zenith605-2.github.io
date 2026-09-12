@@ -32,6 +32,7 @@ SUPABASE_KEY = 'sb_publishable_hF3_Mw-TybTPGxXPBx4M3Q_sPKe06UU'
 STATIC_PAGES = [
     ('/', '1.0'),
     ('/board.html', '0.9'),
+    ('/check.html', '0.9'),
     ('/guides/', '0.8'),
     ('/guides/what-google-checks.html', '0.8'),
     ('/guides/daily-opens-data.html', '0.8'),
