@@ -525,6 +525,25 @@ export async function markEmailRegistered(appId, testerId, on) {
   if (error) throw error;
 }
 
+// ---- 옵트인 점검 ----
+// 서버는 구글에 로그인할 수 없다. 큐에 넣어 두면 로그인된 브라우저가
+// 집어가서 그룹 가입 → 옵트인 페이지 판독까지 하고 결과를 써 넣는다.
+export async function requestOptinCheck(optinUrl, groupUrl) {
+  const { data, error } = await sb.rpc('request_optin_check', {
+    p_optin_url: optinUrl, p_group_url: groupUrl || null,
+  });
+  if (error) throw error;
+  return data;
+}
+
+/** 결과 폴링 — 패키지명이 캐시 키다. */
+export async function getOptinCheck(pkg) {
+  const { data } = await sb.from('optin_checks')
+    .select('package, status, detail, app_name, checked_at')
+    .eq('package', pkg).maybeSingle();
+  return data;
+}
+
 // ---- 그룹 공개 여부 ----
 export async function checkGroup(urlOrName) {
   const { data, error } = await sb.functions.invoke('group-check', {

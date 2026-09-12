@@ -8,6 +8,72 @@
 // 없으면 TW/HK/MO 는 번체, 나머지 중국어는 간체.
 
 const T = {
+  chk_o_locked: ['그룹에 가입할 수 없습니다',
+                 'Testers cannot join the group',
+                 'グループに参加できません',
+                 '测试者无法加入群组', '測試者無法加入群組'],
+  chk_f_locked_h: ['그룹이 보이기는 하는데 가입이 막혀 있습니다',
+                 'The group is visible but joining is blocked',
+                 'グループは見えますが参加が塞がれています',
+                 '群组看得到但无法加入', '群組看得到但無法加入'],
+  chk_f_locked_p: ['그룹 이름은 밖에서 보이는데, 초대받지 않은 계정은 가입 버튼을 눌러도 들어가지지 않습니다. 그룹에 못 들어가니 옵트인도 당연히 막힙니다. 주인은 이미 멤버라 이 벽이 안 보입니다.',
+                 'The group name is visible from outside, but an uninvited account cannot actually get in. No group, no opt-in. The owner is already a member, so this wall is invisible to them.',
+                 'グループ名は外から見えますが、招待されていないアカウントは実際には参加できません。グループに入れなければオプトインも通りません。所有者は既にメンバーなのでこの壁が見えません。',
+                 '群组名称从外部可见，但未被邀请的账号实际上加不进去。进不了群组，自然也无法加入测试。所有者已是成员，看不到这堵墙。',
+                 '群組名稱從外部可見，但未被邀請的帳號實際上加不進去。進不了群組，自然也無法加入測試。擁有者已是成員，看不到這堵牆。'],
+  chk_f_locked_s: ['groups.google.com 에서 그룹을 엽니다
+[그룹 설정] → [일반]
+<b>그룹 가입</b>을 “웹상의 모든 사용자가 가입할 수 있음”으로 바꿉니다
+“승인이 필요함”이나 “초대된 사용자만”으로 두면 테스터가 못 들어옵니다
+<b>그룹 보기</b>도 “웹상의 모든 사용자”인지 같이 확인합니다
+[변경사항 저장]을 누릅니다',
+                 'Open the group at groups.google.com
+Group settings → General
+Set <b>Who can join group</b> to “Anyone on the web can join”
+“Ask to join” or “Only invited users” blocks testers
+Check <b>Who can view group</b> is “Anyone on the web” too
+Press Save changes',
+                 'groups.google.com でグループを開く
+[グループ設定] → [全般]
+<b>グループへの参加</b>を「ウェブ上の全員が参加可能」にする
+「承認が必要」「招待された人のみ」ではテスターが入れません
+<b>グループの表示</b>も「ウェブ上の全員」か確認する
+[変更を保存]を押す',
+                 '在 groups.google.com 打开群组
+群组设置 → 常规
+把<b>谁可以加入群组</b>设为“网络上的任何人都可以加入”
+设为“需要审批”或“仅限受邀用户”会挡住测试者
+同时确认<b>谁可以查看群组</b>是“网络上的任何人”
+点击保存更改',
+                 '在 groups.google.com 打開群組
+群組設定 → 一般
+把<b>誰可以加入群組</b>設為「網路上的任何人都可以加入」
+設為「需要審批」或「僅限受邀使用者」會擋住測試者
+同時確認<b>誰可以查看群組</b>是「網路上的任何人」
+點擊儲存變更'],
+  chk_o_sub2:   ['그룹에 가입한 검증 계정이 실제로 열어 보고 알려 드립니다. 확인까지 잠깐 걸립니다.',
+                 'A checker account that has joined the group opens it for real and reports back. It takes a moment.',
+                 'グループに参加した検証用アカウントが実際に開いて結果をお知らせします。少し時間がかかります。',
+                 '已加入群组的检查账号会实际打开并返回结果，需要稍等片刻。',
+                 '已加入群組的檢查帳號會實際打開並回傳結果，需要稍等片刻。'],
+  chk_o_wait:   ['확인하는 중이에요 —', 'Checking —', '確認中です —', '正在检查 —', '正在檢查 —'],
+  chk_o_ok:     ['정상입니다. 테스터가 들어올 수 있어요',
+                 'Working. Testers can get in',
+                 '正常です。テスターは入れます',
+                 '正常，测试者可以进来', '正常，測試者可以進來'],
+  chk_o_broken: ['옵트인 페이지가 열리지 않습니다',
+                 'The opt-in page does not open',
+                 'オプトインのページが開きません',
+                 '加入测试页面打不开', '加入測試頁面打不開'],
+  chk_o_pending: ['아직 결과가 안 나왔어요. 직접 열어 보고 아래에서 골라 주세요.',
+                 'No result yet. Open it yourself and pick what you saw below.',
+                 'まだ結果が出ていません。ご自分で開いて下に選んでください。',
+                 '还没有结果，请自己打开后在下面选择看到的画面。',
+                 '還沒有結果，請自己打開後在下面選擇看到的畫面。'],
+  chk_o_slow:   ['자동 확인이 늦어질 때는 직접 보시는 게 빠릅니다.',
+                 'When the automatic check is slow, looking yourself is faster.',
+                 '自動確認が遅いときは、ご自分で見るほうが早いです。',
+                 '自动检查慢的时候，自己看更快。', '自動檢查慢的時候，自己看更快。'],
   nav_check:    ['링크 점검', 'Link check', 'リンク点検', '链接检查', '連結檢查'],
   chk_h:        ['테스터가 막히는지 미리 확인하세요',
                  'Check your tester links',
