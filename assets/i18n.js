@@ -8,6 +8,10 @@
 // 없으면 TW/HK/MO 는 번체, 나머지 중국어는 간체.
 
 const T = {
+  chk_g_joining: ['가입까지 되는지 확인하는 중',
+                 'checking whether joining actually works',
+                 '参加できるかも確認中',
+                 '正在确认能否加入', '正在確認能否加入'],
   chk_o_locked: ['그룹에 가입할 수 없습니다',
                  'Testers cannot join the group',
                  'グループに参加できません',

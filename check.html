@@ -9,7 +9,7 @@
 <meta property="og:title" content="Check your closed testing links">
 <meta property="og:description" content="Your group and opt-in links look fine to you because you are the owner. Check them the way a tester sees them.">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="/assets/app.css?v=101">
+<link rel="stylesheet" href="/assets/app.css?v=102">
 </head>
 <body>
 
@@ -97,8 +97,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
 import { checkGroup, requestOptinCheck, getOptinCheck, mountAuth }
-  from '/assets/api.js?v=101';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=101';
+  from '/assets/api.js?v=102';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=102';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -139,7 +139,11 @@ const groupNow = async () => {
     if (!r?.ok) {
       $('gfix').innerHTML = fixBox('chk_f_group', '/guides/google-group.html');
       $('gfix').hidden = false;
+      return;
     }
+    // 제목이 보인다고 끝이 아니다. 가입까지 되는지는 실제로 해 봐야 안다 —
+    // 검증 계정이 가입을 시도하고, 되면 옵트인 페이지까지 열어 본다.
+    if (PKG.test($('o').value.trim())) optinNow();
   } catch (_) {
     $('gmsg').className = 'hint';
     $('gmsg').textContent = t('chk_err');
@@ -184,7 +188,7 @@ function showVerdict(row) {
   return false;
 }
 
-const optinNow = async () => {
+async function optinNow() {
   const v = $('o').value.trim();
   $('ofix').hidden = true;
   $('manual').hidden = true;
@@ -200,6 +204,7 @@ const optinNow = async () => {
   $('oopen').href = `https://play.google.com/apps/testing/${pkg}`;
   $('omsg').className = 'hint';
   $('omsg').innerHTML = `${t('chk_o_wait')} <code>${esc(pkg)}</code>`;
+  $('gmsg').innerHTML += ` · ${t('chk_g_joining')}`;
 
   try {
     const row = await requestOptinCheck(v, $('g').value.trim());
@@ -219,7 +224,7 @@ const optinNow = async () => {
   $('omsg').className = 'hint';
   $('omsg').innerHTML = t('chk_o_pending');
   $('manual').hidden = false;
-};
+}
 $('obtn').onclick = optinNow;
 $('o').addEventListener('keydown', (e) => { if (e.key === 'Enter') optinNow(); });
 
