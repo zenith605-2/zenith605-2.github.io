@@ -9,7 +9,7 @@
 <meta property="og:title" content="Check your closed testing links">
 <meta property="og:description" content="Your group and opt-in links look fine to you because you are the owner. Check them the way a tester sees them.">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="/assets/app.css?v=102">
+<link rel="stylesheet" href="/assets/app.css?v=103">
 </head>
 <body>
 
@@ -51,10 +51,12 @@
 
   <!-- ── 2. 옵트인 ──
        구글은 로그인 전에 아무것도 해석하지 않는다. 없는 패키지도 정상 앱도
-       똑같이 로그인 화면으로 보낸다. 그래서 큐에 넣고, 그룹에 가입한 검증
-       계정이 실제로 열어 본 결과를 받아 온다. 유저는 결과만 본다. -->
+       똑같이 로그인 화면으로 보낸다.
+       검증 계정으로 자동 판정하는 길도 만들어 봤는데(v2_27, store/link_checker),
+       구글이 자동화 브라우저 로그인에 캡차를 걸어 접었다. 우회하지 않는다.
+       그래서 여기는 직접 열어 보고 고르게 한다 — 고르면 고칠 단계가 펼쳐진다. -->
   <h2 style="margin:38px 0 4px;font-size:19px" data-t="chk_o_h">2. Opt-in link</h2>
-  <p class="muted" style="margin:0 0 10px" data-t="chk_o_sub2"></p>
+  <p class="muted" style="margin:0 0 10px" data-t="chk_o_sub"></p>
   <div class="row">
     <input type="url" id="o" style="flex:1;min-width:240px"
            placeholder="https://play.google.com/apps/testing/com.example.app">
@@ -96,9 +98,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { checkGroup, requestOptinCheck, getOptinCheck, mountAuth }
-  from '/assets/api.js?v=102';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=102';
+import { checkGroup, mountAuth } from '/assets/api.js?v=103';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=103';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -108,7 +109,6 @@ mountAuth('authSlot', t);
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g,
   (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // 문제마다 "왜 그런지 + 무엇을 누르면 되는지 + 자세한 가이드"를 바로 밑에 편다.
 // 링크만 주면 안 눌러 본다 — 고칠 단계가 그 자리에 보여야 고친다.
@@ -141,9 +141,7 @@ const groupNow = async () => {
       $('gfix').hidden = false;
       return;
     }
-    // 제목이 보인다고 끝이 아니다. 가입까지 되는지는 실제로 해 봐야 안다 —
-    // 검증 계정이 가입을 시도하고, 되면 옵트인 페이지까지 열어 본다.
-    if (PKG.test($('o').value.trim())) optinNow();
+
   } catch (_) {
     $('gmsg').className = 'hint';
     $('gmsg').textContent = t('chk_err');
@@ -155,38 +153,6 @@ $('g').addEventListener('keydown', (e) => { if (e.key === 'Enter') groupNow(); }
 
 // ── 2. 옵트인 ──
 const PKG = /play\.google\.com\/apps\/testing\/([A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)+)/;
-
-function showVerdict(row) {
-  if (row.status === 'ok') {
-    $('omsg').className = 'hint ok';
-    $('omsg').innerHTML = `✓ ${t('chk_o_ok')}` +
-      (row.app_name ? ` — ${esc(row.app_name)}` : '');
-    $('ofix').hidden = true;
-    $('manual').hidden = true;
-    return true;
-  }
-  // 그룹이 보이기는 하는데 가입이 막힌 경우가 따로 있다. 익명 점검은
-  // 제목만 보므로 통과시킨다 — 실제로 가입해 봐야 드러난다.
-  if (row.status === 'group_locked' || row.status === 'group_hidden') {
-    const locked = row.status === 'group_locked';
-    $('omsg').className = 'hint bad';
-    $('omsg').innerHTML = `⚠ ${locked ? t('chk_o_locked') : t('chk_g_bad')}`;
-    $('ofix').innerHTML = fixBox(locked ? 'chk_f_locked' : 'chk_f_group',
-                                 '/guides/google-group.html');
-    $('ofix').hidden = false;
-    $('manual').hidden = true;
-    return true;
-  }
-  if (row.status === 'broken') {
-    $('omsg').className = 'hint bad';
-    $('omsg').innerHTML = `⚠ ${t('chk_o_broken')}`;
-    $('ofix').innerHTML = fixBox('chk_f_na', '/guides/blocked-screens.html');
-    $('ofix').hidden = false;
-    $('manual').hidden = true;
-    return true;
-  }
-  return false;
-}
 
 async function optinNow() {
   const v = $('o').value.trim();
@@ -200,29 +166,9 @@ async function optinNow() {
     $('omsg').innerHTML = `⚠ ${t('chk_o_bad')}`;
     return;
   }
-  const pkg = m[1];
-  $('oopen').href = `https://play.google.com/apps/testing/${pkg}`;
-  $('omsg').className = 'hint';
-  $('omsg').innerHTML = `${t('chk_o_wait')} <code>${esc(pkg)}</code>`;
-  $('gmsg').innerHTML += ` · ${t('chk_g_joining')}`;
-
-  try {
-    const row = await requestOptinCheck(v, $('g').value.trim());
-    if (row && showVerdict(row)) return;
-  } catch (_) {
-    $('omsg').className = 'hint bad';
-    $('omsg').innerHTML = `⚠ ${t('chk_o_bad')}`;
-    return;
-  }
-
-  // 러너가 집어갈 때까지 기다린다. 오래 걸리면 직접 보라고 넘긴다.
-  for (let i = 0; i < 20; i++) {
-    await sleep(3000);
-    const row = await getOptinCheck(pkg);
-    if (row && showVerdict(row)) return;
-  }
-  $('omsg').className = 'hint';
-  $('omsg').innerHTML = t('chk_o_pending');
+  $('oopen').href = `https://play.google.com/apps/testing/${m[1]}`;
+  $('omsg').className = 'hint ok';
+  $('omsg').innerHTML = `✓ ${t('chk_o_fmt')} — <code>${esc(m[1])}</code>`;
   $('manual').hidden = false;
 }
 $('obtn').onclick = optinNow;
