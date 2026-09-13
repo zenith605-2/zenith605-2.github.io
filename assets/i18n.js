@@ -8,6 +8,7 @@
 // 없으면 TW/HK/MO 는 번체, 나머지 중국어는 간체.
 
 const T = {
+  grp_party_wait: ['파티 대기', 'Party pending', 'パーティー待機', '组队待机', '組隊待機'],
   chk_g_joining: ['가입까지 되는지 확인하는 중',
                  'checking whether joining actually works',
                  '参加できるかも確認中',
