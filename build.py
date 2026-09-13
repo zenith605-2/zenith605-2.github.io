@@ -180,6 +180,7 @@ def main():
     if os.path.exists(landing):
         urls += [f'{SITE}{p}' for p in json.load(open(landing, encoding='utf-8'))]
 
+    app_urls = []
     for a in listed:
         pkg = a['package_name']
         d = os.path.join(BASE, 'a', pkg)
@@ -187,15 +188,35 @@ def main():
         with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8',
                   newline='') as f:
             f.write(page(a))
-        urls.append(f'{SITE}/a/{pkg}/')
+        app_urls.append(f'{SITE}/a/{pkg}/')
 
-    body = '\n'.join(
-        f'  <url><loc>{u}</loc></url>' for u in urls)
+    # 사이트맵을 둘로 나눈다.
+    #
+    # 하나에 다 넣었더니 앱 상세 107개가 전체의 63% 를 차지했다. 서로 비슷하고
+    # 얇은 페이지 뭉치라 구글이 뒤로 미루는데, 그 줄에 한국어 가이드·랜딩이
+    # 같이 밀려 크롤링조차 안 됐다 (색인 10 / 미색인 80, 2026-09-13).
+    #
+    # 읽히길 바라는 페이지와 목록용 페이지를 갈라 두면 중요한 쪽이 먼저 처리된다.
+    def write_sitemap(name, items):
+        body = '\n'.join(f'  <url><loc>{u}</loc></url>' for u in items)
+        with open(os.path.join(BASE, name), 'w', encoding='utf-8',
+                  newline='') as f:
+            f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+                    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                    f'{body}\n</urlset>\n')
+
+    write_sitemap('sitemap-pages.xml', urls)
+    write_sitemap('sitemap-apps.xml', app_urls)
+
+    # 색인 파일 — 구글에는 이 하나만 제출하면 아래 둘을 같이 읽는다
     with open(os.path.join(BASE, 'sitemap.xml'), 'w', encoding='utf-8',
               newline='') as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-                f'{body}\n</urlset>\n')
+                '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                f'  <sitemap><loc>{SITE}/sitemap-pages.xml</loc></sitemap>\n'
+                f'  <sitemap><loc>{SITE}/sitemap-apps.xml</loc></sitemap>\n'
+                '</sitemapindex>\n')
+    urls = urls + app_urls
 
     with open(os.path.join(BASE, 'robots.txt'), 'w', encoding='utf-8',
               newline='') as f:
