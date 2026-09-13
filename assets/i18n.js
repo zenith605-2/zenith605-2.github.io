@@ -25,36 +25,11 @@ const T = {
                  'グループ名は外から見えますが、招待されていないアカウントは実際には参加できません。グループに入れなければオプトインも通りません。所有者は既にメンバーなのでこの壁が見えません。',
                  '群组名称从外部可见，但未被邀请的账号实际上加不进去。进不了群组，自然也无法加入测试。所有者已是成员，看不到这堵墙。',
                  '群組名稱從外部可見，但未被邀請的帳號實際上加不進去。進不了群組，自然也無法加入測試。擁有者已是成員，看不到這堵牆。'],
-  chk_f_locked_s: ['groups.google.com 에서 그룹을 엽니다
-[그룹 설정] → [일반]
-<b>그룹 가입</b>을 “웹상의 모든 사용자가 가입할 수 있음”으로 바꿉니다
-“승인이 필요함”이나 “초대된 사용자만”으로 두면 테스터가 못 들어옵니다
-<b>그룹 보기</b>도 “웹상의 모든 사용자”인지 같이 확인합니다
-[변경사항 저장]을 누릅니다',
-                 'Open the group at groups.google.com
-Group settings → General
-Set <b>Who can join group</b> to “Anyone on the web can join”
-“Ask to join” or “Only invited users” blocks testers
-Check <b>Who can view group</b> is “Anyone on the web” too
-Press Save changes',
-                 'groups.google.com でグループを開く
-[グループ設定] → [全般]
-<b>グループへの参加</b>を「ウェブ上の全員が参加可能」にする
-「承認が必要」「招待された人のみ」ではテスターが入れません
-<b>グループの表示</b>も「ウェブ上の全員」か確認する
-[変更を保存]を押す',
-                 '在 groups.google.com 打开群组
-群组设置 → 常规
-把<b>谁可以加入群组</b>设为“网络上的任何人都可以加入”
-设为“需要审批”或“仅限受邀用户”会挡住测试者
-同时确认<b>谁可以查看群组</b>是“网络上的任何人”
-点击保存更改',
-                 '在 groups.google.com 打開群組
-群組設定 → 一般
-把<b>誰可以加入群組</b>設為「網路上的任何人都可以加入」
-設為「需要審批」或「僅限受邀使用者」會擋住測試者
-同時確認<b>誰可以查看群組</b>是「網路上的任何人」
-點擊儲存變更'],
+  chk_f_locked_s: ['groups.google.com 에서 그룹을 엽니다\n[그룹 설정] → [일반]\n<b>그룹 가입</b>을 “웹상의 모든 사용자가 가입할 수 있음”으로 바꿉니다\n“승인이 필요함”이나 “초대된 사용자만”으로 두면 테스터가 못 들어옵니다\n<b>그룹 보기</b>도 “웹상의 모든 사용자”인지 같이 확인합니다\n[변경사항 저장]을 누릅니다',
+                 'Open the group at groups.google.com\nGroup settings → General\nSet <b>Who can join group</b> to “Anyone on the web can join”\n“Ask to join” or “Only invited users” blocks testers\nCheck <b>Who can view group</b> is “Anyone on the web” too\nPress Save changes',
+                 'groups.google.com でグループを開く\n[グループ設定] → [全般]\n<b>グループへの参加</b>を「ウェブ上の全員が参加可能」にする\n「承認が必要」「招待された人のみ」ではテスターが入れません\n<b>グループの表示</b>も「ウェブ上の全員」か確認する\n[変更を保存]を押す',
+                 '在 groups.google.com 打开群组\n群组设置 → 常规\n把<b>谁可以加入群组</b>设为“网络上的任何人都可以加入”\n设为“需要审批”或“仅限受邀用户”会挡住测试者\n同时确认<b>谁可以查看群组</b>是“网络上的任何人”\n点击保存更改',
+                 '在 groups.google.com 打開群組\n群組設定 → 一般\n把<b>誰可以加入群組</b>設為「網路上的任何人都可以加入」\n設為「需要審批」或「僅限受邀使用者」會擋住測試者\n同時確認<b>誰可以查看群組</b>是「網路上的任何人」\n點擊儲存變更'],
   chk_o_sub2:   ['그룹에 가입한 검증 계정이 실제로 열어 보고 알려 드립니다. 확인까지 잠깐 걸립니다.',
                  'A checker account that has joined the group opens it for real and reports back. It takes a moment.',
                  'グループに参加した検証用アカウントが実際に開いて結果をお知らせします。少し時間がかかります。',
