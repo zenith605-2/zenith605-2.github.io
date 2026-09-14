@@ -26,6 +26,13 @@
   /* 심사 설문 문항 — 한 문항이 두세 줄이라 붙여 두면 경계가 안 보인다 */
   #doc ol li { margin-bottom: 14px; line-height: 1.65 }
   #doc ol li:last-child { margin-bottom: 0 }
+  /* 아홉 문항을 한 장에 모아 두면 열기 전에 답을 미리 짜 볼 수 있다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; border: 1px solid #e3e6ea;
+    border-radius: 10px; display: block;
+  }
+  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
 </style>
 </head>
 <body>
@@ -58,6 +65,11 @@ import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v
 import { sectionAnchors } from '/assets/anchors.js?v=105';
 
 // 본문은 언어마다 통째로 다르다. 문장 단위 키로 쪼개면 번역이 어색해진다.
+// 한국어 카드는 한국어 양식 그대로, 나머지 언어는 영어판을 보여 준다.
+const SHOT = (name, cap) =>
+  '<figure><img src="/img/' + name + '.png" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
 const DOC = {
   ko: `
   <h1 style="font-size:28px;margin:0 0 8px">프로덕션 신청서 9문항</h1>
@@ -120,6 +132,8 @@ const DOC = {
 
   <p class="muted">답변은 Play 스토어에 공개되지 않습니다. 심사에만 쓰인다고
   화면에 적혀 있으니, 홍보 문구처럼 쓸 필요가 없습니다.</p>
+
+${SHOT('guide-form-q9', '아홉 문항을 한 장에. 열기 전에 답을 미리 짜 두면 300자 안에 들어갑니다')}
 
 <h2>왜 그 둘에서 막히나</h2>
 
@@ -249,6 +263,8 @@ const DOC = {
   <p class="muted">Your answers are not shown on the Play listing. The form says
   so on screen, so there is no reason to write them like marketing copy.</p>
 
+${SHOT('guide-form-q9-en', 'All nine on one page. Draft the answers before you open it and they fit in 300 characters')}
+
 <h2>Why those two are hard</h2>
 
   <p>Two weeks later, "what feedback did I get" usually returns nothing. So you
@@ -370,6 +386,8 @@ const DOC = {
   <p class="muted">回答はPlayストアには表示されません。審査だけに使うと画面に
   書かれているので、宣伝文のように書く必要はありません。</p>
 
+${SHOT('guide-form-q9-en', '9問を1枚に。開く前に下書きしておけば300字に収まります')}
+
 <h2>なぜその二つで詰まるのか</h2>
 
   <p>2週間経ってから「どんな意見をもらったか」を思い出そうとしても、たいてい
@@ -478,6 +496,8 @@ const DOC = {
   <p class="muted">你的回答不会显示在 Play 商店页面上。表单里就这么写着，
   所以没必要按宣传文案来写。</p>
 
+${SHOT('guide-form-q9-en', '九个问题一张图。打开前先拟好，300 字就够用')}
+
 <h2>为什么卡在这两个</h2>
 
   <p>两周后回想「收到过什么反馈」，通常什么也想不起来。于是开始编写听起来
@@ -522,11 +542,11 @@ const DOC = {
   </p>`,
 
   'zh-Hant': `
-  <h1 style="font-size:28px;margin:0 0 8px">正式版申請表的 10 个問題</h1>
+  <h1 style="font-size:28px;margin:0 0 8px">正式版申請表的 9 個問題</h1>
   <p class="muted" style="margin:0 0 24px">其中两个決定成敗</p>
 
   <p>12 位測試者保持加入 14 天后就可以申請正式版。但点了申請并不会直接进入審核，
-  <b>会先出現一張表單。</b>10 个問題，大多是問答題，每题 300 字左右。</p>
+  <b>会先出現一張表單。</b>9 個問題，大多是問答題，每题 300 字左右。</p>
 
   <p>很多人卡在這裡。跑完 14 天和写出這 14 天發生了什麼，是兩件事。</p>
 
@@ -577,6 +597,8 @@ const DOC = {
 
   <p class="muted">你的回答不會顯示在 Play 商店頁面上。表單裡就這麼寫著，
   所以沒必要按宣傳文案來寫。</p>
+
+${SHOT('guide-form-q9-en', '九個問題一張圖。打開前先擬好，300 字就夠用')}
 
 <h2>為什麼卡在這兩個</h2>
 

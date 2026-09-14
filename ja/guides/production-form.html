@@ -32,6 +32,13 @@
   /* 심사 설문 문항 — 한 문항이 두세 줄이라 붙여 두면 경계가 안 보인다 */
   #doc ol li { margin-bottom: 14px; line-height: 1.65 }
   #doc ol li:last-child { margin-bottom: 0 }
+  /* 아홉 문항을 한 장에 모아 두면 열기 전에 답을 미리 짜 볼 수 있다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; border: 1px solid #e3e6ea;
+    border-radius: 10px; display: block;
+  }
+  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
 </style>
 </head>
 <body>
@@ -113,6 +120,8 @@
   <p class="muted">回答はPlayストアには表示されません。審査だけに使うと画面に
   書かれているので、宣伝文のように書く必要はありません。</p>
 
+<figure><img src="/img/guide-form-q9-en.png" alt="" loading="lazy"><figcaption>9問を1枚に。開く前に下書きしておけば300字に収まります</figcaption></figure>
+
 <h2>なぜその二つで詰まるのか</h2>
 
   <p>2週間経ってから「どんな意見をもらったか」を思い出そうとしても、たいてい
@@ -175,6 +184,11 @@ import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v
 import { sectionAnchors } from '/assets/anchors.js?v=105';
 
 // 본문은 언어마다 통째로 다르다. 문장 단위 키로 쪼개면 번역이 어색해진다.
+// 한국어 카드는 한국어 양식 그대로, 나머지 언어는 영어판을 보여 준다.
+const SHOT = (name, cap) =>
+  '<figure><img src="/img/' + name + '.png" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
 
 document.getElementById('langSlot').innerHTML = langPicker();
 sectionAnchors(LANG);
