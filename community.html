@@ -97,7 +97,8 @@ function list() {
           ${esc(p.author_name || t('developer'))} · ${ago(p.created_at)}
           ${p.comment_count ? `<span class="sep">·</span>
             <span class="dim">${t('comments')} ${p.comment_count}</span>` : ''}</p>
-        ${p.content ? `<p class="desc line2">${esc(p.content)}</p>` : ''}
+        ${p.content ? `<p class="desc line2">${esc(
+          p.content.replace(/\[img\d+\]/g, ' ').trim())}</p>` : ''}
       </div>`).join('') : `<p class="muted">${t('no_posts')}</p>`}</div>`;
 
   applyDom();
@@ -117,6 +118,37 @@ function list() {
   if (l) l.onclick = () => signIn().catch((e) => alert(e.message));
 }
 
+/// 본문 안의 [imgN] 자리에 그 번호의 사진을 끼워 넣는다.
+/// 앱(community_screen.dart _bodyWithImages)과 같은 규칙이어야, 같은 글이
+/// 두 곳에서 다르게 보이지 않는다.
+function bodyWithImages(content, images) {
+  const imgs = images || [];
+  const text = content || '';
+  const used = new Set();
+  let out = '';
+  let cursor = 0;
+  const re = /\[img(\d+)\]/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    const i = parseInt(m[1], 10) - 1;
+    // 없는 번호는 표시만 지운다 — 사진을 지운 뒤 남은 자국이다
+    const before = text.slice(cursor, m.index);
+    if (before.trim()) out += `<p class="desc pre">${esc(before.trim())}</p>`;
+    if (i >= 0 && i < imgs.length) {
+      out += `<img class="shot" src="${esc(imgs[i])}" alt="">`;
+      used.add(i);
+    }
+    cursor = m.index + m[0].length;
+  }
+  const rest = text.slice(cursor);
+  if (rest.trim()) out += `<p class="desc pre">${esc(rest.trim())}</p>`;
+  // 본문에서 안 부른 사진은 뒤에 붙인다
+  imgs.forEach((u, i) => {
+    if (!used.has(i)) out += `<img class="shot" src="${esc(u)}" alt="">`;
+  });
+  return out || `<p class="desc pre"></p>`;
+}
+
 async function open(id) {
   root.innerHTML = `<p class="muted">${t('loading')}</p>`;
   const p = await post(id).catch(() => null);
@@ -128,8 +160,7 @@ async function open(id) {
         <span class="tag sky">${catLabel(p.category)}</span> ${esc(p.title || '')}</p>
       <p class="muted who">${iconHtml(p.author_icon, p.author_name || '?', 'dev-icon')}
         ${esc(p.author_name || t('developer'))} · ${ago(p.created_at)}</p>
-      <p class="desc pre">${esc(p.content || '')}</p>
-      ${(p.images || []).map((u) => `<img class="shot" src="${esc(u)}" alt="">`).join('')}
+      ${bodyWithImages(p.content, p.images)}
       ${ME && p.author_id === ME.id
         ? `<p style="margin:14px 0 0"><button class="btn ghost sm" id="del">${t('delete')}</button></p>` : ''}
     </div>
