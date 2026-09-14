@@ -29,6 +29,13 @@
     vertical-align: middle; font-weight: 500;
   }
   #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
+  /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; border: 1px solid #e3e6ea;
+    border-radius: 10px; display: block;
+  }
+  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
 </style>
 </head>
 <body>
@@ -71,6 +78,8 @@
 
   <p>アンインストールしてもテスター一覧からは外れません。14日を過ぎていれば、
   削除しても積み上がった期間は消えません。</p>
+
+  <figure><img src="/img/guide-console-testers-en.png" alt="" loading="lazy"><figcaption>Play Console → テストトラック →［テスター］タブ。 12人はこの一覧にいる人数です</figcaption></figure>
 
   <h2>ではなぜ「活動が必要」と言われるのか</h2>
 
@@ -127,6 +136,12 @@ import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v
 import { sectionAnchors } from '/assets/anchors.js?v=105';
 
 // 본문은 언어마다 통째로 다르다. 문장 단위 키로 쪼개면 번역이 어색해진다.
+// 콘솔은 계정 언어를 따라간다. 한국어로 쓰는 사람은 한국어 화면을 보므로
+// 캡처도 맞춰 준다 — 일본어·중국어 콘솔 캡처는 없어서 영어 쪽으로 보낸다.
+const SHOT = (name, cap) =>
+  '<figure><img src="/img/' + name + '.png" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
 
 document.getElementById('langSlot').innerHTML = langPicker();
 sectionAnchors(LANG);

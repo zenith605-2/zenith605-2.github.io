@@ -23,6 +23,13 @@
     vertical-align: middle; font-weight: 500;
   }
   #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
+  /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; border: 1px solid #e3e6ea;
+    border-radius: 10px; display: block;
+  }
+  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
 </style>
 </head>
 <body>
@@ -54,6 +61,12 @@ import { mountAuth } from '/assets/api.js?v=105';
 import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=105';
 import { sectionAnchors } from '/assets/anchors.js?v=105';
 
+// 콘솔은 계정 언어를 따라간다. 한국어로 쓰는 사람은 한국어 화면을 보므로
+// 캡처도 맞춰 준다 — 일본어·중국어 콘솔 캡처는 없어서 영어 쪽으로 보낸다.
+const SHOT = (name, cap) =>
+  '<figure><img src="/img/' + name + '.png" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
 const DOC = {
   ko: `
   <h1 style="font-size:28px;margin:0 0 8px">테스터는 왜 사라지나</h1>
@@ -66,6 +79,8 @@ const DOC = {
   <p><b>고치는 법:</b> 특별한 이유가 없으면 모든 국가로 열어 두세요. 이게 가장
   흔한 조용한 이탈이고, 막는 데 드는 비용이 0입니다.</p>
 
+  ${SHOT('guide-country-edit-ko', 'Play Console → 테스트 트랙 → [국가/지역]. 맨 윗칸을 체크하면 전부 선택됩니다')}
+
   <h2>2. 그룹 링크가 막혀 있는데 본인만 모릅니다</h2>
   <p>구글 그룹의 <em>대화를 볼 수 있는 사람</em>이 "그룹 멤버"로 되어 있으면,
   아직 멤버가 아닌 사람은 권한 벽을 만납니다. 당신은 소유자라 당신 눈에는
@@ -73,6 +88,8 @@ const DOC = {
   <p><b>고치는 법:</b> 그룹 설정에서 "그룹 보기"와 "가입"을 둘 다
   <em>웹상의 모든 사용자</em>로 바꾸세요. 그런 다음 시크릿 창에서 링크를
   확인하세요.</p>
+
+  ${SHOT('guide-group-2', '그룹 설정의 이 두 개를 [웹상의 모든 사용자]로 바꿔야 남에게도 보입니다')}
 
   <h2>3. 설치했다가 조용히 지웁니다</h2>
   <p>저장 공간, 정리, 아니면 그냥 흥미를 잃은 겁니다. 테스터 목록에는 그대로
@@ -112,6 +129,8 @@ const DOC = {
   not to. This is the single most common silent drop-off, and it costs you
   nothing to prevent.</p>
 
+  ${SHOT('guide-country-edit-en', 'Play Console → your test track → Countries / regions. The top checkbox selects them all')}
+
   <h2>2. The group link is broken and you cannot see it</h2>
   <p>If your Google Group's <em>Who can view conversations</em> is set to
   "Group members", anyone who is not already a member hits a permission wall.
@@ -120,6 +139,8 @@ const DOC = {
   <p><b>Fix:</b> open your group settings and set both "Who can see group" and
   "Who can join" to <em>Anyone on the web</em>. Then check the link in a
   private window.</p>
+
+  ${SHOT('guide-group-2-en', 'Set both of these to "Anyone on the web" or nobody else can see the group')}
 
   <h2>3. They install, then quietly uninstall</h2>
   <p>Phone storage, a cleanup, or they simply lost interest. The tester list
@@ -161,6 +182,8 @@ const DOC = {
   <p><b>対処:</b> 理由がなければ全ての国に開いておきましょう。最も多い静かな
   離脱で、防ぐコストはゼロです。</p>
 
+  ${SHOT('guide-country-edit-en', 'Play Console → テストトラック →［国／地域］。一番上をチェックすると全選択です')}
+
   <h2>2. グループのリンクが塞がっているのに本人だけ気づけない</h2>
   <p>Googleグループの<em>会話を閲覧できるユーザー</em>が「グループのメンバー」に
   なっていると、まだメンバーでない人は権限の壁に当たります。あなたは所有者なので
@@ -168,6 +191,8 @@ const DOC = {
   <p><b>対処:</b> グループ設定で「グループの表示」と「参加」を両方
   <em>ウェブ上の全員</em>にしてください。そのうえでシークレットウィンドウで
   リンクを確認しましょう。</p>
+
+  ${SHOT('guide-group-2-en', 'この二つを「ウェブ上の全員」にしないと他の人には見えません')}
 
   <h2>3. インストールしてから静かに削除する</h2>
   <p>ストレージ、整理、あるいは単に興味を失った。テスター一覧には残るので
@@ -204,11 +229,15 @@ const DOC = {
   <p><b>解决：</b>如无真正理由，请开放给所有国家。这是最常见的悄然流失，
   而预防它不花你一分钱。</p>
 
+  ${SHOT('guide-country-edit-en', 'Play Console → 测试轨道 →［国家/地区］。勾选最上面一格就是全选')}
+
   <h2>2. 群组链接是坏的，而你看不到</h2>
   <p>如果你的 Google 群组把<em>谁可以查看对话</em>设成了"群组成员"，那么还不是
   成员的人会撞上权限墙。你永远看不到 —— 你是所有者，从你这边看一切正常。</p>
   <p><b>解决：</b>打开群组设置，把"谁可以查看群组"和"谁可以加入"都改为
   <em>网络上的任何人</em>。然后用无痕窗口检查链接。</p>
+
+  ${SHOT('guide-group-2-en', '这两项都要改成「网络上的任何人」，否则别人看不到群组')}
 
   <h2>3. 装了，然后悄悄卸载</h2>
   <p>手机空间、清理，或者单纯失去兴趣。测试者名单里他还在，所以看起来一切正常。
@@ -244,11 +273,15 @@ const DOC = {
   <p><b>解決：</b>如無真正理由，請開放給所有國家。這是最常見的悄然流失，
   而預防它不花你一分錢。</p>
 
+  ${SHOT('guide-country-edit-en', 'Play Console → 測試軌道 →［國家/地區］。勾選最上面一格就是全選')}
+
   <h2>2. 群組連結是壞的，而你看不到</h2>
   <p>如果你的 Google 群組把<em>誰可以查看對話</em>設成了「群組成員」，那麼還不是
   成員的人會撞上權限牆。你永遠看不到 —— 你是所有者，從你這邊看一切正常。</p>
   <p><b>解決：</b>打開群組設定，把「誰可以查看群組」和「誰可以加入」都改為
   <em>網路上的任何人</em>。然後用無痕視窗檢查連結。</p>
+
+  ${SHOT('guide-group-2-en', '這兩項都要改成「網路上的任何人」，否則別人看不到群組')}
 
   <h2>3. 裝了，然後悄悄卸載</h2>
   <p>手機空間、整理，或者單純失去興趣。測試者名單裡他還在，所以看起來一切正常。

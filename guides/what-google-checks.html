@@ -23,6 +23,13 @@
     vertical-align: middle; font-weight: 500;
   }
   #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
+  /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; border: 1px solid #e3e6ea;
+    border-radius: 10px; display: block;
+  }
+  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
 </style>
 </head>
 <body>
@@ -55,6 +62,12 @@ import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v
 import { sectionAnchors } from '/assets/anchors.js?v=105';
 
 // 본문은 언어마다 통째로 다르다. 문장 단위 키로 쪼개면 번역이 어색해진다.
+// 콘솔은 계정 언어를 따라간다. 한국어로 쓰는 사람은 한국어 화면을 보므로
+// 캡처도 맞춰 준다 — 일본어·중국어 콘솔 캡처는 없어서 영어 쪽으로 보낸다.
+const SHOT = (name, cap) =>
+  '<figure><img src="/img/' + name + '.png" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
 const DOC = {
   ko: `
   <h1 style="font-size:28px;margin:0 0 8px">구글이 실제로 보는 것</h1>
@@ -77,6 +90,8 @@ const DOC = {
 
   <p>앱을 지워도 테스터 목록에서 빠지지 않습니다. 14일이 지난 뒤라면 삭제해도
   이미 쌓인 기간은 사라지지 않습니다.</p>
+
+  ${SHOT('guide-console-testers', 'Play Console → 테스트 트랙 → [테스터] 탭. 12명은 여기 앉아 있는 사람 수입니다')}
 
   <h2>그런데 왜 다들 "활동해야 한다"고 할까</h2>
 
@@ -146,6 +161,8 @@ const DOC = {
 
   <p>Uninstalling does not remove someone from your tester list either. Once
   the 14 days are behind you, a tester deleting the app does not undo it.</p>
+
+  ${SHOT('guide-console-testers-en', 'Play Console → your test track → Testers. The 12 are the people sitting in this list')}
 
   <h2>So why does everyone say testers must be active?</h2>
 
@@ -221,6 +238,8 @@ const DOC = {
   <p>アンインストールしてもテスター一覧からは外れません。14日を過ぎていれば、
   削除しても積み上がった期間は消えません。</p>
 
+  ${SHOT('guide-console-testers-en', 'Play Console → テストトラック →［テスター］タブ。 12人はこの一覧にいる人数です')}
+
   <h2>ではなぜ「活動が必要」と言われるのか</h2>
 
   <p>理由は二つあり、Googleの話はそのうち一つだけです。</p>
@@ -287,6 +306,8 @@ const DOC = {
   <p>卸载也不会把人从测试者名单里移除。14 天过去之后，测试者删掉应用并不会
   抹掉已经累计的时间。</p>
 
+  ${SHOT('guide-console-testers-en', 'Play Console → 测试轨道 →［测试者］标签页。 12 人就是这个列表里的人')}
+
   <h2>那为什么大家都说测试者必须活跃？</h2>
 
   <p>有两个原因，其中只有一个来自 Google。</p>
@@ -348,6 +369,8 @@ const DOC = {
 
   <p>卸載也不會把人從測試者名單裡移除。14 天過去之後，測試者刪掉應用並不會
   抹掉已經累計的時間。</p>
+
+  ${SHOT('guide-console-testers-en', 'Play Console → 測試軌道 →［測試者］標籤頁。 12 人就是這個清單裡的人')}
 
   <h2>那為什麼大家都說測試者必須活躍？</h2>
 

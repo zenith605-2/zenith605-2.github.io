@@ -29,6 +29,13 @@
     vertical-align: middle; font-weight: 500;
   }
   #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
+  /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; border: 1px solid #e3e6ea;
+    border-radius: 10px; display: block;
+  }
+  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
 </style>
 </head>
 <body>
@@ -58,11 +65,15 @@
   <p><b>解決：</b>如無真正理由，請開放給所有國家。這是最常見的悄然流失，
   而預防它不花你一分錢。</p>
 
+  <figure><img src="/img/guide-country-edit-en.png" alt="" loading="lazy"><figcaption>Play Console → 測試軌道 →［國家/地區］。勾選最上面一格就是全選</figcaption></figure>
+
   <h2>2. 群組連結是壞的，而你看不到</h2>
   <p>如果你的 Google 群組把<em>誰可以查看對話</em>設成了「群組成員」，那麼還不是
   成員的人會撞上權限牆。你永遠看不到 —— 你是所有者，從你這邊看一切正常。</p>
   <p><b>解決：</b>打開群組設定，把「誰可以查看群組」和「誰可以加入」都改為
   <em>網路上的任何人</em>。然後用無痕視窗檢查連結。</p>
+
+  <figure><img src="/img/guide-group-2-en.png" alt="" loading="lazy"><figcaption>這兩項都要改成「網路上的任何人」，否則別人看不到群組</figcaption></figure>
 
   <h2>3. 裝了，然後悄悄卸載</h2>
   <p>手機空間、整理，或者單純失去興趣。測試者名單裡他還在，所以看起來一切正常。
@@ -97,6 +108,12 @@
 import { mountAuth } from '/assets/api.js?v=105';
 import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=105';
 import { sectionAnchors } from '/assets/anchors.js?v=105';
+
+// 콘솔은 계정 언어를 따라간다. 한국어로 쓰는 사람은 한국어 화면을 보므로
+// 캡처도 맞춰 준다 — 일본어·중국어 콘솔 캡처는 없어서 영어 쪽으로 보낸다.
+const SHOT = (name, cap) =>
+  '<figure><img src="/img/' + name + '.png" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
 
 
 document.getElementById('langSlot').innerHTML = langPicker();

@@ -29,6 +29,13 @@
     vertical-align: middle; font-weight: 500;
   }
   #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
+  /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; border: 1px solid #e3e6ea;
+    border-radius: 10px; display: block;
+  }
+  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
 </style>
 </head>
 <body>
@@ -59,6 +66,8 @@
   <p><b>고치는 법:</b> 특별한 이유가 없으면 모든 국가로 열어 두세요. 이게 가장
   흔한 조용한 이탈이고, 막는 데 드는 비용이 0입니다.</p>
 
+  <figure><img src="/img/guide-country-edit-ko.png" alt="" loading="lazy"><figcaption>Play Console → 테스트 트랙 → [국가/지역]. 맨 윗칸을 체크하면 전부 선택됩니다</figcaption></figure>
+
   <h2>2. 그룹 링크가 막혀 있는데 본인만 모릅니다</h2>
   <p>구글 그룹의 <em>대화를 볼 수 있는 사람</em>이 "그룹 멤버"로 되어 있으면,
   아직 멤버가 아닌 사람은 권한 벽을 만납니다. 당신은 소유자라 당신 눈에는
@@ -66,6 +75,8 @@
   <p><b>고치는 법:</b> 그룹 설정에서 "그룹 보기"와 "가입"을 둘 다
   <em>웹상의 모든 사용자</em>로 바꾸세요. 그런 다음 시크릿 창에서 링크를
   확인하세요.</p>
+
+  <figure><img src="/img/guide-group-2.png" alt="" loading="lazy"><figcaption>그룹 설정의 이 두 개를 [웹상의 모든 사용자]로 바꿔야 남에게도 보입니다</figcaption></figure>
 
   <h2>3. 설치했다가 조용히 지웁니다</h2>
   <p>저장 공간, 정리, 아니면 그냥 흥미를 잃은 겁니다. 테스터 목록에는 그대로
@@ -102,6 +113,12 @@
 import { mountAuth } from '/assets/api.js?v=105';
 import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=105';
 import { sectionAnchors } from '/assets/anchors.js?v=105';
+
+// 콘솔은 계정 언어를 따라간다. 한국어로 쓰는 사람은 한국어 화면을 보므로
+// 캡처도 맞춰 준다 — 일본어·중국어 콘솔 캡처는 없어서 영어 쪽으로 보낸다.
+const SHOT = (name, cap) =>
+  '<figure><img src="/img/' + name + '.png" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
 
 
 document.getElementById('langSlot').innerHTML = langPicker();
