@@ -205,6 +205,16 @@ SAME_AS = {
     '57e82241': ('production-form', 'en'),   # ⑤ The last gate
     'e72b05ad': ('google-group', 'ko'),      # ⑥ 구글 그룹
     '6532aa58': ('google-group', 'en'),      # ⑥ Google Group
+    '25b49497': ('blocked-screens', 'ko'),        # ⑦ 막히는 화면
+    '1066dd26': ('blocked-screens', 'en'),        # ⑦ five screens
+    '6907dbd1': ('why-testers-drop', 'ko'),       # ⑧ 왜 사라지나
+    'c72632ae': ('why-testers-drop', 'en'),       # ⑧ why disappear
+    'f62b52a2': ('country-availability', 'ko'),   # ⑨ 배포 국가
+    '48ae70f7': ('country-availability', 'en'),   # ⑨ all countries
+    '96c19d4b': ('what-google-checks', 'ko'),     # ⑩ 구글이 보는 것
+    'a9e52539': ('what-google-checks', 'en'),     # ⑩ what Google checks
+    '4abb2978': ('daily-opens-data', 'ko'),       # ⑪ 14일 내내
+    'cf0dcf78': ('daily-opens-data', 'en'),       # ⑪ nobody opens
 }
 
 
