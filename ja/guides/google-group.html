@@ -20,6 +20,15 @@
 <link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/google-group.html">
 <link rel="stylesheet" href="/assets/app.css?v=105">
 <style>
+  /* 구간마다 주소를 달아 두면 "당신은 2번"이라고 정확히 보낼 수 있다 */
+  #doc h2 { position: relative }
+  #doc .anchor-copy {
+    margin-left: 10px; padding: 3px 9px; font-size: 11.5px;
+    border: 1px solid #d7dbe0; border-radius: 999px;
+    background: #fff; color: #5b6570; cursor: pointer;
+    vertical-align: middle; font-weight: 500;
+  }
+  #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
   /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
   #doc figure { margin: 18px 0 22px }
   #doc figure img {
@@ -170,6 +179,7 @@
 <script type="module">
 import { mountAuth } from '/assets/api.js?v=105';
 import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=105';
+import { sectionAnchors } from '/assets/anchors.js?v=105';
 
 const SHOT = (src, cap) =>
   '<figure><img src="' + src + '" alt="" loading="lazy">' +
@@ -181,6 +191,7 @@ const NOT_AVAILABLE =
 
 
 document.getElementById('langSlot').innerHTML = langPicker();
+sectionAnchors(LANG);
 applyDom();
 wireLangPicker();
 mountAuth('authSlot', t);

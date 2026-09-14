@@ -14,6 +14,15 @@
 <link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/blocked-screens.html">
 <link rel="stylesheet" href="/assets/app.css?v=105">
 <style>
+  /* 구간마다 주소를 달아 두면 "당신은 2번"이라고 정확히 보낼 수 있다 */
+  #doc h2 { position: relative }
+  #doc .anchor-copy {
+    margin-left: 10px; padding: 3px 9px; font-size: 11.5px;
+    border: 1px solid #d7dbe0; border-radius: 999px;
+    background: #fff; color: #5b6570; cursor: pointer;
+    vertical-align: middle; font-weight: 500;
+  }
+  #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
   #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
   /* 화면 캡처가 글보다 먼저 읽힌다 — 본문 폭을 넘지 않게만 잡아 준다 */
   #doc figure { margin: 18px 0 22px }
@@ -58,6 +67,7 @@
 <script type="module">
 import { mountAuth } from '/assets/api.js?v=105';
 import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=105';
+import { sectionAnchors } from '/assets/anchors.js?v=105';
 
 const SHOT = (src, cap) =>
   '<figure><img src="' + src + '" alt="" loading="lazy">' +
@@ -398,6 +408,7 @@ const DOC = {
 
 document.getElementById('langSlot').innerHTML = langPicker();
 document.getElementById('doc').innerHTML = DOC[LANG] ?? DOC.en;
+sectionAnchors(LANG);
 applyDom();
 wireLangPicker();
 mountAuth('authSlot', t);
