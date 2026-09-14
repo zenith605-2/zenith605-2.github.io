@@ -31,10 +31,30 @@
     <p class="muted">zenith.studio &middot; 2026-09-04</p>
   <p class="desc pre">This is the question we get most: &quot;why can&#x27;t my testers join my group?&quot;
 
-There are two ways to let people into a closed test: an email list, or a Google Group. With an email list you add every tester by hand in the Console. With a group, you hand out one address and they join themselves. You need 12</p>
+There are two ways to let people into a closed test: an email list, or a Google Group. With an email list you add every tester by hand in the Console. With a group, you hand out one address and they join themselves. You need 12 people, so the group is far less work.
+
+Two things trip everyone up.
+
+First, a new group is locked by default. If you don&#x27;t change these, testers open your link and only see &quot;content unavailable&quot;.
+
+- Who can search for the group -&gt; Anyone on the web
+- Who can join the group -&gt; Anyone can join</p>
   <img class="shot" src="https://eedqzvckdxfcuoyycivu.supabase.co/storage/v1/object/public/post-images/34553526-5752-4db2-ad9d-02afecd7b710/guide_group_1_en.png" alt="">
   <img class="shot" src="https://eedqzvckdxfcuoyycivu.supabase.co/storage/v1/object/public/post-images/34553526-5752-4db2-ad9d-02afecd7b710/guide_group_2_en.png" alt="">
+  <p class="desc pre">Second, linking the group and saving is not enough. If that track has no published build, the opt-in link stays shut and testers see &quot;App not available&quot;. They joined the group but can&#x27;t get the app.</p>
   <img class="shot" src="https://eedqzvckdxfcuoyycivu.supabase.co/storage/v1/object/public/post-images/34553526-5752-4db2-ad9d-02afecd7b710/guide_console_testers_en.png" alt="">
+  <p class="desc pre">So the order matters.
+
+1. Create the group and fix the two settings above
+2. Play Console &gt; Test and release &gt; Closed testing &gt; Testers tab: paste the group address and hit Save
+3. Upload an AAB to that track and get it through review
+4. Only then invite testers
+
+! Workspace groups (groups.google.com/a/yourdomain/g/...) usually block outside accounts. If you&#x27;re recruiting testers publicly, make the group on a personal Google account.
+
+When you register your app in ACT Party, fill in both the group address and the opt-in link - testers then get the steps in the right order.
+
+Full walkthrough with screenshots: https://actparty.app/guides/google-group.html</p>
   <img class="shot" src="https://eedqzvckdxfcuoyycivu.supabase.co/storage/v1/object/public/post-images/34553526-5752-4db2-ad9d-02afecd7b710/guide_console_link_en.png" alt="">
   </div>
 

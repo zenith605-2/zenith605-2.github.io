@@ -175,9 +175,17 @@ def posts():
     읽으면 글쓴이 이름이 안 따라오고, 무엇보다 두 곳이 서로 다른 글 목록을
     보게 될 수 있다.
     """
+    rows = _rpc('community_list', {})
+    # 목록 RPC 는 본문을 300자에서 자른다 — 미리보기 두 줄에 쓰는 값이라 그렇다.
+    # 그대로 구우면 페이지마다 첫 문단만 남아서, 검색에 걸리게 하려던 본문이
+    # 통째로 빠진다. 글마다 한 번 더 부른다.
+    return [_rpc('community_post', {'p_id': r['id']}) or r for r in rows]
+
+
+def _rpc(name, body):
     req = urllib.request.Request(
-        f'{SUPABASE_URL}/rest/v1/rpc/community_list',
-        data=b'{}',
+        f'{SUPABASE_URL}/rest/v1/rpc/{name}',
+        data=json.dumps(body).encode(),
         headers={
             'apikey': SUPABASE_KEY,
             'Authorization': f'Bearer {SUPABASE_KEY}',
