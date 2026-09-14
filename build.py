@@ -13,6 +13,7 @@ import io
 import json
 import re
 import os
+import shutil
 import sys
 import urllib.request
 
@@ -324,6 +325,32 @@ def post_page(row):
 """
 
 
+def prune_apps(live):
+    """목록에서 빠진 앱의 페이지를 지운다.
+
+    여기서 굽기만 하고 안 지웠더니 141개 폴더 중 29개가 이미 없는 앱이었다.
+    사이트맵에는 안 올라가지만 예전에 색인된 주소라 사람이 눌러 들어올 수 있고,
+    그 페이지는 "N명 모집 중"이라고 거짓말을 한다 (2026-09-15).
+
+    한 번에 다 날리는 사고를 막는다: 목록을 못 받아 왔거나 절반 넘게 사라진
+    것처럼 보이면 손대지 않고 넘어간다. 앱이 다시 목록에 들어오면 다음
+    실행에서 페이지도 다시 생긴다.
+    """
+    root = os.path.join(BASE, 'a')
+    if not os.path.isdir(root):
+        return
+    have = {d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))}
+    gone = have - live
+    if len(live) < 20 or len(gone) > len(have) * 0.4:
+        print(f'  ! 앱 목록이 이상하다 (현재 {len(live)}, 지울 것 {len(gone)}) '
+              f'— 지우지 않고 넘어간다')
+        return
+    for d in sorted(gone):
+        shutil.rmtree(os.path.join(root, d))
+    if gone:
+        print(f'  내려간 앱 페이지 {len(gone)}개 삭제')
+
+
 def main():
     apps = public_apps()
     listed = [a for a in apps if a.get('package_name')]
@@ -350,6 +377,7 @@ def main():
     urls += [f'{SITE}{post_path(r)}' for r in rows if not same_as(r)]
 
     app_urls = []
+    prune_apps({a['package_name'] for a in listed})
     for a in listed:
         pkg = a['package_name']
         d = os.path.join(BASE, 'a', pkg)
