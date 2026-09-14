@@ -6,7 +6,7 @@
 <title>Board — ACT Party</title>
 <meta name="description" content="Where Android developers running closed tests compare notes: guides, questions, launch stories, and what Google actually asks for.">
 <link rel="canonical" href="https://actparty.app/community.html">
-<link rel="stylesheet" href="/assets/app.css?v=105">
+<link rel="stylesheet" href="/assets/app.css?v=106">
 </head>
 <body>
 
@@ -37,8 +37,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
 import { me, signIn, esc, ago, iconHtml, mountAuth,
-         posts, post, addPost, addComment, deletePost } from '/assets/api.js?v=105';
-import { t, applyDom, langPicker, wireLangPicker, catLabel } from '/assets/i18n.js?v=105';
+         posts, post, addPost, addComment, deletePost } from '/assets/api.js?v=106';
+import { t, applyDom, langPicker, wireLangPicker, catLabel } from '/assets/i18n.js?v=106';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -48,6 +48,9 @@ mountAuth('authSlot', t);
 const root = document.getElementById('root');
 const CATS = ['가이드', '잡담', '질문', '고충', '팁', '아이디어',
               '앱 소개', '출시 후기', '수익화', '심사·정책', '피드백'];
+
+// 글마다 구워 둔 정적 페이지 (build.py post_path). 크롤러가 읽는 건 이쪽이다.
+const PERMA = (id) => `/p/${id.slice(0, 8)}.html`;
 
 let ME = null;
 let ALL = [];
@@ -89,7 +92,7 @@ function list() {
         ${onlyMyLang ? 'checked' : ''}> ${t('lang_only')}</label></p>
 
     <div class="grid" id="posts">${rows.length ? rows.map((p) => `
-      <div class="card post" data-open="${p.id}">
+      <a class="card post" href="${PERMA(p.id)}" data-open="${p.id}">
         <p class="app-name">
           <span class="tag sky">${catLabel(p.category)}</span>
           ${esc(p.title || '')}</p>
@@ -99,7 +102,7 @@ function list() {
             <span class="dim">${t('comments')} ${p.comment_count}</span>` : ''}</p>
         ${p.content ? `<p class="desc line2">${esc(
           p.content.replace(/\[img\d+\]/g, ' ').trim())}</p>` : ''}
-      </div>`).join('') : `<p class="muted">${t('no_posts')}</p>`}</div>`;
+      </a>`).join('') : `<p class="muted">${t('no_posts')}</p>`}</div>`;
 
   applyDom();
   document.getElementById('langOnly').onchange = (e) => {
@@ -110,7 +113,14 @@ function list() {
     b.onclick = () => { cat = b.dataset.cat; list(); };
   });
   root.querySelectorAll('[data-open]').forEach((b) => {
-    b.onclick = () => { history.pushState({}, '', `#post=${b.dataset.open}`); open(b.dataset.open); };
+    b.onclick = (e) => {
+      // ctrl/cmd 클릭이나 가운데 버튼은 브라우저에게 넘긴다 — 새 탭으로
+      // 열려는 사람에게는 구워 둔 페이지가 맞다
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      history.pushState({}, '', `#post=${b.dataset.open}`);
+      open(b.dataset.open);
+    };
   });
   const w = document.getElementById('write');
   if (w) w.onclick = () => form();
@@ -149,10 +159,25 @@ function bodyWithImages(content, images) {
   return out || `<p class="desc pre"></p>`;
 }
 
+/// 열려 있는 글의 정식 주소를 <link rel="canonical"> 로 알린다.
+///
+/// 이 화면은 주소가 community.html#post=... 인데 # 뒤는 검색엔진이 안 읽는다.
+/// 구워 둔 페이지를 가리켜 두면 같은 글이 두 주소로 갈리지 않는다.
+function canonical(href) {
+  let el = document.querySelector('link[rel=canonical]');
+  if (!el) {
+    el = document.createElement('link');
+    el.rel = 'canonical';
+    document.head.appendChild(el);
+  }
+  el.href = href;
+}
+
 async function open(id) {
   root.innerHTML = `<p class="muted">${t('loading')}</p>`;
   const p = await post(id).catch(() => null);
   if (!p) { back(); return; }
+  canonical(location.origin + PERMA(id));
   root.innerHTML = `
     <p style="margin:0 0 12px"><button class="btn ghost sm" id="back">←</button></p>
     <div class="card">
@@ -203,6 +228,7 @@ async function open(id) {
 
 function back() {
   history.pushState({}, '', location.pathname);
+  canonical(location.origin + '/community.html');
   list();
 }
 

@@ -558,7 +558,10 @@ header.top .wrap, footer.bot .wrap { max-width: 1140px; }
 /* 카드 동작 칸 — 문구가 두 줄로 접히지 않을 만큼은 준다 */
 
 /* 게시판 */
-.card.post { cursor: pointer; }
+/* 글 카드는 <a> 다 — 구워 둔 /p/<id>.html 로 가는 진짜 링크여야 크롤러가
+   글을 찾아간다. 사람에게는 눌러도 그 자리에서 열려서 링크처럼 안 보인다. */
+.card.post { cursor: pointer; display: block; color: inherit;
+             text-decoration: none; }
 .card.post:hover { border-color: var(--ink300); }
 .desc.line2 {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;

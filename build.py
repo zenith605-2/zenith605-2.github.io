@@ -167,6 +167,163 @@ def page(a):
 """
 
 
+def posts():
+    """게시판 글.
+
+    게시판 화면이 부르는 것과 같은 RPC 다 (assets/api.js posts()). 표를 직접
+    읽으면 글쓴이 이름이 안 따라오고, 무엇보다 두 곳이 서로 다른 글 목록을
+    보게 될 수 있다.
+    """
+    req = urllib.request.Request(
+        f'{SUPABASE_URL}/rest/v1/rpc/community_list',
+        data=b'{}',
+        headers={
+            'apikey': SUPABASE_KEY,
+            'Authorization': f'Bearer {SUPABASE_KEY}',
+            'Content-Type': 'application/json',
+        })
+    with urllib.request.urlopen(req) as r:
+        return json.loads(r.read().decode())
+
+
+# 게시판 글 중 둘은 웹 가이드와 같은 내용을 다룬다 — ⑤ 신청서, ⑥ 구글 그룹.
+# 글을 구워 놓으면 그 둘이 같은 검색어를 놓고 우리 페이지끼리 경쟁한다.
+# 가이드 쪽이 더 길고 언어판도 다섯이라, 그쪽을 정본으로 지목한다.
+#
+# 글은 그대로 둔다 — 게시판을 넘기다 읽는 사람에게는 이 길이가 맞다.
+SAME_AS = {
+    'b7aa6295': ('production-form', 'ko'),   # ⑤ 마지막 관문
+    '57e82241': ('production-form', 'en'),   # ⑤ The last gate
+    'e72b05ad': ('google-group', 'ko'),      # ⑥ 구글 그룹
+    '6532aa58': ('google-group', 'en'),      # ⑥ Google Group
+}
+
+
+def same_as(row):
+    """이 글의 정본이 따로 있으면 그 주소, 없으면 None."""
+    hit = SAME_AS.get(row['id'][:8])
+    if not hit:
+        return None
+    slug, lang = hit
+    prefix = '' if lang == 'en' else '/' + lang
+    return f'{prefix}/guides/{slug}.html'
+
+
+# 주소는 /p/<id 앞 8자>.html 이다.
+#
+# 제목을 slug 로 쓰면 한국어·일본어 글은 URL 이 통째로 퍼센트 인코딩되고,
+# 제목을 고치면 주소가 바뀌어 이미 나간 링크가 죽는다. 검색에서 slug 가 주는
+# 이득은 제목·본문에 비하면 작아서, 안 변하는 쪽을 골랐다.
+def post_path(row):
+    return '/p/' + row['id'][:8] + '.html'
+
+
+def post_body(content, images):
+    """본문의 [imgN] 자리에 그 번호의 사진을 끼운다.
+
+    앱(community_screen.dart _bodyWithImages)·웹(community.html
+    bodyWithImages)과 같은 규칙이어야 한 글이 세 곳에서 다르게 보이지 않는다.
+    """
+    e = html.escape
+    imgs = images or []
+    text = content or ''
+    used = set()
+    out = []
+    cursor = 0
+    for m in re.finditer(r'\[img(\d+)\]', text):
+        i = int(m.group(1)) - 1
+        before = text[cursor:m.start()].strip()
+        if before:
+            out.append(f'<p class="desc pre">{e(before)}</p>')
+        if 0 <= i < len(imgs):
+            out.append(f'<img class="shot" src="{e(imgs[i])}" alt="">')
+            used.add(i)
+        cursor = m.end()
+    rest = text[cursor:].strip()
+    if rest:
+        out.append(f'<p class="desc pre">{e(rest)}</p>')
+    for i, u in enumerate(imgs):
+        if i not in used:
+            out.append(f'<img class="shot" src="{e(u)}" alt="">')
+    return '\n  '.join(out)
+
+
+def post_page(row):
+    e = html.escape
+    title = row.get('title') or ''
+    content = row.get('content') or ''
+    lang = (row.get('lang') or 'en').split('-')[0]
+    imgs = row.get('images') or []
+    author = row.get('author_name') or 'A developer'
+    day = (row.get('created_at') or '')[:10]
+
+    plain = re.sub(r'\[img\d+\]', ' ', content)
+    plain = re.sub(r'\s+', ' ', plain).strip()
+    desc = plain[:280]
+
+    canon = same_as(row) or post_path(row)
+    ld = {
+        '@context': 'https://schema.org',
+        '@type': 'DiscussionForumPosting',
+        'headline': title,
+        'datePublished': row.get('created_at'),
+        'author': {'@type': 'Person', 'name': author},
+        'url': SITE + post_path(row),
+    }
+    if desc:
+        ld['articleBody'] = desc
+    if imgs:
+        ld['image'] = imgs[0]
+
+    og_img = f'<meta property="og:image" content="{e(imgs[0])}">' if imgs else ''
+    return f"""<!DOCTYPE html>
+<html lang="{e(lang)}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{e(title)} | ACT Party</title>
+<meta name="description" content="{e(desc)}">
+<link rel="canonical" href="{SITE}{canon}">
+<meta property="og:title" content="{e(title)}">
+<meta property="og:description" content="{e(desc)}">
+{og_img}
+<link rel="stylesheet" href="/assets/app.css?v={CACHE_V}">
+<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/community.html">Board</a>
+      <a href="/guides/">Guides</a>
+      <a href="/board.html">App board</a>
+    </nav>
+  </div>
+</header>
+
+<article class="wrap narrow" style="padding-top:28px">
+  <div class="card">
+    <h1 class="app-name" style="font-size:22px;margin:0 0 6px">{e(title)}</h1>
+    <p class="muted">{e(author)}{f' &middot; {e(day)}' if day else ''}</p>
+  {post_body(content, imgs)}
+  </div>
+
+  <p style="margin:22px 0 0">
+    <a href="/community.html#post={e(row['id'])}">Read replies on the board &rarr;</a>
+  </p>
+  <p style="margin:8px 0 0"><a href="/community.html">&larr; All posts</a></p>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/">ACT Party</a> &middot; <a href="/guides/">Guides</a> &middot;
+  <a href="/privacy.html">Privacy</a></p></div></footer>
+</body>
+</html>
+"""
+
+
 def main():
     apps = public_apps()
     listed = [a for a in apps if a.get('package_name')]
@@ -179,6 +336,18 @@ def main():
     landing = os.path.join(BASE, 'landing_pages.json')
     if os.path.exists(landing):
         urls += [f'{SITE}{p}' for p in json.load(open(landing, encoding='utf-8'))]
+
+    # 게시판 글. 앱 상세와 달리 글마다 내용이 다 달라서 읽히는 페이지 쪽
+    # 사이트맵에 넣는다.
+    rows = posts()
+    os.makedirs(os.path.join(BASE, 'p'), exist_ok=True)
+    for row in rows:
+        with open(os.path.join(BASE, 'p', row['id'][:8] + '.html'), 'w',
+                  encoding='utf-8', newline='') as f:
+            f.write(post_page(row))
+    # 정본이 가이드 쪽인 글은 사이트맵에 안 올린다 — 올려 두고 canonical 로
+    # 다른 데를 가리키면 구글에 앞뒤가 안 맞는 말을 하는 셈이다.
+    urls += [f'{SITE}{post_path(r)}' for r in rows if not same_as(r)]
 
     app_urls = []
     for a in listed:
@@ -224,7 +393,7 @@ def main():
                 'Disallow: /console.html\n'
                 f'Sitemap: {SITE}/sitemap.xml\n')
 
-    print(f'앱 페이지 {len(listed)}개, 사이트맵 {len(urls)}개 URL')
+    print(f'앱 페이지 {len(listed)}개, 글 페이지 {len(rows)}개, 사이트맵 {len(urls)}개 URL')
 
 
 if __name__ == '__main__':
