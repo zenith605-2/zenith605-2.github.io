@@ -237,6 +237,23 @@ def post_path(row):
     return '/p/' + row['id'][:8] + '.html'
 
 
+def linkify(escaped):
+    """본문에 그냥 적힌 주소를 누를 수 있게 만든다.
+
+    escape 를 거친 문자열만 넣는다 — 주소가 아닌 부분이 태그로 살아나면 안 된다.
+    끝의 문장부호는 주소에서 뺀다 ("...html." 의 마침표까지 넣으면 404 다).
+    게시판 화면(community.html linkify)과 같은 규칙이다.
+    """
+    def one(m):
+        u = m.group(0)
+        tail = ''
+        while u and u[-1] in '.,;:)]':
+            tail = u[-1] + tail
+            u = u[:-1]
+        return f'<a href="{u}" rel="noopener">{u}</a>{tail}'
+    return re.sub(r'https?://[^\s<]+', one, escaped)
+
+
 def post_body(content, images):
     """본문의 [imgN] 자리에 그 번호의 사진을 끼운다.
 
@@ -253,14 +270,14 @@ def post_body(content, images):
         i = int(m.group(1)) - 1
         before = text[cursor:m.start()].strip()
         if before:
-            out.append(f'<p class="desc pre">{e(before)}</p>')
+            out.append(f'<p class="desc pre">{linkify(e(before))}</p>')
         if 0 <= i < len(imgs):
             out.append(f'<img class="shot" src="{e(imgs[i])}" alt="">')
             used.add(i)
         cursor = m.end()
     rest = text[cursor:].strip()
     if rest:
-        out.append(f'<p class="desc pre">{e(rest)}</p>')
+        out.append(f'<p class="desc pre">{linkify(e(rest))}</p>')
     for i, u in enumerate(imgs):
         if i not in used:
             out.append(f'<img class="shot" src="{e(u)}" alt="">')

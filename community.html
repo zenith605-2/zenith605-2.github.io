@@ -129,6 +129,21 @@ function list() {
   if (l) l.onclick = () => signIn().catch((e) => alert(e.message));
 }
 
+/// 본문에 그냥 적힌 주소를 누를 수 있게 만든다.
+///
+/// 글은 esc() 를 거친 뒤에 들어온다 — 그래야 주소가 아닌 부분이 태그로 살아나지
+/// 않는다. 그래서 여기서 찾는 건 이미 escape 된 문자열이다.
+///
+/// 끝에 붙은 문장부호는 주소에서 뺀다. "...html." 의 마침표까지 링크에 넣으면
+/// 404 가 난다.
+function linkify(escaped) {
+  return escaped.replace(/https?:\/\/[^\s<]+/g, (u) => {
+    let tail = '';
+    while (/[.,;:)\]]$/.test(u)) { tail = u.slice(-1) + tail; u = u.slice(0, -1); }
+    return `<a href="${u}" rel="noopener">${u}</a>${tail}`;
+  });
+}
+
 /// 본문 안의 [imgN] 자리에 그 번호의 사진을 끼워 넣는다.
 /// 앱(community_screen.dart _bodyWithImages)과 같은 규칙이어야, 같은 글이
 /// 두 곳에서 다르게 보이지 않는다.
@@ -144,7 +159,7 @@ function bodyWithImages(content, images) {
     const i = parseInt(m[1], 10) - 1;
     // 없는 번호는 표시만 지운다 — 사진을 지운 뒤 남은 자국이다
     const before = text.slice(cursor, m.index);
-    if (before.trim()) out += `<p class="desc pre">${esc(before.trim())}</p>`;
+    if (before.trim()) out += `<p class="desc pre">${linkify(esc(before.trim()))}</p>`;
     if (i >= 0 && i < imgs.length) {
       out += `<img class="shot" src="${esc(imgs[i])}" alt="">`;
       used.add(i);
@@ -152,7 +167,7 @@ function bodyWithImages(content, images) {
     cursor = m.index + m[0].length;
   }
   const rest = text.slice(cursor);
-  if (rest.trim()) out += `<p class="desc pre">${esc(rest.trim())}</p>`;
+  if (rest.trim()) out += `<p class="desc pre">${linkify(esc(rest.trim()))}</p>`;
   // 본문에서 안 부른 사진은 뒤에 붙인다
   imgs.forEach((u, i) => {
     if (!used.has(i)) out += `<img class="shot" src="${esc(u)}" alt="">`;
