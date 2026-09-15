@@ -16,7 +16,7 @@
 <meta property="og:description" content="12 testers must stay opted in for 14 days before you can publish. What Google counts, how many days testers really open the app, when people drop out, and how to apply on day 14. From 48 finished tests.">
 <meta property="og:url" content="https://actparty.app/closed-testing-14-days.html">
 <meta property="og:type" content="article">
-<link rel="stylesheet" href="/assets/app.css?v=109">
+<link rel="stylesheet" href="/assets/app.css?v=110">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "When does the 14-day clock start?", "acceptedAnswer": {"@type": "Answer", "text": "Per tester, from their opt-in. The 12 don't have to join on the same day, but there must be a 14-day stretch with 12 opted in at once."}}, {"@type": "Question", "name": "Do I fail review if testers don't open the app?", "acceptedAnswer": {"@type": "Answer", "text": "No. Google counts opt-in time. In 48 measured runs testers averaged 8.8 open days and passed. The production form does ask about engagement, so zero opens is still a bad look."}}, {"@type": "Question", "name": "It's been 14 days and the button is still locked", "acceptedAnswer": {"@type": "Answer", "text": "Check that 12 were opted in simultaneously for 14 consecutive days. A day where one person left and you were at 11 does not count."}}, {"@type": "Question", "name": "Does internal testing count?", "acceptedAnswer": {"@type": "Answer", "text": "No. It has to be the Closed testing track. Internal testing is outside the requirement."}}]}</script>
 <style>
   #doc h2 { margin-top: 30px }
@@ -98,8 +98,8 @@ what on the board; the tester reports nothing.</p>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=109';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=109';
+import { mountAuth } from '/assets/api.js?v=110';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=110';
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
 wireLangPicker();

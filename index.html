@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://actparty.app/img/og-en.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/app.css?v=109">
+<link rel="stylesheet" href="/assets/app.css?v=110">
 </head>
 <body>
 
@@ -101,8 +101,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters, publicStats } from '/assets/api.js?v=109';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=109';
+import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters, publicStats } from '/assets/api.js?v=110';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=110';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -224,6 +224,19 @@ function testerFaces(a) {
 /// 로그인해 있으면 보드에서 바로 신청한다. 앱 페이지까지 한 번 더
 /// 들어가야 하면 그 사이에 그만두는 사람이 생긴다.
 function offerBtn(a, href) {
+  // 출시했거나 모집을 껐으면 신청이 들어가도 받아 줄 사람이 없다. 앱은
+  // 이미 막고 있는데(block_trade_to_released) 웹만 열려 있었다.
+  //
+  // 로그인 검사보다 먼저 본다. 출시했다는 건 보는 사람이 누구든 같은
+  // 사실이라, 로그아웃에게 "로그인하면 신청할 수 있어요"를 보여 주면
+  // 로그인하고 나서야 못 한다는 걸 알게 된다.
+  const shut = a.released_at ? 'offer_live'
+             : a.recruiting === false ? 'offer_off' : null;
+  if (shut) {
+    return `<div class="cardact">
+      <button class="btn sm" disabled>${t('offer')}</button>
+      <span class="muted">${t(shut)}</span></div>`;
+  }
   // 로그아웃이면 버튼을 감추지 않는다. 무엇을 할 수 있는 자리인지 보여 주고,
   // 왜 지금은 안 되는지 한 줄로 알려 주는 편이 낫다.
   if (!ME) {
@@ -232,16 +245,6 @@ function offerBtn(a, href) {
       <span class="muted">${t('offer_login')}</span></div>`;
   }
   if (a.is_mine) return `<div class="cardact"><span class="state">${t('offer_mine')}</span></div>`;
-  // 출시했거나 모집을 껐으면 신청이 들어가도 받아 줄 사람이 없다. 앱은
-  // 이미 막고 있는데(block_trade_to_released) 웹만 열려 있었다.
-  // 감추지 않고 비활성으로 두는 건 로그아웃일 때와 같은 방식이다.
-  const shut = a.released_at ? 'offer_live'
-             : a.recruiting === false ? 'offer_off' : null;
-  if (shut) {
-    return `<div class="cardact">
-      <button class="btn sm" disabled>${t('offer')}</button>
-      <span class="muted">${t(shut)}</span></div>`;
-  }
   if (a.trading_with_me) return `<div class="cardact"><span class="state on">✓ ${t('offer_trading')}</span></div>`;
   if (a.requested_by_me) return `<div class="cardact"><span class="state on">✓ ${t('offer_sent')}</span></div>`;
   // 예전에 끝낸 상대면 그 사실을 먼저 알려 준다
