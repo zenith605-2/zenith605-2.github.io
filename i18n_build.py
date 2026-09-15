@@ -94,6 +94,16 @@ def build_lang_page(src, doc_html, lang, rel_path, en_title, en_desc):
     s = re.sub(r'<link rel="canonical" href="[^"]*">',
                f'<link rel="canonical" href="{SITE}/{lang}{rel_path}">\n' + alt_links(rel_path),
                s, count=1)
+    # 링크를 붙였을 때 뜨는 카드도 그 언어로. 한국어 카드만 따로 있고,
+    # 일본어·중국어는 영어 카드를 쓴다 (가이드 캡처와 같은 방침).
+    if lang == 'ko':
+        s = s.replace('/img/og-en.png', '/img/og-ko.png')
+    s = re.sub(r'<meta property="og:title" content="[^"]*">',
+               f'<meta property="og:title" content="{html.escape(title, quote=True)}">',
+               s, count=1)
+    s = re.sub(r'<meta property="og:description" content="[^"]*">',
+               f'<meta property="og:description" content="{html.escape(desc, quote=True)}">',
+               s, count=1)
     # 본문을 HTML 에 박는다
     body = lang_bar(rel_path, lang) + localize_links(doc_html, lang)
     s = re.sub(r'(<article[^>]*id="doc"[^>]*>)(</article>)',
