@@ -16,7 +16,7 @@
 <meta property="og:description" content="테스터 12명이 14일을 채워야 출시할 수 있습니다. 구글이 세는 것, 테스터가 실제로 앱을 여는 날수, 며칠째에 사람이 빠지는지, 14일 뒤 신청 요령까지. 끝난 테스트 48건 실측.">
 <meta property="og:url" content="https://actparty.app/ko/closed-testing-14-days.html">
 <meta property="og:type" content="article">
-<link rel="stylesheet" href="/assets/app.css?v=110">
+<link rel="stylesheet" href="/assets/app.css?v=111">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "14일은 언제부터 세나요?", "acceptedAnswer": {"@type": "Answer", "text": "테스터마다 옵트인한 날부터 따로 셉니다. 12명이 같은 날 들어올 필요는 없지만, 12명이 동시에 옵트인 상태인 기간이 14일 있어야 합니다."}}, {"@type": "Question", "name": "테스터가 앱을 안 열면 심사에 떨어지나요?", "acceptedAnswer": {"@type": "Answer", "text": "아닙니다. 구글은 옵트인 기간을 봅니다. 실측 48건에서 평균 8.8일만 열었고 통과했습니다. 다만 설문에서 테스터 참여도를 물으니 아예 안 여는 건 좋지 않습니다."}}, {"@type": "Question", "name": "14일이 지났는데 버튼이 안 열려요", "acceptedAnswer": {"@type": "Answer", "text": "12명이 동시에 옵트인된 상태가 14일 연속이었는지 확인하세요. 중간에 한 명이라도 빠져 11명이 된 날은 세지 않습니다."}}, {"@type": "Question", "name": "내부 테스트로도 되나요?", "acceptedAnswer": {"@type": "Answer", "text": "아닙니다. 비공개 테스트(Closed testing) 트랙이어야 합니다. 내부 테스트는 조건에 포함되지 않습니다."}}]}</script>
 <style>
   #doc h2 { margin-top: 30px }
@@ -97,8 +97,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=110';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=110';
+import { mountAuth } from '/assets/api.js?v=111';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=111';
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
 wireLangPicker();
