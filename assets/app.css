@@ -76,7 +76,17 @@ header.top nav a.btn.ghost, header.top nav a.btn.ghost:hover { color: var(--ink1
 .btn:hover { text-decoration: none; filter: brightness(1.06); }
 .btn.ghost { background: transparent; color: var(--ink100); border: 1px solid var(--ink600); }
 .btn.sky { background: var(--sky); color: #06121f; }
-.btn:disabled { opacity: .5; cursor: default; }
+/* 눌리지 않는 버튼은 색까지 죽인다. opacity 만 낮추면 어두운 배경 위의
+   민트색은 반투명해져도 여전히 초록이라, 막아 뒀는데도 눌러 보게 된다
+   (출시한 앱 카드에서 실제로 그랬다, 2026-09-15).
+   테두리는 border 가 아니라 inset 그림자로 넣는다 — .btn 이 border:0 이라
+   여기서 1px 를 주면 비활성 버튼만 살짝 커진다. */
+.btn:disabled {
+  background: var(--ink700); color: var(--ink300);
+  box-shadow: inset 0 0 0 1px var(--ink600);
+  opacity: 1; cursor: default;
+}
+.btn:disabled:hover { filter: none; }
 .btn.sm { padding: 7px 13px; font-size: 13px; border-radius: 9px; }
 
 /* ---- 카드 ---- */

@@ -16,7 +16,7 @@
 <meta property="og:description" content="找封閉測試者的四種方式，按成本、速度、留存率比較：找熟人、付費服務、Reddit 發文、開發者互測。每種在哪一步會斷，附真實數據。">
 <meta property="og:url" content="https://actparty.app/zh-Hant/find-android-app-testers.html">
 <meta property="og:type" content="article">
-<link rel="stylesheet" href="/assets/app.css?v=111">
+<link rel="stylesheet" href="/assets/app.css?v=112">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "付錢給測試者違規嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不違反 Google 政策。但正式版申請表會問測試者的使用方式與真實使用者有何不同，付費加入在那裡很難解釋。"}}, {"@type": "Question", "name": "測試者可以超過 12 人嗎？", "acceptedAnswer": {"@type": "Answer", "text": "可以，13～14 人更穩。有人中途退出只剩 11 人的那天不計入。"}}, {"@type": "Question", "name": "測試者必須每天打開應用程式嗎？", "acceptedAnswer": {"@type": "Answer", "text": "Google 數的是加入時長，不是打開次數。實測 48 次平均只打開 8.8 天，都通過了。"}}, {"@type": "Question", "name": "互測的話我也得打開對方的應用程式 14 天？", "acceptedAnswer": {"@type": "Answer", "text": "是的，這就是互測。對方打開你的多少，你也打開對方的多少。一天一次，幾秒鐘。"}}]}</script>
 <style>
   #doc h2 { margin-top: 30px }
@@ -93,8 +93,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=111';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=111';
+import { mountAuth } from '/assets/api.js?v=112';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=112';
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
 wireLangPicker();
