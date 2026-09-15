@@ -184,6 +184,7 @@ export async function myAppProgress() {
 export async function saveApp(app) {
   const uid = (await me())?.id;
   if (!uid) throw new Error('signin');
+  await ensureProfile();
   const row = {
     owner_id: uid,
     name: app.name,
@@ -306,6 +307,9 @@ export async function mountAuth(slotId, t) {
       const { data } = await sb.from('profiles')
         .select('developer_name, nickname').eq('id', user.id).maybeSingle();
       label = data?.developer_name || data?.nickname || label;
+      // 웹으로만 가입해서 프로필 행이 없는 사람을 여기서 메운다. 어차피 한 번
+      // 읽는 자리라 질의가 늘지 않고, 앱 등록까지 가기 전에 조용히 낫는다.
+      if (!data) ensureProfile().catch(() => {});
     } catch (_) {}
     el.innerHTML =
       // "내 앱"은 로그인한 사람만 갈 곳이다. 공개 메뉴가 아니라
@@ -792,6 +796,7 @@ export async function setSetupStep(exchangeId, field, on) {
 export async function addExchange(x) {
   const uid = (await me())?.id;
   if (!uid) throw new Error('signin');
+  await ensureProfile();
   const row = {
     owner_id: uid,
     peer_app_name: x.peer_app_name,
@@ -818,6 +823,30 @@ export async function uploadShot(file) {
     .upload(path, file, { contentType: file.type, upsert: false });
   if (error) throw error;
   return sb.storage.from('app-shots').getPublicUrl(path).data.publicUrl;
+}
+
+/// 프로필 행이 없으면 만든다.
+///
+/// 안드로이드 앱은 로그인할 때 upsert 하는데(gateway.dart) 웹에는 그게 없었다.
+/// 그래서 웹으로만 가입한 사람은 auth 에는 있고 profiles 에는 없는 상태가 된다.
+/// apps.owner_id 와 exchanges.owner_id 가 profiles(id) 를 가리키는 탓에 앱을
+/// 등록하려고 하면 외래키에서 막히고, 사용자에게는
+/// "violates foreign key constraint apps_owner_id_fkey" 로 보인다 (2026-09-15 제보).
+///
+/// nickname 은 not null 이라 비워 둘 수 없다. 구글 계정 이름을 쓰고, 그것도
+/// 없으면 메일 주소 앞부분을 쓴다.
+export async function ensureProfile() {
+  const u = await me();
+  if (!u) return null;
+  const { data } = await sb.from('profiles').select('id').eq('id', u.id).maybeSingle();
+  if (data) return u.id;
+  const name = u.user_metadata?.name || u.user_metadata?.full_name ||
+               (u.email || '').split('@')[0] || 'Developer';
+  // 다른 탭에서 먼저 만들었을 수 있으니 upsert 로 둔다
+  const { error } = await sb.from('profiles')
+    .upsert({ id: u.id, nickname: String(name).slice(0, 40) }, { onConflict: 'id' });
+  if (error) throw error;
+  return u.id;
 }
 
 // ---- 개발자명 ----
