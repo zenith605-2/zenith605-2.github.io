@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://actparty.app/img/og-en.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/app.css?v=108">
+<link rel="stylesheet" href="/assets/app.css?v=109">
 </head>
 <body>
 
@@ -101,8 +101,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters, publicStats } from '/assets/api.js?v=108';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=108';
+import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters, publicStats } from '/assets/api.js?v=109';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=109';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -232,6 +232,16 @@ function offerBtn(a, href) {
       <span class="muted">${t('offer_login')}</span></div>`;
   }
   if (a.is_mine) return `<div class="cardact"><span class="state">${t('offer_mine')}</span></div>`;
+  // 출시했거나 모집을 껐으면 신청이 들어가도 받아 줄 사람이 없다. 앱은
+  // 이미 막고 있는데(block_trade_to_released) 웹만 열려 있었다.
+  // 감추지 않고 비활성으로 두는 건 로그아웃일 때와 같은 방식이다.
+  const shut = a.released_at ? 'offer_live'
+             : a.recruiting === false ? 'offer_off' : null;
+  if (shut) {
+    return `<div class="cardact">
+      <button class="btn sm" disabled>${t('offer')}</button>
+      <span class="muted">${t(shut)}</span></div>`;
+  }
   if (a.trading_with_me) return `<div class="cardact"><span class="state on">✓ ${t('offer_trading')}</span></div>`;
   if (a.requested_by_me) return `<div class="cardact"><span class="state on">✓ ${t('offer_sent')}</span></div>`;
   // 예전에 끝낸 상대면 그 사실을 먼저 알려 준다
