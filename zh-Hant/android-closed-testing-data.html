@@ -16,7 +16,7 @@
 <meta property="og:description" content="來自 1,862 次 Android 封閉測試的實測數據。27.6% 完成全部 14 天，流失集中在第 10-13 天，「裝不上」的 105 次回報中有 87 次並非連結問題。">
 <meta property="og:url" content="https://actparty.app/zh-Hant/android-closed-testing-data.html">
 <meta property="og:type" content="article">
-<link rel="stylesheet" href="/assets/app.css?v=112">
+<link rel="stylesheet" href="/assets/app.css?v=113">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "測試者必須每天打開應用嗎？", "acceptedAnswer": {"@type": "Answer", "text": "Google 看的是加入測試的狀態是否持續了 14 天。每天打開並不是 Google 的要求。不過如果有測試者一次都沒打開，在正式版申請問卷裡會比較難解釋。"}}, {"@type": "Question", "name": "12 人裡有一個退出，要從頭再來嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不用。其餘測試者已累積的時間照常保留，只有新加入的人需要自己跑滿 14 天。"}}, {"@type": "Question", "name": "測試者說找不到應用，但連結在我這裡是好的。", "acceptedAnswer": {"@type": "Answer", "text": "我們統計的 105 次裡有 87 次就是這種情況。按常見程度排序：國家未開放、登入帳號與 Play 商店帳號不一致、沒有加入群組。先查國家。"}}, {"@type": "Question", "name": "要招多少測試者才保險？", "acceptedAnswer": {"@type": "Answer", "text": "我們的數據裡完成率是 27.6%。如果需要 12 人，請留出餘量，並在第 12 或 13 天發一次提醒。"}}]}</script>
 <style>
   #doc h2 { margin-top: 30px }
@@ -125,8 +125,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=112';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=112';
+import { mountAuth } from '/assets/api.js?v=113';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=113';
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
 wireLangPicker();

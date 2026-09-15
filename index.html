@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://actparty.app/img/og-en.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/app.css?v=112">
+<link rel="stylesheet" href="/assets/app.css?v=113">
 </head>
 <body>
 
@@ -101,8 +101,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters, publicStats } from '/assets/api.js?v=112';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=112';
+import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters, publicStats } from '/assets/api.js?v=113';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=113';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -133,7 +133,13 @@ function card(a, i) {
   const ext = a.external_testers ?? 0;
   const cur = act + ext;
   const need = a.needed_testers ?? 12;
+  // 14일을 채우고 끝난 사람. 현재 인원에 더하지 않는다 — 품앗이가 끝나면
+  // 자동 인증도 같이 끊겨서, 그 사람이 아직 옵트인 상태인지 우리는 모른다.
+  // 그래도 안 보이면 몇 달 굴린 앱이 어제 올린 앱과 똑같이 보인다.
+  const done = a.done_testers ?? 0;
   const pct = Math.min(100, Math.round(cur / Math.max(need, 1) * 100));
+  // 막대에 이어 붙일 몫. 둘을 합쳐 100%를 넘지 않게 자른다.
+  const donePct = Math.min(100 - pct, Math.round(done / Math.max(need, 1) * 100));
   // 이 앱이 지금 어느 단계인지가 제일 먼저 읽혀야 한다.
   // 비공개 테스트 중이면 품앗이 상대고, 출시했으면 이미 통과한 앱이다.
   // 배지는 한 군데에 모은다. 단계 → 상태 → 경고 순.
@@ -189,10 +195,12 @@ function card(a, i) {
           <span class="sep">·</span>${trust(a)}</p>
       </div>
       <div class="stats">
-        <div class="bar"><i style="width:${pct}%"></i></div>
+        <div class="bar"><i style="width:${pct}%"></i>${
+          donePct > 0 ? `<i class="done" style="width:${donePct}%"></i>` : ''}</div>
         <p class="count"><b>${cur}</b> / ${need} ${t('testers')}${
           // 0이어도 적는다 — 안 적으면 "왜 없냐"가 된다
           ` <span class="sub">(${act} ${t('on_act')} · ${ext} ${t('outside')})</span>`
+          }${done > 0 ? ` <span class="done-n">✓ ${t('done_n')} ${done}</span>` : ''
           }${testerFaces(a)}</p>
         <details class="who" data-who="${a.app_id}">
           <summary class="muted" style="cursor:pointer;font-size:12px">${t('who_testing')}</summary>
