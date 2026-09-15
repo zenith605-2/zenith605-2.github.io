@@ -16,7 +16,7 @@
 <meta property="og:description" content="Androidクローズドテスト14日間を1,862件回した実測。完走率27.6%、離脱は10〜13日目に集中、「インストールできない」105件のうち87件はリンクの問題ではなかった。">
 <meta property="og:url" content="https://actparty.app/ja/android-closed-testing-data.html">
 <meta property="og:type" content="article">
-<link rel="stylesheet" href="/assets/app.css?v=114">
+<link rel="stylesheet" href="/assets/app.css?v=115">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "テスターは毎日アプリを開く必要がありますか？", "acceptedAnswer": {"@type": "Answer", "text": "Googleが見るのはオプトイン状態が14日続いたかです。毎日の起動はGoogleの要件ではありません。ただし一度も開かないテスターが混ざると、製品版申請のアンケートで説明しづらくなります。"}}, {"@type": "Question", "name": "12人のうち1人が抜けたら最初からやり直しですか？", "acceptedAnswer": {"@type": "Answer", "text": "いいえ。残った人の期間はそのまま積み上がり、新しく入ったテスターだけが14日を満たせば大丈夫です。"}}, {"@type": "Question", "name": "テスターが「アプリが見つからない」と言いますが、リンクは正常です。", "acceptedAnswer": {"@type": "Answer", "text": "実測105件のうち87件がその状況でした。国が開いていない、ログインとPlayストアのアカウント不一致、グループ未参加の順に多いです。まず国を確認してください。"}}, {"@type": "Question", "name": "テスターは何人集めれば安全ですか？", "acceptedAnswer": {"@type": "Answer", "text": "完走率は27.6%でした。12人必要なら余裕をもって集め、12〜13日目にリマインドを送るのが確実です。"}}]}</script>
 <style>
   #doc h2 { margin-top: 30px }
@@ -133,8 +133,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=114';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=114';
+import { mountAuth } from '/assets/api.js?v=115';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=115';
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
 wireLangPicker();

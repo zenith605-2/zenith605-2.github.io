@@ -118,7 +118,6 @@ header.top nav a.btn.ghost, header.top nav a.btn.ghost:hover { color: var(--ink1
 /* 완주분. 같은 색을 흐리게 이어 붙인다 — 같은 12칸 안의 이야기지만 지금
    세어지는 인원과 섞이면 안 된다. 모서리는 바깥 .bar 가 잘라 준다. */
 .bar > i.done { background: var(--mint); opacity: .3; border-radius: 0; }
-.count .done-n { color: var(--mint); font-size: 12px; margin-left: 4px; }
 .count { font-size: 13.5px; margin-top: 8px; }
 .count b { color: var(--amber); font-size: 17px; font-variant-numeric: tabular-nums; }
 
