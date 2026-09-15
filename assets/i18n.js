@@ -694,6 +694,7 @@ const T = {
   grp_testing:  ['테스트 중', 'Testing', 'テスト中', '测试中', '測試中'],
   grp_pending:  ['설치 전', 'Not installed', '未インストール', '未安装', '未安裝'],
   grp_request:  ['신청', 'Requested', '申請', '申请', '申請'],
+  grp_done:     ['완주', 'Finished', '完走', '已完成', '已完成'],
   grp_peer_done:['상대 완주', 'They finished', '相手は完走', '对方已完成', '對方已完成'],
   grp_peer_drop:['상대 중단', 'They dropped', '相手が中断', '对方已中止', '對方已中止'],
   grp_peer_none:['상대 없음', 'No trade back', '相手側なし', '对方未参与', '對方未參與'],

@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://actparty.app/img/og-en.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/app.css?v=113">
+<link rel="stylesheet" href="/assets/app.css?v=114">
 </head>
 <body>
 
@@ -101,8 +101,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters, publicStats } from '/assets/api.js?v=113';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=113';
+import { publicApps, offerTrade, myApps, me, iconHtml, esc, ago, STORE_URL, mountAuth, appTesters, publicStats } from '/assets/api.js?v=114';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=114';
 
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
@@ -387,6 +387,9 @@ function bindWho() {
       // 앱과 같은 일곱 묶음. '한쪽만' 하나로 묶었더니 완주한 상대까지 섞였다.
       const groups = [
         ['grp_testing',   'mint',  rows.filter(r => r.source === 'trade' || r.source === 'party')],
+        // 14일을 채우고 끝난 사람. 카드의 [완주 N]과 같은 사람들이라
+        // 바로 아래에 둔다 — 숫자만 있고 이름이 없으면 믿을 근거가 없다.
+        ['grp_done',      'mint',  rows.filter(r => r.source === 'done')],
         ['grp_pending',   '',      rows.filter(r => r.source === 'pending')],
         // 아직 시작 안 한 파티의 멤버 — '설치 전'에 섞으면 신청이 몰린 것처럼 보인다
         ['grp_party_wait','amber', rows.filter(r => r.source === 'party_wait')],
