@@ -305,11 +305,20 @@ export async function mountAuth(slotId, t) {
     let label = user.user_metadata?.name || user.email || '';
     try {
       const { data } = await sb.from('profiles')
-        .select('developer_name, nickname').eq('id', user.id).maybeSingle();
+        .select('developer_name, nickname, last_seen_at').eq('id', user.id).maybeSingle();
       label = data?.developer_name || data?.nickname || label;
       // 웹으로만 가입해서 프로필 행이 없는 사람을 여기서 메운다. 어차피 한 번
       // 읽는 자리라 질의가 늘지 않고, 앱 등록까지 가기 전에 조용히 낫는다.
       if (!data) ensureProfile().catch(() => {});
+      // 마지막 접속을 찍는다. public_apps() 가 5일 넘게 안 들어온 개발자의
+      // 앱을 보드에서 내리는데, 웹만 쓰는 사람은 이 칸이 안 갱신돼서 자기
+      // 앱이 남에게 안 보였다 (본인 화면에는 보여서 알아채기 어렵다).
+      // 한 시간에 한 번이면 충분하다 — 페이지마다 쓰기를 날릴 이유가 없다.
+      else if (!data.last_seen_at ||
+               Date.now() - new Date(data.last_seen_at) > 3600e3) {
+        sb.from('profiles').update({ last_seen_at: new Date().toISOString() })
+          .eq('id', user.id).then(() => {}, () => {});
+      }
     } catch (_) {}
     el.innerHTML =
       // "내 앱"은 로그인한 사람만 갈 곳이다. 공개 메뉴가 아니라
@@ -844,7 +853,8 @@ export async function ensureProfile() {
                (u.email || '').split('@')[0] || 'Developer';
   // 다른 탭에서 먼저 만들었을 수 있으니 upsert 로 둔다
   const { error } = await sb.from('profiles')
-    .upsert({ id: u.id, nickname: String(name).slice(0, 40) }, { onConflict: 'id' });
+    .upsert({ id: u.id, nickname: String(name).slice(0, 40),
+              last_seen_at: new Date().toISOString() }, { onConflict: 'id' });
   if (error) throw error;
   return u.id;
 }
