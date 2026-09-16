@@ -127,7 +127,7 @@ const DOC = {
           <td><a href="#stage-3">3 · Install</a></td></tr>
       <tr><td>"You are a tester" — but Play has no Install button</td>
           <td><a href="#stage-3-country">3 · Install</a></td></tr>
-      <tr><td>"This app is not available for any of your devices"</td>
+      <tr><td>"This item isn’t available in your country" on Play</td>
           <td><a href="#stage-3-country">3 · Install</a></td></tr>
     </tbody>
   </table>
@@ -206,13 +206,15 @@ const DOC = {
   The list can hold the right people and show the right count and still do
   nothing.</p>
 
-  ${SHOT(P + 'e1-list-unchecked.png', 'Two testers in the list, and the list is off. Save is still clickable in this state.')}
+  ${SHOT(P + 'e1-list-unchecked.png', 'Two testers in the list, and the list is off.')}
 
   <h3>3. A typo in an email address</h3>
-  <p>Play never checks that an address exists. One wrong character silently
-  drops that tester, and the only symptom is "App not available".</p>
+  <p>Nothing warns you while you type. When Play does reject an address, it is
+  only on Save, with one generic error that does not say which row. And a typo
+  that happens to be someone else’s real account passes every check, so the only
+  symptom is your tester seeing "App not available".</p>
 
-  ${SHOT(P + 'e2-email-typo.png', 'gmial.com, accepted without a warning.')}
+  ${SHOT(P + 'e2-email-typo.png', 'gmial.com, typed in with no warning.')}
 
   <p>Read the list back against what the tester sent you. This is also the best
   argument for a Google Group: testers type their own address.</p>
@@ -226,7 +228,7 @@ const DOC = {
   ${SHOT(P + 'p7-publishing-overview-pending.png', 'Changes not yet submitted for review. Nothing here is live.')}
   ${SHOT(P + 'p10-quick-checks.png', 'Quick checks run first — up to about 14 minutes.')}
   ${SHOT(P + 'p8-send-for-review-dialog.png', 'Send changes for review.')}
-  ${SHOT(P + 'p9-changes-in-review.png', 'Changes in review. A tester change took about half an hour to go live for us.')}
+  ${SHOT(P + 'p9-changes-in-review.png', 'Changes in review. Our tester change went live in under half an hour.')}
 
   <h3>5. It is the wrong link</h3>
   <p>The opt-in link is not your store link. Find it at the bottom of the
@@ -270,9 +272,9 @@ const DOC = {
 
   <p>They click through to Play and get this:</p>
 
-  ${SHOT(P + 't9-store-country-blocked.png', 'No Install button, and "This app is not available for any of your devices". It blames their phone. The word country never appears.')}
+  ${SHOT(P + 'store-country-blocked-en.png', 'No Install button, and "This item isn’t available in your country." Recreated in English from a tester’s phone.')}
 
-  <p>So the tester reports that their phone is not supported. The real answer
+  <p>Nothing is wrong on their side, and they cannot change it. The real answer
   is in your console.</p>
 
   <h3>Cause: the track does not include their country</h3>
@@ -304,9 +306,8 @@ const DOC = {
 
   <div class="note warn"><b>The tester stays blocked for a while after you fix
   it.</b> We watched the console go back to 177 countries while the same
-  tester’s store page still said "not available". Play caches availability per
-  account. Tell them to check again later instead of changing anything
-  else.</div>
+  tester’s store page still said "not available". It caught up later on its own.
+  Tell them to check again later instead of changing anything else.</div>
 
   <p>Country targeting is also <b>per track</b>: adding a country to production
   does not add it to your closed test. More in

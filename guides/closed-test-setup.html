@@ -417,17 +417,17 @@ const DOC = {
 
   <h3>2. The list is there, but it is not ticked</h3>
   <p>An email list only applies while its row is checked. The list can exist,
-  hold the right people, show the right count, and still do nothing. Save stays
-  available with nothing ticked, so it is easy to leave it this way.</p>
+  hold the right people, show the right count, and still do nothing.</p>
 
   ${SHOT(P + 'e1-list-unchecked.png', 'A list with two testers in it, doing nothing. The count is right and the row is unchecked.')}
 
   <h3>3. A typo in one address</h3>
-  <p>Play does not check that an address exists. Anything shaped like an email
-  is accepted, so one wrong character silently costs you a tester, and the only
-  symptom is that person seeing App not available.</p>
+  <p>Nothing warns you while you type. When Play does reject an address, it is
+  only on Save, with one generic error that does not say which row (step 7). And
+  a typo that happens to be someone else’s real account passes every check, so
+  the only symptom is that person seeing App not available.</p>
 
-  ${SHOT(P + 'e2-email-typo.png', 'Accepted without complaint. Nothing on this screen will ever tell you that address does not exist.')}
+  ${SHOT(P + 'e2-email-typo.png', 'gmial.com, typed in with no warning.')}
 
   <p>Read the list back against what the tester actually sent you, character by
   character. This is also the strongest argument for using a Google Group
@@ -467,8 +467,8 @@ const DOC = {
 
   <p>A closed test only reaches the countries the track targets. If you unticked
   countries while setting the track up, or started with a short list, everyone
-  outside it is blocked, and the message they get blames their account rather
-  than your settings.</p>
+  outside it is blocked, and the message they get says the app is not available
+  in their country, which sounds like their problem rather than your settings.</p>
 
   <h3>What the tester sees</h3>
   <p>This is the cruel part, and the reason nobody reports it correctly. The
@@ -478,10 +478,10 @@ const DOC = {
 
   <p>They click through to Play and get this instead:</p>
 
-  ${SHOT(P + 't9-store-country-blocked.png', 'No Install button. The line reads "This app is not available for any of your devices" — it blames their phone, and the word country never appears.')}
+  ${SHOT(P + 'store-country-blocked-en.png', 'No Install button, and "This item isn’t available in your country." Recreated in English from a tester’s phone.')}
 
-  <p>So the tester tells you their phone is not supported, or that your app is
-  broken. Both times the real answer is on your side of the console.</p>
+  <p>So the tester assumes your app does not ship where they live and gives up.
+  Nothing on their side can change that. The real answer is in your console.</p>
 
   <h3>Finding it</h3>
   <p>The count is in the track header, one line under the title.</p>
@@ -509,9 +509,8 @@ const DOC = {
     submit it from Publishing overview.</li>
     <li><b>The tester stays blocked after you fix it.</b> We watched the track
     go back to 177 countries in the console while the same tester's store page
-    still said the app was not available for their devices. Play caches
-    availability per account. Tell them to check again later instead of
-    changing anything else.</li>
+    still had no Install button. It caught up later on its own. Tell them to
+    check again later instead of changing anything else.</li>
   </ul>
   <p>The screen the tester actually gets is in
   <a href="/guides/blocked-screens.html">The six screens that stop a tester</a>.</p>
