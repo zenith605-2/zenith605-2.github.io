@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>テスターが詰まる5つの画面 | ACT Party</title>
+<title>テスターが詰まる6つの画面 | ACT Party</title>
 <meta name="description" content="画面ごとに原因が違います。リンクを送り直しても直りません。">
 <link rel="canonical" href="https://actparty.app/ja/guides/blocked-screens.html">
 <link rel="alternate" hreflang="en" href="https://actparty.app/guides/blocked-screens.html">
@@ -20,7 +20,7 @@
 <link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/blocked-screens.html">
 <meta property="og:image" content="https://actparty.app/img/og-en.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/app.css?v=118">
+<link rel="stylesheet" href="/assets/app.css?v=119">
 <style>
   /* 구간마다 주소를 달아 두면 "당신은 2번"이라고 정확히 보낼 수 있다 */
   #doc h2 { position: relative }
@@ -67,7 +67,7 @@
 </header>
 
 <article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/blocked-screens.html" hreflang="en">English</a> · <a href="/ko/guides/blocked-screens.html" hreflang="ko">한국어</a> · <b>日本語</b> · <a href="/zh-Hans/guides/blocked-screens.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/guides/blocked-screens.html" hreflang="zh-Hant">繁體中文</a></p>
-  <h1 style="font-size:28px;margin:0 0 8px">テスターが詰まる5つの画面</h1>
+  <h1 style="font-size:28px;margin:0 0 8px">テスターが詰まる6つの画面</h1>
   <p class="muted" style="margin:0 0 24px">画面ごとに原因が違います。リンクを送り直しても直りません。</p>
 
   <p>入れなかったテスターは、たいてい何も言いません。言ってくれても「入れません」
@@ -106,13 +106,32 @@
   解決します。30分たっても同じなら、国の制限かアカウント違いです —
   <a href="/ja/guides/country-availability.html">配信国をすべての国に開く</a>を参照。</p>
 
-  <h2>4. コンソール — 「追加のテストが必要」</h2>
+  <h2>4. ストア — 「お住まいの国では提供されていません」</h2>
+  <p>3番と画面は似ていますが<b>原因は逆</b>です。3番は待てば開きますが、これは
+  待っても開きません。オプトインをやり直しても、アカウントを変えても同じです。
+  <b>テスターにできることが何もない唯一の画面</b>です。</p>
+  <p>アプリの所有者が Play Console で配信国にその国を追加しないと解決しません。
+  やり方は<a href="/ja/guides/country-availability.html">配信国をすべての国に開く</a>に
+  書いてあります。</p>
+  <p><b>テスターの方は</b>待たずに伝えてください。伝えないと所有者は自分のアプリが
+  その国で入手できないことを永遠に知りません — 黙って消えた人が国の制限なのか
+  気が変わったのか、向こうからは区別できません。</p>
+  <ul>
+    <li>ACT Party なら品앗이カードの <b>⋮ →［国で入手できません］</b>。
+    カルマは減らず、所有者に「どの国のテスターがインストールできなかったか」まで
+    伝わります。</li>
+    <li>すでに進行中なら <b>⋮ →［合意して終了］</b>で理由を書いて送ってください。
+    相手が承諾すると<b>両方</b>が閉じます。［中断］だけでは自分側しか終わらず、
+    相手は何も知らないまま14日を続けます。</li>
+  </ul>
+
+  <h2>5. コンソール — 「追加のテストが必要」</h2>
   <figure><img src="/img/guide/guide-err-console-reject.png" alt="" loading="lazy"><figcaption>製品版アクセス申請が却下された画面。14日は審査日から数え直しになります。</figcaption></figure>
   <p>これはテスターではなく<b>アプリの持ち主が見る画面</b>です。重要なのは最後の行 —
   「<b>審査日から</b>12名以上でさらに14日」。申請前に貯めた日数は引き継がれません。
   早く申請するほど遅くなります。</p>
 
-  <h2>5. 却下メール — 理由は2つ</h2>
+  <h2>6. 却下メール — 理由は2つ</h2>
   <figure><img src="/img/guide/guide-err-reject-mail.png" alt="" loading="lazy"><figcaption>却下メール。理由が2行で書かれています。</figcaption></figure>
   <ul>
     <li><b>テスターがアプリを利用しなかった。</b> オプトインだけで開かない人が多いと該当します。</li>
@@ -138,9 +157,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=118';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=118';
-import { sectionAnchors } from '/assets/anchors.js?v=118';
+import { mountAuth } from '/assets/api.js?v=119';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=119';
+import { sectionAnchors } from '/assets/anchors.js?v=119';
 
 const SHOT = (src, cap) =>
   '<figure><img src="' + src + '" alt="" loading="lazy">' +

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>卡住测试者的五个画面 | ACT Party</title>
+<title>卡住测试者的六个画面 | ACT Party</title>
 <meta name="description" content="每个画面的原因都不同，重发链接一个也解决不了。">
 <link rel="canonical" href="https://actparty.app/zh-Hans/guides/blocked-screens.html">
 <link rel="alternate" hreflang="en" href="https://actparty.app/guides/blocked-screens.html">
@@ -20,7 +20,7 @@
 <link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/blocked-screens.html">
 <meta property="og:image" content="https://actparty.app/img/og-en.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/app.css?v=118">
+<link rel="stylesheet" href="/assets/app.css?v=119">
 <style>
   /* 구간마다 주소를 달아 두면 "당신은 2번"이라고 정확히 보낼 수 있다 */
   #doc h2 { position: relative }
@@ -67,14 +67,14 @@
 </header>
 
 <article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/blocked-screens.html" hreflang="en">English</a> · <a href="/ko/guides/blocked-screens.html" hreflang="ko">한국어</a> · <a href="/ja/guides/blocked-screens.html" hreflang="ja">日本語</a> · <b>简体中文</b> · <a href="/zh-Hant/guides/blocked-screens.html" hreflang="zh-Hant">繁體中文</a></p>
-  <h1 style="font-size:28px;margin:0 0 8px">卡住测试者的五个画面</h1>
+  <h1 style="font-size:28px;margin:0 0 8px">卡住测试者的六个画面</h1>
   <p class="muted" style="margin:0 0 24px">每个画面的原因都不同，重发链接一个也解决不了。</p>
 
   <p>进不去的测试者通常什么也不说。就算说了也只是"打不开"，看不出原因。但这些画面
   长得完全不一样。</p>
 
   <p>这些是我自己跑了 <b>100 多次</b>封闭测试时遇到的画面。几乎每次链接都是好的，
-  问题出在卡住那一边。把这五张图给他看，问"你看到的是哪一个"，原因就分开了。</p>
+  问题出在卡住那一边。把这六张图给他看，问"你看到的是哪一个"，原因就分开了。</p>
 
   <h2>1. 群组 — "无法使用此内容"</h2>
   <figure><img src="/img/guide/guide-err-group-private.png" alt="" loading="lazy"><figcaption>Google 群组页面。未受邀请的账号看不到内容，也没有加入按钮。</figcaption></figure>
@@ -105,13 +105,27 @@
   还一样，就是国家限制或账号不对 —
   见<a href="/zh-Hans/guides/country-availability.html">把封闭测试开放到所有国家</a>。</p>
 
-  <h2>4. 控制台 — "需要更多测试"</h2>
+  <h2>4. 商店 — "您所在的国家/地区无法使用"</h2>
+  <p>画面和第 3 条很像，但<b>原因相反</b>。第 3 条等一会儿就会打开，这一条等多久
+  都不会。重新加入测试没用，换账号也没用。<b>这是测试者唯一什么都做不了的画面。</b></p>
+  <p>只有应用所有者在 Play Console 里把那个国家加进分发范围才能解决。做法写在
+  <a href="/zh-Hans/guides/country-availability.html">把封闭测试开放给所有国家</a>里。</p>
+  <p><b>如果你是测试者</b>，不要干等，告诉对方。不说的话，所有者永远不会知道自己的
+  应用在你那里根本装不了 — 从他那边看，因国家限制而消失的人和改变主意的人长得一模一样。</p>
+  <ul>
+    <li>用 ACT Party 的话：互测卡片的 <b>⋮ →［我的国家无法获取］</b>。不扣业力，
+    而且会告诉所有者是哪个国家的测试者装不上。</li>
+    <li>如果互测已经在进行，请用 <b>⋮ →［协商终止］</b>并写上原因。对方同意后
+    <b>双方</b>一起关闭。只按［中止］的话只结束你这边，对方会一无所知地继续开 14 天。</li>
+  </ul>
+
+  <h2>5. 控制台 — "需要更多测试"</h2>
   <figure><img src="/img/guide/guide-err-console-reject.png" alt="" loading="lazy"><figcaption>生产环境访问申请被驳回。14 天要从审核日期重新算。</figcaption></figure>
   <p>这个画面不是给测试者的，是<b>应用所有者看到的</b>。关键是最后一行 —
   12 位测试者、<b>从审核日期起</b>再测 14 天。申请前积累的天数不会延续。
   申请得越早，反而越晚。</p>
 
-  <h2>5. 驳回邮件 — 两条理由</h2>
+  <h2>6. 驳回邮件 — 两条理由</h2>
   <figure><img src="/img/guide/guide-err-reject-mail.png" alt="" loading="lazy"><figcaption>驳回邮件，理由写成两行。</figcaption></figure>
   <ul>
     <li><b>测试期间测试者没有使用应用。</b> 只加入却从不打开的人多了就会被判定。</li>
@@ -135,9 +149,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=118';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=118';
-import { sectionAnchors } from '/assets/anchors.js?v=118';
+import { mountAuth } from '/assets/api.js?v=119';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=119';
+import { sectionAnchors } from '/assets/anchors.js?v=119';
 
 const SHOT = (src, cap) =>
   '<figure><img src="' + src + '" alt="" loading="lazy">' +

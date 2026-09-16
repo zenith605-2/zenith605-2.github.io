@@ -16,7 +16,7 @@
 <meta property="og:description" content="안드로이드 비공개 테스트 14일을 참여 1,862건 돌려 본 결과. 완주율 27.6%, 이탈은 10~13일에 몰린다, &quot;설치가 안 돼요&quot; 105건 중 87건은 링크가 멀쩡했다.">
 <meta property="og:url" content="https://actparty.app/ko/android-closed-testing-data.html">
 <meta property="og:type" content="article">
-<link rel="stylesheet" href="/assets/app.css?v=118">
+<link rel="stylesheet" href="/assets/app.css?v=119">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "안드로이드 비공개 테스트는 테스터가 매일 앱을 열어야 하나요?", "acceptedAnswer": {"@type": "Answer", "text": "구글이 보는 건 옵트인 상태가 14일 이어졌는지입니다. 매일 실행은 구글 요건이 아닙니다. 다만 한 번도 안 여는 테스터가 섞이면 프로덕션 신청 설문에서 설명하기 어려워집니다."}}, {"@type": "Question", "name": "12명 중 한 명이 중간에 나가면 처음부터 다시인가요?", "acceptedAnswer": {"@type": "Answer", "text": "아닙니다. 남은 사람의 기간은 그대로 쌓이고, 새로 들어온 테스터만 14일을 채우면 됩니다."}}, {"@type": "Question", "name": "테스터가 \"앱을 찾을 수 없다\"고 하는데 링크는 정상입니다.", "acceptedAnswer": {"@type": "Answer", "text": "실측 105건 중 87건이 그 경우였습니다. 국가 미개방, 로그인 계정과 플레이스토어 계정 불일치, 그룹 미가입 순으로 흔합니다. 국가부터 확인하세요."}}, {"@type": "Question", "name": "테스터는 몇 명을 모아야 안전한가요?", "acceptedAnswer": {"@type": "Answer", "text": "완주율이 27.6%였습니다. 12명이 필요하면 그보다 넉넉하게 모으고, 12~13일째에 리마인드를 보내는 편이 확실합니다."}}]}</script>
 <style>
   #doc h2 { margin-top: 30px }
@@ -136,8 +136,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=118';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=118';
+import { mountAuth } from '/assets/api.js?v=119';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=119';
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
 wireLangPicker();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>卡住測試者的五個畫面 | ACT Party</title>
+<title>卡住測試者的六個畫面 | ACT Party</title>
 <meta name="description" content="每個畫面的原因都不同，重寄連結一個也解決不了。">
 <link rel="canonical" href="https://actparty.app/zh-Hant/guides/blocked-screens.html">
 <link rel="alternate" hreflang="en" href="https://actparty.app/guides/blocked-screens.html">
@@ -20,7 +20,7 @@
 <link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/blocked-screens.html">
 <meta property="og:image" content="https://actparty.app/img/og-en.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/app.css?v=118">
+<link rel="stylesheet" href="/assets/app.css?v=119">
 <style>
   /* 구간마다 주소를 달아 두면 "당신은 2번"이라고 정확히 보낼 수 있다 */
   #doc h2 { position: relative }
@@ -67,14 +67,14 @@
 </header>
 
 <article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/blocked-screens.html" hreflang="en">English</a> · <a href="/ko/guides/blocked-screens.html" hreflang="ko">한국어</a> · <a href="/ja/guides/blocked-screens.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/guides/blocked-screens.html" hreflang="zh-Hans">简体中文</a> · <b>繁體中文</b></p>
-  <h1 style="font-size:28px;margin:0 0 8px">卡住測試者的五個畫面</h1>
+  <h1 style="font-size:28px;margin:0 0 8px">卡住測試者的六個畫面</h1>
   <p class="muted" style="margin:0 0 24px">每個畫面的原因都不同，重寄連結一個也解決不了。</p>
 
   <p>進不去的測試者通常什麼也不說。就算說了也只是「打不開」，看不出原因。但這些畫面
   長得完全不一樣。</p>
 
   <p>這些是我自己跑了 <b>100 多次</b>封閉測試時遇到的畫面。幾乎每次連結都是好的，
-  問題出在卡住那一邊。把這五張圖給他看，問「你看到的是哪一個」，原因就分開了。</p>
+  問題出在卡住那一邊。把這六張圖給他看，問「你看到的是哪一個」，原因就分開了。</p>
 
   <h2>1. 群組 — 「無法使用這項內容」</h2>
   <figure><img src="/img/guide/guide-err-group-private.png" alt="" loading="lazy"><figcaption>Google 群組頁面。未受邀請的帳戶看不到內容，也沒有加入按鈕。</figcaption></figure>
@@ -105,13 +105,27 @@
   還一樣，就是國家限制或帳戶不對 —
   見<a href="/zh-Hant/guides/country-availability.html">把封閉測試開放到所有國家</a>。</p>
 
-  <h2>4. 主控台 — 「需要更多測試」</h2>
+  <h2>4. 商店 — 「您所在的國家/地區無法使用」</h2>
+  <p>畫面和第 3 條很像，但<b>原因相反</b>。第 3 條等一下就會開，這一條等多久都不會。
+  重新加入測試沒用，換帳號也沒用。<b>這是測試者唯一什麼都做不了的畫面。</b></p>
+  <p>只有應用程式擁有者在 Play Console 把那個國家加進發布範圍才能解決。做法寫在
+  <a href="/zh-Hant/guides/country-availability.html">把封閉測試開放給所有國家</a>裡。</p>
+  <p><b>如果你是測試者</b>，不要乾等，告訴對方。不說的話，擁有者永遠不會知道自己的
+  應用程式在你那裡根本裝不了 — 從他那邊看，因國家限制而消失的人和改變主意的人長得一模一樣。</p>
+  <ul>
+    <li>用 ACT Party 的話：互測卡片的 <b>⋮ →［我的國家無法取得］</b>。不扣業力，
+    而且會告訴擁有者是哪個國家的測試者裝不上。</li>
+    <li>如果互測已經在進行，請用 <b>⋮ →［協商終止］</b>並寫上原因。對方同意後
+    <b>雙方</b>一起關閉。只按［中斷］只會結束你這邊，對方會一無所知地繼續開 14 天。</li>
+  </ul>
+
+  <h2>5. 主控台 — 「需要更多測試」</h2>
   <figure><img src="/img/guide/guide-err-console-reject.png" alt="" loading="lazy"><figcaption>正式版存取申請遭駁回。14 天要從審查日期重新計算。</figcaption></figure>
   <p>這個畫面不是給測試者的，是<b>應用程式擁有者看到的</b>。關鍵是最後一行 —
   12 位測試者、<b>從審查日期起</b>再測 14 天。申請前累積的天數不會延續。
   申請得越早，反而越晚。</p>
 
-  <h2>5. 駁回信 — 兩個理由</h2>
+  <h2>6. 駁回信 — 兩個理由</h2>
   <figure><img src="/img/guide/guide-err-reject-mail.png" alt="" loading="lazy"><figcaption>駁回信，理由寫成兩行。</figcaption></figure>
   <ul>
     <li><b>測試期間測試者沒有使用應用程式。</b> 只加入卻從不開啟的人多了就會被認定。</li>
@@ -135,9 +149,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=118';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=118';
-import { sectionAnchors } from '/assets/anchors.js?v=118';
+import { mountAuth } from '/assets/api.js?v=119';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=119';
+import { sectionAnchors } from '/assets/anchors.js?v=119';
 
 const SHOT = (src, cap) =>
   '<figure><img src="' + src + '" alt="" loading="lazy">' +
