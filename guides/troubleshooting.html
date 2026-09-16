@@ -137,45 +137,47 @@ const DOC = {
 
   <h2><span class="step">1</span>"Content unavailable"</h2>
 
-  ${SHOT(P + 't1-content-unavailable.png', 'What the tester sees. Content unavailable, and a suggestion to switch accounts — which is not the problem.')}
+  <p>If this is what your tester sees, your Google Group is private.</p>
 
-  <p>The page does not say the group exists, that they are not a member, or
-  that they could ask to join. Testers read "try switching accounts", switch
-  accounts, get the same page, and give up.</p>
+  ${SHOT(P + 'r1-tester-sees.png', 'What your tester sees')}
 
-  <h3>Cause: the group is private — because that is the default</h3>
-  <p>Nobody makes their group private on purpose. When you create a Google
-  Group, the two settings that matter are <b>already</b> set to the closed
-  values, and nothing on the page suggests changing them.</p>
+  <p>Open your group, then <b>Group settings &rarr; General</b>. The two
+  dropdowns you need are just below <i>Shared labels</i>, one scroll down.</p>
 
-  ${SHOT(P + 'g1-privacy-defaults.png', 'The privacy step while creating a group. Who can search for group: Group members. Who can join group: Only invited users. These are Google’s defaults.')}
+  <h3>1. Who can see group</h3>
+  ${SHOT(P + 'r2-who-can-see.png', 'Who can see group')}
+  <p>Set it to <b>Anyone on the web</b>.</p>
 
-  <h3>Fix</h3>
-  <p>Open the group, then <b>Group settings &rarr; General</b>. The two dropdowns
-  are well down the page.</p>
+  <h3>2. Who can join group</h3>
+  ${SHOT(P + 'r3-who-can-join.png', 'Who can join group')}
+  <p>Set it to <b>Anyone on the web can join</b>. Not "can ask": that one makes
+  every tester wait for you to approve them by hand, and nobody can opt in until
+  you do.</p>
 
-  ${SHOT(P + 'g3-settings-before.png', 'Before. Who can see group: Group members. Who can join group: Invited users only.')}
-  ${SHOT(P + 'g4-see-group-dropdown.png', 'Who can see group — pick Anyone on the web.')}
-  ${SHOT(P + 'g5-join-group-dropdown.png', 'Who can join group — pick Anyone on the web can join. Can ask puts every tester in a queue you have to approve by hand.')}
-  ${SHOT(P + 'g6-settings-after.png', 'After. Both set.')}
-  ${SHOT(P + 'g7-settings-saved.png', 'Saved. Note the line: it might take some time for the changes to take effect.')}
+  <h3>3. Save</h3>
+  ${SHOT(P + 'r4-both-set.png', 'Both set correctly')}
+  <p>Google warns the change can take a while to take effect. If it still fails
+  right away, wait before touching anything else.</p>
 
-  <div class="note warn">If the link still fails a minute after saving, wait before
-  changing anything else. Group settings take a little while to apply.</div>
+  <h3 id="stage-1-permission">4. Warn your testers about this screen</h3>
+  ${SHOT(P + 'r5-this-is-normal.png', 'After the fix. This is normal')}
+  <p>That message is about reading old group posts, which is a separate setting.
+  It has nothing to do with joining. The <b>Join group</b> button works. If you do
+  not tell testers first, they see the message and leave.</p>
 
-  <h2 id="stage-1-permission"><span class="step">1b</span>"You don’t have permission to access this content"</h2>
+  <h3>5. Join once from a second account</h3>
+  ${SHOT(P + 'r6-member-count.png', 'Joined from a second account')}
+  <p>Your own account makes a broken group look fine, so test it from another
+  browser profile. The member count should go up with nothing for you to
+  approve.</p>
 
-  <p>After the fix above, this is what the tester sees. It looks like a failure.
-  It is not.</p>
-
-  ${SHOT(P + 't2-join-but-no-permission.png', 'The Join group button is what matters. The permission message is about reading the group’s messages, not about joining.')}
-
-  <p><i>Who can view conversations</i> is a separate setting, still set to
-  members only. That is fine for a test group. Tell testers in advance to
-  ignore the message and press <b>Join group</b>.</p>
-
-  ${SHOT(P + 't3-join-dialog.png', 'Joining. Subscription defaults to Each email — testers can set it to No email.')}
-  ${SHOT(P + 't4-joined.png', 'Joined. With Anyone on the web can join there is nothing for you to approve.')}
+  <h3>Why this happens</h3>
+  <p>Nobody misconfigured anything. A new group starts like this:</p>
+  ${SHOT(P + 'r7-defaults.png', 'Google’s defaults for a new group')}
+  <p>And Play puts the group step first: <i>"For closed tests using a Google
+  Group, users must join the group before opting into your test."</i> A default
+  group is a wall in front of your test, and the error your tester gets never
+  mentions the group at all.</p>
 
   <div class="note ok"><b>Stage 1 done</b> when the tester lands on the group page
   and the member count went up. Next: the opt-in link.</div>
