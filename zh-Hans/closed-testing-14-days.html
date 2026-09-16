@@ -16,7 +16,7 @@
 <meta property="og:description" content="12 名测试者必须保持加入状态 14 天才能发布。Google 到底在数什么、测试者真正打开应用的天数、人会在第几天流失、第 14 天怎么申请。来自 48 次已完成的测试。">
 <meta property="og:url" content="https://actparty.app/zh-Hans/closed-testing-14-days.html">
 <meta property="og:type" content="article">
-<link rel="stylesheet" href="/assets/app.css?v=122">
+<link rel="stylesheet" href="/assets/app.css?v=123">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "14 天从什么时候开始算？", "acceptedAnswer": {"@type": "Answer", "text": "按每个测试者各自加入的那天算。12 个人不必同一天加入，但必须有连续 14 天同时有 12 人处于加入状态。"}}, {"@type": "Question", "name": "测试者不打开应用会审核不过吗？", "acceptedAnswer": {"@type": "Answer", "text": "不会。Google 看的是加入时长。实测 48 次平均只打开 8.8 天，都通过了。不过申请表会问参与度，完全不打开也不好看。"}}, {"@type": "Question", "name": "已经 14 天了按钮还是锁着", "acceptedAnswer": {"@type": "Answer", "text": "检查是否连续 14 天都有 12 人同时处于加入状态。哪天有人退出只剩 11 人，那天就不算。"}}, {"@type": "Question", "name": "内部测试算吗？", "acceptedAnswer": {"@type": "Answer", "text": "不算。必须是封闭测试（Closed testing）轨道。内部测试不在要求之内。"}}]}</script>
 <style>
   #doc h2 { margin-top: 30px }
@@ -91,8 +91,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=122';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=122';
+import { mountAuth } from '/assets/api.js?v=123';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=123';
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
 wireLangPicker();

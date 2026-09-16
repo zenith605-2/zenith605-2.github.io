@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Set up a closed test on Google Play — every screen, from an empty account</title>
-<meta name="description" content="A first closed test, walked end to end with real screenshots: create the app, the track Google already made for you, countries, tester lists, the release. Including the errors that stop people, like an email list Google silently refuses to save.">
+<title>Register an Android app and run your first closed test — every screen, in order</title>
+<meta name="description" content="From an empty Play Console account to a closed test in review: what you need before you start, how to register the app, the eleven declarations that actually gate you, the store listing, the track, and the release. Real screenshots from one app set up end to end.">
 <link rel="canonical" href="https://actparty.app/guides/closed-test-setup.html">
 <link rel="alternate" hreflang="en" href="https://actparty.app/guides/closed-test-setup.html">
 <link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/closed-test-setup.html">
 <meta property="og:image" content="https://actparty.app/img/og-en.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/app.css?v=122">
+<link rel="stylesheet" href="/assets/app.css?v=123">
 <style>
   #doc h2 { position: relative }
   #doc .anchor-copy {
@@ -29,16 +29,30 @@
   #doc figcaption {
     font-size: 13px; color: #5b6672; margin-top: 8px; line-height: 1.6;
   }
-  #doc h2 { margin-top: 38px }
+  #doc h2 { margin-top: 40px }
+  #doc h3 { margin-top: 26px; font-size: 17px }
   #doc li.hot {
     background: #fff1f2; border-left: 3px solid #e11d48;
     border-radius: 6px; padding: 9px 12px; margin: 10px 0; color: #9f1239;
+    list-style: none;
+  }
+  #doc .part {
+    margin: 52px 0 6px; padding-top: 22px; border-top: 2px solid #1f2933;
+    font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    color: #5b6672; font-weight: 700;
   }
   #doc .step {
-    display: inline-block; min-width: 26px; height: 26px; line-height: 26px;
+    display: inline-block; min-width: 27px; height: 27px; line-height: 27px;
     text-align: center; border-radius: 999px; background: #1f2933; color: #fff;
-    font-size: 14px; font-weight: 700; margin-right: 9px;
+    font-size: 14px; font-weight: 700; margin-right: 10px;
   }
+  #doc pre.box {
+    background: #f6f8fa; border: 1px solid #e3e6ea; border-radius: 8px;
+    padding: 13px 15px; font-size: 13.5px; line-height: 1.7; overflow-x: auto;
+  }
+  #doc .toc { background: #f6f8fa; border-radius: 10px; padding: 16px 20px; margin: 22px 0 8px }
+  #doc .toc ol { margin: 6px 0 0; padding-left: 20px }
+  #doc .toc li { margin-bottom: 3px }
 </style>
 </head>
 <body>
@@ -67,9 +81,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=122';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=122';
-import { sectionAnchors } from '/assets/anchors.js?v=122';
+import { mountAuth } from '/assets/api.js?v=123';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=123';
+import { sectionAnchors } from '/assets/anchors.js?v=123';
 
 const SHOT = (src, cap) =>
   '<figure><img src="' + src + '" alt="" loading="lazy">' +
@@ -77,183 +91,247 @@ const SHOT = (src, cap) =>
 
 const P = '/img/guide/closed-test/';
 
-// 이 가이드는 영문만 둔다 (사용자 결정, 2026-09-16). DOC 을 쓰는 건 다른
-// 가이드와 껍데기를 맞추기 위한 것이고, 언어판은 만들지 않는다.
+// 영문만 둔다 (사용자 결정, 2026-09-16). DOC 을 쓰는 건 다른 가이드와
+// 껍데기를 맞추기 위한 것이고, 언어판은 만들지 않는다.
+//
+// 절 순서는 '내가 겪은 순서'가 아니라 '독자가 해야 하는 순서'다. 처음 판은
+// 내가 헤맨 대로 써서 트랙부터 시작하고 선언 11개가 8번에 있었는데,
+// 그건 로그지 가이드가 아니다 (사용자 지적, 2026-09-16).
 const DOC = {
   en: `
-  <h1 style="font-size:28px;margin:0 0 8px">Set up a closed test, from an empty account</h1>
-  <p class="muted" style="margin:0 0 24px">Every screen in order, with the parts that trip people up.</p>
+  <h1 style="font-size:28px;margin:0 0 8px">Register an app and run your first closed test</h1>
+  <p class="muted" style="margin:0 0 22px">Every screen, in the order you should actually do them.</p>
 
   <p>Google requires a closed test before an individual developer account can
   publish: <b>12 testers, opted in, for 14 consecutive days</b>. Most guides
-  explain the rule. This one walks the console instead — every screen from an
-  account with nothing in it, in the order you actually meet them.</p>
+  explain the rule. This one walks the console — from an account with nothing
+  in it to a release sitting in review.</p>
 
-  <p>The screenshots are from a real app set up for this guide in
-  September 2026, not mock-ups. Where something failed, the failure is here too.</p>
+  <p>Every screenshot is from one app registered for this guide in September
+  2026. Where something failed, the failure is in here too, at the step where
+  it happens.</p>
 
-  <h2><span class="step">1</span>Create the app</h2>
+  <div class="toc">
+    <b>The order that works</b>
+    <ol>
+      <li>Get four things ready before you open the console</li>
+      <li>Register the app — creation, eleven declarations, store listing</li>
+      <li>Set up the closed test track — countries, testers, the build</li>
+      <li>Submit for review</li>
+    </ol>
+    <p style="margin:10px 0 0;font-size:13.5px;color:#5b6672">Doing 3 before 2
+    is the mistake that costs a day. There is a section at the end showing
+    exactly what that looks like.</p>
+  </div>
+
+  <div class="part">Part 1 &mdash; Before you open the console</div>
+
+  <h2><span class="step">1</span>Four things you need first</h2>
+  <p>Each of these blocks registration further down. Getting them now saves you
+  from stopping halfway.</p>
+
+  <h3>A developer account</h3>
+  <p>A one-off 25 USD registration, and for a personal account Google now
+  requires identity verification. Do this first — verification can take days,
+  and nothing else can start without it.</p>
+
+  <h3>An upload key, and a build signed with it</h3>
+  <p>Play rejects a debug-signed bundle. If you have never made a keystore this
+  is the step people miss: a plain <code>flutter build appbundle</code> in a
+  fresh project is still debug-signed.</p>
+  <pre class="box">keytool -genkeypair -v \\
+  -keystore upload.jks -storetype JKS \\
+  -keyalg RSA -keysize 2048 -validity 10000 \\
+  -alias upload</pre>
+  <p>Put the keystore outside version control, wire it into your release build,
+  then confirm it took:</p>
+  <pre class="box">keytool -printcert -jarfile app-release.aab | head -1
+# Owner: CN=...   &lt;- your name, not "Android Debug"</pre>
+  <li class="hot"><b>Keep the keystore and its password.</b> With Play App
+  Signing — the default now — a lost <i>upload</i> key can be reset by Google,
+  so it is not fatal. Losing the account is.</li>
+
+  <h3>A privacy policy at a public URL</h3>
+  <p>Required, and the field will not accept a promise to write one later. A
+  single static page is enough and GitHub Pages hosts one free. It has to
+  describe what your app actually does with data — if your app sends anything
+  to a third-party service, say so, by name.</p>
+
+  <h3>Store graphics</h3>
+  <p>Have these ready as files before you start the listing:</p>
+  <ul>
+    <li><b>App icon</b> — 512 x 512 PNG, under 1 MB</li>
+    <li><b>Feature graphic</b> — 1024 x 500 PNG or JPEG</li>
+    <li><b>Phone screenshots</b> — at least 2, each side between 320 px and
+    3840 px, and no side more than twice the other. Take them from a real
+    device. If your build shows test ads, crop that banner out — "This is a
+    test ad" in a store screenshot reads as unfinished.</li>
+  </ul>
+
+  <div class="part">Part 2 &mdash; Register the app</div>
+
+  <h2><span class="step">2</span>Create the app</h2>
   <p><b>All apps → Create app.</b> Four fields and two checkboxes.</p>
-  ${SHOT(P + '01-create-app.png', 'The create form. The package name is permanent — you cannot change it later, and you cannot reuse it if you delete the app.')}
+  ${SHOT(P + 'a1-create-app.png', 'The create form. The package name is permanent — you cannot change it, and you cannot reuse it if you delete the app.')}
   <ul>
     <li><b>App name</b> — 30 characters, shown on Google Play. Changeable later.</li>
-    <li><b>Package name</b> — <b>permanent.</b> Use reverse-domain form
-    (<code>com.yourname.yourapp</code>) and make sure it matches what is in your
-    <code>build.gradle</code>. Press <b>Check availability</b> before you continue.</li>
-    <li><b>Default language</b> — the language your store listing falls back to.</li>
-    <li><b>App or game</b>, <b>Free or paid</b> — free cannot become paid after you publish.</li>
+    <li><b>Package name</b> — <b>permanent.</b> Reverse-domain form
+    (<code>com.yourname.yourapp</code>), and it must match your
+    <code>build.gradle</code>. Press <b>Check availability</b> before continuing.</li>
+    <li><b>Default language</b> — what your listing falls back to.</li>
+    <li><b>App or game</b>, <b>Free or paid</b> — free cannot become paid after
+    you publish.</li>
   </ul>
-  ${SHOT(P + '02-declarations.png', 'Both boxes are required. You are signing for the app, so read them rather than reflex-clicking.')}
+  ${SHOT(P + 'a2-declarations.png', 'Both boxes are required. You are signing for the app, so read them.')}
 
-  <h2><span class="step">2</span>Find the closed test</h2>
-  <p><b>Test and release</b> in the left menu. Three kinds of testing sit here,
+  <h2><span class="step">3</span>The eleven declarations</h2>
+  <p>This is the part that actually gates everything, and the part most guides
+  skip. <b>Dashboard → Finish setting up your app → View tasks.</b></p>
+  ${SHOT(P + 'a3-task-list.png', 'Nine content declarations and two store items. Do these before you touch the test track.')}
+  <p>Seven are one click if the answer is no — <b>sign-in details</b>,
+  <b>government apps</b>, <b>financial features</b>, <b>health</b>, plus
+  <b>app category</b> and contact details. Four deserve attention.</p>
+
+  <h3>Privacy policy</h3>
+  <p>Paste the URL from Part 1. It is checked for reachability, so the page has
+  to be live already.</p>
+  ${SHOT(P + 'a4-privacy-policy.png', 'One field, but the page behind it has to exist.')}
+
+  <h3>Ads</h3>
+  <p>If you bundled an ads SDK the answer is yes, even if ads are not switched
+  on yet. Saying no and shipping ads is a policy violation.</p>
+  ${SHOT(P + 'a5-ads.png', 'Answering yes puts a "Contains ads" label on your listing.')}
+
+  <h3>Content rating</h3>
+  <p>An IARC questionnaire. The trap is <b>Online Content</b>: "content that
+  isn't part of the initial app download, but can be accessed from the app."
+  Google's own examples include <b>generated AI content</b>. If your app calls a
+  model at runtime that is a yes, and answering it opens the violence,
+  sexuality, language and drugs questions.</p>
+  ${SHOT(P + 'a6-content-rating.png', 'Ratings come back per territory — ESRB, PEGI, ClassInd and the rest.')}
+
+  <h3>Data safety</h3>
+  <p>The long one. Every data type that <i>leaves the device</i> has to be
+  declared — including data your libraries send, which is what people get
+  wrong. Two easy misses:</p>
+  <ul>
+    <li>An ads SDK collects and <b>shares</b> a <b>device or other ID</b>. That
+    is a declaration whether or not you think of it as your data collection.</li>
+    <li>If your app sends user text to an AI API, that is <b>Messages →
+    Other in-app messages</b>, collected <i>and</i> shared. Free API tiers often
+    permit the provider to use that content to improve their models, which means
+    you cannot call it "processed ephemerally".</li>
+  </ul>
+  ${SHOT(P + 'a7-data-safety.png', 'The preview is exactly what users see on your listing. A wrong declaration is grounds for removal.')}
+
+  <h3>Store listing</h3>
+  <p>App name, short description (80 chars), full description (4000), and the
+  graphics from Part 1. A closed test still needs a complete listing.</p>
+  ${SHOT(P + 'a8-listing-text.png', 'Short description is the line users see before expanding.')}
+  ${SHOT(P + 'a9-listing-graphics.png', 'Icon, feature graphic, and at least two phone screenshots. All required.')}
+
+  <p>When the last one is done the whole setup section disappears from the
+  Dashboard and closed testing unlocks.</p>
+  ${SHOT(P + 'a10-setup-done.png', 'Setup gone, closed testing open. Now the track.')}
+
+  <div class="part">Part 3 &mdash; Set up the closed test</div>
+
+  <h2><span class="step">4</span>Find it</h2>
+  <p><b>Test and release</b> in the left menu. Three kinds of testing live here
   and beginners often pick the wrong one.</p>
-  ${SHOT(P + '03-test-and-release.png', 'Open, closed and internal testing, plus internal app sharing. Only closed testing counts toward production access.')}
+  ${SHOT(P + 'c1-test-and-release.png', 'Only closed testing counts toward production access.')}
   <ul>
     <li><b>Internal testing</b> — up to 100 testers, live in seconds, no review.
-    Good for checking your build works. <b>Does not count</b> toward the 14 days.</li>
-    <li><b>Closed testing</b> — this is the one Google requires.</li>
+    Good for checking a build. <b>Does not count</b> toward the 14 days.</li>
+    <li><b>Closed testing</b> — the one Google requires.</li>
     <li><b>Open testing</b> — anyone can join. Not needed for production access.</li>
   </ul>
 
-  <h2><span class="step">3</span>The track already exists</h2>
-  <p>This surprises people: you do not create a track. <b>Closed testing – Alpha</b>
-  is already there. <b>Manage track</b>, not <b>Create track</b>.</p>
-  ${SHOT(P + '04-closed-testing-tracks.png', 'Alpha comes with the app. "Create track" is for extra tracks — a second one for a different group, which you do not need yet.')}
-  <p>Inside, the track has a four-task checklist. Two set the track up, two ship
-  a build. They unlock in order — the last two are padlocked until the first two
-  are done.</p>
-  ${SHOT(P + '05-track-checklist.png', 'Select countries, select testers, create a release, send for review. Nothing is live until all four are green.')}
+  <h2><span class="step">5</span>The track already exists</h2>
+  <p>You do not create a track. <b>Closed testing – Alpha</b> is already there.
+  <b>Manage track</b>, not <b>Create track</b>.</p>
+  ${SHOT(P + 'c2-tracks.png', 'Alpha comes with the app. "Create track" is for a second group you do not need yet.')}
+  ${SHOT(P + 'c3-checklist.png', 'Four tasks. The last two stay padlocked until the first two are done.')}
 
-  <h2><span class="step">4</span>Countries</h2>
-  <p>An empty country list is the single most expensive mistake on this page,
-  because it fails <i>silently</i>. Testers who are outside your list see
-  <b>"not available in your country"</b> in the Play Store and usually just
-  disappear without telling you.</p>
-  ${SHOT(P + '06-countries-empty.png', 'The starting state: no countries. Your opt-in link works for nobody.')}
-  ${SHOT(P + '07-countries-picker.png', 'Add countries / regions. The checkbox in the header row selects every country at once.')}
-  <li class="hot">If you are recruiting testers from the internet, tick them all.
-  You do not know where the person who helps you lives, and there is no penalty
-  for being available in a country you never market in.</li>
-  ${SHOT(P + '08-countries-targeted-177.png', 'Targeted (177), and the first checklist item goes green: 1 of 4 complete.')}
-  <p>More on this, including how to tell whether your test track is locked to
-  your production country list:
+  <h2><span class="step">6</span>Countries</h2>
+  <p>An empty country list is the most expensive mistake on this page because it
+  fails <i>silently</i>. Testers outside your list see <b>"not available in your
+  country"</b> in the Play Store and usually vanish without telling you.</p>
+  ${SHOT(P + 'c4-countries-empty.png', 'The starting state: no countries. Your opt-in link works for nobody.')}
+  ${SHOT(P + 'c5-countries-picker.png', 'The checkbox in the header row selects every country at once.')}
+  <li class="hot">If you are recruiting testers from the internet, tick them
+  all. You do not know where the person who helps you lives, and there is no
+  penalty for being available somewhere you never market.</li>
+  ${SHOT(P + 'c6-countries-done.png', 'Targeted (177), and the first checklist item goes green.')}
+  <p>More, including how to tell whether your test track is locked to your
+  production country list:
   <a href="/guides/country-availability.html">Open your closed test to all countries</a>.</p>
 
-  <h2><span class="step">5</span>Testers</h2>
-  <p>Two ways to say who may join, and the choice matters more than it looks.</p>
-  ${SHOT(P + '09-testers-choice.png', 'Email lists or Google Groups. You pick one; they are radio buttons, not a combination.')}
+  <h2><span class="step">7</span>Testers</h2>
+  <p>Two ways to say who may join. They are radio buttons — you pick one.</p>
+  ${SHOT(P + 'c7-testers-choice.png', 'Email lists or Google Groups.')}
   <ul>
-    <li><b>Email lists</b> — you paste addresses into the console. Simple, and
-    fine while you know every tester. Every change means editing the list yourself.</li>
+    <li><b>Email lists</b> — you paste addresses into the console. Fine while
+    you know every tester; every change means editing the list yourself.</li>
     <li><b>Google Groups</b> — you give the console one group address and manage
-    members in the group. Better once people come and go, but the group has to be
-    open enough for strangers to join, and a private group is the single most
-    common reason a tester cannot get in.
-    See <a href="/guides/google-group.html">Setting up a Google Group for testers</a>.</li>
+    members in the group. Better once people come and go, but the group has to
+    be open enough for strangers to join. A private group is the single most
+    common reason a tester cannot get in — see
+    <a href="/guides/google-group.html">Setting up a Google Group for testers</a>.</li>
   </ul>
-  ${SHOT(P + '10-create-email-list.png', 'Create email list. Comma-separated, or a CSV upload for a long list.')}
+  ${SHOT(P + 'c8-email-list.png', 'Create email list. Comma-separated, or a CSV for a long list.')}
 
   <h3>The error Google will not explain</h3>
-  <p>Filling this in with placeholder addresses fails, and the console does not
-  say why.</p>
-  ${SHOT(P + '11-email-list-filled.png', 'Three addresses accepted into the list, Save changes enabled. Looks fine.')}
-  ${SHOT(P + '12-email-list-error.png', '“Your changes couldn’t be saved”, a red mark on every row, and no explanation anywhere on the page.')}
+  ${SHOT(P + 'c9-email-list-filled.png', 'Three addresses accepted into the list, Save enabled. Looks fine.')}
+  ${SHOT(P + 'c10-email-list-error.png', 'Save fails with one generic line and a red mark on every row. No explanation anywhere on the page.')}
   <p>The addresses were <code>@example.com</code>. <b>Tester addresses have to be
   real Google accounts</b> — the console validates them server-side and reports
-  only a generic failure. If a save fails here, check the addresses one at a time
-  rather than looking for a setting.</p>
-  ${SHOT(P + '13-testers-selected.png', 'A valid list ticked and saved. Below it sits the opt-in link testers will use.')}
+  only a generic failure. If a save fails here, check the addresses one at a
+  time rather than hunting for a setting.</p>
+  ${SHOT(P + 'c11-testers-done.png', 'A valid list ticked and saved. Below it sits the opt-in link testers will use.')}
 
-  <h2><span class="step">6</span>The release</h2>
-  <p>With countries and testers done, the last two tasks unlock.
-  <b>Create new release</b> opens the upload page.</p>
-  ${SHOT(P + '14-create-release-upload.png', 'Drop the .aab here. "Add from library" reuses a bundle you already uploaded to another track.')}
+  <h2><span class="step">8</span>Upload the build</h2>
+  <p>With countries and testers done the last two tasks unlock.
+  <b>Create new release</b>.</p>
+  ${SHOT(P + 'c12-upload.png', 'Drop the .aab here. "Add from library" reuses a bundle from another track.')}
   <ul>
-    <li><b>App bundle (.aab)</b>, not an APK. Play Console has not accepted APKs
-    for new apps for years.</li>
-    <li>It must be signed with your <b>upload key</b>, not the debug key. A debug
-    build is rejected on upload. If you have never made a keystore, that is the
-    step people miss — a plain <code>flutter build appbundle</code> in a fresh
-    project is still debug-signed.</li>
-    <li><b>Release name</b> is for you, not for testers. Release notes are shown
-    to testers, per language.</li>
+    <li><b>App bundle (.aab)</b>, not an APK. Play has not accepted APKs for new
+    apps for years.</li>
+    <li>Signed with your <b>upload key</b> from Part 1. A debug build is rejected
+    on upload.</li>
+    <li><b>Release name</b> is for you. Release notes are shown to testers, per
+    language.</li>
   </ul>
+  ${SHOT(P + 'c13-bundle-ok.png', 'Accepted: version, API levels, target SDK. A debug-signed bundle would have been refused here.')}
+  ${SHOT(P + 'c14-review-clean.png', 'Preview and confirm, with no errors — because Part 2 was done first.')}
 
-  ${SHOT(P + '15-bundle-uploaded.png', 'The bundle accepted: version, API levels, target SDK. If it were signed with the debug key it would have been rejected right here.')}
+  <div class="part">Part 4 &mdash; Submit</div>
 
-  <h2><span class="step">7</span>The four errors nobody warns you about</h2>
-  <p>Press <b>Next</b> and the console finally tells you the track was never the
-  thing standing in your way.</p>
-  ${SHOT(P + '17-four-errors.png', 'Four errors, found only after the bundle is uploaded. None of them are about the release.')}
-  <p>Every one of these lives somewhere else in the console:</p>
-  <ul>
-    <li><b>"Your app cannot be published yet. Complete the steps listed on the
-    Dashboard."</b> — the app-setup task list: store listing, content rating,
-    data safety, target audience, privacy policy.</li>
-    <li><b>"Add a full description to save"</b> — your store listing is empty.
-    A closed test still needs a listing.</li>
-    <li><b>"You must let us know whether your app includes any financial
-    features."</b> — a declaration, even if the answer is no.</li>
-    <li><b>"You must complete the health declaration"</b> — same.</li>
-  </ul>
-  <li class="hot">This is the order that wastes a day: people build the track,
-  sign the app, upload the bundle, and only then discover a pile of unrelated
-  forms. <b>Do the Dashboard task list first</b>, then come back here. The track
-  itself takes ten minutes; the forms do not.</li>
-
-  <p>The Dashboard says so, in a line most people scroll past: <b>"To start a
-  closed test, finish setting up your app."</b> The whole closed-testing section
-  is padlocked until the list above it is done.</p>
-  ${SHOT(P + '18-dashboard-locked.png', 'Closed testing, locked. The order is right there — it is just below the fold.')}
-
-  <h2><span class="step">8</span>The eleven forms</h2>
-  <p>This is the list that actually gates your test.</p>
-  ${SHOT(P + '19-setup-task-list.png', 'Nine content declarations and two store items. Most take a minute; three do not.')}
-  <ul>
-    <li><b>Privacy policy</b> — needs a URL that is already live. If you have no
-    site, a single static page on GitHub Pages is enough, and it has to describe
-    what your app actually does with data.</li>
-    <li><b>Content rating</b> — an IARC questionnaire. If your app shows anything
-    fetched or generated at runtime, answer <b>yes</b> to online content;
-    generated AI output is named in Google's own examples.</li>
-    <li><b>Data safety</b> — the long one. Every type of data that leaves the
-    device has to be declared, including data your libraries send. An ads SDK
-    means you are collecting and sharing a device identifier whether you think
-    of it that way or not.</li>
-    <li><b>Store listing</b> — full description, icon, a feature graphic
-    (1024x500) and at least two phone screenshots. A closed test still needs all
-    of it.</li>
-    <li>The rest — sign-in details, ads, target audience, government apps,
-    financial features, health, app category — are a click each if the answer is
-    no.</li>
-  </ul>
-  ${SHOT(P + '22-setup-done-testing-unlocked.png', 'When the last one is done the whole setup section disappears and closed testing unlocks.')}
-  ${SHOT(P + '23-no-errors-ready.png', 'The same review page as before, with the four errors gone.')}
-
-  <h2><span class="step">9</span>One more that is not on the list</h2>
-  <p>Finish all eleven, press send, and Google runs a set of quick checks
-  first. Ours came back with a twelfth requirement that appears nowhere on
-  the Dashboard.</p>
-  ${SHOT(P + '25-advertising-id-issue.png', 'Found only at submit time: "Incomplete advertising ID declaration".')}
-  <p>Anyone shipping an ads SDK will meet this one. If your manifest contains
-  <code>com.google.android.gms.permission.AD_ID</code> — and the Google Mobile Ads
-  SDK adds it for you, whether or not you wrote it yourself — you have to declare
-  that the app uses an advertising ID. The console is unusually direct about it:
+  <h2><span class="step">9</span>One more that is not on any list</h2>
+  <p>Press send and Google runs quick checks first. Ours came back with a
+  twelfth requirement that appears nowhere on the Dashboard.</p>
+  ${SHOT(P + 'd1-ad-id-issue.png', 'Found only at submit time: "Incomplete advertising ID declaration".')}
+  <p>Anyone shipping an ads SDK meets this. If your manifest contains
+  <code>com.google.android.gms.permission.AD_ID</code> — and the Google Mobile
+  Ads SDK merges it in whether or not you wrote it — you have to declare that
+  the app uses an advertising ID. The console is unusually direct:
   <i>"Your manifest file includes the AD_ID permission. Answer 'yes' or remove
   this permission from your manifest."</i></p>
-  <p>Answer it, and the checks run again from the start. Budget another
-  fifteen minutes.</p>
+  <p>Answer it and the checks restart from the beginning. Budget another fifteen
+  minutes.</p>
 
-  <h2><span class="step">10</span>Review, then the wait</h2>
-  <p>Send the release for review. First review of a new app is usually a few days,
-  not hours. Nothing about your test starts until it is approved — including the
+  <h2><span class="step">10</span>Send it</h2>
+  ${SHOT(P + 'd2-ready.png', '"Your changes can now be sent for review." The button finally works.')}
+  ${SHOT(P + 'd3-in-review.png', 'Changes in review. For a new app this is usually a few days, not hours.')}
+  <p>Nothing about your test starts until the review passes — including the
   14 days.</p>
-  <p>After approval, your testers join with the opt-in link from step 5
-  (<code>play.google.com/apps/testing/&lt;your.package&gt;</code>). Then:</p>
+
+  <h2><span class="step">11</span>Then the wait</h2>
+  <p>After approval, testers join with the opt-in link from step 7
+  (<code>play.google.com/apps/testing/&lt;your.package&gt;</code>).</p>
   <ul>
     <li>Each tester has to <b>open the opt-in link and accept</b>, then install
-    from Play. Installing an APK you send them does not count.</li>
+    from Play. Sending them an APK does not count.</li>
     <li>You need <b>12 of them, at the same time, for 14 consecutive days.</b>
     Someone who opts out on day 9 resets that person, not the clock.</li>
     <li>Google also looks for <b>real use</b> and <b>updates shipped during the
@@ -261,9 +339,22 @@ const DOC = {
     common rejection. See
     <a href="/guides/what-google-checks.html">What Google actually checks</a>.</li>
   </ul>
-  <p>When a tester cannot get in, they almost never say why.
+  <p>When a tester cannot get in they almost never say why.
   <a href="/guides/blocked-screens.html">The six screens that stop a tester</a>
   is the list to send them.</p>
+
+  <div class="part">If you do it in the wrong order</div>
+
+  <h2><span class="step">12</span>What that looks like</h2>
+  <p>We did it backwards the first time: built the track, signed the app,
+  uploaded the bundle — and only then pressed Next.</p>
+  ${SHOT(P + 'x1-four-errors.png', 'Four errors, none of them about the release, found after the bundle was already uploaded.')}
+  <p>All four live in Part 2 of this guide. The Dashboard says so, in a line
+  most people scroll past: <b>"To start a closed test, finish setting up your
+  app."</b></p>
+  ${SHOT(P + 'x2-locked.png', 'Closed testing, padlocked. The order was there all along, just below the fold.')}
+  <p>The track itself takes ten minutes. The declarations do not. Do them
+  first.</p>
 
   <div class="note" style="margin:26px 0">
     <b>ACT Party</b> is where developers test each other's apps to fill those 12.
