@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Closed test troubleshooting — group, opt-in, install</title>
+<meta name="description" content="A tester says your closed test does not work. Find the stage they are stuck at — joining the Google Group, opting in, or installing — then work through the causes in order. Every failure reproduced on a real app, with the screen the tester sees and the console setting that fixes it.">
+<link rel="canonical" href="https://actparty.app/guides/troubleshooting.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/troubleshooting.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/troubleshooting.html">
+<meta property="og:image" content="https://actparty.app/img/og-en.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/app.css?v=123">
+<style>
+  #doc h2 { position: relative }
+  #doc .anchor-copy {
+    margin-left: 10px; padding: 3px 9px; font-size: 11.5px;
+    border: 1px solid #d7dbe0; border-radius: 999px;
+    background: #fff; color: #5b6570; cursor: pointer;
+    vertical-align: middle; font-weight: 500;
+  }
+  #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; display: block; border-radius: 10px;
+    border: 1px solid #e3e6ea; background: #fff;
+  }
+  #doc figcaption {
+    font-size: 13px; color: #5b6672; margin-top: 8px; line-height: 1.6;
+  }
+  #doc h2 { margin-top: 40px }
+  #doc h3 { margin-top: 28px; font-size: 17px }
+  #doc .part {
+    margin: 56px 0 6px; padding-top: 22px; border-top: 2px solid #1f2933;
+    font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    color: #5b6672; font-weight: 700;
+  }
+  #doc .step {
+    display: inline-block; min-width: 27px; height: 27px; line-height: 27px;
+    text-align: center; border-radius: 999px; background: #1f2933; color: #fff;
+    font-size: 14px; font-weight: 700; margin-right: 10px;
+  }
+  #doc .find-wrap { overflow-x: auto; margin: 20px 0 8px }
+  #doc table.find {
+    width: 100%; border-collapse: collapse; font-size: 14px; min-width: 420px;
+  }
+  #doc table.find th, #doc table.find td {
+    text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--ink600);
+    vertical-align: top; line-height: 1.5;
+  }
+  #doc table.find th { font-size: 12px; color: var(--ink300); font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; background: var(--ink800) }
+  #doc table.find td:last-child { white-space: nowrap }
+  #doc table.find a { font-weight: 600 }
+  #doc .note { margin: 16px 0; line-height: 1.6; font-size: 14px }
+  #doc .note.ok { background: rgba(61,220,151,.10); border-color: rgba(61,220,151,.35) }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <a href="/check.html" data-t="nav_check">Link check</a>
+      <a href="/guides/" data-t="nav_guides">Guides</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=123';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=123';
+import { sectionAnchors } from '/assets/anchors.js?v=123';
+
+const SHOT = (src, cap) =>
+  '<figure><img src="' + src + '" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
+const P = '/img/guide/closed-test/';
+
+// 영문만 (사용자 결정, 2026-09-16). 사진은 closed-test-setup 을 만들 때
+// ChatHelper 로 실제로 재현하며 찍은 것을 그대로 쓴다.
+//
+// 구성은 '테스터가 밟는 순서'다: 그룹 → 옵트인 → 설치. 테스터가 무엇을
+// 봤는지로 단계를 먼저 찾고, 그 단계 안에서 원인을 흔한 순서대로 본다.
+// 캡션은 작은따옴표 JS 문자열이라 ' 를 쓰면 페이지가 통째로 빈다 — ’ 를 쓴다.
+const DOC = {
+  en: `
+  <h1 style="font-size:28px;margin:0 0 8px">Closed test troubleshooting</h1>
+  <p class="muted" style="margin:0 0 22px">A tester says it does not work. Find the stage, then the cause.</p>
+
+  <p>Every tester goes through the same three stages, in this order:
+  <b>join your Google Group</b>, <b>opt in</b>, <b>install from Play</b>.
+  Each one fails in its own way, and none of them tells the tester why. They
+  just see a page that will not open, and usually they tell you "the link is
+  broken".</p>
+
+  <p>So start with what they actually saw. Every screen below was reproduced on
+  a real app, from a real tester account, in September 2026.</p>
+
+  <div class="find-wrap">
+  <table class="find">
+    <thead><tr><th>What the tester sees</th><th>Stage</th></tr></thead>
+    <tbody>
+      <tr><td>"Content unavailable" on the group page</td>
+          <td><a href="#stage-1">1 · Group</a></td></tr>
+      <tr><td>"You don’t have permission to access this content", with a Join group button</td>
+          <td><a href="#stage-1-permission">1 · Group</a> (usually fine)</td></tr>
+      <tr><td>"App not available" on the opt-in page</td>
+          <td><a href="#stage-2">2 · Opt-in</a></td></tr>
+      <tr><td>"Item not found" on Play, right after opting in</td>
+          <td><a href="#stage-3">3 · Install</a></td></tr>
+      <tr><td>"You are a tester" — but Play has no Install button</td>
+          <td><a href="#stage-3-country">3 · Install</a></td></tr>
+      <tr><td>"This app is not available for any of your devices"</td>
+          <td><a href="#stage-3-country">3 · Install</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="part" id="stage-1">Stage 1 &mdash; Joining the Google Group</div>
+
+  <h2><span class="step">1</span>"Content unavailable"</h2>
+
+  ${SHOT(P + 't1-content-unavailable.png', 'What the tester sees. Content unavailable, and a suggestion to switch accounts — which is not the problem.')}
+
+  <p>The page does not say the group exists, that they are not a member, or
+  that they could ask to join. Testers read "try switching accounts", switch
+  accounts, get the same page, and give up.</p>
+
+  <h3>Cause: the group is private — because that is the default</h3>
+  <p>Nobody makes their group private on purpose. When you create a Google
+  Group, the two settings that matter are <b>already</b> set to the closed
+  values, and nothing on the page suggests changing them.</p>
+
+  ${SHOT(P + 'g1-privacy-defaults.png', 'The privacy step while creating a group. Who can search for group: Group members. Who can join group: Only invited users. These are Google’s defaults.')}
+
+  <h3>Fix</h3>
+  <p>Open the group, then <b>Group settings &rarr; General</b>. The two dropdowns
+  are well down the page.</p>
+
+  ${SHOT(P + 'g3-settings-before.png', 'Before. Who can see group: Group members. Who can join group: Invited users only.')}
+  ${SHOT(P + 'g4-see-group-dropdown.png', 'Who can see group — pick Anyone on the web.')}
+  ${SHOT(P + 'g5-join-group-dropdown.png', 'Who can join group — pick Anyone on the web can join. Can ask puts every tester in a queue you have to approve by hand.')}
+  ${SHOT(P + 'g6-settings-after.png', 'After. Both set.')}
+  ${SHOT(P + 'g7-settings-saved.png', 'Saved. Note the line: it might take some time for the changes to take effect.')}
+
+  <div class="note warn">If the link still fails a minute after saving, wait before
+  changing anything else. Group settings take a little while to apply.</div>
+
+  <h2 id="stage-1-permission"><span class="step">1b</span>"You don’t have permission to access this content"</h2>
+
+  <p>After the fix above, this is what the tester sees. It looks like a failure.
+  It is not.</p>
+
+  ${SHOT(P + 't2-join-but-no-permission.png', 'The Join group button is what matters. The permission message is about reading the group’s messages, not about joining.')}
+
+  <p><i>Who can view conversations</i> is a separate setting, still set to
+  members only. That is fine for a test group. Tell testers in advance to
+  ignore the message and press <b>Join group</b>.</p>
+
+  ${SHOT(P + 't3-join-dialog.png', 'Joining. Subscription defaults to Each email — testers can set it to No email.')}
+  ${SHOT(P + 't4-joined.png', 'Joined. With Anyone on the web can join there is nothing for you to approve.')}
+
+  <div class="note ok"><b>Stage 1 done</b> when the tester lands on the group page
+  and the member count went up. Next: the opt-in link.</div>
+
+  <div class="part" id="stage-2">Stage 2 &mdash; Opting in</div>
+
+  <h2><span class="step">2</span>"App not available"</h2>
+
+  ${SHOT(P + 't5-optin-app-not-available.png', 'The opt-in page refusing a tester who is signed in and is a member of the group.')}
+
+  <p>This one costs days, because the tester usually did everything right. Work
+  through these in order — the first two account for almost all of it.</p>
+
+  <h3>1. The track is on an email list, not the group</h3>
+  <p>In Play Console, the track’s <b>Testers</b> tab has two options and only one
+  can be active. If you started with an email list and set up the group later,
+  the radio button is probably still on the list — and group membership does
+  nothing at all.</p>
+
+  ${SHOT(P + 'p2-testers-emaillist.png', 'The cause. Testers is set to Email lists, so the Google Group is ignored.')}
+  ${SHOT(P + 'p4-testers-google-group.png', 'Switch to Google Groups and type the full address, ending in @googlegroups.com.')}
+  ${SHOT(P + 'p5-testers-save-enabled.png', 'The address must turn into a chip before Save lights up. If Save stays grey, press Tab.')}
+
+  <h3>2. The email list is not ticked</h3>
+  <p>If you do use email lists, each list only counts while its row is checked.
+  The list can hold the right people and show the right count and still do
+  nothing.</p>
+
+  ${SHOT(P + 'e1-list-unchecked.png', 'Two testers in the list, and the list is off. Save is still clickable in this state.')}
+
+  <h3>3. A typo in an email address</h3>
+  <p>Play never checks that an address exists. One wrong character silently
+  drops that tester, and the only symptom is "App not available".</p>
+
+  ${SHOT(P + 'e2-email-typo.png', 'gmial.com, accepted without a warning.')}
+
+  <p>Read the list back against what the tester sent you. This is also the best
+  argument for a Google Group: testers type their own address.</p>
+
+  <h3>4. You saved it, but did not send it for review</h3>
+  <p>This is the most common reason a correct fix appears to do nothing.
+  Saving a tester or country change does not apply it — it waits in
+  <b>Publishing overview</b> until you submit it.</p>
+
+  ${SHOT(P + 'p6-go-to-publishing-overview.png', 'After Save. Your change has been saved. To send it to Google for review, go to Publishing overview.')}
+  ${SHOT(P + 'p7-publishing-overview-pending.png', 'Changes not yet submitted for review. Nothing here is live.')}
+  ${SHOT(P + 'p10-quick-checks.png', 'Quick checks run first — up to about 14 minutes.')}
+  ${SHOT(P + 'p8-send-for-review-dialog.png', 'Send changes for review.')}
+  ${SHOT(P + 'p9-changes-in-review.png', 'Changes in review. A tester change took about half an hour to go live for us.')}
+
+  <h3>5. It is the wrong link</h3>
+  <p>The opt-in link is not your store link. Find it at the bottom of the
+  track’s Testers tab.</p>
+
+  ${SHOT(P + 'p3-optin-links.png', 'Send testers Join on the web: play.google.com/apps/testing/your.package. A tester who has not opted in cannot find your app by searching Play.')}
+
+  <h3>6. The tester is signed in with a different account</h3>
+  <p>The Google account that joined the group has to be the one signed in to
+  Play. On a phone with two accounts this is the usual culprit — and the page
+  looks exactly the same.</p>
+
+  <h3>What it looks like when it works</h3>
+
+  ${SHOT(P + 't6-optin-working.png', 'The opt-in page as it should be: your developer name, your app, and Become a tester.')}
+  ${SHOT(P + 't7-you-are-a-tester.png', 'After opting in: You are a tester, and a link to download it on Google Play.')}
+
+  <div class="note ok"><b>Stage 2 done</b> when the tester sees "You are a tester".
+  But that alone does not mean they can install — see stage 3.</div>
+
+  <div class="part" id="stage-3">Stage 3 &mdash; Installing from Play</div>
+
+  <h2><span class="step">3</span>"Item not found", right after opting in</h2>
+
+  <p>Usually nothing is wrong. After a tester opts in, the store can take
+  <b>about 30 minutes</b> to show them the app. Tell them to wait.</p>
+
+  <p>If it is still "Item not found" after 30 minutes, it is one of two things:</p>
+  <ul>
+    <li>Play on the phone is signed in to a different account than the one that
+    opted in — <a href="#stage-2">stage 2, cause 6</a>.</li>
+    <li>Their country is not in the track — next section.</li>
+  </ul>
+
+  <h2 id="stage-3-country"><span class="step">3b</span>"You are a tester" — but no Install button</h2>
+
+  <p>This is the cruel one. The opt-in page keeps saying <b>You are a
+  tester</b> in green:</p>
+
+  ${SHOT(P + 't10-optin-ok-but-blocked.png', 'Opted in. This tester still cannot install.')}
+
+  <p>They click through to Play and get this:</p>
+
+  ${SHOT(P + 't9-store-country-blocked.png', 'No Install button, and "This app is not available for any of your devices". It blames their phone. The word country never appears.')}
+
+  <p>So the tester reports that their phone is not supported. The real answer
+  is in your console.</p>
+
+  <h3>Cause: the track does not include their country</h3>
+  <p>A closed test only reaches the countries its track targets. This is how it
+  happens — a short list chosen early, or a few boxes unticked:</p>
+
+  ${SHOT(P + 'k4-japan-only.png', 'The mistake, made on purpose to photograph it. One country ticked, and nothing on the screen warns you.')}
+
+  <h3>Check</h3>
+  <p>The count is in the track header, one line under the title.</p>
+
+  ${SHOT(P + 'p1-closed-track-overview.png', 'Track summary. If the number of countries is small, this is your problem.')}
+
+  <p>For the detail, open <b>Countries / regions</b> and use the filter.</p>
+
+  ${SHOT(P + 'k5-not-targeted-176.png', 'The diagnostic. This track targets 1 country and excludes 176. Not targeted must read 0.')}
+  ${SHOT(P + 'k2-not-targeted-filter.png', 'A healthy track. Targeted 177, Not targeted 0.')}
+
+  <h3>Fix</h3>
+  <p><b>Edit countries / regions</b>, then tick the checkbox in the header row.
+  It selects every country at once.</p>
+
+  ${SHOT(P + 'k6-reselect-all.png', 'The header checkbox fixing a restricted track. Rows still say Not targeted until you save and submit.')}
+
+  <p>Then submit it from Publishing overview, exactly like
+  <a href="#stage-2">cause 4 in stage 2</a>.</p>
+
+  ${SHOT(P + 'k1-countries-all.png', 'Done. 177 targeted, 0 not targeted.')}
+
+  <div class="note warn"><b>The tester stays blocked for a while after you fix
+  it.</b> We watched the console go back to 177 countries while the same
+  tester’s store page still said "not available". Play caches availability per
+  account. Tell them to check again later instead of changing anything
+  else.</div>
+
+  <p>Country targeting is also <b>per track</b>: adding a country to production
+  does not add it to your closed test. More in
+  <a href="/guides/country-availability.html">Open your test to all countries</a>.</p>
+
+  <h3>What it looks like when it works</h3>
+
+  ${SHOT(P + 't8-store-installable.png', 'An opted-in tester in a targeted country. A normal store page with an Install button — there is no badge saying this is a test build.')}
+
+  <div class="note ok"><b>All three stages done</b> when the tester has installed
+  the app from Play. From here the 14 days are about daily use, not access.</div>
+
+  <div class="part">Still stuck</div>
+
+  <ul>
+    <li>For every screen a tester can hit, including the production rejection,
+    see <a href="/guides/blocked-screens.html">The six screens that stop a closed test</a>.</li>
+    <li>If you have not set up the track yet, start with
+    <a href="/guides/closed-test-setup.html">Set up a closed test, from an empty account</a>.</li>
+  </ul>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> is where developers test each other’s apps to reach the 12
+    testers. When a tester cannot get in, they can report it from the trade card,
+    so you hear about it the same day instead of after they have quietly left.
+    <a href="/">Free at actparty.app</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">Screens are from Play Console and
+  Google Groups in September 2026. Google rewords buttons often, so a label may
+  sit somewhere slightly different by the time you read this.</p>`,
+};
+
+document.getElementById('langSlot').innerHTML = langPicker();
+document.getElementById('doc').innerHTML = DOC.en;
+sectionAnchors('en');
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>
