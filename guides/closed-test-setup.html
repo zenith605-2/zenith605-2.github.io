@@ -496,12 +496,17 @@ const DOC = {
   ${SHOT(P + 'k6-reselect-all.png', 'The same checkbox repairing a restricted track. Every row still reads Not targeted until you save and submit.')}
   ${SHOT(P + 'k1-countries-all.png', 'Done. 177 targeted, 0 not targeted.')}
 
-  <p>Two things that catch people out:</p>
+  <p>Three things that catch people out:</p>
   <ul>
     <li>Country targeting is <b>per track</b>. Adding a country to production
     does not add it to your closed test, and the reverse is also true.</li>
     <li>Like the tester change above, it is saved but not applied until you
     submit it from Publishing overview.</li>
+    <li><b>The tester stays blocked after you fix it.</b> We watched the track
+    go back to 177 countries in the console while the same tester's store page
+    still said the app was not available for their devices. Play caches
+    availability per account. Tell them to check again later instead of
+    changing anything else.</li>
   </ul>
   <p>The screen the tester actually gets is in
   <a href="/guides/blocked-screens.html">The six screens that stop a tester</a>.</p>
