@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A Google Group for your testers — create it, connect it, publish</title>
-<meta name="description" content="Make a Google Group, set who can join, connect it to your closed test, and publish a build. Miss one of these and testers only see App not available.">
+<title>Content unavailable: fix the Google Group for your closed test</title>
+<meta name="description" content="A tester opens your group link and sees Content unavailable. The group is private, which is Google’s default. The two settings to change, checking it from a second account, and connecting the group to Play Console.">
 <link rel="canonical" href="https://actparty.app/guides/google-group.html">
 <link rel="alternate" hreflang="en" href="https://actparty.app/guides/google-group.html">
 <link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/google-group.html">
@@ -17,30 +17,50 @@
 <link rel="stylesheet" href="/assets/app.css?v=123">
 <style>
   /* 구간마다 주소를 달아 두면 "당신은 2번"이라고 정확히 보낼 수 있다 */
-  #doc h2 { position: relative }
+  #doc h2 { position: relative; margin-top: 40px }
+  #doc h3 { margin-top: 28px; font-size: 17px }
   #doc .anchor-copy {
     margin-left: 10px; padding: 3px 9px; font-size: 11.5px;
-    border: 1px solid #d7dbe0; border-radius: 999px;
-    background: #fff; color: #5b6570; cursor: pointer;
+    border: 1px solid var(--ink600); border-radius: 999px;
+    background: var(--ink800); color: var(--ink300); cursor: pointer;
     vertical-align: middle; font-weight: 500;
   }
-  #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
-  /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
+  #doc .anchor-copy:hover { background: var(--ink700); color: var(--ink100) }
   #doc figure { margin: 18px 0 22px }
   #doc figure img {
-    max-width: 100%; border: 1px solid #e3e6ea;
-    border-radius: 10px; display: block;
+    max-width: 100%; display: block; border-radius: 10px;
+    border: 1px solid var(--ink600); background: #fff;
   }
-  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
+  #doc figcaption { font-size: 13px; color: var(--ink300); margin-top: 8px; line-height: 1.6 }
   #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
-  /* 여기서 다들 멈춘다 — 그룹까지 다 해 놓고 버전을 안 올려서
-     테스터에게 "App not available" 이 뜬다. 눈에 걸리게 둔다. */
   #doc ol li.hot {
-    background: #fff1f2; border-left: 3px solid #e11d48;
+    background: rgba(255,110,120,.10); border-left: 3px solid var(--rose);
     border-radius: 6px; padding: 9px 12px; margin: 10px 0;
-    color: #9f1239; list-style-position: outside;
+    color: var(--ink100); list-style-position: outside;
   }
-  #doc ol li.hot b { color: #be123c }
+  #doc ol li.hot b { color: var(--rose) }
+  #doc table { border-collapse: collapse; margin: 16px 0; font-size: 14px }
+  #doc th, #doc td { border: 1px solid var(--ink600); padding: 7px 12px; text-align: left }
+  #doc th { background: var(--ink800); color: var(--ink300); font-weight: 700 }
+  #doc td.n { text-align: right; font-variant-numeric: tabular-nums }
+  #doc .part {
+    margin: 52px 0 6px; padding-top: 22px; border-top: 2px solid var(--ink600);
+    font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink300); font-weight: 700;
+  }
+  #doc .stage { color: var(--ink300); margin: 0 0 22px }
+  #doc pre.box {
+    background: var(--ink800); border: 1px solid var(--ink600); border-radius: 8px;
+    padding: 13px 15px; font-size: 13.5px; line-height: 1.7; white-space: pre-wrap;
+    color: var(--ink100);
+  }
+  #doc .note { margin: 16px 0; line-height: 1.6; font-size: 14px }
+  #doc .note.ok { background: rgba(61,220,151,.10); border-color: rgba(61,220,151,.35) }
+  #doc .find-wrap { overflow-x: auto; margin: 20px 0 8px }
+  #doc table.find { width: 100%; min-width: 420px; margin: 0 }
+  #doc table.find td:last-child { white-space: nowrap }
+  #doc table.find a { font-weight: 600 }
+  #doc .next { display: block; margin: 30px 0 10px; font-weight: 700 }
 </style>
 </head>
 <body>
@@ -80,6 +100,10 @@ const SHOT = (src, cap) =>
 const NOT_AVAILABLE =
   '<p class="note">App not available — A testing version of this app hasn\'t ' +
   'been published yet or isn\'t available for this account.</p>';
+
+// Stage 1 of the troubleshooting set (2026-09-16). The English version carries
+// the r/TesterBoard post word for word; see troubleshooting.html.
+const IMG = (file, cap) => SHOT('/img/guide/closed-test/' + file, cap);
 
 const DOC = {
   ko: `
@@ -193,118 +217,108 @@ const DOC = {
   문구를 종종 바꾸므로 위치가 조금 다를 수 있습니다.</p>`,
 
   en: `
-  <h1 style="font-size:28px;margin:0 0 8px">A Google Group for your testers</h1>
-  <p class="muted" style="margin:0 0 24px">Create it, connect it, then publish a build</p>
+  <h1 style="font-size:28px;margin:0 0 6px">Tester sees "Content unavailable"? Fix your Google Group</h1>
+  <p class="stage">Stage 1 of 3 in <a href="/guides/troubleshooting.html">closed test troubleshooting</a>:
+  <b>group</b> &rarr; opt-in &rarr; install.</p>
 
-  <p>There are two ways to let people into a closed test: an <b>email list</b> or a
-  <b>Google Group</b>. One difference separates them, and it is a big one.</p>
+  <h2 id="content-unavailable">"Content unavailable"</h2>
 
+  <p>If this is what your tester sees, your Google Group is private.</p>
+
+  ${IMG('r1-tester-sees.png', 'What your tester sees')}
+
+  <p>Open your group, then <b>Group settings &rarr; General</b>. The two
+  dropdowns you need are just below <i>Shared labels</i>, one scroll down.</p>
+
+  <h3>1. Who can see group</h3>
+  ${IMG('r2-who-can-see.png', 'Who can see group')}
+  <p>Set it to <b>Anyone on the web</b>.</p>
+
+  <h3>2. Who can join group</h3>
+  ${IMG('r3-who-can-join.png', 'Who can join group')}
+  <p>Set it to <b>Anyone on the web can join</b>. Not "can ask": that one makes
+  every tester wait for you to approve them by hand, and nobody can opt in until
+  you do.</p>
+
+  <h3>3. Save</h3>
+  ${IMG('r4-both-set.png', 'Both set correctly')}
+  <p>Google warns the change can take a while to take effect. If it still fails
+  right away, wait before touching anything else.</p>
+
+  <h3 id="stage-1-permission">4. Warn your testers about this screen</h3>
+  ${IMG('r5-this-is-normal.png', 'After the fix. This is normal')}
+  <p>That message is about reading old group posts, which is a separate setting.
+  It has nothing to do with joining. The <b>Join group</b> button works. If you do
+  not tell testers first, they see the message and leave.</p>
+
+  <h3>5. Join once from a second account</h3>
+  ${IMG('r6-member-count.png', 'Joined from a second account')}
+  <p>Your own account makes a broken group look fine, so test it from another
+  browser profile. The member count should go up with nothing for you to
+  approve.</p>
+
+  <h3>Why this happens</h3>
+  <p>Nobody misconfigured anything. A new group starts like this:</p>
+  ${IMG('r7-defaults.png', 'Google’s defaults for a new group')}
+  <p>And Play puts the group step first: <i>"For closed tests using a Google
+  Group, users must join the group before opting into your test."</i> A default
+  group is a wall in front of your test, and the error your tester gets never
+  mentions the group at all.</p>
+
+
+  <h2 id="still-unavailable">Still "Content unavailable"?</h2>
+  <p>The URL and a second account usually tell you which of three it is.</p>
   <ul>
-    <li><b>Email list</b> — testers send you their address and you add each one in the console, by hand, every time.</li>
-    <li><b>Google Group</b> — you hand out one address and testers join themselves. You do nothing.</li>
+    <li>The URL contains <code>/a/yourdomain/g/</code> — that is a Workspace
+    group. Accounts outside the domain cannot join it at all. Remake it on a
+    personal Google account.</li>
+    <li>Open the same link on a different Google account. The browser opens with
+    whichever account signed in first; if it works on the other one, it was the
+    account. That is what the "switch accounts" line on the error page means.</li>
+    <li>Same on every account? Then the two settings above are still on their
+    defaults, or the change has not taken effect yet.</li>
   </ul>
+  <p>The owner sees their own group just fine, so they have no idea anything is
+  wrong. If it is someone else’s group, sending them this gets it fixed fastest:</p>
+  <pre class="box">Your group link shows "Content unavailable" for me. In Group settings → General, could you set Who can see group to Anyone on the web and Who can join group to Anyone on the web can join? It looks normal from your own account.</pre>
 
-  <p>You need twelve of them, so the group is far less work. Three things trip
-  people up; here they are in order.</p>
-
-  <h2>1. Create the group</h2>
-
-  <p>At <a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a>,
-  click Create group. The name is free-form; the email prefix becomes the address
-  you hand out.</p>
-
+  <h2 id="new-group">Making a new group</h2>
+  <p>At <a href="https://groups.google.com/" target="_blank" rel="noopener">groups.google.com</a>,
+  press <b>Create group</b>. The name is free-form; the email prefix becomes the
+  address you hand out.</p>
   ${SHOT('/img/guide-group-1-en.png', 'The email prefix becomes the group address — myapp-testers@googlegroups.com')}
+  <p>The next screen is the privacy step, with the defaults shown above. Change
+  both before you finish. On this screen they are labelled <i>Who can search for
+  group</i> and <i>Who can join group</i>.</p>
 
-  <h2>2. This is where most people get it wrong</h2>
-
-  <p>The next screen is the one that matters. Leave the defaults and
-  <b>nobody can get in.</b></p>
-
-  ${SHOT('/img/guide-group-2-en.png', 'Change these two. They default to "Group members" and "Invited users only"')}
-
-  <ul>
-    <li><b>Who can search for the group</b> → Anyone on the web</li>
-    <li><b>Who can join the group</b> → Anyone can join</li>
-  </ul>
-
-  <p>On the defaults a tester who clicks your link only sees
-  <b>"Content unavailable"</b>. They cannot tell what they did wrong, and you
-  cannot tell why nobody is joining. For a group you already made, the same two
-  settings sit under group settings.</p>
-
-  <p class="muted">A Workspace group (groups.google.com/<b>a/yourdomain</b>/g/...)
-  usually refuses accounts outside the domain. If your testers come from outside,
-  make the group on a personal Google account.</p>
-
-  <h2>3. Connect it in the console</h2>
-
-  <p><a href="https://play.google.com/console" target="_blank" rel="noopener">Play Console</a> → Test and release → Testing → <b>Closed testing</b> → Manage
-  track → <b>Testers</b> tab.</p>
-
-  ${SHOT('/img/guide-console-testers-en.png', 'Pick Google Groups and paste the group email address')}
-
-  <p>Then press <b>Save</b> at the bottom right. Nothing happens until you do.</p>
-
-  <h2>4. Saving is not enough</h2>
-
-  <p>Here is the second trap. Even with the group connected, the opt-in link stays
-  shut until <b>a build is published on that track</b>. Testers see this:</p>
-
-  ${NOT_AVAILABLE}
-
-  <p>They get that screen even after joining the group, which is why the order
-  matters.</p>
-
+  <h2 id="connect">Connect the group in Play Console</h2>
+  <p><b>Test and release &rarr; Testing &rarr; Closed testing</b>, open the track,
+  then the <b>Testers</b> tab. Pick <b>Google Groups</b> and type the full address,
+  ending in @googlegroups.com.</p>
+  ${IMG('p4-testers-google-group.png', 'Google Groups, and the full group address. It has to turn into a chip before Save lights up; press Tab if it does not.')}
+  <p>Two things stop testers even when this is right:</p>
   <ol>
-    <li>Create the group and fix the two access settings</li>
-    <li>Connect it on the Testers tab and press Save</li>
-    <li class="hot"><b>Upload a build to the closed track and get it through review</b></li>
-    <li>Only then invite testers</li>
+    <li class="hot"><b>Save is not enough.</b> The change waits in Publishing
+    overview until you send it for review.</li>
+    <li class="hot"><b>No build, no opt-in.</b> The opt-in link stays shut until a
+    build on that track has been through review.</li>
   </ol>
+  <p>So the order is: create the group and change the two settings, connect it
+  and send the change for review, get a build on the track through review, and
+  only then invite testers. Both are covered in detail in stage 2.</p>
+  ${IMG('p3-optin-links.png', 'The opt-in link, at the bottom of the same tab. Send testers the web one.')}
 
-  <h2>5. Grab both links</h2>
-
-  ${SHOT('/img/guide-console-link-en.png', 'Lower on the same tab — separate links for Android and web')}
-
-  <p>That is the opt-in link, usually
-  <code>play.google.com/apps/testing/your.package</code>. When you register your
-  app on ACT Party, fill in <b>both</b> the group address and the opt-in link, and
-  whoever requests a trade is walked through them in order.</p>
-
-  <h2>When a tester sees "Content not available"</h2>
-
-  <p>They tapped the group link and got nothing else. Three causes, and the
-  URL alone usually tells you which one.</p>
-
-  <ol>
-    <li><b>The URL contains <code>/a/yourdomain/g/</code></b> — that is a
-      Workspace group. Outside Google accounts cannot join it at all. The owner
-      has to remake it on a personal account.</li>
-    <li><b>If not, open the same link on a different Google account</b> — the
-      browser opens with whichever account signed in first. If it works there,
-      it was the account. That is what the "switch accounts" line on the error
-      page means.</li>
-    <li class="hot"><b>Same on every account? Then it is the owner's group
-      settings</b> — the two options from step 2 are still on their defaults.</li>
-  </ol>
-
-  <p>Number three is most of them. The owner sees their own group just fine, so
-  they have no idea anything is wrong. Sending them this gets it fixed fastest.</p>
-
-  <p class="note">Your group link shows "Content not available" for me. In the
-  group settings, could you set <b>Who can search for group → Anyone on the
-  web</b> and <b>Who can join group → Anyone can ask</b>? It looks normal from
-  your own account.</p>
+  <a class="next" href="/guides/app-not-available.html">Next &rarr; Stage 2: the opt-in link says "App not available"</a>
 
   <div class="note" style="margin:26px 0">
-    <b>ACT Party</b> keeps both addresses per app and counts how far each tester
-    got — joined, opted in, installed.
-    <a href="/">Use it free at actparty.app</a>
+    <b>ACT Party</b> keeps the group address and opt-in link for each app, and
+    walks whoever trades with you through them in order.
+    <a href="/">Free at actparty.app</a>
   </div>
 
-  <p class="muted" style="font-size:13px">Screens are from September 2026 and in
-  Korean; Google moves this wording around, so yours may sit slightly
-  differently.</p>`,
+  <p class="muted" style="font-size:13px">Screens are from Google Groups and Play
+  Console in September 2026. Google rewords these often, so a label may sit
+  somewhere slightly different by the time you read this.</p>`,
 
   ja: `
   <h1 style="font-size:28px;margin:0 0 8px">テスター用のGoogleグループ</h1>

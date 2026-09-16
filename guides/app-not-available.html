@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App not available on the closed test opt-in page — the causes, in order</title>
+<meta name="description" content="Your tester joined the group, opened the opt-in link and got App not available. Check these in order: no build through review, the track still on an email list, an unticked list, a typo, a change saved but not sent, the wrong link, the wrong account.">
+<link rel="canonical" href="https://actparty.app/guides/app-not-available.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/app-not-available.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/app-not-available.html">
+<meta property="og:image" content="https://actparty.app/img/og-en.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/app.css?v=123">
+<style>
+  /* 구간마다 주소를 달아 두면 "당신은 2번"이라고 정확히 보낼 수 있다 */
+  #doc h2 { position: relative; margin-top: 40px }
+  #doc h3 { margin-top: 28px; font-size: 17px }
+  #doc .anchor-copy {
+    margin-left: 10px; padding: 3px 9px; font-size: 11.5px;
+    border: 1px solid var(--ink600); border-radius: 999px;
+    background: var(--ink800); color: var(--ink300); cursor: pointer;
+    vertical-align: middle; font-weight: 500;
+  }
+  #doc .anchor-copy:hover { background: var(--ink700); color: var(--ink100) }
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; display: block; border-radius: 10px;
+    border: 1px solid var(--ink600); background: #fff;
+  }
+  #doc figcaption { font-size: 13px; color: var(--ink300); margin-top: 8px; line-height: 1.6 }
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+  #doc ol li.hot {
+    background: rgba(255,110,120,.10); border-left: 3px solid var(--rose);
+    border-radius: 6px; padding: 9px 12px; margin: 10px 0;
+    color: var(--ink100); list-style-position: outside;
+  }
+  #doc ol li.hot b { color: var(--rose) }
+  #doc table { border-collapse: collapse; margin: 16px 0; font-size: 14px }
+  #doc th, #doc td { border: 1px solid var(--ink600); padding: 7px 12px; text-align: left }
+  #doc th { background: var(--ink800); color: var(--ink300); font-weight: 700 }
+  #doc td.n { text-align: right; font-variant-numeric: tabular-nums }
+  #doc .part {
+    margin: 52px 0 6px; padding-top: 22px; border-top: 2px solid var(--ink600);
+    font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink300); font-weight: 700;
+  }
+  #doc .stage { color: var(--ink300); margin: 0 0 22px }
+  #doc pre.box {
+    background: var(--ink800); border: 1px solid var(--ink600); border-radius: 8px;
+    padding: 13px 15px; font-size: 13.5px; line-height: 1.7; white-space: pre-wrap;
+    color: var(--ink100);
+  }
+  #doc .note { margin: 16px 0; line-height: 1.6; font-size: 14px }
+  #doc .note.ok { background: rgba(61,220,151,.10); border-color: rgba(61,220,151,.35) }
+  #doc .find-wrap { overflow-x: auto; margin: 20px 0 8px }
+  #doc table.find { width: 100%; min-width: 420px; margin: 0 }
+  #doc table.find td:last-child { white-space: nowrap }
+  #doc table.find a { font-weight: 600 }
+  #doc .next { display: block; margin: 30px 0 10px; font-weight: 700 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <a href="/check.html" data-t="nav_check">Link check</a>
+      <a href="/guides/" data-t="nav_guides">Guides</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=123';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=123';
+import { sectionAnchors } from '/assets/anchors.js?v=123';
+
+const SHOT = (src, cap) =>
+  '<figure><img src="' + src + '" alt="" loading="lazy">' +
+  '<figcaption>' + cap + '</figcaption></figure>';
+
+const P = '/img/guide/closed-test/';
+const IMG = (file, cap) => SHOT(P + file, cap);
+
+// Stage 2 of the troubleshooting set (2026-09-16). English only for now.
+const DOC = {
+  en: `
+  <h1 style="font-size:28px;margin:0 0 6px">Opt-in link says "App not available"? The causes, in order</h1>
+  <p class="stage">Stage 2 of 3 in <a href="/guides/troubleshooting.html">closed test troubleshooting</a>:
+  group &rarr; <b>opt-in</b> &rarr; install.</p>
+
+  ${IMG('t5-optin-app-not-available.png', 'The opt-in page refusing a tester who is signed in and is a member of the group.')}
+
+  <p>This one costs days, because the tester usually did everything right. The
+  page gives the same message whatever the cause, so work through these in
+  order. If the tester cannot even open your group, go back to
+  <a href="/guides/google-group.html">stage 1</a> first.</p>
+
+  <h2 id="no-build">1. No build has been through review on this track</h2>
+  <p>The opt-in link stays shut until a release on that track is live. A
+  connected group and a correct link are not enough on their own.</p>
+  ${IMG('p1-closed-track-overview.png', 'Track summary: Active, with a latest release. No release, no opt-in.')}
+
+  <h2 id="email-list">2. The track is on an email list, not the group</h2>
+  <p>The track’s <b>Testers</b> tab has two options and only one can be active. If
+  you started with an email list and set up the group later, the radio button is
+  probably still on the list — and group membership does nothing at all.</p>
+  ${IMG('p2-testers-emaillist.png', 'The cause. Testers is set to Email lists, so the Google Group is ignored.')}
+  ${IMG('p4-testers-google-group.png', 'Switch to Google Groups and type the full address, ending in @googlegroups.com.')}
+  ${IMG('p5-testers-save-enabled.png', 'The address must turn into a chip before Save lights up. If Save stays grey, press Tab.')}
+
+  <h2 id="unticked">3. The email list is not ticked</h2>
+  <p>If you do use email lists, each list only counts while its row is checked.
+  The list can hold the right people and show the right count and still do
+  nothing.</p>
+  ${IMG('e1-list-unchecked.png', 'Two testers in the list, and the list is off.')}
+
+  <h2 id="typo">4. A typo in an email address</h2>
+  <p>Nothing warns you while you type. When Play does reject an address, it is
+  only on Save, with one generic error that does not say which row. And a typo
+  that happens to be someone else’s real account passes every check, so the only
+  symptom is your tester seeing "App not available".</p>
+  ${IMG('e2-email-typo.png', 'gmial.com, typed in with no warning.')}
+  <p>Read the list back against what the tester sent you. This is also the best
+  argument for a Google Group: testers type their own address.</p>
+
+  <h2 id="not-sent">5. You saved it, but did not send it for review</h2>
+  <p>This is the most common reason a correct fix appears to do nothing. Saving a
+  tester or country change does not apply it — it waits in <b>Publishing
+  overview</b> until you submit it.</p>
+  ${IMG('p6-go-to-publishing-overview.png', 'After Save. Your change has been saved. To send it to Google for review, go to Publishing overview.')}
+  ${IMG('p7-publishing-overview-pending.png', 'Changes not yet submitted for review. Nothing here is live.')}
+  ${IMG('p10-quick-checks.png', 'Quick checks run first — up to about 14 minutes.')}
+  ${IMG('p8-send-for-review-dialog.png', 'Send changes for review.')}
+  ${IMG('p9-changes-in-review.png', 'Changes in review. Our tester change went live in under half an hour.')}
+
+  <h2 id="wrong-link">6. It is the wrong link</h2>
+  <p>The opt-in link is not your store link. Find it at the bottom of the track’s
+  Testers tab.</p>
+  ${IMG('p3-optin-links.png', 'Send testers Join on the web: play.google.com/apps/testing/your.package. A tester who has not opted in cannot find your app by searching Play.')}
+
+  <h2 id="wrong-account">7. The tester is signed in with a different account</h2>
+  <p>The Google account that joined the group has to be the one signed in to
+  Play. On a phone with two accounts this is the usual culprit — and the page
+  looks exactly the same.</p>
+
+  <h2 id="works">What it looks like when it works</h2>
+  ${IMG('t6-optin-working.png', 'The opt-in page as it should be: your developer name, your app, and Become a tester.')}
+  ${IMG('t7-you-are-a-tester.png', 'After opting in: You are a tester, and a link to download it on Google Play.')}
+  <p>"You are a tester" does not yet mean they can install.</p>
+
+  <a class="next" href="/guides/country-availability.html">Next &rarr; Stage 3: no Install button, or "not available in your country"</a>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> is where developers test each other’s apps to reach the 12
+    testers. When a tester cannot get in, they can report it from the trade card,
+    so you hear about it the same day instead of after they have quietly left.
+    <a href="/">Free at actparty.app</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">Screens are from Play Console in
+  September 2026. Google rewords buttons often, so a label may sit somewhere
+  slightly different by the time you read this.</p>`,
+};
+
+document.getElementById('langSlot').innerHTML = langPicker();
+document.getElementById('doc').innerHTML = DOC.en;
+sectionAnchors('en');
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

@@ -44,6 +44,7 @@ STATIC_PAGES = [
     ('/guides/blocked-screens.html', '0.8'),
     ('/guides/closed-test-setup.html', '0.8'),
     ('/guides/troubleshooting.html', '0.8'),
+    ('/guides/app-not-available.html', '0.8'),
 ]
 
 

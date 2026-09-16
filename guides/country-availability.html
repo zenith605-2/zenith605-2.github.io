@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Open your closed test to all countries — and why testers vanish without it</title>
-<meta name="description" content="A tester who sees Not available in your country just disappears. Where the country setting lives in Play Console, how to tell whether the test track is synced with production, and what we measured across 72 apps.">
+<title>Not available in your country: open your closed test to all countries</title>
+<meta name="description" content="A tester opted in, but Play has no Install button and says This item isn’t available in your country. Where the country setting lives, whether the track is synced with production, how to widen it, and what we measured across 72 apps.">
 <link rel="canonical" href="https://actparty.app/guides/country-availability.html">
 <link rel="alternate" hreflang="en" href="https://actparty.app/guides/country-availability.html">
 <link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/country-availability.html">
@@ -17,33 +17,50 @@
 <link rel="stylesheet" href="/assets/app.css?v=123">
 <style>
   /* 구간마다 주소를 달아 두면 "당신은 2번"이라고 정확히 보낼 수 있다 */
-  #doc h2 { position: relative }
+  #doc h2 { position: relative; margin-top: 40px }
+  #doc h3 { margin-top: 28px; font-size: 17px }
   #doc .anchor-copy {
     margin-left: 10px; padding: 3px 9px; font-size: 11.5px;
-    border: 1px solid #d7dbe0; border-radius: 999px;
-    background: #fff; color: #5b6570; cursor: pointer;
+    border: 1px solid var(--ink600); border-radius: 999px;
+    background: var(--ink800); color: var(--ink300); cursor: pointer;
     vertical-align: middle; font-weight: 500;
   }
-  #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
-  /* 화면 그대로 넣지 않으면 어디를 누르라는 건지 글로는 안 전해진다 */
+  #doc .anchor-copy:hover { background: var(--ink700); color: var(--ink100) }
   #doc figure { margin: 18px 0 22px }
   #doc figure img {
-    max-width: 100%; border: 1px solid #e3e6ea;
-    border-radius: 10px; display: block;
+    max-width: 100%; display: block; border-radius: 10px;
+    border: 1px solid var(--ink600); background: #fff;
   }
-  #doc figcaption { font-size: 12.5px; color: #6b7280; margin-top: 6px }
+  #doc figcaption { font-size: 13px; color: var(--ink300); margin-top: 8px; line-height: 1.6 }
   #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
-  /* 여기서 막히면 테스터는 아무 말 없이 사라진다 — 눈에 걸리게 둔다 */
   #doc ol li.hot {
-    background: #fff1f2; border-left: 3px solid #e11d48;
+    background: rgba(255,110,120,.10); border-left: 3px solid var(--rose);
     border-radius: 6px; padding: 9px 12px; margin: 10px 0;
-    color: #9f1239; list-style-position: outside;
+    color: var(--ink100); list-style-position: outside;
   }
-  #doc ol li.hot b { color: #be123c }
+  #doc ol li.hot b { color: var(--rose) }
   #doc table { border-collapse: collapse; margin: 16px 0; font-size: 14px }
-  #doc th, #doc td { border: 1px solid #e3e6ea; padding: 7px 12px; text-align: left }
-  #doc th { background: #f6f7f9; font-weight: 700 }
+  #doc th, #doc td { border: 1px solid var(--ink600); padding: 7px 12px; text-align: left }
+  #doc th { background: var(--ink800); color: var(--ink300); font-weight: 700 }
   #doc td.n { text-align: right; font-variant-numeric: tabular-nums }
+  #doc .part {
+    margin: 52px 0 6px; padding-top: 22px; border-top: 2px solid var(--ink600);
+    font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink300); font-weight: 700;
+  }
+  #doc .stage { color: var(--ink300); margin: 0 0 22px }
+  #doc pre.box {
+    background: var(--ink800); border: 1px solid var(--ink600); border-radius: 8px;
+    padding: 13px 15px; font-size: 13.5px; line-height: 1.7; white-space: pre-wrap;
+    color: var(--ink100);
+  }
+  #doc .note { margin: 16px 0; line-height: 1.6; font-size: 14px }
+  #doc .note.ok { background: rgba(61,220,151,.10); border-color: rgba(61,220,151,.35) }
+  #doc .find-wrap { overflow-x: auto; margin: 20px 0 8px }
+  #doc table.find { width: 100%; min-width: 420px; margin: 0 }
+  #doc table.find td:last-child { white-space: nowrap }
+  #doc table.find a { font-weight: 600 }
+  #doc .next { display: block; margin: 30px 0 10px; font-weight: 700 }
 </style>
 </head>
 <body>
@@ -85,6 +102,10 @@ const SHOT = (name, cap) =>
 const NOT_AVAILABLE =
   '<p class="note">This item isn\'t available in your country — ' +
   'Play 스토어에서 테스터에게 보이는 화면입니다.</p>';
+
+// Stage 3 of the troubleshooting set (2026-09-16). English rewritten around the
+// original numbers and sync explanation; other languages unchanged for now.
+const IMG = (file, cap) => SHOT('guide/closed-test/' + file.replace(/\.png$/, ''), cap);
 
 const DOC = {
   ko: `
@@ -211,18 +232,29 @@ const DOC = {
   <a href="https://support.google.com/googleplay/android-developer/answer/7550024" target="_blank" rel="noopener">Play Console 고객센터</a>를 보세요.</p>`,
 
   en: `
-  <h1 style="font-size:28px;margin:0 0 8px">Open your closed test to all countries</h1>
-  <p class="muted" style="margin:0 0 24px">The most common reason a tester disappears without a word</p>
+  <h1 style="font-size:28px;margin:0 0 6px">"You are a tester" but no Install button? Open your test to all countries</h1>
+  <p class="stage">Stage 3 of 3 in <a href="/guides/troubleshooting.html">closed test troubleshooting</a>:
+  group &rarr; opt-in &rarr; <b>install</b>.</p>
 
-  <p>You found a tester. They joined the group, they clicked the opt-in link.
-  And then nothing installs. The store page will not open at all, or it opens
-  and says only this.</p>
+  <h2 id="item-not-found">"Item not found", right after opting in</h2>
+  <p>Usually nothing is wrong. After a tester opts in, the store can take
+  <b>about 30 minutes</b> to show them the app. Tell them to wait.</p>
+  <p>If it is still "Item not found" after 30 minutes, it is one of two things:</p>
+  <ul>
+    <li>Play on the phone is signed in to a different account than the one that
+    opted in — <a href="/guides/app-not-available.html#wrong-account">stage 2, cause 7</a>.</li>
+    <li>Their country is not in the track — the rest of this page.</li>
+  </ul>
 
-  ${NOT_AVAILABLE}
-
-  <p>That person usually says nothing. They assume they did something wrong.
-  From your side it just looks like one more tester who never showed up, and
-  days later you are wondering why the count is stuck at nine.</p>
+  <h2 id="not-in-country">"This item isn’t available in your country"</h2>
+  <p>This is the cruel one. The opt-in page keeps saying <b>You are a tester</b>
+  in green:</p>
+  ${IMG('t10-optin-ok-but-blocked.png', 'Opted in. This tester still cannot install.')}
+  <p>They open Play and get this instead:</p>
+  ${IMG('store-country-blocked-en.png', 'No Install button, and "This item isn’t available in your country." Recreated in English from a tester’s phone.')}
+  <p>So the tester assumes your app does not ship where they live and gives up.
+  Nothing on their side can change that. The real answer is in your console:
+  a closed test only reaches the countries its track targets.</p>
 
   <h2>How common is it</h2>
 
@@ -242,11 +274,14 @@ const DOC = {
   the people who bothered to report it in the app, so the ones who quietly left
   are not counted here.</p>
 
-  <h2>Where to look</h2>
-
-  <p>Play Console → <b>Test and release</b> → <b>Testing</b> → <b>Closed
-  testing</b>, then the <b>Countries / regions</b> tab at the top (Releases,
-  Countries / regions and Testers sit side by side).</p>
+  
+  <h2 id="where">Where to look</h2>
+  <p><b>Test and release &rarr; Testing &rarr; Closed testing</b>, open the track.
+  The country count is in the track header, one line under the title.</p>
+  ${IMG('p1-closed-track-overview.png', 'Track summary. If the number of countries is small, this is your problem.')}
+  <p>For the detail, open the <b>Countries / regions</b> tab and use the filter.</p>
+  ${IMG('k5-not-targeted-176.png', 'The diagnostic. This track targets 1 country and excludes 176. Not targeted must read 0.')}
+  ${IMG('k2-not-targeted-filter.png', 'A healthy track. Targeted 177, Not targeted 0.')}
 
   <h2>First: is this track tied to production?</h2>
 
@@ -277,30 +312,41 @@ const DOC = {
   with, so it is usually the second case. Either way, <b>that one line on the
   screen tells you which</b>.</p>
 
-  <h2>Widening it</h2>
-
+  
+  <h2 id="widen">Widening it</h2>
+  ${IMG('k4-japan-only.png', 'How it happens: a short list picked early. One country ticked, and nothing on the screen warns you.')}
   <ol>
-    <li>Press <b>Edit countries / regions</b> (if it is synced, do the step above first)</li>
-    <li>A <b>checkbox</b> appears in front of every country. The one in the
-      <b>header row</b> selects them all — you do not have to click them one by one</li>
-    <li class="hot"><b>Save at the bottom of the page</b> — selecting and walking
-      away changes nothing</li>
-    <li>If you run open testing, internal testing or production separately,
-      <b>check each track</b></li>
+    <li>Press <b>Edit countries / regions</b> (if the track is synced, see above first).</li>
+    <li>Tick the checkbox in the header row. It selects every country at once — you
+    do not have to click them one by one.</li>
+    <li class="hot"><b>Save, then send the change for review</b> from Publishing
+    overview. Selecting and walking away changes nothing, and so does saving on
+    its own — <a href="/guides/app-not-available.html#not-sent">same as a tester change</a>.</li>
+    <li>If you run open testing, internal testing or production separately, check
+    each track.</li>
   </ol>
+  ${IMG('k6-reselect-all.png', 'The header checkbox fixing a restricted track. Rows still say Not targeted until you save and submit.')}
+  ${IMG('k1-countries-all.png', 'Done. 177 targeted, 0 not targeted.')}
+  <p>While you are in edit mode the Sync and Edit links go grey. That is normal —
+  it just means you are in the middle of choosing.</p>
 
-  ${SHOT('guide-country-edit-en',
-    'One checkbox in the header row selects every country. Press Save at the bottom right or nothing changes')}
+  <h2 id="after">After the fix</h2>
+  <div class="note warn"><b>The tester stays blocked for a while.</b> We watched
+  the console go back to 177 countries while the same tester’s store page still had
+  no Install button. It caught up later on its own. Tell them to retry in an hour
+  instead of changing anything else.</div>
 
-  <p class="muted">While you are in edit mode the Sync and Edit links go grey.
-  That is normal — it just means you are in the middle of choosing.</p>
+  <h2>What about the people you already lost</h2>
 
-  <p>When it is done you get a chip above the table reading something like
-  <b>Targeted (177)</b>, and a line saying 176 countries / regions and other
-  countries are active. A smaller number means you are not finished.</p>
+  <p>After you widen the list you have to go back and tell them to try again.
+  Nobody retries on their own. An app that failed once does not get a second
+  tap three days later.</p>
 
-  <p class="muted">It takes a while to propagate. If your tester tries again
-  immediately it may still fail — tell them to retry in an hour.</p>
+  
+  <h2 id="works">What it looks like when it works</h2>
+  ${IMG('t8-store-installable.png', 'An opted-in tester in a targeted country. A normal store page with an Install button — there is no badge saying this is a test build.')}
+  <div class="note ok"><b>All three stages done</b> when the tester has installed
+  the app from Play. From here the 14 days are about daily use, not access.</div>
 
   <h2>Is opening everything safe</h2>
 
@@ -317,22 +363,17 @@ const DOC = {
   <p>If none of those apply, open it. You can narrow production later. There is
   no reason to be narrow while you are still testing.</p>
 
-  <h2>What about the people you already lost</h2>
-
-  <p>After you widen the list you have to go back and tell them to try again.
-  Nobody retries on their own. An app that failed once does not get a second
-  tap three days later.</p>
-
+  
   <div class="note" style="margin:26px 0">
-    <b>ACT Party</b> notifies you the moment a tester taps "it is not available
-    in my country", and shows you who was blocked and where. If someone else in
-    that same country later installs it, the report is revoked automatically.
+    ACT Party notifies you the moment a tester taps "it is not available in my
+    country", and shows you who was blocked and where. If someone else in that same
+    country later installs it, the report is revoked automatically.
     <a href="/">Free at actparty.app</a>
   </div>
 
-  <p class="muted" style="font-size:13px">Screen names are as of September 2026.
-  Google moves and renames things often; if you cannot find it, check the
-  <a href="https://support.google.com/googleplay/android-developer/answer/7550024" target="_blank" rel="noopener">Play Console Help</a>.</p>`,
+  <p class="muted" style="font-size:13px">Screens are from Play Console in
+  September 2026. Google moves and renames things often; if you cannot find it,
+  check the Play Console Help.</p>`,
 
   ja: `
   <h1 style="font-size:28px;margin:0 0 8px">配信国をすべての国に開く</h1>

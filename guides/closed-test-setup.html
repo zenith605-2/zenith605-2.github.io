@@ -354,166 +354,25 @@ const DOC = {
   <div class="part">Part 5 &mdash; After review passes</div>
 
   <p>The release is approved and the track is live. This is where most tests
-  stall, and all three causes look identical to a tester: a page that will not
-  open. None of them produce a useful error message.</p>
+  stall, and all three causes look alike to a tester: a page that will not open.
+  Each has its own page, in the order a tester meets them —
+  <a href="/guides/troubleshooting.html">closed test troubleshooting</a> starts
+  from what the tester saw.</p>
 
-  <p>If a tester is already stuck, go straight to
-  <a href="/guides/troubleshooting.html">Closed test troubleshooting</a>. It
-  starts from what the tester saw and walks group, opt-in and install in
-  order.</p>
+  <h2><span class="step">12</span>Testers see "Content unavailable"</h2>
+  <p>Your Google Group is private, which is Google’s default for every new group.
+  Two settings open it.
+  <a href="/guides/google-group.html">Fix your Google Group &rarr;</a></p>
 
-  <h2><span class="step">12</span>Your group is private, because that is the default</h2>
+  <h2><span class="step">13</span>The opt-in link says "App not available"</h2>
+  <p>They joined the group and still cannot opt in. Usually the track is still on
+  an email list, or a fix was saved but never sent for review.
+  <a href="/guides/app-not-available.html">The causes, in order &rarr;</a></p>
 
-  <p>Google Groups never asks you to make the group private. It arrives that
-  way. On the creation screen the two settings that matter are already set to
-  the closed values, and nothing on the page suggests you should change them.</p>
-
-  ${SHOT(P + 'g1-privacy-defaults.png', 'The privacy step while creating a group. Who can search for group: Group members. Who can join group: Only invited users. Nobody chose these, they are what Google fills in.')}
-
-  <p>A tester who opens that group link sees this, and it tells them nothing:</p>
-
-  ${SHOT(P + 't1-content-unavailable.png', 'What a tester sees when the group is private. Content unavailable, and a suggestion to switch accounts, which is not the problem.')}
-
-  <p>Note what it does <b>not</b> say: that the group exists, that they are not
-  a member, or that they should ask you for access. Testers read "try switching
-  accounts", switch accounts, get the same page, and give up on you.</p>
-
-  <h3>The fix</h3>
-  <p>Open the group, then <b>Group settings &rarr; General</b>. Two dropdowns,
-  both well down the page.</p>
-
-  ${SHOT(P + 'g3-settings-before.png', 'Before. Who can see group: Group members. Who can join group: Invited users only.')}
-  ${SHOT(P + 'g4-see-group-dropdown.png', 'Who can see group has exactly two values. Pick Anyone on the web.')}
-  ${SHOT(P + 'g5-join-group-dropdown.png', 'Who can join group has three. Anyone on the web can ask puts every tester into an approval queue you have to clear by hand. For a test group pick Anyone on the web can join.')}
-  ${SHOT(P + 'g6-settings-after.png', 'After, before saving. Anyone on the web, and Anyone on the web can join.')}
-  ${SHOT(P + 'g7-settings-saved.png', 'Saved, and Save changes goes grey. Google’s confirmation adds that it might take some time for the changes to take effect, so if the link still fails a minute later, wait before you change anything else.')}
-
-  <p>Now the tester gets a Join group button. The body of the page still says
-  they have no permission, because <i>Who can view conversations</i> is a
-  separate setting and is still members only. That is harmless, and worth
-  warning testers about, because it reads like a failure:</p>
-
-  ${SHOT(P + 't2-join-but-no-permission.png', 'After the fix. The permission message is about the message archive, not about joining. The Join group button is the part that matters.')}
-  ${SHOT(P + 't3-join-dialog.png', 'Joining. Subscription defaults to Each email. Tell testers to set it to No email unless you want them to get every post.')}
-  ${SHOT(P + 't4-joined.png', 'Joined, member count up immediately. With Anyone on the web can join there is nothing for you to approve.')}
-
-  <h2><span class="step">13</span>They joined the group and the opt-in page still will not open</h2>
-
-  <p>This is the one that costs days, because the tester did everything right
-  and the page still says no.</p>
-
-  ${SHOT(P + 't5-optin-app-not-available.png', 'App not available. This tester is signed in with the correct account and is a member of the group.')}
-
-  <p>Work through these in order. The first two account for almost all of it.</p>
-
-  <h3>1. The track is using an email list, not the group</h3>
-  <p>These are two settings on the same page and only one can be active. If you
-  made an email list early on and added the group later, the radio button is
-  still on the list, and group membership does nothing at all.</p>
-
-  ${SHOT(P + 'p2-testers-emaillist.png', 'The cause. Testers is set to Email lists, so the Google Group is ignored entirely.')}
-  ${SHOT(P + 'p4-testers-google-group.png', 'Switch the radio to Google Groups and type the full address, ending in @googlegroups.com.')}
-  ${SHOT(P + 'p5-testers-save-enabled.png', 'The address has to turn into a chip before Save lights up. If Save stays grey, press Tab.')}
-
-  <h3>2. The list is there, but it is not ticked</h3>
-  <p>An email list only applies while its row is checked. The list can exist,
-  hold the right people, show the right count, and still do nothing.</p>
-
-  ${SHOT(P + 'e1-list-unchecked.png', 'A list with two testers in it, doing nothing. The count is right and the row is unchecked.')}
-
-  <h3>3. A typo in one address</h3>
-  <p>Nothing warns you while you type. When Play does reject an address, it is
-  only on Save, with one generic error that does not say which row (step 7). And
-  a typo that happens to be someone else’s real account passes every check, so
-  the only symptom is that person seeing App not available.</p>
-
-  ${SHOT(P + 'e2-email-typo.png', 'gmial.com, typed in with no warning.')}
-
-  <p>Read the list back against what the tester actually sent you, character by
-  character. This is also the strongest argument for using a Google Group
-  instead: the tester types their own address, so you cannot get it wrong.</p>
-
-  <h3>4. You saved it, but you did not send it</h3>
-  <p>Saving a tester change does not apply it. It parks the change in Publishing
-  overview, where it sits until you submit it. This is the most common reason a
-  correct fix appears to do nothing.</p>
-
-  ${SHOT(P + 'p6-go-to-publishing-overview.png', 'The dialog says it plainly. Your change has been saved. To send it to Google for review, go to Publishing overview.')}
-  ${SHOT(P + 'p7-publishing-overview-pending.png', 'Changes not yet submitted for review. Nothing on this list is live yet.')}
-  ${SHOT(P + 'p8-send-for-review-dialog.png', 'Reviews are typically completed within 7 days. A tester list change is usually much quicker, but it is never instant.')}
-  ${SHOT(P + 'p10-quick-checks.png', 'Quick checks run first, up to about 14 minutes. The change is not sent to Google until they pass.')}
-  ${SHOT(P + 'p9-changes-in-review.png', 'Changes in review. Now it is actually on its way.')}
-
-  <h3>5. It is the wrong link</h3>
-  <p>The opt-in link is not your store link. Play Console hands you two links
-  and they are not interchangeable.</p>
-
-  ${SHOT(P + 'p3-optin-links.png', 'Testers tab, bottom of the page. Join on Android opens Play on the phone. Join on the web is the play.google.com/apps/testing/ link. Send the web one, because a tester who has not opted in yet cannot find the app by searching Play.')}
-
-  <h3>6. Wrong account on the phone</h3>
-  <p>The account that joined the group has to be the account Play is signed in
-  to on the device. On a phone with two accounts this is the usual culprit, and
-  the opt-in page gives the same App not available either way.</p>
-
-  <h3>What it looks like when it works</h3>
-  <p>Worth knowing, because none of these pages say the word "success" and
-  people keep clicking looking for confirmation.</p>
-
-  ${SHOT(P + 't6-optin-working.png', 'The opt-in page as it should look. Your developer name, your app, and a Become a tester button.')}
-  ${SHOT(P + 't7-you-are-a-tester.png', 'After opting in. You are a tester, and a download it on Google Play link. It can take a few minutes before that link works.')}
-  ${SHOT(P + 't8-store-installable.png', 'The store page an opted-in tester sees. A normal listing with an Install button — there is no badge saying this is a test build.')}
-
-  <h2><span class="step">14</span>Not available in your country</h2>
-
-  <p>A closed test only reaches the countries the track targets. If you unticked
-  countries while setting the track up, or started with a short list, everyone
-  outside it is blocked, and the message they get says the app is not available
-  in their country, which sounds like their problem rather than your settings.</p>
-
-  <h3>What the tester sees</h3>
-  <p>This is the cruel part, and the reason nobody reports it correctly. The
-  opt-in page keeps working. It still says <b>You are a tester</b> in green.</p>
-
-  ${SHOT(P + 't10-optin-ok-but-blocked.png', 'Opted in, blocked, and told neither. This tester cannot install the app.')}
-
-  <p>They click through to Play and get this instead:</p>
-
-  ${SHOT(P + 'store-country-blocked-en.png', 'No Install button, and "This item isn’t available in your country." Recreated in English from a tester’s phone.')}
-
-  <p>So the tester assumes your app does not ship where they live and gives up.
-  Nothing on their side can change that. The real answer is in your console.</p>
-
-  <h3>Finding it</h3>
-  <p>The count is in the track header, one line under the title.</p>
-
-  ${SHOT(P + 'p1-closed-track-overview.png', 'Track summary. Active, latest release, and the number of countries. If that number is small, this is your problem.')}
-
-  <p>The detail is on the track's <b>Countries / regions</b> tab.</p>
-
-  ${SHOT(P + 'k5-not-targeted-176.png', 'The filter is the diagnostic. This track targets one country and excludes 176. Not targeted has to read 0.')}
-  ${SHOT(P + 'k2-not-targeted-filter.png', 'A healthy track for comparison. Targeted 177, Not targeted 0.')}
-
-  <p>To fix it, <b>Edit countries / regions</b>, then the checkbox in the header
-  row, which takes every country at once.</p>
-
-  ${SHOT(P + 'k4-japan-only.png', 'The mistake, made on purpose to photograph it. One country ticked. Every tester outside Japan is now blocked, and nothing on this screen warns you.')}
-  ${SHOT(P + 'k3-edit-select-all.png', 'Edit mode. The top checkbox selects all 177. Do not work down the list.')}
-  ${SHOT(P + 'k6-reselect-all.png', 'The same checkbox repairing a restricted track. Every row still reads Not targeted until you save and submit.')}
-  ${SHOT(P + 'k1-countries-all.png', 'Done. 177 targeted, 0 not targeted.')}
-
-  <p>Three things that catch people out:</p>
-  <ul>
-    <li>Country targeting is <b>per track</b>. Adding a country to production
-    does not add it to your closed test, and the reverse is also true.</li>
-    <li>Like the tester change above, it is saved but not applied until you
-    submit it from Publishing overview.</li>
-    <li><b>The tester stays blocked after you fix it.</b> We watched the track
-    go back to 177 countries in the console while the same tester's store page
-    still had no Install button. It caught up later on its own. Tell them to
-    check again later instead of changing anything else.</li>
-  </ul>
-  <p>The screen the tester actually gets is in
-  <a href="/guides/blocked-screens.html">The six screens that stop a tester</a>.</p>
+  <h2><span class="step">14</span>No Install button, "not available in your country"</h2>
+  <p>The opt-in page says "You are a tester", but the track does not include
+  their country.
+  <a href="/guides/country-availability.html">Open your test to all countries &rarr;</a></p>
 
   <div class="part">If you do it in the wrong order</div>
 
