@@ -410,7 +410,25 @@ const DOC = {
   ${SHOT(P + 'p4-testers-google-group.png', 'Switch the radio to Google Groups and type the full address, ending in @googlegroups.com.')}
   ${SHOT(P + 'p5-testers-save-enabled.png', 'The address has to turn into a chip before Save lights up. If Save stays grey, press Tab.')}
 
-  <h3>2. You saved it, but you did not send it</h3>
+  <h3>2. The list is there, but it is not ticked</h3>
+  <p>An email list only applies while its row is checked. The list can exist,
+  hold the right people, show the right count, and still do nothing. Save stays
+  available with nothing ticked, so it is easy to leave it this way.</p>
+
+  ${SHOT(P + 'e1-list-unchecked.png', 'A list with two testers in it, doing nothing. The count is right and the row is unchecked.')}
+
+  <h3>3. A typo in one address</h3>
+  <p>Play does not check that an address exists. Anything shaped like an email
+  is accepted, so one wrong character silently costs you a tester, and the only
+  symptom is that person seeing App not available.</p>
+
+  ${SHOT(P + 'e2-email-typo.png', 'Accepted without complaint. Nothing on this screen will ever tell you that address does not exist.')}
+
+  <p>Read the list back against what the tester actually sent you, character by
+  character. This is also the strongest argument for using a Google Group
+  instead: the tester types their own address, so you cannot get it wrong.</p>
+
+  <h3>4. You saved it, but you did not send it</h3>
   <p>Saving a tester change does not apply it. It parks the change in Publishing
   overview, where it sits until you submit it. This is the most common reason a
   correct fix appears to do nothing.</p>
@@ -418,18 +436,27 @@ const DOC = {
   ${SHOT(P + 'p6-go-to-publishing-overview.png', 'The dialog says it plainly. Your change has been saved. To send it to Google for review, go to Publishing overview.')}
   ${SHOT(P + 'p7-publishing-overview-pending.png', 'Changes not yet submitted for review. Nothing on this list is live yet.')}
   ${SHOT(P + 'p8-send-for-review-dialog.png', 'Reviews are typically completed within 7 days. A tester list change is usually much quicker, but it is never instant.')}
+  ${SHOT(P + 'p10-quick-checks.png', 'Quick checks run first, up to about 14 minutes. The change is not sent to Google until they pass.')}
   ${SHOT(P + 'p9-changes-in-review.png', 'Changes in review. Now it is actually on its way.')}
 
-  <h3>3. It is the wrong link</h3>
+  <h3>5. It is the wrong link</h3>
   <p>The opt-in link is not your store link. Play Console hands you two links
   and they are not interchangeable.</p>
 
   ${SHOT(P + 'p3-optin-links.png', 'Testers tab, bottom of the page. Join on Android opens Play on the phone. Join on the web is the play.google.com/apps/testing/ link. Send the web one, because a tester who has not opted in yet cannot find the app by searching Play.')}
 
-  <h3>4. Wrong account on the phone</h3>
+  <h3>6. Wrong account on the phone</h3>
   <p>The account that joined the group has to be the account Play is signed in
   to on the device. On a phone with two accounts this is the usual culprit, and
   the opt-in page gives the same App not available either way.</p>
+
+  <h3>What it looks like when it works</h3>
+  <p>Worth knowing, because none of these pages say the word "success" and
+  people keep clicking looking for confirmation.</p>
+
+  ${SHOT(P + 't6-optin-working.png', 'The opt-in page as it should look. Your developer name, your app, and a Become a tester button.')}
+  ${SHOT(P + 't7-you-are-a-tester.png', 'After opting in. You are a tester, and a download it on Google Play link. It can take a few minutes before that link works.')}
+  ${SHOT(P + 't8-store-installable.png', 'The store page an opted-in tester sees. A normal listing with an Install button — there is no badge saying this is a test build.')}
 
   <h2><span class="step">14</span>Not available in your country</h2>
 
@@ -449,6 +476,7 @@ const DOC = {
   <p>To fix it, <b>Edit countries / regions</b>, then the checkbox in the header
   row, which takes every country at once.</p>
 
+  ${SHOT(P + 'k4-japan-only.png', 'The mistake, made on purpose to photograph it. One country ticked. Every tester outside Japan is now blocked, and nothing on this screen warns you.')}
   ${SHOT(P + 'k3-edit-select-all.png', 'Edit mode. The top checkbox selects all 177. Do not work down the list.')}
   ${SHOT(P + 'k1-countries-all.png', 'Done. 177 targeted, 0 not targeted.')}
 
