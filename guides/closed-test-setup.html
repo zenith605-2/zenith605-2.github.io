@@ -180,7 +180,29 @@ const DOC = {
     to testers, per language.</li>
   </ul>
 
-  <h2><span class="step">7</span>Review, then the wait</h2>
+  ${SHOT(P + '15-bundle-uploaded.png', 'The bundle accepted: version, API levels, target SDK. If it were signed with the debug key it would have been rejected right here.')}
+
+  <h2><span class="step">7</span>The four errors nobody warns you about</h2>
+  <p>Press <b>Next</b> and the console finally tells you the track was never the
+  thing standing in your way.</p>
+  ${SHOT(P + '17-four-errors.png', 'Four errors, found only after the bundle is uploaded. None of them are about the release.')}
+  <p>Every one of these lives somewhere else in the console:</p>
+  <ul>
+    <li><b>"Your app cannot be published yet. Complete the steps listed on the
+    Dashboard."</b> — the app-setup task list: store listing, content rating,
+    data safety, target audience, privacy policy.</li>
+    <li><b>"Add a full description to save"</b> — your store listing is empty.
+    A closed test still needs a listing.</li>
+    <li><b>"You must let us know whether your app includes any financial
+    features."</b> — a declaration, even if the answer is no.</li>
+    <li><b>"You must complete the health declaration"</b> — same.</li>
+  </ul>
+  <li class="hot">This is the order that wastes a day: people build the track,
+  sign the app, upload the bundle, and only then discover a pile of unrelated
+  forms. <b>Do the Dashboard task list first</b>, then come back here. The track
+  itself takes ten minutes; the forms do not.</li>
+
+  <h2><span class="step">8</span>Review, then the wait</h2>
   <p>Send the release for review. First review of a new app is usually a few days,
   not hours. Nothing about your test starts until it is approved — including the
   14 days.</p>
