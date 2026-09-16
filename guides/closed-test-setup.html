@@ -465,19 +465,35 @@ const DOC = {
   outside it is blocked, and the message they get blames their account rather
   than your settings.</p>
 
+  <h3>What the tester sees</h3>
+  <p>This is the cruel part, and the reason nobody reports it correctly. The
+  opt-in page keeps working. It still says <b>You are a tester</b> in green.</p>
+
+  ${SHOT(P + 't10-optin-ok-but-blocked.png', 'Opted in, blocked, and told neither. This tester cannot install the app.')}
+
+  <p>They click through to Play and get this instead:</p>
+
+  ${SHOT(P + 't9-store-country-blocked.png', 'No Install button. The line reads "This app is not available for any of your devices" — it blames their phone, and the word country never appears.')}
+
+  <p>So the tester tells you their phone is not supported, or that your app is
+  broken. Both times the real answer is on your side of the console.</p>
+
+  <h3>Finding it</h3>
   <p>The count is in the track header, one line under the title.</p>
 
   ${SHOT(P + 'p1-closed-track-overview.png', 'Track summary. Active, latest release, and the number of countries. If that number is small, this is your problem.')}
 
   <p>The detail is on the track's <b>Countries / regions</b> tab.</p>
 
-  ${SHOT(P + 'k2-not-targeted-filter.png', 'The filter is the diagnostic. Not targeted has to read 0. Any other number is how many countries your testers cannot install from.')}
+  ${SHOT(P + 'k5-not-targeted-176.png', 'The filter is the diagnostic. This track targets one country and excludes 176. Not targeted has to read 0.')}
+  ${SHOT(P + 'k2-not-targeted-filter.png', 'A healthy track for comparison. Targeted 177, Not targeted 0.')}
 
   <p>To fix it, <b>Edit countries / regions</b>, then the checkbox in the header
   row, which takes every country at once.</p>
 
   ${SHOT(P + 'k4-japan-only.png', 'The mistake, made on purpose to photograph it. One country ticked. Every tester outside Japan is now blocked, and nothing on this screen warns you.')}
   ${SHOT(P + 'k3-edit-select-all.png', 'Edit mode. The top checkbox selects all 177. Do not work down the list.')}
+  ${SHOT(P + 'k6-reselect-all.png', 'The same checkbox repairing a restricted track. Every row still reads Not targeted until you save and submit.')}
   ${SHOT(P + 'k1-countries-all.png', 'Done. 177 targeted, 0 not targeted.')}
 
   <p>Two things that catch people out:</p>
