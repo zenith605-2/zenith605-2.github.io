@@ -10,7 +10,7 @@
 <link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/closed-test-setup.html">
 <meta property="og:image" content="https://actparty.app/img/og-en.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/app.css?v=121">
+<link rel="stylesheet" href="/assets/app.css?v=122">
 <style>
   #doc h2 { position: relative }
   #doc .anchor-copy {
@@ -67,9 +67,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=121';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=121';
-import { sectionAnchors } from '/assets/anchors.js?v=121';
+import { mountAuth } from '/assets/api.js?v=122';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=122';
+import { sectionAnchors } from '/assets/anchors.js?v=122';
 
 const SHOT = (src, cap) =>
   '<figure><img src="' + src + '" alt="" loading="lazy">' +
@@ -231,7 +231,21 @@ const DOC = {
   ${SHOT(P + '22-setup-done-testing-unlocked.png', 'When the last one is done the whole setup section disappears and closed testing unlocks.')}
   ${SHOT(P + '23-no-errors-ready.png', 'The same review page as before, with the four errors gone.')}
 
-  <h2><span class="step">9</span>Review, then the wait</h2>
+  <h2><span class="step">9</span>One more that is not on the list</h2>
+  <p>Finish all eleven, press send, and Google runs a set of quick checks
+  first. Ours came back with a twelfth requirement that appears nowhere on
+  the Dashboard.</p>
+  ${SHOT(P + '25-advertising-id-issue.png', 'Found only at submit time: "Incomplete advertising ID declaration".')}
+  <p>Anyone shipping an ads SDK will meet this one. If your manifest contains
+  <code>com.google.android.gms.permission.AD_ID</code> — and the Google Mobile Ads
+  SDK adds it for you, whether or not you wrote it yourself — you have to declare
+  that the app uses an advertising ID. The console is unusually direct about it:
+  <i>"Your manifest file includes the AD_ID permission. Answer 'yes' or remove
+  this permission from your manifest."</i></p>
+  <p>Answer it, and the checks run again from the start. Budget another
+  fifteen minutes.</p>
+
+  <h2><span class="step">10</span>Review, then the wait</h2>
   <p>Send the release for review. First review of a new app is usually a few days,
   not hours. Nothing about your test starts until it is approved — including the
   14 days.</p>
