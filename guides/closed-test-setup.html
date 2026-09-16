@@ -10,7 +10,7 @@
 <link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/closed-test-setup.html">
 <meta property="og:image" content="https://actparty.app/img/og-en.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/app.css?v=120">
+<link rel="stylesheet" href="/assets/app.css?v=121">
 <style>
   #doc h2 { position: relative }
   #doc .anchor-copy {
@@ -67,9 +67,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=120';
-import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=120';
-import { sectionAnchors } from '/assets/anchors.js?v=120';
+import { mountAuth } from '/assets/api.js?v=121';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=121';
+import { sectionAnchors } from '/assets/anchors.js?v=121';
 
 const SHOT = (src, cap) =>
   '<figure><img src="' + src + '" alt="" loading="lazy">' +
@@ -202,7 +202,36 @@ const DOC = {
   forms. <b>Do the Dashboard task list first</b>, then come back here. The track
   itself takes ten minutes; the forms do not.</li>
 
-  <h2><span class="step">8</span>Review, then the wait</h2>
+  <p>The Dashboard says so, in a line most people scroll past: <b>"To start a
+  closed test, finish setting up your app."</b> The whole closed-testing section
+  is padlocked until the list above it is done.</p>
+  ${SHOT(P + '18-dashboard-locked.png', 'Closed testing, locked. The order is right there — it is just below the fold.')}
+
+  <h2><span class="step">8</span>The eleven forms</h2>
+  <p>This is the list that actually gates your test.</p>
+  ${SHOT(P + '19-setup-task-list.png', 'Nine content declarations and two store items. Most take a minute; three do not.')}
+  <ul>
+    <li><b>Privacy policy</b> — needs a URL that is already live. If you have no
+    site, a single static page on GitHub Pages is enough, and it has to describe
+    what your app actually does with data.</li>
+    <li><b>Content rating</b> — an IARC questionnaire. If your app shows anything
+    fetched or generated at runtime, answer <b>yes</b> to online content;
+    generated AI output is named in Google's own examples.</li>
+    <li><b>Data safety</b> — the long one. Every type of data that leaves the
+    device has to be declared, including data your libraries send. An ads SDK
+    means you are collecting and sharing a device identifier whether you think
+    of it that way or not.</li>
+    <li><b>Store listing</b> — full description, icon, a feature graphic
+    (1024x500) and at least two phone screenshots. A closed test still needs all
+    of it.</li>
+    <li>The rest — sign-in details, ads, target audience, government apps,
+    financial features, health, app category — are a click each if the answer is
+    no.</li>
+  </ul>
+  ${SHOT(P + '22-setup-done-testing-unlocked.png', 'When the last one is done the whole setup section disappears and closed testing unlocks.')}
+  ${SHOT(P + '23-no-errors-ready.png', 'The same review page as before, with the four errors gone.')}
+
+  <h2><span class="step">9</span>Review, then the wait</h2>
   <p>Send the release for review. First review of a new app is usually a few days,
   not hours. Nothing about your test starts until it is approved — including the
   14 days.</p>

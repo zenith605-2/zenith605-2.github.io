@@ -16,7 +16,7 @@
 <meta property="og:description" content="来自 1,862 次安卓封闭测试的实测数据。27.6% 完成全部 14 天，流失集中在第 10-13 天，&quot;装不上&quot;的 105 次反馈中有 87 次并非链接问题。">
 <meta property="og:url" content="https://actparty.app/zh-Hans/android-closed-testing-data.html">
 <meta property="og:type" content="article">
-<link rel="stylesheet" href="/assets/app.css?v=120">
+<link rel="stylesheet" href="/assets/app.css?v=121">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "测试者必须每天打开应用吗？", "acceptedAnswer": {"@type": "Answer", "text": "Google 看的是加入测试的状态是否持续了 14 天。每天打开并不是 Google 的要求。不过如果有测试者一次都没打开，在生产环境申请问卷里会比较难解释。"}}, {"@type": "Question", "name": "12 人里有一个退出，要从头再来吗？", "acceptedAnswer": {"@type": "Answer", "text": "不用。其余测试者已积累的时间照常保留，只有新加入的人需要自己跑满 14 天。"}}, {"@type": "Question", "name": "测试者说找不到应用，但链接在我这里是好的。", "acceptedAnswer": {"@type": "Answer", "text": "我们统计的 105 次里有 87 次就是这种情况。按常见程度排序：国家未开放、登录账号与 Play 商店账号不一致、没有加入群组。先查国家。"}}, {"@type": "Question", "name": "招多少测试者才保险？", "acceptedAnswer": {"@type": "Answer", "text": "我们的数据里完成率是 27.6%。如果需要 12 人，请留出余量，并在第 12 或 13 天发一次提醒。"}}]}</script>
 <style>
   #doc h2 { margin-top: 30px }
@@ -125,8 +125,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=120';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=120';
+import { mountAuth } from '/assets/api.js?v=121';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=121';
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
 wireLangPicker();
