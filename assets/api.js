@@ -305,8 +305,11 @@ export async function mountAuth(slotId, t) {
     let label = user.user_metadata?.name || user.email || '';
     try {
       const { data } = await sb.from('profiles')
-        .select('developer_name, nickname, last_seen_at').eq('id', user.id).maybeSingle();
+        .select('developer_name, nickname, last_seen_at, eula_accepted_at').eq('id', user.id).maybeSingle();
       label = data?.developer_name || data?.nickname || label;
+      // 웹으로 가입하면 약관·개인정보·나이 동의를 한 번도 안 받고 있었다
+      // (앱은 가입 직후 동의 화면을 거친다). 동의 전이면 여기서 받는다.
+      if (!data?.eula_accepted_at) askConsent(user, t);
       // 웹으로만 가입해서 프로필 행이 없는 사람을 여기서 메운다. 어차피 한 번
       // 읽는 자리라 질의가 늘지 않고, 앱 등록까지 가기 전에 조용히 낫는다.
       if (!data) ensureProfile().catch(() => {});
@@ -338,6 +341,45 @@ export async function mountAuth(slotId, t) {
     document.getElementById('siBtn').onclick = go;
     document.getElementById('suBtn').onclick = go;
   }
+}
+
+/** 가입 동의 — 앱의 동의 화면(moderation.dart)과 같은 세 가지.
+ *  동의하지 않으면 로그아웃한다. 둘러보기는 로그인 없이도 된다. */
+function askConsent(user, t) {
+  if (document.getElementById('consentBox')) return;
+  const box = document.createElement('div');
+  box.id = 'consentBox';
+  box.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);' +
+    'display:flex;align-items:center;justify-content:center;padding:16px';
+  box.innerHTML =
+    `<div class="card" style="max-width:420px;width:100%;padding:20px">` +
+    `<h3 style="margin:0 0 12px">${t('consent_title')}</h3>` +
+    `<label style="display:block;margin:8px 0"><input type="checkbox" class="cc"> ` +
+      `<a href="/terms.html" target="_blank">${t('consent_terms')}</a></label>` +
+    `<label style="display:block;margin:8px 0"><input type="checkbox" class="cc"> ` +
+      `<a href="/privacy.html" target="_blank">${t('consent_privacy')}</a></label>` +
+    `<label style="display:block;margin:8px 0"><input type="checkbox" class="cc"> ${t('consent_age')}</label>` +
+    `<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">` +
+      `<a href="#" id="ccNo" style="align-self:center;font-size:13px">${t('consent_no')}</a>` +
+      `<button id="ccYes" class="btn" disabled>${t('consent_yes')}</button></div></div>`;
+  document.body.appendChild(box);
+  const checks = [...box.querySelectorAll('.cc')];
+  const yes = box.querySelector('#ccYes');
+  checks.forEach(c => c.onchange = () => { yes.disabled = !checks.every(x => x.checked); });
+  box.querySelector('#ccNo').onclick = (e) => { e.preventDefault(); signOut(); };
+  yes.onclick = async () => {
+    yes.disabled = true;
+    try {
+      await ensureProfile().catch(() => {});
+      const { error } = await sb.from('profiles')
+        .update({ eula_accepted_at: new Date().toISOString() }).eq('id', user.id);
+      if (error) throw error;
+      box.remove();
+    } catch (x) {
+      yes.disabled = false;
+      alert(x.message || x);
+    }
+  };
 }
 
 /** 인증 달력. 앱의 TradeDayStrip 과 같은 규칙 —

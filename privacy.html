@@ -42,112 +42,169 @@
 <header>
   <div class="brand">ACT Party</div>
   <h1>개인정보 처리방침 / Privacy Policy</h1>
-  <div class="meta">시행일 (Effective date): 2026-08-13</div>
+  <div class="meta">시행일 (Effective date): 2026-08-13 · 최종 개정 (Last updated): 2026-09-20</div>
 </header>
 
-<p>ACT Party(이하 &ldquo;서비스&rdquo;)는 Android 개발자들이 Google Play 비공개 테스트(테스터 12명 &times; 14일)를 함께 완료하도록 돕는 앱입니다. 본 방침은 서비스가 수집하는 정보와 이용 방식을 설명합니다.</p>
+<p>ACT Party(이하 &ldquo;서비스&rdquo;)는 Android 개발자들이 Google Play 비공개 테스트(테스터 12명 &times; 14일)를 서로 도와 완료하도록 돕는 앱과 웹사이트(actparty.app)입니다. 본 방침은 서비스가 처리하는 개인정보와 그 방법을 설명합니다.</p>
 
-<h2>1. 수집하는 정보</h2>
+<h2>1. 처리하는 개인정보</h2>
 <table>
   <tr><th>항목</th><th>수집 시점</th><th>목적</th></tr>
-  <tr><td>이메일 주소</td><td>회원가입 시</td><td>계정 식별, 로그인.<br><b>품앗이를 수락한 상대에게 보입니다</b> — 상대가 회원님을 비공개 테스트 명단에 넣으려면 이 주소가 필요합니다.</td></tr>
-  <tr><td>개발자 이름</td><td>회원가입 시</td><td>파티 내 표시</td></tr>
-  <tr><td>등록한 앱 정보<br>(이름·설명·패키지명·테스트 링크)</td><td>앱 등록 시</td><td>파티 매칭, 테스터 안내</td></tr>
-  <tr><td>파티 활동 기록<br>(참여·인증·카르마·완주 이력)</td><td>서비스 이용 중</td><td>파티 운영, 신뢰도 표시</td></tr>
-  <tr><td>작성한 글·댓글·채팅·피드백</td><td>작성 시</td><td>커뮤니티 및 파티 운영</td></tr>
-  <tr><td><strong>파티 참여 앱의 사용 시간</strong></td><td>자동 인증 사용 시(선택)</td><td>테스트 수행 인증</td></tr>
+  <tr><td>이메일 주소</td><td>회원가입 시</td><td>계정 식별, 로그인, 중요 알림 메일.<br><b>품앗이를 수락한 상대에게 보입니다</b> — 상대가 회원님을 비공개 테스트 명단에 넣으려면 필요합니다.</td></tr>
+  <tr><td>테스터용 구글 계정 이메일</td><td>회원이 직접 고를 때</td><td>폰의 Play 스토어 계정이 가입 이메일과 다를 때, 상대의 테스터 명단에 넣을 주소. 품앗이 상대에게만 보입니다.</td></tr>
+  <tr><td>개발자 이름·프로필 아이콘</td><td>회원가입·설정 시</td><td>앱보드·품앗이·파티 화면에 표시 (4항, <b>누구나 볼 수 있음</b>)</td></tr>
+  <tr><td>등록한 앱 정보<br>(이름·설명·아이콘·스크린샷·패키지명·테스트 링크)</td><td>앱 등록 시</td><td>품앗이·파티 매칭, 테스터 안내</td></tr>
+  <tr><td>테스트 활동 기록<br>(품앗이·파티 참여, 인증 일수, 카르마, 완주·중도 이탈, 최근 접속일)</td><td>서비스 이용 중</td><td>테스트 진행 관리, 신뢰도 표시</td></tr>
+  <tr><td><strong>등록된 앱의 사용 시간</strong></td><td>사용 정보 접근 권한을 켰을 때(선택)</td><td>매일 테스트 인증 자동 기록 (아래 설명)</td></tr>
+  <tr><td>작성한 글·댓글·채팅·피드백·문의</td><td>작성 시</td><td>커뮤니티·품앗이 운영, 고객 문의 응대</td></tr>
+  <tr><td>기기 정보<br>(푸시 알림 토큰, 기기 국가, 앱 언어, 테스트 중인 앱의 설치 버전)</td><td>앱 실행 시</td><td>알림 발송, 배포 국가 문제 확인, 피드백에 버전 표시</td></tr>
+  <tr><td>오류 보고<br>(기기 모델·OS 버전·오류 기록)</td><td>앱 오류 시 자동</td><td>오류 원인 파악과 수정</td></tr>
+  <tr><td>후원 결제 기록<br>(Google Play 주문번호·상품·금액)</td><td>후원 결제 완료 시</td><td>중복 기록 방지, 운영자 확인. 카드 등 결제 수단 정보는 Google Play가 처리하며 서비스는 받지 않습니다.</td></tr>
 </table>
 
-<h3>사용 정보 접근 권한(PACKAGE_USAGE_STATS)에 대한 설명</h3>
+<h3>사용 정보 접근 권한(PACKAGE_USAGE_STATS)</h3>
 <div class="note">
   <ul>
-    <li><strong>확인 범위</strong>: 이용자가 참여 중인 파티에 등록된 앱(패키지명이 명시된 앱)의 실행 여부와 사용 시간만 기기 내에서 확인합니다.</li>
-    <li><strong>미수집 범위</strong>: 그 외 다른 앱의 사용 기록은 <strong>읽지도, 저장하지도, 전송하지도 않습니다.</strong></li>
-    <li><strong>전송 데이터</strong>: 서버에는 &ldquo;어떤 파티 앱을 오늘 몇 분 사용했는지&rdquo;라는 결과 숫자만 전송됩니다.</li>
-    <li><strong>선택 사항</strong>: 권한을 허용하지 않아도 서비스를 이용할 수 있으며, 이 경우 수동으로 인증합니다.</li>
+    <li><strong>확인 범위</strong>: 회원이 참여 중인 품앗이·파티에 등록된 앱(패키지명이 명시된 앱)을 열었는지와 사용 시간만 기기에서 확인합니다. 처음 켜면 지난 14일치를 한 번에 확인합니다.</li>
+    <li><strong>보내는 것</strong>: 서버에는 &ldquo;어느 앱을 어느 날 몇 분 사용했는지&rdquo;라는 결과만 보냅니다. 이 인증 일수는 상대와 로그인한 다른 이용자가 볼 수 있습니다(4항).</li>
+    <li><strong>보내지 않는 것</strong>: 등록되지 않은 다른 앱의 사용 기록은 <strong>읽지도, 저장하지도, 전송하지도 않습니다.</strong></li>
+    <li><strong>선택 사항</strong>: 권한을 켜지 않아도 서비스를 이용할 수 있으며, 이 경우 인증이 자동으로 남지 않습니다. 권한은 기기 설정에서 언제든 끌 수 있습니다.</li>
   </ul>
 </div>
 
-<h2>2. 수집하지 않는 정보</h2>
+<h2>2. 처리하지 않는 정보</h2>
 <ul>
-  <li>연락처, 위치 정보, 사진·미디어, 통화 기록, SMS</li>
-  <li>결제 정보 (본 서비스는 결제 기능이 없습니다)</li>
-  <li>파티에 등록되지 않은 앱의 사용 기록</li>
-  <li>광고 식별자 (본 서비스는 광고를 게재하지 않습니다)</li>
+  <li>연락처, 위치 정보, 사진·미디어(직접 첨부한 이미지 제외), 통화 기록, SMS</li>
+  <li>카드 번호 등 결제 수단 정보</li>
+  <li>등록되지 않은 앱의 사용 기록</li>
+  <li>광고 식별자 (서비스는 광고를 게재하지 않습니다)</li>
 </ul>
 
-<h2>3. 정보의 이용 목적</h2>
+<h2>3. 처리 목적과 근거</h2>
 <ul>
-  <li>비공개 테스트 파티 매칭 및 진행 관리</li>
-  <li>테스트 수행 여부 인증 및 카르마·완주율 산정</li>
-  <li>커뮤니티 게시판·채팅 운영</li>
-  <li>신고 처리 및 부정 이용 방지</li>
+  <li>회원 관리, 품앗이·파티 매칭과 테스트 인증, 알림, 커뮤니티 운영, 문의 응대, 부정 이용 방지와 신고 처리, 오류 수정</li>
+  <li>근거: 서비스 이용 계약의 이행과 회원의 동의(가입 시). 사용 정보 접근과 채팅 번역은 회원이 직접 켤 때만 처리합니다.</li>
+  <li>가입 시 동의하지 않으면 회원가입을 할 수 없습니다. 선택 기능(사용 정보 접근, 채팅 번역, 이메일 알림)은 켜지 않아도 서비스를 이용할 수 있습니다.</li>
 </ul>
 
-<h2>4. 제3자 제공 및 공개 범위</h2>
+<h2>4. 공개 범위와 제3자 제공</h2>
 <ul>
-  <li>이용자 정보를 제3자에게 판매하거나 제공하지 않습니다.</li>
-  <li>데이터 저장 및 인증은 <strong>Supabase</strong>(데이터베이스 호스팅)를 통해 처리됩니다.</li>
-  <li>파티 참여 시 다음 정보는 <strong>같은 파티 구성원에게 공개</strong>됩니다: 개발자 이름, 등록한 앱 정보, 인증 기록, 카르마·완주율.</li>
-  <li>피드백은 <strong>해당 앱의 개발자에게만</strong> 전달되며 공개되지 않습니다.</li>
-  <li><strong>채팅 자동 번역</strong>이 켜져 있으면, 다른 언어로 온 메시지 본문이 번역을 위해 <strong>Google(Gemini API)</strong>로 전송됩니다. 유료 등급으로 호출하므로 전송된 내용은 모델 학습에 쓰이지 않습니다. 같은 문장을 반복해서 보내지 않도록 <strong>번역문은 서버에 보관</strong>합니다 (원문은 저장하지 않고 되돌릴 수 없는 해시만 열쇠로 씁니다). 이 기능은 <strong>[설정] &rarr; [채팅 자동 번역]</strong>에서 끌 수 있습니다.</li>
+  <li>개인정보를 판매하거나 광고 목적으로 제3자에게 제공하지 않습니다.</li>
+  <li>서로 믿고 품앗이할 상대를 고를 수 있도록 다음 정보를 앱보드와 웹사이트(actparty.app)에 표시합니다.
+    <ul>
+      <li><strong>누구나 볼 수 있음</strong> (로그인하지 않은 사람 포함): 개발자 이름, 프로필 아이콘, 국가, 공개로 등록한 앱 정보(이름·설명·아이콘·스크린샷·패키지명·테스트 링크), 카르마와 완주 횟수, 최근 접속일, 자동 인증 사용 여부</li>
+      <li><strong>로그인한 이용자만 볼 수 있음</strong>: 어떤 앱을 누가 테스트하고 있는지, 앱별 인증 일수와 진행 상태(진행 중·완주·중단), 완주한 앱과 기간, 중도 이탈 횟수</li>
+    </ul>
+  </li>
+  <li>이메일 주소와 테스터용 구글 계정은 <strong>품앗이를 수락한 상대에게만</strong> 보이고, 위 공개 정보에는 포함되지 않습니다.</li>
+  <li>앱을 비공개로 등록하면 그 앱은 앱보드에 나오지 않습니다.</li>
+  <li>피드백과 문의는 <strong>해당 앱의 개발자와 운영자에게만</strong> 전달되며 공개되지 않습니다.</li>
 </ul>
 
-<h2>5. 보관 및 파기</h2>
+<h2>5. 처리 위탁과 국외 이전</h2>
+<p>서비스는 아래 업체에 처리를 맡기며, 이 과정에서 개인정보가 국외로 전송됩니다. 서비스를 이용할 때 암호화된 네트워크(HTTPS)로 전송되고, 보유 기간은 이 방침의 6항을 따릅니다. 국외 이전을 원하지 않으면 회원 탈퇴로 처리를 멈출 수 있으나, 이 경우 서비스를 이용할 수 없습니다(선택 기능은 끄면 해당 전송이 멈춥니다).</p>
+<table>
+  <tr><th>받는 곳 (국가)</th><th>항목</th><th>목적</th></tr>
+  <tr><td>Supabase Inc. (싱가포르 서버)</td><td>1항의 모든 항목</td><td>데이터 저장, 로그인, 서버 기능</td></tr>
+  <tr><td>Google LLC — Firebase (미국)</td><td>푸시 알림 토큰, 알림 내용, 오류 보고</td><td>알림 발송(FCM), 오류 수집(Crashlytics)</td></tr>
+  <tr><td>Google LLC — Gemini API (미국)</td><td>번역할 채팅 메시지 본문</td><td>채팅 자동 번역 (켰을 때만). 유료 등급이라 모델 학습에 쓰이지 않으며, 같은 문장을 다시 보내지 않도록 번역문만 서버에 보관합니다(원문은 되돌릴 수 없는 해시로만 저장).</td></tr>
+  <tr><td>Resend Inc. (미국)</td><td>이메일 주소, 알림 제목·내용</td><td>품앗이 신청·피드백 등 중요 알림 메일 (설정에서 끌 수 있음)</td></tr>
+  <tr><td>Google LLC — Google Play (미국)</td><td>후원 결제</td><td>결제 처리 (Google이 직접 처리)</td></tr>
+</table>
+
+<h2>6. 보유 기간과 파기</h2>
 <ul>
-  <li>앱 내 <strong>[내 앱 &rarr; 계정 &rarr; 계정 삭제]</strong>에서 언제든지 계정과 관련 데이터를 즉시 삭제할 수 있습니다.</li>
-  <li>계정 삭제 시 등록한 앱, 파티 기록, 작성 글, 인증 이력이 모두 영구 삭제됩니다.</li>
-  <li>신고 기록은 분쟁 대응을 위해 최대 1년간 보관될 수 있습니다.</li>
+  <li>개인정보는 회원 탈퇴 시까지 보유합니다. 앱의 <strong>[설정 &rarr; 계정 &rarr; 계정 삭제]</strong>에서 언제든 탈퇴할 수 있고, 웹에서는 아래 이메일로 요청할 수 있습니다.</li>
+  <li><strong>탈퇴하면 즉시 지우는 것</strong>: 로그인 정보와 이메일, 테스터용 구글 계정, 개발자 이름, 기기 국가, 푸시 토큰과 알림함, 회원이 한 품앗이·인증 기록, 답을 받지 못한 품앗이 신청</li>
+  <li><strong>남기는 것</strong> (남은 이용자의 기록과 대화를 지키기 위해):
+    <ul>
+      <li>작성한 글·댓글·채팅·피드백 — 작성자를 &ldquo;탈퇴한 사용자&rdquo;로 바꿔 남깁니다. 본문 삭제를 원하면 탈퇴 전에 직접 지우거나 이메일로 요청해 주세요.</li>
+      <li>등록한 앱 정보 — 비공개로 보관합니다. 그 앱을 테스트하던 다른 이용자의 기록이 이어져 있기 때문입니다. 같은 앱을 다른 계정으로 다시 등록하면 그 계정이 이어받습니다.</li>
+      <li>후원 주문 기록 — 주문번호·상품·금액만 남기고 회원과의 연결은 끊습니다.</li>
+    </ul>
+  </li>
+  <li>신고 기록은 분쟁 대응을 위해 최대 1년, 오류 보고는 Firebase 기본 설정에 따라 최대 90일 보관합니다.</li>
+  <li>파기 방법: 전자 파일은 복구할 수 없도록 데이터베이스에서 삭제합니다. 웹사이트에 만들어 둔 페이지는 다음 사이트 갱신 때 함께 지워집니다.</li>
 </ul>
 
-<h2>6. 이용자의 권리</h2>
+<h2>7. 안전성 확보 조치</h2>
 <ul>
-  <li>앱 내에서 개발자 이름 변경, 등록 앱 삭제, 로그아웃, 계정 삭제가 가능합니다.</li>
-  <li>데이터 열람·정정·삭제를 원하시면 아래 이메일로 요청해 주세요. 요청일로부터 7일 이내 처리합니다.</li>
+  <li>전송 구간 암호화(HTTPS), 데이터베이스 행 단위 접근 통제(RLS)로 본인 정보만 읽고 쓸 수 있게 합니다.</li>
+  <li>운영자 권한은 최소 인원에게만 두며, 비밀 키는 소스 코드가 아닌 별도 보관소(Vault·환경 변수)에 둡니다.</li>
 </ul>
 
-<h2>7. 아동의 개인정보</h2>
-<p>본 서비스는 앱 개발자를 대상으로 하며, 만 14세 미만 아동을 대상으로 하지 않습니다.</p>
+<h2>8. 이용자의 권리</h2>
+<ul>
+  <li>회원은 언제든 자신의 개인정보 열람·정정·삭제·처리 정지를 요구하고 동의를 철회할 수 있습니다. 앱에서 개발자 이름 변경, 앱 삭제, 권한 끄기, 탈퇴를 직접 할 수 있고, 그 밖의 요청은 아래 이메일로 보내 주세요. 요청일로부터 10일 이내에 처리하고 결과를 알려 드립니다.</li>
+  <li>개인정보 침해 신고·상담: 개인정보침해신고센터(privacy.kisa.or.kr, 국번 없이 118), 개인정보분쟁조정위원회(kopico.go.kr, 1833-6972)</li>
+</ul>
 
-<h2>8. 문의처</h2>
-<p>이메일: <a href="mailto:wnsgud875@gmail.com">wnsgud875@gmail.com</a></p>
+<h2>9. 아동의 개인정보</h2>
+<p>서비스는 앱 개발자를 대상으로 하며, 만 14세 미만은 가입할 수 없습니다.</p>
+
+<h2>10. 개인정보 보호책임자와 문의처</h2>
+<ul>
+  <li>개인정보 보호책임자: Zenith Studio 운영팀</li>
+  <li>이메일: <a href="mailto:wnsgud875@gmail.com">wnsgud875@gmail.com</a></li>
+</ul>
+<p>이 방침이 바뀌면 시행 7일 전에 웹사이트와 앱 공지로 알립니다.</p>
 
 <hr>
 
 <h1 id="english">Privacy Policy (English)</h1>
-<div class="meta">Effective date: 2026-08-13</div>
+<div class="meta">Effective date: 2026-08-13 · Last updated: 2026-09-20</div>
 
-<p><strong>ACT Party</strong> helps Android developers complete Google Play closed testing (12 testers &times; 14 days) together.</p>
+<p><strong>ACT Party</strong> (the app and actparty.app) helps Android developers complete Google Play closed testing (12 testers &times; 14 days) by testing each other&rsquo;s apps. The controller is the operator named under &ldquo;Contact&rdquo;.</p>
 
-<h2>What we collect</h2>
+<h2>What we collect and why</h2>
 <ul>
-  <li>Email address (account identification). <b>Shown to a partner once you accept a trade</b> — they need it to add you to their closed test.</li>
-  <li>Developer name (shown to party members)</li>
-  <li>Registered app info (name, description, package name, testing links)</li>
-  <li>Party activity (participation, check-ins, karma, completion history)</li>
-  <li>Posts, comments, chat messages, and feedback you write</li>
-  <li><strong>Usage time of apps within your party</strong> &mdash; only if you grant the optional Usage Access permission</li>
+  <li><b>Email address</b> &mdash; account and sign-in, important notification emails. <b>Shown to a partner once you accept a trade</b>, so they can add you to their closed test.</li>
+  <li><b>Tester Google account</b> (optional) &mdash; if the Play Store account on your phone differs from your sign-in email; shown only to trade partners.</li>
+  <li><b>Developer name and profile icon</b> &mdash; <b>shown publicly</b> (see &ldquo;What is public&rdquo;).</li>
+  <li><b>Registered app info</b> (name, description, icon, screenshot, package name, testing links).</li>
+  <li><b>Testing activity</b> (trades and parties, check-in days, karma, completions and drop-outs, last active date).</li>
+  <li><b>Usage time of registered apps</b> &mdash; only if you turn on Usage Access (below).</li>
+  <li><b>Posts, comments, chats, feedback and support messages</b> you write.</li>
+  <li><b>Device data</b>: push token, device country, app language, installed version of apps you are testing.</li>
+  <li><b>Crash reports</b> (device model, OS version, error logs) &mdash; to fix bugs.</li>
+  <li><b>Tip purchases</b> (Google Play order ID, product, price). Card details are handled by Google Play; we never receive them.</li>
 </ul>
+<p><b>Legal bases (GDPR Art. 6):</b> performance of our contract with you (account, matching, check-ins, notifications); your consent for optional features (Usage Access, chat translation, email notifications), which you can withdraw at any time in Settings; our legitimate interest in keeping the service safe and fixing crashes.</p>
 
 <h2>Usage Access permission</h2>
 <div class="note">
-  We check <strong>only</strong> whether apps registered in your party were opened and for how long.
-  We never read, store, or transmit usage data of any other app. Only aggregate minutes for party
-  apps are sent to our server. The permission is optional &mdash; without it you can verify manually.
+  We check, on your phone, <strong>only</strong> whether apps registered in your trades and parties were opened and for how long. Only &ldquo;which app, which day, how many minutes&rdquo; is sent to our server; the first time, the last 14 days are checked at once. Your check-in days are visible to partners and to other signed-in users. Usage of any other app is never read, stored or sent. The permission is optional &mdash; without it, check-ins are simply not recorded automatically.
 </div>
 
 <h2>What we never collect</h2>
-<p>Contacts, location, photos or media, call logs, SMS, payment data, or advertising identifiers (the app serves no ads).</p>
+<p>Contacts, location, photos or media (other than images you attach), call logs, SMS, card or other payment details, or advertising identifiers (the app serves no ads).</p>
 
-<h2>Third parties</h2>
-<p>We do not sell or share your data. Data is hosted on Supabase. Within a party, your developer name, app info, check-in records, and karma are visible to party members. Feedback is delivered privately to the app&rsquo;s developer only.</p>
-<p>When <strong>automatic chat translation</strong> is on, the text of messages written in another language is sent to <strong>Google (Gemini API)</strong> to be translated. We call it on a paid tier, so the text is not used to train models. <strong>Translations are cached on our servers</strong> so the same sentence is not sent twice (the original is not stored - only a one-way hash is kept as the key). You can turn this off in <strong>Settings &rarr; Translate chats automatically</strong>.</p>
+<h2>What is public</h2>
+<p>So that people can choose who to test with, the app board and actparty.app show: <strong>to anyone, including people who are not signed in</strong> &mdash; your developer name, profile icon and country, public app listings, karma and number of completions, last active date and whether automatic check-in is on; <strong>to signed-in users only</strong> &mdash; which apps you are testing with check-in days and status (in progress, finished, stopped), the apps you completed and when, and your drop-outs. Your email and tester Google account are not part of this &mdash; they are shown only to partners once you accept a trade. Apps registered as private do not appear on the board. Feedback and support messages go only to the app&rsquo;s developer and to us.</p>
+
+<h2>Processors and international transfers</h2>
+<p>We do not sell your data or share it for advertising. We use these processors; your data is transferred to them over encrypted connections:</p>
+<ul>
+  <li><b>Supabase</b> (servers in Singapore) &mdash; database, sign-in, server functions.</li>
+  <li><b>Google Firebase</b> (USA) &mdash; push notifications and crash reports.</li>
+  <li><b>Google Gemini API</b> (USA) &mdash; chat translation, only when you turn it on. Called on a paid tier, so text is not used for training; we cache translations (the original is kept only as a one-way hash).</li>
+  <li><b>Resend</b> (USA) &mdash; notification emails (you can turn these off).</li>
+  <li><b>Google Play</b> &mdash; processes tip payments.</li>
+</ul>
+<p>Transfers outside the EU/EEA rely on the providers&rsquo; standard contractual clauses or equivalent safeguards.</p>
 
 <h2>Retention &amp; deletion</h2>
-<p>You can delete your account at any time from <strong>My Apps &rarr; Account &rarr; Delete account</strong>. All associated data (apps, party records, posts, check-ins) is permanently removed. Report records may be retained for up to 1 year for dispute handling.</p>
+<p>We keep your data while your account exists. You can delete your account at any time in <strong>Settings &rarr; Account &rarr; Delete account</strong>, or ask us by email. When you do, we immediately erase your sign-in and email, tester Google account, developer name, device country, push tokens and notifications, your trades and check-in records, and your unanswered trade requests. To keep other people&rsquo;s records and conversations intact, your posts, comments, chats and feedback stay with the author shown as &ldquo;Deleted user&rdquo; (delete them first or email us if you want the text removed), your registered apps are kept hidden (another account registering the same app takes it over), and tip order records are kept without any link to you. Report records are kept for up to 1 year and crash reports for up to 90 days. Pages generated on the website are removed at the next site update.</p>
+
+<h2>Your rights</h2>
+<p>You can access, correct, delete, restrict or object to the processing of your data, ask for a copy (portability), and withdraw consent at any time. Email us and we will reply within 10 days (and within one month at most, as the GDPR requires). EU/EEA users may also lodge a complaint with their local data protection authority.</p>
+
+<h2>Children</h2>
+<p>The service is for app developers. You must be at least 14 years old (or the minimum age for digital consent in your country, if higher) to sign up.</p>
 
 <h2>Contact</h2>
-<p>Email: <a href="mailto:wnsgud875@gmail.com">wnsgud875@gmail.com</a></p>
+<p>Privacy officer: Zenith Studio (operations team) &middot; Email: <a href="mailto:wnsgud875@gmail.com">wnsgud875@gmail.com</a></p>
+<p>We will announce changes to this policy on the website and in the app at least 7 days before they take effect.</p>
 
 <footer>
   &copy; 2026 ACT Party &middot; Android Closed Testing

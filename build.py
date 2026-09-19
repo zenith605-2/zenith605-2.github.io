@@ -165,7 +165,7 @@ def page(a):
 
 <footer class="bot"><div class="wrap"><p>
   <a href="/">ACT Party</a> · <a href="/guides/">Guides</a> ·
-  <a href="/privacy.html">Privacy</a></p></div></footer>
+  <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p></div></footer>
 </body>
 </html>
 """
@@ -357,7 +357,7 @@ def post_page(row):
 
 <footer class="bot"><div class="wrap"><p>
   <a href="/">ACT Party</a> &middot; <a href="/guides/">Guides</a> &middot;
-  <a href="/privacy.html">Privacy</a></p></div></footer>
+  <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p></div></footer>
 </body>
 </html>
 """
