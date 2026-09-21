@@ -1035,3 +1035,25 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
 /* 내가 한 말은 살짝 다르게 — 상대 말과 섞이면 누가 했는지 흐려진다 */
 .rec.mine { background: color-mix(in srgb, var(--mint) 8%, var(--ink800)); }
 .rec.mine .recwho b { color: var(--mint); }
+
+/* 앱 상세(/a/<패키지>/) — 테스트 참여 단계와 보드 미리보기.
+   앱에서 기록을 공유할 때 찍는 QR 이 이 페이지로 온다 (2026-09-21). */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.steps > li { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.steps .btn { min-width: 210px; justify-content: center; }
+.minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.mini {
+  display: flex; align-items: center; gap: 8px; min-width: 0;
+  padding: 9px 10px; border-radius: 10px;
+  background: var(--ink800); border: 1px solid var(--ink700);
+}
+.mini:hover { text-decoration: none; border-color: var(--mint); }
+.mini img, .mini .ph {
+  width: 28px; height: 28px; border-radius: 7px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--ink700); color: var(--ink300); font-size: 13px;
+}
+.mini .nm {
+  flex: 1; min-width: 0; font-size: 13.5px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}

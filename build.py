@@ -62,7 +62,47 @@ def public_apps():
         return json.loads(r.read().decode())
 
 
-def page(a):
+# /a/ 페이지는 검색용이라 영어로 굽는다. 그런데 앱에서 기록을 공유할 때
+# 찍히는 QR 이 여기로 오고, 그 그림은 주로 한국어 카톡방에서 돈다
+# (2026-09-22). 문구마다 한국어를 data-ko 로 붙여 두고, 한국어 기기(또는
+# 사이트에서 한국어를 고른 사람)면 화면에서 바꿔 끼운다.
+KO_TEXT = [('>App board<', '앱 보드'), ('>Guides<', '가이드'), ('>My apps<', '내 앱'), ('>Privacy<', '개인정보처리방침'), ('>Terms<', '이용약관'), ('1. Join the Google Group', '1. 구글 그룹 가입'), ('Membership is what lets Google show you the test build.', '그룹에 가입해야 구글이 테스트 빌드를 보여 줘요.'), ('Opt in to the test', '테스트 참여 (옵트인)'), ('Use the same Google account you join with.', '그룹에 가입한 구글 계정 그대로 쓰세요.'), ('Install from Play', 'Play에서 설치'), ('The link only opens after you are opted in.', '옵트인을 마쳐야 이 링크가 열려요.'), ('Get it on Google Play', 'Google Play에서 받기'), ('Released — anyone can install it.', '출시된 앱이라 누구나 설치할 수 있어요.'), ('>Package<', '패키지'), ('>Developer karma<', '개발자 카르마'), ('>Finished trades<', '완료한 품앗이'), ('Test this app, get testers back', '이 앱을 테스트하고, 테스터를 돌려받으세요'), ('Get ACT Party — free', 'ACT Party 무료로 받기'), ('Open on the board', '보드에서 열기'), ('View on Play', 'Play에서 보기'), ('Apps looking for testers right now', '지금 테스터를 찾는 앱'), ('Test one of these and its developer tests yours back.', '이 중 하나를 테스트하면 그 개발자가 내 앱을 테스트해 줘요.'), ('See the whole board →', '보드 전체 보기 →'), ('← All apps looking for testers', '← 테스터를 찾는 모든 앱')]
+
+KO_SCRIPT = """<script>
+(function () {
+  var l = '';
+  try { l = localStorage.getItem('lang') || ''; } catch (_) {}
+  if (!l) {
+    var ls = navigator.languages || [navigator.language || 'en'];
+    l = String(ls[0] || '').toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
+  }
+  if (l !== 'ko') return;
+  document.documentElement.lang = 'ko';
+  document.querySelectorAll('[data-ko]').forEach(function (el) {
+    el.textContent = el.getAttribute('data-ko');
+  });
+})();
+</script>"""
+
+
+def add_ko(out):
+    head, body = out.split('<body>', 1)
+    for en, ko in KO_TEXT:
+        esc = html.escape(ko, quote=True)
+        if en.startswith('>') and en.endswith('<'):
+            word = en[1:-1]
+            body = body.replace(en, f'><span data-ko="{esc}">{word}</span><')
+        else:
+            body = body.replace(en, f'<span data-ko="{esc}">{en}</span>')
+    body = body.replace('</body>', KO_SCRIPT + '\n</body>')
+    return head + '<body>' + body
+
+
+def page(a, others=()):
+    return add_ko(_page(a, others))
+
+
+def _page(a, others=()):
     e = html.escape
     name = a.get('name') or ''
     pkg = a.get('package_name') or ''
@@ -77,6 +117,65 @@ def page(a):
     # 출시 표시가 된 앱만 링크를 건다 — 깨진 링크는 안 거는 것만 못하다.
     store = (f'https://play.google.com/store/apps/details?id={pkg}'
              if pkg and a.get('released_at') else '')
+
+    # 테스트에 참여하는 길. 이 페이지는 앱에서 기록을 공유할 때 찍히는 QR 의
+    # 도착지이기도 하다 (2026-09-21) — 스캔한 사람이 여기서 바로 가입하고
+    # 옵트인하고 설치까지 갈 수 있어야 한다.
+    group = (a.get('google_group_url') or '').strip()
+    optin = (a.get('opt_in_url') or '').strip()
+    # 비공개 테스트 앱의 스토어 주소는 옵트인 전에는 404 다. 그래도 적어 둔다 —
+    # 옵트인을 마친 사람에게는 이 주소가 설치 경로다.
+    test_store = f'https://play.google.com/store/apps/details?id={pkg}' if pkg else ''
+    steps = []
+    if a.get('released_at'):
+        # 출시된 앱은 가입도 옵트인도 필요 없다 — 설치 하나뿐이다
+        steps.append((test_store, 'Get it on Google Play',
+                      'Released — anyone can install it.'))
+    elif group:
+        steps.append((group, '1. Join the Google Group',
+                      'Membership is what lets Google show you the test build.'))
+    if optin and not a.get('released_at'):
+        steps.append((optin, f'{len(steps) + 1}. Opt in to the test',
+                      'Use the same Google account you join with.'))
+    if test_store and not a.get('released_at'):
+        steps.append((test_store, f'{len(steps) + 1}. Install from Play',
+                      'The link only opens after you are opted in.'))
+    join_card = ''
+    if steps:
+        rows_html = '\n'.join(
+            f'''      <li>
+        <a class="btn{'' if i == 0 else ' ghost'}" href="{e(u)}" rel="nofollow noopener">{e(label)}</a>
+        <span class="muted" style="font-size:13px">{e(hint)}</span>
+      </li>''' for i, (u, label, hint) in enumerate(steps))
+        join_card = f'''  <div class="card" style="margin-bottom:16px">
+    <h2 style="font-size:17px;margin:0 0 10px"><span data-ko="{e(name)} 테스트하기">Test {e(name)}</span></h2>
+    <ul class="steps">
+{rows_html}
+    </ul>
+  </div>
+'''
+
+    # 보드 미리보기. 여기까지 온 사람은 "테스터를 구하는 사람"일 때가 많다 —
+    # 이 앱 하나만 보여 주고 끝내면 되돌아갈 데가 링크 한 줄뿐이다.
+    board = ''
+    if others:
+        cards = '\n'.join(
+            f'''      <a class="mini" href="/a/{e(o.get('package_name') or '')}/">
+        {f'<img src="{e(o.get("icon_url") or "")}" alt="">' if o.get('icon_url')
+         else f'<span class="ph">{e((o.get("name") or "?")[:1].upper())}</span>'}
+        <span class="nm">{e(o.get('name') or '')}</span>
+        <span class="muted">{o.get('current_testers') or 0}/{o.get('needed_testers') or 12}</span>
+      </a>''' for o in others)
+        board = f'''  <div class="card" style="margin-bottom:16px">
+    <h2 style="font-size:17px;margin:0 0 4px">Apps looking for testers right now</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 12px">
+      Test one of these and its developer tests yours back.</p>
+    <div class="minis">
+{cards}
+    </div>
+    <p style="margin:12px 0 0"><a href="/board.html">See the whole board →</a></p>
+  </div>
+'''
 
     # 검색 결과에 뜨는 한 줄. 설명이 없으면 상태로 대신한다.
     meta_desc = (f'{name} by {dev} is looking for closed testers on ACT Party. '
@@ -134,25 +233,25 @@ def page(a):
       <p class="muted">{e(dev)}</p>
       {f'<p class="desc">{e(desc)}</p>' if desc else ''}
       <div class="bar"><i style="width:{min(100, round(cur / max(need, 1) * 100))}%"></i></div>
-      <p class="count"><b>{cur}</b> / {need} testers</p>
+      <p class="count"><b>{cur}</b> / {need}<span data-ko="명"> testers</span></p>
     </div>
   </div>
 
-  <div class="card" style="margin-bottom:16px">
+{join_card}  <div class="card" style="margin-bottom:16px">
     <p style="margin:0 0 6px"><span class="muted">Package</span> {e(pkg) or '—'}</p>
     <p style="margin:0 0 6px"><span class="muted">Developer karma</span> {karma}</p>
     <p style="margin:0"><span class="muted">Finished trades</span> {done}</p>
   </div>
 
-  <div class="card">
+  <div class="card" style="margin-bottom:16px">
     <h2 style="font-size:17px;margin:0 0 8px">Test this app, get testers back</h2>
     <p class="muted" style="font-size:14px">
-      {e(dev)} is trading closed tests on ACT Party. You test theirs, they test
-      yours.</p>
+      <span data-ko="{e(dev)}님은 ACT Party에서 비공개 테스트를 주고받고 있어요. 내가 테스트해 주면 상대도 내 앱을 테스트해 줍니다.">{e(dev)} is trading closed tests on ACT Party. You test theirs, they test
+      yours.</span></p>
     <p class="muted" style="font-size:14px;margin-top:10px">
-      Daily opens are recorded automatically from Android usage stats — no
+      <span data-ko="매일 앱을 연 기록은 안드로이드 사용 기록으로 자동으로 남아요. 스크린샷도, 적어 낼 양식도 없습니다. 다만 폰에 ACT Party 앱이 있어야 기록이 남고, 없으면 상대에게 내 테스트가 보이지 않아요.">Daily opens are recorded automatically from Android usage stats — no
       screenshots, no forms to fill. That part needs the ACT Party app on your
-      phone; without it your testing stays invisible to the other side.</p>
+      phone; without it your testing stays invisible to the other side.</span></p>
     <p class="row" style="margin-top:14px">
       <a class="btn" href="{ACT_STORE}" rel="noopener">Get ACT Party — free</a>
       <a class="btn ghost" href="/app.html?p={e(pkg)}">Open on the board</a>
@@ -160,6 +259,7 @@ def page(a):
     </p>
   </div>
 
+{board}
   <p style="margin-top:22px"><a href="/board.html">← All apps looking for testers</a></p>
 </div>
 
@@ -416,13 +516,18 @@ def main():
 
     app_urls = []
     prune_apps({a['package_name'] for a in listed})
+    # 보드 미리보기 후보 — 아직 모집 중이고 인원이 덜 찬 앱을 앞에 둔다
+    recruiting = [a for a in listed
+                  if a.get('recruiting') and not a.get('released_at')]
+    recruiting.sort(key=lambda x: (x.get('current_testers') or 0))
     for a in listed:
         pkg = a['package_name']
         d = os.path.join(BASE, 'a', pkg)
         os.makedirs(d, exist_ok=True)
+        others = [o for o in recruiting if o.get('package_name') != pkg][:8]
         with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8',
                   newline='') as f:
-            f.write(page(a))
+            f.write(page(a, others))
         app_urls.append(f'{SITE}/a/{pkg}/')
 
     # 사이트맵을 둘로 나눈다.
