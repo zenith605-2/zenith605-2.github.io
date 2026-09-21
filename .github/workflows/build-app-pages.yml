@@ -28,8 +28,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      # 신호가 몰리면 앞 빌드가 푸시하는 동안 다음 빌드가 대기한다. 대기하던
+      # 빌드는 신호가 온 시점의 커밋을 받아서, 앞 빌드의 커밋 위에 못 올리고
+      # 푸시가 거절됐다 (2026-09-21, 10초 간격 신호 두 개). 늘 최신을 받는다.
+      - run: git fetch origin main && git reset --hard origin/main
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       # 표준 라이브러리만 쓴다 — 설치할 게 없다
@@ -43,5 +47,6 @@ jobs:
             echo "no changes"
           else
             git commit -m "Rebuild app pages"
+            git pull --rebase origin main
             git push
           fi

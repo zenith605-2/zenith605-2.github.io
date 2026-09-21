@@ -21,7 +21,7 @@ CACHE_V = __import__('re').search(r'app\.css\?v=(\d+)',
                                   io.open(os.path.join(BASE, 'index.html'), encoding='utf-8').read()).group(1)
 LANG_NAME = {'en': 'English', 'ko': '한국어', 'ja': '日本語',
              'zh-Hans': '简体中文', 'zh-Hant': '繁體中文'}
-STORE = 'https://play.google.com/store/apps/details?id=kr.testerparty.tester_party'
+STORE = 'https://play.google.com/store/apps/details?id=kr.testerparty.tester_party&referrer=utm_source%3Dactparty_site%26utm_medium%3Dlanding'
 
 
 def url_of(slug, lang):

@@ -81,7 +81,7 @@
 <dl class="faq">
 <dt>测试者必须连续 14 天每天打开应用吗？</dt><dd>不必。Google 看的是加入状态是否持续 14 天。实测 48 次中测试者平均只打开 8.8 天，审核通过。</dd><dt>12 人里有人中途退出，要从头再来吗？</dt><dd>不用。留下的人天数照常累计，新补的测试者只需自己满 14 天。</dd><dt>可以付钱给测试者吗？</dt><dd>Google 政策不禁止，但正式版申请表会问你测试者的使用方式与真实用户有何不同，付费加入很难解释。开发者互测没有这个问题。</dd><dt>ACT Party 收费吗？</dt><dd>免费。开发者之间互相测试，没有需要收费的地方。</dd>
 </dl>
-<div class="note" style="margin:26px 0"><b>ACT Party</b> 看板上随时有 20～40 个应用在找测试者。登记你的应用，挑一个开始就行。<a href="/">查看看板</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party">获取应用</a></div>
+<div class="note" style="margin:26px 0"><b>ACT Party</b> 看板上随时有 20～40 个应用在找测试者。登记你的应用，挑一个开始就行。<a href="/">查看看板</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party&referrer=utm_source%3Dactparty_site%26utm_medium%3Dlanding">获取应用</a></div>
 </article>
 
 <footer class="bot"><div class="wrap"><p>
@@ -90,8 +90,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-import { mountAuth } from '/assets/api.js?v=124';
-import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=124';
+import { mountAuth } from '/assets/api.js?v=126';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=126';
 document.getElementById('langSlot').innerHTML = langPicker();
 applyDom();
 wireLangPicker();

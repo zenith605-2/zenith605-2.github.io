@@ -24,8 +24,11 @@ SITE = 'https://actparty.app'
 # 사이트를 올릴 때마다 이 파일만 옛 버전으로 남는다 (v74 로 26개 남아 있었다).
 CACHE_V = re.search(r'app\.css\?v=(\d+)',
                     io.open('index.html', encoding='utf-8').read()).group(1)
+# 끝의 referrer 는 출처 이름표다 — Play Console 이 "사이트 앱 페이지에서 온
+# 설치"를 따로 센다 (2026-09-21, 광고·사이트·공유 중 어디서 오는지 몰랐다).
 ACT_STORE = ('https://play.google.com/store/apps/details'
-             '?id=kr.testerparty.tester_party')
+             '?id=kr.testerparty.tester_party'
+             '&referrer=utm_source%3Dactparty_site%26utm_medium%3Dapp_page')
 
 SUPABASE_URL = 'https://eedqzvckdxfcuoyycivu.supabase.co'
 SUPABASE_KEY = 'sb_publishable_hF3_Mw-TybTPGxXPBx4M3Q_sPKe06UU'

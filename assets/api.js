@@ -7,7 +7,7 @@ export const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
 });
 
 export const STORE_URL =
-  'https://play.google.com/store/apps/details?id=kr.testerparty.tester_party';
+  'https://play.google.com/store/apps/details?id=kr.testerparty.tester_party&referrer=utm_source%3Dactparty_site%26utm_medium%3Dweb';
 
 // ---- 인증 ----
 // 안드로이드 앱과 같은 Supabase 프로젝트라 같은 계정으로 들어온다.
