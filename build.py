@@ -145,7 +145,7 @@ def _page(a, others=()):
         rows_html = '\n'.join(
             f'''      <li>
         <a class="btn{'' if i == 0 else ' ghost'}" href="{e(u)}" rel="nofollow noopener">{e(label)}</a>
-        <span class="muted" style="font-size:13px">{e(hint)}</span>
+        <a class="addr" href="{e(u)}" rel="nofollow noopener">{e(u.replace('https://', ''))}</a>
       </li>''' for i, (u, label, hint) in enumerate(steps))
         join_card = f'''  <div class="card" style="margin-bottom:16px">
     <h2 style="font-size:17px;margin:0 0 10px"><span data-ko="{e(name)} 테스트하기">Test {e(name)}</span></h2>
@@ -237,31 +237,16 @@ def _page(a, others=()):
     </div>
   </div>
 
-{join_card}  <div class="card" style="margin-bottom:16px">
-    <p style="margin:0 0 6px"><span class="muted">Package</span> {e(pkg) or '—'}</p>
-    <p style="margin:0 0 6px"><span class="muted">Developer karma</span> {karma}</p>
-    <p style="margin:0"><span class="muted">Finished trades</span> {done}</p>
-  </div>
+{join_card}  <!-- 예전에는 패키지·카르마·완료 수 카드와 ACT 소개 두 문단, 버튼 세 개가
+       더 있었다. QR 로 들어온 사람에게 필요한 건 참여 링크뿐이라 너무 많이
+       늘어놓는다는 말이 나왔다 (2026-09-22) — 우리 소개는 한 줄로 줄인다. -->
+  <a class="card act-strip" href="{ACT_STORE}" rel="noopener">
+    <span class="dot">ACT</span>
+    <span class="tx"><span data-ko="서로 테스트해서 12명 채우기 · 무료">Trade tests, fill your 12 testers · free</span></span>
+    <span class="go">›</span>
+  </a>
 
-  <div class="card" style="margin-bottom:16px">
-    <h2 style="font-size:17px;margin:0 0 8px">Test this app, get testers back</h2>
-    <p class="muted" style="font-size:14px">
-      <span data-ko="{e(dev)}님은 ACT Party에서 비공개 테스트를 주고받고 있어요. 내가 테스트해 주면 상대도 내 앱을 테스트해 줍니다.">{e(dev)} is trading closed tests on ACT Party. You test theirs, they test
-      yours.</span></p>
-    <p class="muted" style="font-size:14px;margin-top:10px">
-      <span data-ko="매일 앱을 연 기록은 안드로이드 사용 기록으로 자동으로 남아요. 스크린샷도, 적어 낼 양식도 없습니다. 다만 폰에 ACT Party 앱이 있어야 기록이 남고, 없으면 상대에게 내 테스트가 보이지 않아요.">Daily opens are recorded automatically from Android usage stats — no
-      screenshots, no forms to fill. That part needs the ACT Party app on your
-      phone; without it your testing stays invisible to the other side.</span></p>
-    <p class="row" style="margin-top:14px">
-      <a class="btn" href="{ACT_STORE}" rel="noopener">Get ACT Party — free</a>
-      <a class="btn ghost" href="/app.html?p={e(pkg)}">Open on the board</a>
-      {f'<a class="btn ghost" href="{store}" rel="nofollow noopener">View on Play</a>' if store else ''}
-    </p>
-  </div>
-
-{board}
-  <p style="margin-top:22px"><a href="/board.html">← All apps looking for testers</a></p>
-</div>
+{board}</div>
 
 <footer class="bot"><div class="wrap"><p>
   <a href="/">ACT Party</a> · <a href="/guides/">Guides</a> ·
@@ -524,7 +509,7 @@ def main():
         pkg = a['package_name']
         d = os.path.join(BASE, 'a', pkg)
         os.makedirs(d, exist_ok=True)
-        others = [o for o in recruiting if o.get('package_name') != pkg][:8]
+        others = [o for o in recruiting if o.get('package_name') != pkg][:4]
         with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8',
                   newline='') as f:
             f.write(page(a, others))

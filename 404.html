@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not found — ACT Party</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/assets/app.css?v=126">
+<script>
+// 앱 상세 페이지(/a/<패키지>/)는 build.py 를 돌려야 생긴다. 그런데 앱에서
+// 기록을 공유할 때 QR 이 이 주소를 가리키므로, 오늘 등록한 앱은 다음
+// 빌드 전까지 404 가 난다 (2026-09-22 검토). 그 경우 실시간으로 그리는
+// 보드 상세(/app.html?p=)로 보낸다 — 그룹·옵트인·스토어 링크가 다 있다.
+(function () {
+  var m = location.pathname.match(/^\/a\/([A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)+)\/?$/);
+  if (m) location.replace('/app.html?p=' + encodeURIComponent(m[1]));
+})();
+</script>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+  </div>
+</header>
+<div class="wrap narrow" style="padding-top:40px">
+  <h1 style="font-size:22px">Page not found</h1>
+  <p class="muted">The page may have moved. <a href="/board.html">Go to the app board →</a></p>
+</div>
+</body>
+</html>

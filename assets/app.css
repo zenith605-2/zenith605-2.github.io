@@ -1057,3 +1057,16 @@ details.grid-d[open] > summary::after { content: ' \2304'; }
   flex: 1; min-width: 0; font-size: 13.5px; font-weight: 600;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+
+/* 앱 상세 — ACT 소개 한 줄 (2026-09-22, 긴 소개 카드를 대신한다) */
+.act-strip { display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  padding: 12px 14px; color: var(--ink100); }
+.act-strip:hover { text-decoration: none; border-color: var(--mint); }
+.act-strip .dot { flex: none; background: var(--mint); color: #06121f; font-weight: 900;
+  font-size: 11px; border-radius: 6px; padding: 5px 6px; }
+.act-strip .tx { flex: 1; min-width: 0; font-size: 13.5px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.act-strip .go { color: var(--mint); font-size: 20px; }
+/* 참여 단계 — 설명 대신 실제 주소 (2026-09-22 "그냥 주소만") */
+.steps > li { flex-direction: column; align-items: flex-start; gap: 4px; }
+.steps .addr { font-size: 12.5px; color: var(--ink300); word-break: break-all; }
