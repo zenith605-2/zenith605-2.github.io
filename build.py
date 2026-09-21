@@ -205,9 +205,17 @@ def _page(a, others=()):
 <title>{e(name)} — looking for closed testers | ACT Party</title>
 <meta name="description" content="{e(meta_desc)}">
 <link rel="canonical" href="{SITE}/a/{e(pkg)}/">
-<meta property="og:title" content="{e(name)} — looking for closed testers">
-<meta property="og:description" content="{e(meta_desc)}">
-{f'<meta property="og:image" content="{e(icon)}">' if icon else ''}
+<!-- 공유 미리보기 카드 (2026-09-21). 앱에서 [모집 글 공유]를 누르면 이
+     주소 하나만 나간다 — 카톡·디스코드가 이 태그로 카드를 만든다. 우리 홍보가
+     아니라 그 앱이 주인공이어야 해서 제목은 앱 이름, 썸네일은 앱 아이콘이다.
+     받는 사람 대부분이 한국어 카톡방이라 설명은 한국어를 앞에 둔다. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ACT Party">
+<meta property="og:url" content="{SITE}/a/{e(pkg)}/">
+<meta property="og:title" content="{e(name)}">
+<meta property="og:description" content="비공개 테스트 참여 · 그룹 가입 → 옵트인 → 설치 | Join the closed test">
+<meta property="og:image" content="{e(icon) if icon else SITE + '/img/og-en.png'}">
+<meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="/assets/app.css?v={CACHE_V}">
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
 </head>

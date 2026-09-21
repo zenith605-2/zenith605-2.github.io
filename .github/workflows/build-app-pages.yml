@@ -1,0 +1,47 @@
+# 앱 상세 페이지(/a/<패키지>/)를 다시 만든다 (2026-09-21).
+#
+# 앱을 새로 등록하면 이 페이지가 있어야 공유 링크에 앱 아이콘 카드가 뜬다.
+# 카톡은 자바스크립트를 안 돌리고 HTML 태그만 읽으니, 미리 만들어 둬야 한다.
+#
+# 언제 돌리나:
+#   - 앱 등록·수정 때 DB 트리거가 보내는 신호 (repository_dispatch) — 1~2분 안에 반영
+#   - 하루 한 번 예비 (신호를 놓쳤을 때, 테스터 수 갱신)
+#   - 손으로 (Actions 탭의 Run workflow)
+name: build-app-pages
+
+on:
+  repository_dispatch:
+    types: [app-changed]
+  schedule:
+    - cron: '7 19 * * *'   # 매일 04:07 KST
+  workflow_dispatch:
+
+# 신호가 몰려도 한 번에 하나씩 — 대기 중인 건 하나만 남고, 그 한 번이 최신을 읽는다
+concurrency:
+  group: build-app-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # 표준 라이브러리만 쓴다 — 설치할 게 없다
+      - run: python build.py
+      - name: commit if changed
+        run: |
+          git config user.name "act-party-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "Rebuild app pages"
+            git push
+          fi
