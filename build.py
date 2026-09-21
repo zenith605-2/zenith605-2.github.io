@@ -180,6 +180,72 @@ def _page(a, others=()):
   </div>
 '''
 
+    # 이 앱 주인이 지금 테스트해 주는 앱 — 공유 이미지에 실리는 목록과 같다
+    # (2026-09-22). 이미지를 받고 QR 로 들어왔는데 목록이 다르면 이상하다.
+    # 숫자는 페이지를 열 때 서버에서 받는다(public_app_page) — 정적 페이지는
+    # 하루 한 번만 다시 만들어져서 보드는 16/12 인데 여기는 10/12 였다.
+    testing_card = f'''  <style>
+  .testing .tlist {{ list-style: none; margin: 0; padding: 0; }}
+  .testing .tlist li {{ display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--ink700, #1D242D); }}
+  .testing .tlist li:first-child {{ border-top: 0; }}
+  .testing .tlist img, .testing .tlist .ph {{ width: 32px; height: 32px; border-radius: 9px; flex: none; object-fit: cover; }}
+  .testing .tlist .ph {{ display: inline-flex; align-items: center; justify-content: center; background: var(--ink700, #1D242D); font-weight: 700; }}
+  .testing .nm {{ flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }}
+  .testing .dd {{ flex: none; font-size: 12.5px; color: var(--ink300, #8A97A6); white-space: nowrap; font-variant-numeric: tabular-nums; }}
+  .testing .dd.fin {{ color: var(--mint, #3DDC97); font-weight: 700; }}
+  .testing .ok {{ flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--mint, #3DDC97); color: #05261A; font-size: 13px; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; }}
+  .testing .no {{ flex: none; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--ink600, #2A333F); }}
+</style>
+  <div class="card testing" id="apTesting" hidden style="margin-bottom:16px">
+    <h2 style="font-size:17px;margin:0 0 4px" id="apTestTitle"></h2>
+    <p class="muted" style="font-size:13px;margin:0 0 10px" id="apTestSum"></p>
+    <ul class="tlist" id="apTestList"></ul>
+  </div>
+  <script>
+  (function () {{
+    var dev = {json.dumps(dev, ensure_ascii=False)};
+    function esc(s) {{ return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {{
+      return {{'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}}[c]; }}); }}
+    fetch('https://eedqzvckdxfcuoyycivu.supabase.co/rest/v1/rpc/public_app_page', {{
+      method: 'POST',
+      headers: {{ 'apikey': 'sb_publishable_hF3_Mw-TybTPGxXPBx4M3Q_sPKe06UU',
+                 'Content-Type': 'application/json' }},
+      body: JSON.stringify({{ p_package: {json.dumps(pkg)} }})
+    }}).then(function (r) {{ return r.json(); }}).then(function (d) {{
+      if (!d || typeof d !== 'object') return;
+      // 한국어 전환 스크립트는 body 끝에서 돈다 — 답이 온 뒤에 본다
+      var ko = document.documentElement.lang === 'ko';
+      var need = d.needed || 12, cur = d.testers || 0;
+      document.getElementById('apCur').textContent = cur;
+      // 앱과 같게 — 모자라면 호박, 채우면 초록
+      document.getElementById('apCur').style.color = cur >= need ? 'var(--mint, #3DDC97)' : '';
+      document.getElementById('apNeed').textContent = need;
+      document.getElementById('apBar').style.width = Math.min(100, Math.round(cur / need * 100)) + '%';
+      var list = d.testing || [];
+      if (!list.length) return;
+      var today = list.filter(function (t) {{ return t.today; }}).length;
+      document.getElementById('apTestTitle').textContent = ko
+        ? dev + ' 님이 테스트 중인 앱 ' + list.length + '개'
+        : 'Apps ' + dev + ' is testing (' + list.length + ')';
+      // 공유 이미지 머리말과 같은 문장
+      document.getElementById('apTestSum').textContent = ko
+        ? '테스트 ' + list.length + '건 진행 · 완주 ' + d.finished + ' · 오늘 ' + today + '/' + list.length + ' 완료'
+        : list.length + ' in progress · ' + d.finished + ' finished · ' + today + '/' + list.length + ' opened today';
+      document.getElementById('apTestList').innerHTML = list.map(function (t) {{
+        var days = t.days || 14, n = t.opened || 0;
+        var lbl = (n > days ? days : n) + '/' + days + (ko ? '일' : ' days') + (n > days ? ' +' + (n - days) : '');
+        var ic = t.icon ? '<img src="' + esc(t.icon) + '" alt="" loading="lazy">'
+                        : '<span class="ph">' + esc((t.name || '?').charAt(0).toUpperCase()) + '</span>';
+        return '<li>' + ic + '<span class="nm">' + esc(t.name) + '</span>' +
+          '<span class="dd' + (t.status === 'done' ? ' fin' : '') + '">' + lbl + '</span>' +
+          (t.today ? '<span class="ok" title="today">✓</span>' : '<span class="no"></span>') + '</li>';
+      }}).join('');
+      document.getElementById('apTesting').hidden = false;
+    }}).catch(function () {{}});
+  }})();
+  </script>
+'''
+
     # 검색 결과에 뜨는 한 줄. 설명이 없으면 상태로 대신한다.
     meta_desc = (f'{name} by {dev} is looking for closed testers on ACT Party. '
                  f'{cur} of {need} testers so far. '
@@ -243,12 +309,12 @@ def _page(a, others=()):
       <h1 class="app-name" style="font-size:22px">{e(name)}</h1>
       <p class="muted">{e(dev)}</p>
       {f'<p class="desc">{e(desc)}</p>' if desc else ''}
-      <div class="bar"><i style="width:{min(100, round(cur / max(need, 1) * 100))}%"></i></div>
-      <p class="count"><b>{cur}</b> / {need}<span data-ko="명"> testers</span></p>
+      <div class="bar"><i id="apBar" style="width:{min(100, round(cur / max(need, 1) * 100))}%"></i></div>
+      <p class="count"><b id="apCur">{cur}</b> / <span id="apNeed">{need}</span><span data-ko="명"> testers</span></p>
     </div>
   </div>
 
-{join_card}  <!-- 예전에는 패키지·카르마·완료 수 카드와 ACT 소개 두 문단, 버튼 세 개가
+{join_card}{testing_card}  <!-- 예전에는 패키지·카르마·완료 수 카드와 ACT 소개 두 문단, 버튼 세 개가
        더 있었다. QR 로 들어온 사람에게 필요한 건 참여 링크뿐이라 너무 많이
        늘어놓는다는 말이 나왔다 (2026-09-22) — 우리 소개는 한 줄로 줄인다. -->
   <a class="card act-strip" href="{ACT_STORE}" rel="noopener">
