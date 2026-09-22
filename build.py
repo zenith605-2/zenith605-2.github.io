@@ -186,7 +186,19 @@ def _page(a, others=()):
     # 하루 한 번만 다시 만들어져서 보드는 16/12 인데 여기는 10/12 였다.
     testing_card = f'''  <style>
   .testing .tlist {{ list-style: none; margin: 0; padding: 0; }}
-  .testing .tlist li {{ display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--ink700, #1D242D); }}
+  .testing .tlist li {{ padding: 10px 0; border-top: 1px solid var(--ink700, #1D242D); }}
+  .testing .tlist .hd {{ display: flex; align-items: center; gap: 10px; }}
+  .testing .strip {{ display: grid; grid-template-columns: repeat(14, 1fr); gap: 3px; margin-top: 8px; }}
+  .testing .strip .c {{ display: flex; flex-direction: column; align-items: center; gap: 2px; }}
+  .testing .strip i {{ font-style: normal; font-size: 9.5px; color: var(--ink300, #8A97A6); font-variant-numeric: tabular-nums; }}
+  .testing .strip b {{ width: 100%; height: 16px; border-radius: 4px; background: #1A212B; color: #05261A;
+    font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; }}
+  .testing .strip b.on {{ background: var(--mint, #3DDC97); }}
+  .testing .strip b.fut {{ background: #141A22; }}
+  .testing .strip b.tdy {{ box-shadow: inset 0 0 0 2px var(--mint, #3DDC97); }}
+  .todaybig {{ display: block; margin-top: 10px; padding: 10px 14px; border-radius: 12px;
+    background: #1A212B; color: var(--text, #EEF2F7); font-size: 16px; font-weight: 800; }}
+  .todaybig.all {{ background: rgba(61,220,151,.14); color: var(--mint, #3DDC97); border: 1px solid rgba(61,220,151,.45); }}
   .testing .tlist li:first-child {{ border-top: 0; }}
   .testing .tlist img, .testing .tlist .ph {{ width: 32px; height: 32px; border-radius: 9px; flex: none; object-fit: cover; }}
   .testing .tlist .ph {{ display: inline-flex; align-items: center; justify-content: center; background: var(--ink700, #1D242D); font-weight: 700; }}
@@ -227,17 +239,46 @@ def _page(a, others=()):
       // 공유 이미지 머리말과 같은 문장. 완주 뒤 이어 가는 것을 따로 적어야
       // '진행' 숫자가 위의 ACT 인원과 나란히 읽힌다 (15 와 31 이 왜 다르냐).
       // 폰 폭에서 '오늘 / 31/31' 로 끊겼다 — 의미 단위로 직접 두 줄로 나눈다
-      document.getElementById('apTestSum').innerHTML = ko
-        ? '테스트 ' + list.length + '건 · 진행 ' + act + (cont ? ' · 완주 후 계속 ' + cont : '') + '<br>오늘 ' + today + '/' + list.length + ' 완료'
-        : list.length + ' apps · ' + act + ' in progress' + (cont ? ' · ' + cont + ' kept after finishing' : '') + '<br>' + today + '/' + list.length + ' opened today';
+      // 받는 사람이 묻는 건 "오늘 다 했어요?" 다 (2026-09-22) — 날짜를 박아
+      // 크게 보여 준다. 나중에 열어 봐도 어느 날 기준인지 알 수 있게.
+      var now = new Date(), md = (now.getMonth() + 1) + '/' + now.getDate();
+      var all = today === list.length;
+      document.getElementById('apTestSum').innerHTML =
+        (ko ? '테스트 ' + list.length + '건 · 진행 ' + act + (cont ? ' · 완주 후 계속 ' + cont : '')
+            : list.length + ' apps · ' + act + ' in progress' + (cont ? ' · ' + cont + ' kept after finishing' : '')) +
+        '<span class="todaybig' + (all ? ' all' : '') + '">' +
+        (all ? '✓ ' : '') +
+        (ko ? md + ' 오늘 ' + (all ? list.length + '개 모두 열었어요' : today + '/' + list.length + '개 열었어요')
+            : md + ' today · ' + (all ? 'opened all ' + list.length : today + ' of ' + list.length + ' opened')) +
+        '</span>';
+      // 공유 이미지의 날짜 띠와 같은 규칙: 기간 14일, 기간을 넘겨 이어 가면 최근 14일
+      function ymd(d) {{ return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }}
+      var todayKey = ymd(now);
+      function strip(t) {{
+        var days = t.days || 14, seen = {{}};
+        (t.dates || []).forEach(function (x) {{ seen[x] = 1; }});
+        var start = t.started ? new Date(t.started + 'T00:00:00') : new Date(now.getTime() - 13 * 864e5);
+        var end = new Date(start.getTime() + (days - 1) * 864e5);
+        var last = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        if (last > end) start = new Date(last.getTime() - 13 * 864e5);
+        var h = '<div class="strip">';
+        for (var i = 0; i < 14; i++) {{
+          var d = new Date(start.getTime() + i * 864e5), k = ymd(d);
+          var cls = seen[k] ? 'on' : (k > todayKey ? 'fut' : '');
+          if (k === todayKey) cls += ' tdy';
+          h += '<span class="c"><i>' + d.getDate() + '</i><b class="' + cls + '">' + (seen[k] ? '✓' : '') + '</b></span>';
+        }}
+        return h + '</div>';
+      }}
       document.getElementById('apTestList').innerHTML = list.map(function (t) {{
         var days = t.days || 14, n = t.opened || 0;
         var lbl = (n > days ? days : n) + '/' + days + (ko ? '일' : ' days') + (n > days ? ' +' + (n - days) : '');
         var ic = t.icon ? '<img src="' + esc(t.icon) + '" alt="" loading="lazy">'
                         : '<span class="ph">' + esc((t.name || '?').charAt(0).toUpperCase()) + '</span>';
-        return '<li>' + ic + '<span class="nm">' + esc(t.name) + '</span>' +
+        return '<li><div class="hd">' + ic + '<span class="nm">' + esc(t.name) + '</span>' +
           '<span class="dd' + (t.status === 'done' ? ' fin' : '') + '">' + lbl + '</span>' +
-          (t.today ? '<span class="ok" title="today">✓</span>' : '<span class="no"></span>') + '</li>';
+          (t.today ? '<span class="ok" title="today">✓</span>' : '<span class="no"></span>') + '</div>' +
+          strip(t) + '</li>';
       }}).join('');
       document.getElementById('apTesting').hidden = false;
     }}).catch(function () {{}});
