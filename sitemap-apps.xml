@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://actparty.app/a/com.appamon.mosaic_studio/</loc></url>
+  <url><loc>https://actparty.app/a/app.frogpouch/</loc></url>
   <url><loc>https://actparty.app/a/app.melodix.app/</loc></url>
   <url><loc>https://actparty.app/a/com.forbesfortress.app/</loc></url>
   <url><loc>https://actparty.app/a/com.pocketfrolic.perfectstack/</loc></url>
@@ -34,7 +35,6 @@
   <url><loc>https://actparty.app/a/com.daily.unige.pearl/</loc></url>
   <url><loc>https://actparty.app/a/com.mwomeok.app/</loc></url>
   <url><loc>https://actparty.app/a/com.donghoon.jejurace/</loc></url>
-  <url><loc>https://actparty.app/a/com.waypoint.sg/</loc></url>
   <url><loc>https://actparty.app/a/com.aistudio.openradio.rnair/</loc></url>
   <url><loc>https://actparty.app/a/com.flapsparkstudio.flapspark/</loc></url>
   <url><loc>https://actparty.app/a/com.hongjjangjjang.myohistory/</loc></url>
@@ -43,6 +43,7 @@
   <url><loc>https://actparty.app/a/com.lucidnorth.app/</loc></url>
   <url><loc>https://actparty.app/a/io.github.appleap385.peaceinmind/</loc></url>
   <url><loc>https://actparty.app/a/com.oyrak.minigame/</loc></url>
+  <url><loc>https://actparty.app/a/com.waypoint.sg/</loc></url>
   <url><loc>https://actparty.app/a/app.honors.golf/</loc></url>
   <url><loc>https://actparty.app/a/com.tebami.tebami/</loc></url>
   <url><loc>https://actparty.app/a/app.maturamaster.mobile/</loc></url>
@@ -81,8 +82,8 @@
   <url><loc>https://actparty.app/a/com.calebms.openflix/</loc></url>
   <url><loc>https://actparty.app/a/com.namusunmul.koinonia/</loc></url>
   <url><loc>https://actparty.app/a/com.youngjaeseo.annyeong/</loc></url>
-  <url><loc>https://actparty.app/a/com.jottoo.notes/</loc></url>
   <url><loc>https://actparty.app/a/com.facetlauncher.app/</loc></url>
+  <url><loc>https://actparty.app/a/com.jottoo.notes/</loc></url>
   <url><loc>https://actparty.app/a/com.orderbell.app/</loc></url>
   <url><loc>https://actparty.app/a/com.pocketfrolic.pulsepath/</loc></url>
   <url><loc>https://actparty.app/a/com.taskroulette.app/</loc></url>
@@ -113,9 +114,9 @@
   <url><loc>https://actparty.app/a/com.chriskim.wordloop/</loc></url>
   <url><loc>https://actparty.app/a/com.muhyeop.app/</loc></url>
   <url><loc>https://actparty.app/a/com.riddledlove.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.modernsnc.simpleprinter/</loc></url>
   <url><loc>https://actparty.app/a/com.modernsnc.aiphonedoctor/</loc></url>
   <url><loc>https://actparty.app/a/com.aaraj.habitshield/</loc></url>
+  <url><loc>https://actparty.app/a/com.modernsnc.simpleprinter/</loc></url>
   <url><loc>https://actparty.app/a/com.mantaszemeckas.signalspacefighter/</loc></url>
   <url><loc>https://actparty.app/a/com.sebo.rechner/</loc></url>
   <url><loc>https://actparty.app/a/com.koreabutwhy.topest/</loc></url>
