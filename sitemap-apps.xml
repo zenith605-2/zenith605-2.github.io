@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://actparty.app/a/com.petmap.app.pet_map/</loc></url>
   <url><loc>https://actparty.app/a/com.bizscene.bizscene/</loc></url>
-  <url><loc>https://actparty.app/a/com.appamom.linkeng/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.math/</loc></url>
+  <url><loc>https://actparty.app/a/com.appamom.linkeng/</loc></url>
   <url><loc>https://actparty.app/a/com.terrywi.workfit.app/</loc></url>
   <url><loc>https://actparty.app/a/com.housmantech.artviewer/</loc></url>
   <url><loc>https://actparty.app/a/app.melodix.app/</loc></url>
@@ -36,8 +37,8 @@
   <url><loc>https://actparty.app/a/com.cinequest.app/</loc></url>
   <url><loc>https://actparty.app/a/com.donghoon.jejurace/</loc></url>
   <url><loc>https://actparty.app/a/com.mgigo.kanalix/</loc></url>
-  <url><loc>https://actparty.app/a/com.moschovakiscapital.app/</loc></url>
   <url><loc>https://actparty.app/a/com.trynorthapps.truenorth/</loc></url>
+  <url><loc>https://actparty.app/a/com.moschovakiscapital.app/</loc></url>
   <url><loc>https://actparty.app/a/app.maturamaster.mobile/</loc></url>
   <url><loc>https://actparty.app/a/com.kwon.onwallet/</loc></url>
   <url><loc>https://actparty.app/a/com.aistudio.openradio.rnair/</loc></url>
@@ -153,9 +154,9 @@
   <url><loc>https://actparty.app/a/com.woobro.bricksort/</loc></url>
   <url><loc>https://actparty.app/a/kr.testerparty.tester_party/</loc></url>
   <url><loc>https://actparty.app/a/com.rrllab.omniworkspace/</loc></url>
-  <url><loc>https://actparty.app/a/com.bluequest.chagok/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.padakpadak/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.nown/</loc></url>
+  <url><loc>https://actparty.app/a/com.bluequest.chagok/</loc></url>
   <url><loc>https://actparty.app/a/kr.nyangkeypad.app/</loc></url>
   <url><loc>https://actparty.app/a/com.sonata444.myapp/</loc></url>
   <url><loc>https://actparty.app/a/com.factroyind.landbuildingrecord/</loc></url>
