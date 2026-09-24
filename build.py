@@ -199,6 +199,10 @@ def _page(a, others=()):
   .todaybig {{ display: block; margin-top: 10px; padding: 10px 14px; border-radius: 12px;
     background: #1A212B; color: var(--text, #EEF2F7); font-size: 16px; font-weight: 800; }}
   .todaybig.all {{ background: rgba(61,220,151,.14); color: var(--mint, #3DDC97); border: 1px solid rgba(61,220,151,.45); }}
+  .testing .tlist li.sec {{ border-top: 0; padding: 14px 0 4px; }}
+  .testing .tlist li.sec b {{ display: block; font-size: 13.5px; font-weight: 800; }}
+  .testing .tlist li.sec i {{ display: block; font-style: normal; font-size: 11.5px; color: var(--ink300, #8A97A6); }}
+  .testing .tlist li.sec + li {{ border-top: 0; }}
   .testing .tlist li:first-child {{ border-top: 0; }}
   .testing .tlist img, .testing .tlist .ph {{ width: 32px; height: 32px; border-radius: 9px; flex: none; object-fit: cover; }}
   .testing .tlist .ph {{ display: inline-flex; align-items: center; justify-content: center; background: var(--ink700, #1D242D); font-weight: 700; }}
@@ -270,7 +274,7 @@ def _page(a, others=()):
         }}
         return h + '</div>';
       }}
-      document.getElementById('apTestList').innerHTML = list.map(function (t) {{
+      function item(t) {{
         var days = t.days || 14, n = t.opened || 0;
         var lbl = (n > days ? days : n) + '/' + days + (ko ? '일' : ' days') + (n > days ? ' +' + (n - days) : '');
         var ic = t.icon ? '<img src="' + esc(t.icon) + '" alt="" loading="lazy">'
@@ -279,7 +283,22 @@ def _page(a, others=()):
           '<span class="dd' + (t.status === 'done' ? ' fin' : '') + '">' + lbl + '</span>' +
           (t.today ? '<span class="ok" title="today">✓</span>' : '<span class="no"></span>') + '</div>' +
           strip(t) + '</li>';
-      }}).join('');
+      }}
+      // 앱의 공유 이미지와 같은 기준으로 두 묶음 (2026-09-24). ACT 밖 앱은
+      // 상대 기록이 없어서, 섞여 있으면 '상대가 안 해 준 것'처럼 읽힌다.
+      var inAct = list.filter(function (t) {{ return t.act; }});
+      var outAct = list.filter(function (t) {{ return !t.act; }});
+      function section(title, sub, items) {{
+        if (!items.length) return '';
+        return '<li class="sec"><b>' + esc(title) + '</b><i>' + esc(sub) + '</i></li>' +
+          items.map(item).join('');
+      }}
+      document.getElementById('apTestList').innerHTML = outAct.length
+        ? section(ko ? 'ACT 유저 ' + inAct.length : inAct.length + ' with ACT Party users',
+                  ko ? '서로 기록이 남아요' : 'both sides are recorded', inAct) +
+          section(ko ? 'ACT 밖 ' + outAct.length : outAct.length + ' outside ACT Party',
+                  ko ? '상대 기록이 없어서 이 기록만 있어요' : 'only this side is recorded', outAct)
+        : list.map(item).join('');
       document.getElementById('apTesting').hidden = false;
     }}).catch(function () {{}});
   }})();

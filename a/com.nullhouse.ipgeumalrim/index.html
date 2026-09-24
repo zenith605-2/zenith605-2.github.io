@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>입금알림이 — looking for closed testers | ACT Party</title>
-<meta name="description" content="입금알림이 by hhkang999 is looking for closed testers on ACT Party. 14 of 12 testers so far. 입금알림 서비스">
+<meta name="description" content="입금알림이 by hhkang999 is looking for closed testers on ACT Party. 13 of 12 testers so far. 입금알림 서비스">
 <link rel="canonical" href="https://actparty.app/a/com.nullhouse.ipgeumalrim/">
 <!-- 공유 미리보기 카드 (2026-09-21). 앱에서 [모집 글 공유]를 누르면 이
      주소 하나만 나간다 — 카톡·디스코드가 이 태그로 카드를 만든다. 우리 홍보가
@@ -79,6 +79,10 @@
   .todaybig { display: block; margin-top: 10px; padding: 10px 14px; border-radius: 12px;
     background: #1A212B; color: var(--text, #EEF2F7); font-size: 16px; font-weight: 800; }
   .todaybig.all { background: rgba(61,220,151,.14); color: var(--mint, #3DDC97); border: 1px solid rgba(61,220,151,.45); }
+  .testing .tlist li.sec { border-top: 0; padding: 14px 0 4px; }
+  .testing .tlist li.sec b { display: block; font-size: 13.5px; font-weight: 800; }
+  .testing .tlist li.sec i { display: block; font-style: normal; font-size: 11.5px; color: var(--ink300, #8A97A6); }
+  .testing .tlist li.sec + li { border-top: 0; }
   .testing .tlist li:first-child { border-top: 0; }
   .testing .tlist img, .testing .tlist .ph { width: 32px; height: 32px; border-radius: 9px; flex: none; object-fit: cover; }
   .testing .tlist .ph { display: inline-flex; align-items: center; justify-content: center; background: var(--ink700, #1D242D); font-weight: 700; }
@@ -150,7 +154,7 @@
         }
         return h + '</div>';
       }
-      document.getElementById('apTestList').innerHTML = list.map(function (t) {
+      function item(t) {
         var days = t.days || 14, n = t.opened || 0;
         var lbl = (n > days ? days : n) + '/' + days + (ko ? '일' : ' days') + (n > days ? ' +' + (n - days) : '');
         var ic = t.icon ? '<img src="' + esc(t.icon) + '" alt="" loading="lazy">'
@@ -159,7 +163,22 @@
           '<span class="dd' + (t.status === 'done' ? ' fin' : '') + '">' + lbl + '</span>' +
           (t.today ? '<span class="ok" title="today">✓</span>' : '<span class="no"></span>') + '</div>' +
           strip(t) + '</li>';
-      }).join('');
+      }
+      // 앱의 공유 이미지와 같은 기준으로 두 묶음 (2026-09-24). ACT 밖 앱은
+      // 상대 기록이 없어서, 섞여 있으면 '상대가 안 해 준 것'처럼 읽힌다.
+      var inAct = list.filter(function (t) { return t.act; });
+      var outAct = list.filter(function (t) { return !t.act; });
+      function section(title, sub, items) {
+        if (!items.length) return '';
+        return '<li class="sec"><b>' + esc(title) + '</b><i>' + esc(sub) + '</i></li>' +
+          items.map(item).join('');
+      }
+      document.getElementById('apTestList').innerHTML = outAct.length
+        ? section(ko ? 'ACT 유저 ' + inAct.length : inAct.length + ' with ACT Party users',
+                  ko ? '서로 기록이 남아요' : 'both sides are recorded', inAct) +
+          section(ko ? 'ACT 밖 ' + outAct.length : outAct.length + ' outside ACT Party',
+                  ko ? '상대 기록이 없어서 이 기록만 있어요' : 'only this side is recorded', outAct)
+        : list.map(item).join('');
       document.getElementById('apTesting').hidden = false;
     }).catch(function () {});
   })();
@@ -201,11 +220,6 @@
     <p class="muted" style="font-size:13px;margin:0 0 12px">
       <span data-ko="이 중 하나를 테스트하면 그 개발자가 내 앱을 테스트해 줘요.">Test one of these and its developer tests yours back.</span></p>
     <div class="minis">
-      <a class="mini" href="/a/com.polymita.wallettrackingapp/">
-        <img src="https://eedqzvckdxfcuoyycivu.supabase.co/storage/v1/object/public/app-icons/494c1d2a-9477-45f4-953a-a08b597dcadf/1790213022519.png" alt="">
-        <span class="nm">Walto</span>
-        <span class="muted">0/12</span>
-      </a>
       <a class="mini" href="/a/com.elevenover8.sseukgeul/">
         <span class="ph">쓱</span>
         <span class="nm">쓱글 워치 키보드</span>
@@ -219,6 +233,11 @@
       <a class="mini" href="/a/com.bloom.foldy/">
         <img src="https://eedqzvckdxfcuoyycivu.supabase.co/storage/v1/object/public/app-icons/cf022f37-35f1-4fdb-9d45-59852b037a5c/1788873115800.png" alt="">
         <span class="nm">Folbi</span>
+        <span class="muted">0/12</span>
+      </a>
+      <a class="mini" href="/a/com.terrywi.workfit.app/">
+        <img src="https://eedqzvckdxfcuoyycivu.supabase.co/storage/v1/object/public/app-icons/d41e8b75-cc4c-41b6-b84f-c78917f9c2ff/1788958714377.png" alt="">
+        <span class="nm">워크핏</span>
         <span class="muted">0/12</span>
       </a>
     </div>
