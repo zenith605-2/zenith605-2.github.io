@@ -450,14 +450,14 @@ function progressLine(p, exs) {
   }
   if (p.party_name) {
     if (p.party_status === 'running' && (p.day_no ?? 0) > 0) {
-      parts.push(`${p.party_name} D+${p.day_no}`);
+      parts.push(`${esc(p.party_name)} D+${p.day_no}`);
       parts.push(f('prog_today', { a: p.verified_today ?? 0, b: p.party_testers ?? 0 }));
       if ((p.active_testers ?? 0) < (p.party_testers ?? 0)) {
         parts.push(f('prog_active', { a: p.active_testers ?? 0 }));
       }
     } else {
       const st = { running: 'st_running', recruiting: 'st_recruit' }[p.party_status] || 'st_done';
-      parts.push(`${p.party_name} · ${t(st)}`);
+      parts.push(`${esc(p.party_name)} · ${t(st)}`);
     }
   }
   // 내 앱 카드다 — 세는 쪽은 '내 앱을 테스트하는 사람'이어야 한다.
