@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://actparty.app/a/com.solosim.app/</loc></url>
   <url><loc>https://actparty.app/a/com.lucas.threeminutos/</loc></url>
   <url><loc>https://actparty.app/a/com.housmantech.artviewer/</loc></url>
   <url><loc>https://actparty.app/a/com.godrinking.app/</loc></url>
@@ -7,8 +8,8 @@
   <url><loc>https://actparty.app/a/com.byurim.app/</loc></url>
   <url><loc>https://actparty.app/a/com.daily.unige.pearl/</loc></url>
   <url><loc>https://actparty.app/a/io.github.appleap385.peaceinmind/</loc></url>
-  <url><loc>https://actparty.app/a/com.lucidnorth.app/</loc></url>
   <url><loc>https://actparty.app/a/com.trynorthapps.truenorth/</loc></url>
+  <url><loc>https://actparty.app/a/com.lucidnorth.app/</loc></url>
   <url><loc>https://actparty.app/a/com.forbesfortress.app/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.apex/</loc></url>
   <url><loc>https://actparty.app/a/com.zerobig.salva/</loc></url>
@@ -28,7 +29,6 @@
   <url><loc>https://actparty.app/a/com.usmemorymap.app/</loc></url>
   <url><loc>https://actparty.app/a/com.aistudio.openradio.rnair/</loc></url>
   <url><loc>https://actparty.app/a/com.calebms.openflix/</loc></url>
-  <url><loc>https://actparty.app/a/com.vyma.app/</loc></url>
   <url><loc>https://actparty.app/a/com.voltku.app/</loc></url>
   <url><loc>https://actparty.app/a/com.chriskim.wordloop/</loc></url>
   <url><loc>https://actparty.app/a/com.leorld.onedrip/</loc></url>
@@ -65,8 +65,8 @@
   <url><loc>https://actparty.app/a/kr.co.moplan/</loc></url>
   <url><loc>https://actparty.app/a/com.yjfamilystudio.biblepoint/</loc></url>
   <url><loc>https://actparty.app/a/com.taskroulette.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.modernsnc.simpleprinter/</loc></url>
   <url><loc>https://actparty.app/a/com.modernsnc.aiphonedoctor/</loc></url>
+  <url><loc>https://actparty.app/a/com.modernsnc.simpleprinter/</loc></url>
   <url><loc>https://actparty.app/a/com.arkoda.mojimind/</loc></url>
   <url><loc>https://actparty.app/a/com.arrowclear.puzzlegame/</loc></url>
   <url><loc>https://actparty.app/a/com.malangstudio.silentbell/</loc></url>
@@ -141,6 +141,7 @@
   <url><loc>https://actparty.app/a/fr.zeroestime.mediacove/</loc></url>
   <url><loc>https://actparty.app/a/com.hongjjangjjang.myohistory/</loc></url>
   <url><loc>https://actparty.app/a/com.ruralsyncagro.app/</loc></url>
+  <url><loc>https://actparty.app/a/com.vyma.app/</loc></url>
   <url><loc>https://actparty.app/a/com.duneforgegames.dunewords/</loc></url>
   <url><loc>https://actparty.app/a/com.ijcompany.chalkmaze/</loc></url>
   <url><loc>https://actparty.app/a/com.smilemi.housework/</loc></url>
@@ -178,8 +179,8 @@
   <url><loc>https://actparty.app/a/app.benchscape.app/</loc></url>
   <url><loc>https://actparty.app/a/com.salmimat.mokkitikka/</loc></url>
   <url><loc>https://actparty.app/a/com.plant.muljuo/</loc></url>
-  <url><loc>https://actparty.app/a/com.travelzip.festaon/</loc></url>
   <url><loc>https://actparty.app/a/com.travelzip/</loc></url>
+  <url><loc>https://actparty.app/a/com.travelzip.festaon/</loc></url>
   <url><loc>https://actparty.app/a/sky.Hopper/</loc></url>
   <url><loc>https://actparty.app/a/com.menuinteligente.app/</loc></url>
   <url><loc>https://actparty.app/a/com.sailiq.android/</loc></url>
