@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://actparty.app/a/com.donghoon.rirabeat/</loc></url>
   <url><loc>https://actparty.app/a/com.housmantech.artviewer/</loc></url>
   <url><loc>https://actparty.app/a/com.godrinking.app/</loc></url>
   <url><loc>https://actparty.app/a/com.bloom.foldy/</loc></url>
@@ -7,13 +8,13 @@
   <url><loc>https://actparty.app/a/io.github.appleap385.peaceinmind/</loc></url>
   <url><loc>https://actparty.app/a/com.daily.unige.pearl/</loc></url>
   <url><loc>https://actparty.app/a/com.byurim.app/</loc></url>
+  <url><loc>https://actparty.app/a/com.zerobig.salva/</loc></url>
   <url><loc>https://actparty.app/a/com.aistudio.toddlersfuncards.tfcapp/</loc></url>
   <url><loc>https://actparty.app/a/com.phoenix.blissfulpause/</loc></url>
   <url><loc>https://actparty.app/a/com.forbesfortress.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.trynorthapps.truenorth/</loc></url>
   <url><loc>https://actparty.app/a/com.lucidnorth.app/</loc></url>
   <url><loc>https://actparty.app/a/com.moschovakiscapital.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.zerobig.salva/</loc></url>
+  <url><loc>https://actparty.app/a/com.trynorthapps.truenorth/</loc></url>
   <url><loc>https://actparty.app/a/nz.kiwitest.app/</loc></url>
   <url><loc>https://actparty.app/a/com.pocketfrolic.testercommunity/</loc></url>
   <url><loc>https://actparty.app/a/com.notilog.app/</loc></url>
@@ -59,15 +60,15 @@
   <url><loc>https://actparty.app/a/com.todaysrecord.record/</loc></url>
   <url><loc>https://actparty.app/a/com.arkoda.mojimind/</loc></url>
   <url><loc>https://actparty.app/a/com.faelumestudio.tabatimer/</loc></url>
-  <url><loc>https://actparty.app/a/com.woodongnol/</loc></url>
   <url><loc>https://actparty.app/a/com.donghoon.widgetmon/</loc></url>
+  <url><loc>https://actparty.app/a/com.woodongnol/</loc></url>
   <url><loc>https://actparty.app/a/com.emoi.emoi/</loc></url>
   <url><loc>https://actparty.app/a/ch.leutrim.prism/</loc></url>
-  <url><loc>https://actparty.app/a/com.malangstudio.silentbell/</loc></url>
   <url><loc>https://actparty.app/a/com.malangstudio.slimeidle/</loc></url>
+  <url><loc>https://actparty.app/a/com.malangstudio.silentbell/</loc></url>
   <url><loc>https://actparty.app/a/com.taskroulette.app/</loc></url>
+  <url><loc>https://actparty.app/a/com.offbeat.game/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.math/</loc></url>
-  <url><loc>https://actparty.app/a/com.donghoon.mbtmi/</loc></url>
   <url><loc>https://actparty.app/a/com.arrowclear.puzzlegame/</loc></url>
   <url><loc>https://actparty.app/a/com.facetlauncher.app/</loc></url>
   <url><loc>https://actparty.app/a/kr.co.moplan/</loc></url>
@@ -78,7 +79,6 @@
   <url><loc>https://actparty.app/a/com.yanjiyu.terminalspike/</loc></url>
   <url><loc>https://actparty.app/a/com.franken.haccpscanner/</loc></url>
   <url><loc>https://actparty.app/a/com.melonjam.forgetactics/</loc></url>
-  <url><loc>https://actparty.app/a/com.offbeat.game/</loc></url>
   <url><loc>https://actparty.app/a/com.lekkogo.app/</loc></url>
   <url><loc>https://actparty.app/a/com.auroracamsolutions.opiarto/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.linkeng/</loc></url>
@@ -153,13 +153,14 @@
   <url><loc>https://actparty.app/a/com.chairman.pathlog/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.abup/</loc></url>
   <url><loc>https://actparty.app/a/com.kwon.ontimer/</loc></url>
+  <url><loc>https://actparty.app/a/com.donghoon.mbtmi/</loc></url>
   <url><loc>https://actparty.app/a/com.kwon.onwallet/</loc></url>
   <url><loc>https://actparty.app/a/app.frogpouch/</loc></url>
   <url><loc>https://actparty.app/a/com.mgigo.traggo/</loc></url>
   <url><loc>https://actparty.app/a/kr.testerparty.tester_party/</loc></url>
   <url><loc>https://actparty.app/a/com.woobro.bricksort/</loc></url>
-  <url><loc>https://actparty.app/a/com.bluequest.padakpadak/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.nown/</loc></url>
+  <url><loc>https://actparty.app/a/com.bluequest.padakpadak/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.chagok/</loc></url>
   <url><loc>https://actparty.app/a/kr.nyangkeypad.app/</loc></url>
   <url><loc>https://actparty.app/a/com.kithara.player/</loc></url>
