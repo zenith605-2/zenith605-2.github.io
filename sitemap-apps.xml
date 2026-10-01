@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://actparty.app/a/com.radioactivecoding.cryptomere/</loc></url>
   <url><loc>https://actparty.app/a/de.schnueddels.adventures/</loc></url>
   <url><loc>https://actparty.app/a/com.seryalstudios.comedy_one/</loc></url>
   <url><loc>https://actparty.app/a/com.byurim.app/</loc></url>
@@ -12,7 +13,6 @@
   <url><loc>https://actparty.app/a/io.github.appleap385.peaceinmind/</loc></url>
   <url><loc>https://actparty.app/a/com.park24.golfgroup/</loc></url>
   <url><loc>https://actparty.app/a/com.reversealarm.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.minesweep.royal/</loc></url>
   <url><loc>https://actparty.app/a/com.aistudio.toddlersfuncards.tfcapp/</loc></url>
   <url><loc>https://actparty.app/a/com.lucianafmsilva.appv3/</loc></url>
   <url><loc>https://actparty.app/a/com.phoenix.blissfulpause/</loc></url>
@@ -22,6 +22,7 @@
   <url><loc>https://actparty.app/a/com.moschovakiscapital.app/</loc></url>
   <url><loc>https://actparty.app/a/com.remokok.app/</loc></url>
   <url><loc>https://actparty.app/a/com.smilemi.jjikgo/</loc></url>
+  <url><loc>https://actparty.app/a/com.minesweep.royal/</loc></url>
   <url><loc>https://actparty.app/a/com.favoritefont.app/</loc></url>
   <url><loc>https://actparty.app/a/com.forbesfortress.app/</loc></url>
   <url><loc>https://actparty.app/a/com.amomynys.expresspdf/</loc></url>
@@ -185,9 +186,9 @@
   <url><loc>https://actparty.app/a/com.mgigo.traggo/</loc></url>
   <url><loc>https://actparty.app/a/kr.testerparty.tester_party/</loc></url>
   <url><loc>https://actparty.app/a/com.notilog.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.bluequest.padakpadak/</loc></url>
-  <url><loc>https://actparty.app/a/com.bluequest.nown/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.chagok/</loc></url>
+  <url><loc>https://actparty.app/a/com.bluequest.nown/</loc></url>
+  <url><loc>https://actparty.app/a/com.bluequest.padakpadak/</loc></url>
   <url><loc>https://actparty.app/a/kr.nyangkeypad.app/</loc></url>
   <url><loc>https://actparty.app/a/ABM.filo/</loc></url>
   <url><loc>https://actparty.app/a/com.elevenover8.sseukgeul/</loc></url>
@@ -209,8 +210,8 @@
   <url><loc>https://actparty.app/a/app.benchscape.app/</loc></url>
   <url><loc>https://actparty.app/a/com.deckofdays/</loc></url>
   <url><loc>https://actparty.app/a/com.plant.muljuo/</loc></url>
-  <url><loc>https://actparty.app/a/com.travelzip.festaon/</loc></url>
   <url><loc>https://actparty.app/a/com.travelzip/</loc></url>
+  <url><loc>https://actparty.app/a/com.travelzip.festaon/</loc></url>
   <url><loc>https://actparty.app/a/sky.Hopper/</loc></url>
   <url><loc>https://actparty.app/a/com.mos.greedy.loong/</loc></url>
   <url><loc>https://actparty.app/a/com.canakard.nearu/</loc></url>
