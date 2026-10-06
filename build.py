@@ -15,6 +15,8 @@ import re
 import os
 import shutil
 import sys
+import time
+import urllib.error
 import urllib.request
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -61,8 +63,17 @@ def public_apps():
             'Authorization': f'Bearer {SUPABASE_KEY}',
             'Content-Type': 'application/json',
         })
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read().decode())
+    # anon 은 statement_timeout 3초다. public_apps 는 평소 0.2~1.4초인데 DB 가 바쁘면
+    # 3초를 넘겨 500 으로 끊긴다 — 10/6 05:05·22:11 빌드가 이걸로 실패했다.
+    # 잠깐 쉬었다 다시 부른다.
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return json.loads(r.read().decode())
+        except urllib.error.HTTPError as e:
+            if e.code < 500 or attempt == 3:
+                raise
+            time.sleep(15 * (attempt + 1))
 
 
 # /a/ 페이지는 검색용이라 영어로 굽는다. 그런데 앱에서 기록을 공유할 때
