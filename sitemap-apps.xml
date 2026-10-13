@@ -2,8 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://actparty.app/a/app.syndik8.syndicate/</loc></url>
   <url><loc>https://actparty.app/a/com.offbeat.game/</loc></url>
-  <url><loc>https://actparty.app/a/com.appamom.appa_chem/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.joseon/</loc></url>
+  <url><loc>https://actparty.app/a/com.appamom.appa_chem/</loc></url>
   <url><loc>https://actparty.app/a/com.paleoagtech.matkaleidja/</loc></url>
   <url><loc>https://actparty.app/a/com.joeg.betterfest/</loc></url>
   <url><loc>https://actparty.app/a/com.foctract/</loc></url>
@@ -48,8 +48,8 @@
   <url><loc>https://actparty.app/a/com.kbizv.app/</loc></url>
   <url><loc>https://actparty.app/a/com.chopark3.fileport/</loc></url>
   <url><loc>https://actparty.app/a/com.forgenine.mensalix/</loc></url>
-  <url><loc>https://actparty.app/a/com.donghoon.hamsterseeddefense/</loc></url>
   <url><loc>https://actparty.app/a/com.donghoon.rirabeat/</loc></url>
+  <url><loc>https://actparty.app/a/com.donghoon.hamsterseeddefense/</loc></url>
   <url><loc>https://actparty.app/a/com.alicegames.strongfingers/</loc></url>
   <url><loc>https://actparty.app/a/com.bitzo.ipoc/</loc></url>
   <url><loc>https://actparty.app/a/com.petmap.app.pet_map/</loc></url>
@@ -97,7 +97,6 @@
   <url><loc>https://actparty.app/a/com.taphush.infinitefeed/</loc></url>
   <url><loc>https://actparty.app/a/com.vancemalm.undecide/</loc></url>
   <url><loc>https://actparty.app/a/com.campspot.app/</loc></url>
-  <url><loc>https://actparty.app/a/in.tinyclass.app/</loc></url>
   <url><loc>https://actparty.app/a/com.donghoon.gilgoyang/</loc></url>
   <url><loc>https://actparty.app/a/dev.imperial64.petsalon/</loc></url>
   <url><loc>https://actparty.app/a/com.kwon.onroutine/</loc></url>
@@ -106,6 +105,7 @@
   <url><loc>https://actparty.app/a/com.rookery.ai/</loc></url>
   <url><loc>https://actparty.app/a/azcom.example.myapp/</loc></url>
   <url><loc>https://actparty.app/a/com.sillage.app/</loc></url>
+  <url><loc>https://actparty.app/a/in.tinyclass.app/</loc></url>
   <url><loc>https://actparty.app/a/com.mendelatech.poducasto/</loc></url>
   <url><loc>https://actparty.app/a/com.twotheg.academyfind/</loc></url>
   <url><loc>https://actparty.app/a/com.nurisoft.comfymd/</loc></url>
@@ -212,8 +212,8 @@
   <url><loc>https://actparty.app/a/com.duneforgegames.dunewords/</loc></url>
   <url><loc>https://actparty.app/a/com.chopark3.rackpocket/</loc></url>
   <url><loc>https://actparty.app/a/com.pocketfrolic.colorcrash/</loc></url>
-  <url><loc>https://actparty.app/a/com.pocketfrolic.pulsepath/</loc></url>
   <url><loc>https://actparty.app/a/com.arrowclear.puzzlegame/</loc></url>
+  <url><loc>https://actparty.app/a/com.pocketfrolic.pulsepath/</loc></url>
   <url><loc>https://actparty.app/a/com.yourgamebase.app/</loc></url>
   <url><loc>https://actparty.app/a/com.raytek.lansend/</loc></url>
   <url><loc>https://actparty.app/a/com.muhyeop.app/</loc></url>
@@ -223,9 +223,9 @@
   <url><loc>https://actparty.app/a/com.tebami.tebami/</loc></url>
   <url><loc>https://actparty.app/a/com.digraw.familybudgettracker.play/</loc></url>
   <url><loc>https://actparty.app/a/com.kwon.onwallet/</loc></url>
-  <url><loc>https://actparty.app/a/com.bluequest.chagok/</loc></url>
-  <url><loc>https://actparty.app/a/com.bluequest.nown/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.padakpadak/</loc></url>
+  <url><loc>https://actparty.app/a/com.bluequest.nown/</loc></url>
+  <url><loc>https://actparty.app/a/com.bluequest.chagok/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.abup/</loc></url>
   <url><loc>https://actparty.app/a/progrsult.waga.pomiary/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.puripang/</loc></url>
