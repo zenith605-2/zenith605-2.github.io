@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://actparty.app/a/com.bendcalc.bendcalc/</loc></url>
   <url><loc>https://actparty.app/a/com.tinyproofstudio.blockmath/</loc></url>
+  <url><loc>https://actparty.app/a/com.bendcalc.bendcalc/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.joseon/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.appa_chem/</loc></url>
   <url><loc>https://actparty.app/a/com.offbeat.game/</loc></url>
@@ -70,13 +70,12 @@
   <url><loc>https://actparty.app/a/com.gamebuzz.gamebuzz/</loc></url>
   <url><loc>https://actparty.app/a/dev.iqbal.arus/</loc></url>
   <url><loc>https://actparty.app/a/com.donghoon.gilgoyang/</loc></url>
-  <url><loc>https://actparty.app/a/com.donghoon.hamsterseeddefense/</loc></url>
   <url><loc>https://actparty.app/a/com.joeg.betterfest/</loc></url>
   <url><loc>https://actparty.app/a/com.daqin.sudoku/</loc></url>
   <url><loc>https://actparty.app/a/com.centristudios.sixthman/</loc></url>
   <url><loc>https://actparty.app/a/com.rookery.ash/</loc></url>
   <url><loc>https://actparty.app/a/com.pendragontechnologies.pyramiddrop/</loc></url>
-  <url><loc>https://actparty.app/a/com.kinistudio.wonderfair/</loc></url>
+  <url><loc>https://actparty.app/a/com.donghoon.hamsterseeddefense/</loc></url>
   <url><loc>https://actparty.app/a/com.rickymcdaniel.pester/</loc></url>
   <url><loc>https://actparty.app/a/com.nurisoft.golfRound/</loc></url>
   <url><loc>https://actparty.app/a/com.danbistudio.corerush/</loc></url>
@@ -87,6 +86,7 @@
   <url><loc>https://actparty.app/a/com.shatterjackpot.app/</loc></url>
   <url><loc>https://actparty.app/a/com.proxychat.myapp/</loc></url>
   <url><loc>https://actparty.app/a/com.donghoon.rirawinter/</loc></url>
+  <url><loc>https://actparty.app/a/com.kinistudio.wonderfair/</loc></url>
   <url><loc>https://actparty.app/a/com.areasnap.app/</loc></url>
   <url><loc>https://actparty.app/a/com.Devtonney.colorcube/</loc></url>
   <url><loc>https://actparty.app/a/com.kwon.onroutine/</loc></url>
