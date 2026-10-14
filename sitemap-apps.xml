@@ -2,8 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://actparty.app/a/com.locksandloot.game/</loc></url>
   <url><loc>https://actparty.app/a/com.fillbookhq.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.appamom.joseon/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.appa_chem/</loc></url>
+  <url><loc>https://actparty.app/a/com.appamom.joseon/</loc></url>
   <url><loc>https://actparty.app/a/com.offbeat.game/</loc></url>
   <url><loc>https://actparty.app/a/com.paleoagtech.matkaleidja/</loc></url>
   <url><loc>https://actparty.app/a/com.emoi.emoi/</loc></url>
@@ -65,9 +65,9 @@
   <url><loc>https://actparty.app/a/com.appsbydan.gagapitshowdown/</loc></url>
   <url><loc>https://actparty.app/a/com.qmeicebreaker.app/</loc></url>
   <url><loc>https://actparty.app/a/com.sdz.myapp/</loc></url>
+  <url><loc>https://actparty.app/a/com.plottwisme.twa/</loc></url>
   <url><loc>https://actparty.app/a/com.kinistudio.wonderfair/</loc></url>
   <url><loc>https://actparty.app/a/app.web.worktrack_ce680.twa/</loc></url>
-  <url><loc>https://actparty.app/a/com.plottwisme.twa/</loc></url>
   <url><loc>https://actparty.app/a/dev.iqbal.arus/</loc></url>
   <url><loc>https://actparty.app/a/app.backlit/</loc></url>
   <url><loc>https://actparty.app/a/nortiq.rustplanner/</loc></url>
@@ -92,8 +92,8 @@
   <url><loc>https://actparty.app/a/com.areasnap.app/</loc></url>
   <url><loc>https://actparty.app/a/com.kimrok.sajuchat/</loc></url>
   <url><loc>https://actparty.app/a/com.shatterjackpot.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.donghoon.widgetmon/</loc></url>
   <url><loc>https://actparty.app/a/com.donghoon.gilgoyang/</loc></url>
+  <url><loc>https://actparty.app/a/com.donghoon.widgetmon/</loc></url>
   <url><loc>https://actparty.app/a/com.scanmateai.app/</loc></url>
   <url><loc>https://actparty.app/a/azcom.example.myapp/</loc></url>
   <url><loc>https://actparty.app/a/com.vancemalm.undecide/</loc></url>
@@ -146,21 +146,21 @@
   <url><loc>https://actparty.app/a/com.cricktrack.ai/</loc></url>
   <url><loc>https://actparty.app/a/com.oli4vh.apps.mooscles/</loc></url>
   <url><loc>https://actparty.app/a/com.toddlernote.app/</loc></url>
+  <url><loc>https://actparty.app/a/nz.jobtap.app/</loc></url>
   <url><loc>https://actparty.app/a/com.xallow.traze/</loc></url>
   <url><loc>https://actparty.app/a/com.sudodevs.vybe/</loc></url>
   <url><loc>https://actparty.app/a/com.kardrune.game/</loc></url>
   <url><loc>https://actparty.app/a/com.flocktech.viewer3d/</loc></url>
-  <url><loc>https://actparty.app/a/nz.jobtap.app/</loc></url>
   <url><loc>https://actparty.app/a/uk.co.originforgestudio.contentforge/</loc></url>
   <url><loc>https://actparty.app/a/com.nixia.datingapp/</loc></url>
   <url><loc>https://actparty.app/a/io.github.graviton94.todaybible/</loc></url>
   <url><loc>https://actparty.app/a/games.spikey.pawplace/</loc></url>
   <url><loc>https://actparty.app/a/games.spikey.neonmerge/</loc></url>
+  <url><loc>https://actparty.app/a/com.frailescitystudios.aeroblitz/</loc></url>
   <url><loc>https://actparty.app/a/com.thebityoumissed.app/</loc></url>
   <url><loc>https://actparty.app/a/com.alyaa.sessionly/</loc></url>
   <url><loc>https://actparty.app/a/com.rahid.secondshift/</loc></url>
   <url><loc>https://actparty.app/a/com.swyyty.morningzen/</loc></url>
-  <url><loc>https://actparty.app/a/com.frailescitystudios.aeroblitz/</loc></url>
   <url><loc>https://actparty.app/a/app.ranmio.mobile/</loc></url>
   <url><loc>https://actparty.app/a/com.mypyro.veherego/</loc></url>
   <url><loc>https://actparty.app/a/com.sortis89s.dealt/</loc></url>
@@ -194,7 +194,6 @@
   <url><loc>https://actparty.app/a/app.releaseme.mobile/</loc></url>
   <url><loc>https://actparty.app/a/com.joygle.readtheroom/</loc></url>
   <url><loc>https://actparty.app/a/com.dotaduck.taptarget/</loc></url>
-  <url><loc>https://actparty.app/a/com.veggiemerge.game/</loc></url>
   <url><loc>https://actparty.app/a/com.deko360.capture/</loc></url>
   <url><loc>https://actparty.app/a/com.pricealbum.app/</loc></url>
   <url><loc>https://actparty.app/a/com.sodiqovstudio.ninjarunner/</loc></url>
