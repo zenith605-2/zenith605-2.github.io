@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://actparty.app/a/life.enflow.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.appamom.joseon/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.appa_chem/</loc></url>
+  <url><loc>https://actparty.app/a/com.appamom.joseon/</loc></url>
   <url><loc>https://actparty.app/a/com.offbeat.game/</loc></url>
   <url><loc>https://actparty.app/a/com.paleoagtech.matkaleidja/</loc></url>
   <url><loc>https://actparty.app/a/de.hantelbuch.app/</loc></url>
@@ -109,7 +109,6 @@
   <url><loc>https://actparty.app/a/com.packlings.app/</loc></url>
   <url><loc>https://actparty.app/a/com.mikaallyson.evodrop/</loc></url>
   <url><loc>https://actparty.app/a/com.donghoon.hamsterseeddefense/</loc></url>
-  <url><loc>https://actparty.app/a/games.spikey.sunglaze/</loc></url>
   <url><loc>https://actparty.app/a/com.yklabs.serunel/</loc></url>
   <url><loc>https://actparty.app/a/com.hanziweave.app/</loc></url>
   <url><loc>https://actparty.app/a/com.dhaivatpatel.zerobound/</loc></url>
@@ -120,7 +119,7 @@
   <url><loc>https://actparty.app/a/com.malangstudio.pawroyale/</loc></url>
   <url><loc>https://actparty.app/a/com.tellynest.myapp/</loc></url>
   <url><loc>https://actparty.app/a/nz.kiwitest.app/</loc></url>
-  <url><loc>https://actparty.app/a/games.spikey.stacktower/</loc></url>
+  <url><loc>https://actparty.app/a/games.spikey.sunglaze/</loc></url>
   <url><loc>https://actparty.app/a/app.loafo.pet/</loc></url>
   <url><loc>https://actparty.app/a/com.rickymcdaniel.volmem/</loc></url>
   <url><loc>https://actparty.app/a/com.aistudio.spendtrack.qxmtk/</loc></url>
@@ -128,6 +127,7 @@
   <url><loc>https://actparty.app/a/com.elementmerge.app/</loc></url>
   <url><loc>https://actparty.app/a/com.twotheg.voca60/</loc></url>
   <url><loc>https://actparty.app/a/com.twotheg.readflow/</loc></url>
+  <url><loc>https://actparty.app/a/games.spikey.stacktower/</loc></url>
   <url><loc>https://actparty.app/a/io.github.baebae6ae.hamsterworklog/</loc></url>
   <url><loc>https://actparty.app/a/com.minesweep.neon/</loc></url>
   <url><loc>https://actparty.app/a/com.civiltycoon.civil_tycoon/</loc></url>
@@ -159,9 +159,9 @@
   <url><loc>https://actparty.app/a/com.rahid.secondshift/</loc></url>
   <url><loc>https://actparty.app/a/com.swyyty.morningzen/</loc></url>
   <url><loc>https://actparty.app/a/com.radioactivecoding.cryptomere/</loc></url>
-  <url><loc>https://actparty.app/a/in.tinyclass.app/</loc></url>
   <url><loc>https://actparty.app/a/app.ranmio.mobile/</loc></url>
   <url><loc>https://actparty.app/a/com.mypyro.veherego/</loc></url>
+  <url><loc>https://actparty.app/a/in.tinyclass.app/</loc></url>
   <url><loc>https://actparty.app/a/com.sortis89s.dealt/</loc></url>
   <url><loc>https://actparty.app/a/com.amabyte.opennextlevel.opennextlevel/</loc></url>
   <url><loc>https://actparty.app/a/com.xqzeed.Bomb/</loc></url>
