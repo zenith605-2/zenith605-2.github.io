@@ -2,7 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://actparty.app/a/com.shifttally.app/</loc></url>
   <url><loc>https://actparty.app/a/com.squait.app/</loc></url>
-  <url><loc>https://actparty.app/a/de.wolki.skyclimber/</loc></url>
   <url><loc>https://actparty.app/a/com.bitzo.ipoc/</loc></url>
   <url><loc>https://actparty.app/a/com.phoenix.blissfulpause/</loc></url>
   <url><loc>https://actparty.app/a/com.theexploringduck.pocketfactory/</loc></url>
@@ -21,6 +20,7 @@
   <url><loc>https://actparty.app/a/com.dhaivatpatel.zerobound/</loc></url>
   <url><loc>https://actparty.app/a/world.fistbump.app/</loc></url>
   <url><loc>https://actparty.app/a/com.rhdevstudio.quoteprosales/</loc></url>
+  <url><loc>https://actparty.app/a/de.wolki.skyclimber/</loc></url>
   <url><loc>https://actparty.app/a/com.csmc.readaloud/</loc></url>
   <url><loc>https://actparty.app/a/com.limbo.tales/</loc></url>
   <url><loc>https://actparty.app/a/fr.iam_player/</loc></url>
@@ -186,8 +186,8 @@
   <url><loc>https://actparty.app/a/app.minihomepage/</loc></url>
   <url><loc>https://actparty.app/a/kr.co.hangulromerge.app/</loc></url>
   <url><loc>https://actparty.app/a/in.tinyclass.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.pyromagma.pyro_magma/</loc></url>
   <url><loc>https://actparty.app/a/com.dataframegamestudio.lazyfields/</loc></url>
+  <url><loc>https://actparty.app/a/com.pyromagma.pyro_magma/</loc></url>
   <url><loc>https://actparty.app/a/com.bendcalc.bendcalc/</loc></url>
   <url><loc>https://actparty.app/a/com.guno.timeshot/</loc></url>
   <url><loc>https://actparty.app/a/com.business_bookie.twa/</loc></url>
