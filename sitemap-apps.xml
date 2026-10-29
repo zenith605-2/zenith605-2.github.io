@@ -308,7 +308,6 @@
   <url><loc>https://actparty.app/a/com.facetlauncher.app/</loc></url>
   <url><loc>https://actparty.app/a/com.digraw.familybudgettracker.play/</loc></url>
   <url><loc>https://actparty.app/a/com.scryon/</loc></url>
-  <url><loc>https://actparty.app/a/br.com.donodocanal.app/</loc></url>
   <url><loc>https://actparty.app/a/com.coinflipstudio.pianoguide/</loc></url>
   <url><loc>https://actparty.app/a/com.raytek.lansend/</loc></url>
   <url><loc>https://actparty.app/a/com.muhyeop.app/</loc></url>
@@ -316,8 +315,8 @@
   <url><loc>https://actparty.app/a/com.dotaduck.taptarget/</loc></url>
   <url><loc>https://actparty.app/a/com.kwon.ontimer/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.abup/</loc></url>
-  <url><loc>https://actparty.app/a/com.bluequest.puripang/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.nown/</loc></url>
+  <url><loc>https://actparty.app/a/com.bluequest.puripang/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.padakpadak/</loc></url>
   <url><loc>https://actparty.app/a/com.bluequest.chagok/</loc></url>
   <url><loc>https://actparty.app/a/kr.nyangkeypad.app/</loc></url>
@@ -343,12 +342,12 @@
   <url><loc>https://actparty.app/a/com.kardrune.game/</loc></url>
   <url><loc>https://actparty.app/a/com.nekochan.anime/</loc></url>
   <url><loc>https://actparty.app/a/com.lucas.threeminutos/</loc></url>
-  <url><loc>https://actparty.app/a/com.appamon.mosaic_studio/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.textube/</loc></url>
-  <url><loc>https://actparty.app/a/com.appamom.appa_chem/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.joseon/</loc></url>
-  <url><loc>https://actparty.app/a/com.appamom.linkeng/</loc></url>
+  <url><loc>https://actparty.app/a/com.appamom.appa_chem/</loc></url>
   <url><loc>https://actparty.app/a/com.appamom.math/</loc></url>
+  <url><loc>https://actparty.app/a/com.appamom.linkeng/</loc></url>
+  <url><loc>https://actparty.app/a/com.appamon.mosaic_studio/</loc></url>
   <url><loc>https://actparty.app/a/com.barteruptrader.app/</loc></url>
   <url><loc>https://actparty.app/a/com.tiltdebt.game/</loc></url>
   <url><loc>https://actparty.app/a/com.paleoagtech.matkaleidja/</loc></url>
@@ -358,8 +357,8 @@
   <url><loc>https://actparty.app/a/com.usmemorymap.app/</loc></url>
   <url><loc>https://actparty.app/a/com.lumink.driv/</loc></url>
   <url><loc>https://actparty.app/a/com.nullhouse.ipgeumalrim/</loc></url>
-  <url><loc>https://actparty.app/a/com.fmjapps.collector/</loc></url>
   <url><loc>https://actparty.app/a/com.fmjapps.ezberasistani/</loc></url>
+  <url><loc>https://actparty.app/a/com.fmjapps.collector/</loc></url>
   <url><loc>https://actparty.app/a/com.tiltandgoal.game/</loc></url>
   <url><loc>https://actparty.app/a/com.phoneclean.app/</loc></url>
   <url><loc>https://actparty.app/a/app.flydrone/</loc></url>
@@ -384,6 +383,7 @@
   <url><loc>https://actparty.app/a/de.wolki.skyclimber/</loc></url>
   <url><loc>https://actparty.app/a/com.duneforgegames.ballbloom/</loc></url>
   <url><loc>https://actparty.app/a/app.kaibu/</loc></url>
+  <url><loc>https://actparty.app/a/br.com.donodocanal.app/</loc></url>
   <url><loc>https://actparty.app/a/fr.iam_player/</loc></url>
   <url><loc>https://actparty.app/a/com.aaraj.habitshield/</loc></url>
   <url><loc>https://actparty.app/a/com.rayen.life_tycoon/</loc></url>
@@ -405,8 +405,8 @@
   <url><loc>https://actparty.app/a/com.fernandorodriguezvilla.nutribot/</loc></url>
   <url><loc>https://actparty.app/a/com.nixia.datingapp/</loc></url>
   <url><loc>https://actparty.app/a/com.auroracamsolutions.opiarto/</loc></url>
-  <url><loc>https://actparty.app/a/com.pocketfrolic.colorcrash/</loc></url>
   <url><loc>https://actparty.app/a/com.arrowclear.puzzlegame/</loc></url>
+  <url><loc>https://actparty.app/a/com.pocketfrolic.colorcrash/</loc></url>
   <url><loc>https://actparty.app/a/com.pocketfrolic.testercommunity/</loc></url>
   <url><loc>https://actparty.app/a/com.pocketfrolic.perfectstack/</loc></url>
   <url><loc>https://actparty.app/a/com.duqelauncher.app/</loc></url>
