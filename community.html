@@ -192,6 +192,11 @@ function canonical(href) {
 }
 
 async function open(id) {
+  // /p/<앞 8자>.html 이 아직 안 만들어졌을 때 404.html 이 앞 8자만 들고 온다 — 전체 id 로 바꾼다
+  if (/^[0-9a-f]{8}$/i.test(id)) {
+    const hit = ALL.find((x) => String(x.id).startsWith(id.toLowerCase()));
+    if (hit) id = hit.id;
+  }
   root.innerHTML = `<p class="muted">${t('loading')}</p>`;
   const p = await post(id).catch(() => null);
   if (!p) { back(); return; }

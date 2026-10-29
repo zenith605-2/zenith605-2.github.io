@@ -14,6 +14,9 @@
 (function () {
   var m = location.pathname.match(/^\/a\/([A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)+)\/?$/);
   if (m) location.replace('/app.html?p=' + encodeURIComponent(m[1]));
+  // 커뮤니티 글 페이지(/p/<id 앞 8자>.html)도 글을 쓴 직후엔 다음 빌드 전까지 없다 (2026-10-29 khan2631)
+  var q = location.pathname.match(/^\/p\/([0-9a-f]{8})\.html$/i);
+  if (q) location.replace('/community.html#post=' + q[1].toLowerCase());
 })();
 </script>
 </head>
