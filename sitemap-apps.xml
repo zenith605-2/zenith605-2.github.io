@@ -90,9 +90,9 @@
   <url><loc>https://actparty.app/a/com.snowballsurvival.game3d/</loc></url>
   <url><loc>https://actparty.app/a/com.prolab.meetingassistant/</loc></url>
   <url><loc>https://actparty.app/a/com.business_bookie.twa/</loc></url>
-  <url><loc>https://actparty.app/a/app.lumio.launcher/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.homemaintenance/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.brain/</loc></url>
+  <url><loc>https://actparty.app/a/app.lumio.launcher/</loc></url>
   <url><loc>https://actparty.app/a/com.bidda.kinpulse/</loc></url>
   <url><loc>https://actparty.app/a/com.chasesmall.sleepsounds/</loc></url>
   <url><loc>https://actparty.app/a/com.pvpham.mandarintypist/</loc></url>
@@ -100,6 +100,7 @@
   <url><loc>https://actparty.app/a/com.crescentcrayon.muslimkids/</loc></url>
   <url><loc>https://actparty.app/a/com.bricks2clicks.scamguard/</loc></url>
   <url><loc>https://actparty.app/a/fr.monpetitdressing.app/</loc></url>
+  <url><loc>https://actparty.app/a/com.logiccraftstudio.subsniper/</loc></url>
   <url><loc>https://actparty.app/a/com.hangar31.galactictemps/</loc></url>
   <url><loc>https://actparty.app/a/com.adalberto.scapeluce/</loc></url>
   <url><loc>https://actparty.app/a/com.perfectforge/</loc></url>
@@ -107,7 +108,6 @@
   <url><loc>https://actparty.app/a/ru.vp.push300/</loc></url>
   <url><loc>https://actparty.app/a/app.gymcomp/</loc></url>
   <url><loc>https://actparty.app/a/com.duebox.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.logiccraftstudio.subsniper/</loc></url>
   <url><loc>https://actparty.app/a/com.cmp.mnemo/</loc></url>
   <url><loc>https://actparty.app/a/com.ritune/</loc></url>
   <url><loc>https://actparty.app/a/com.mrvampcruz.plotworld/</loc></url>
@@ -288,22 +288,22 @@
   <url><loc>https://actparty.app/a/app.flaavo/</loc></url>
   <url><loc>https://actparty.app/a/com.kimrok.sajuchat/</loc></url>
   <url><loc>https://actparty.app/a/com.deck.todo/</loc></url>
+  <url><loc>https://actparty.app/a/com.scryware.legalglance/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.focus/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.doomsdaytycoon/</loc></url>
-  <url><loc>https://actparty.app/a/com.scryware.legalglance/</loc></url>
   <url><loc>https://actparty.app/a/com.moaom.babymoa/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.wallpaperwatcher/</loc></url>
-  <url><loc>https://actparty.app/a/com.scryware.umbrafield/</loc></url>
   <url><loc>https://actparty.app/a/app.navfree/</loc></url>
+  <url><loc>https://actparty.app/a/com.scryware.umbrafield/</loc></url>
   <url><loc>https://actparty.app/a/app.navgrant/</loc></url>
   <url><loc>https://actparty.app/a/com.seedling.schooldiary.pro/</loc></url>
   <url><loc>https://actparty.app/a/com.eryngiicode.valerainbow/</loc></url>
   <url><loc>https://actparty.app/a/com.aura.faceswap/</loc></url>
+  <url><loc>https://actparty.app/a/com.logiccraftstudio.cardiologpro/</loc></url>
   <url><loc>https://actparty.app/a/com.danbistudio.corerush/</loc></url>
   <url><loc>https://actparty.app/a/com.notilog.app/</loc></url>
   <url><loc>https://actparty.app/a/com.facetlauncher.app/</loc></url>
   <url><loc>https://actparty.app/a/com.hanziweave.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.logiccraftstudio.cardiologpro/</loc></url>
   <url><loc>https://actparty.app/a/com.cabdirisaq.babyheartbeatmonitor/</loc></url>
   <url><loc>https://actparty.app/a/com.scroad.app/</loc></url>
   <url><loc>https://actparty.app/a/com.housmantech.artviewer/</loc></url>
@@ -344,9 +344,9 @@
   <url><loc>https://actparty.app/a/com.minesweep.royal/</loc></url>
   <url><loc>https://actparty.app/a/com.todayfirst.app/</loc></url>
   <url><loc>https://actparty.app/a/com.mgigo.traggo/</loc></url>
+  <url><loc>https://actparty.app/a/app.frogmemo/</loc></url>
   <url><loc>https://actparty.app/a/com.kwon.onwallet/</loc></url>
   <url><loc>https://actparty.app/a/com.kwon.ontimer/</loc></url>
-  <url><loc>https://actparty.app/a/app.frogmemo/</loc></url>
   <url><loc>https://actparty.app/a/kr.nyangkeypad.app/</loc></url>
   <url><loc>https://actparty.app/a/com.rahid.secondshift/</loc></url>
   <url><loc>https://actparty.app/a/io.github.graviton94.carpediem/</loc></url>
