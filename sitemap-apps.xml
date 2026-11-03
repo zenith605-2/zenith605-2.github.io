@@ -69,17 +69,17 @@
   <url><loc>https://actparty.app/a/com.kwon.onenglish/</loc></url>
   <url><loc>https://actparty.app/a/com.donghoon.festivaltripkorea/</loc></url>
   <url><loc>https://actparty.app/a/com.gordian.ruler/</loc></url>
-  <url><loc>https://actparty.app/a/com.khan2631.mawangnest/</loc></url>
-  <url><loc>https://actparty.app/a/com.khan2631.ReelWarden/</loc></url>
   <url><loc>https://actparty.app/a/com.khan2631.dungeonbreaker/</loc></url>
+  <url><loc>https://actparty.app/a/com.khan2631.ReelWarden/</loc></url>
+  <url><loc>https://actparty.app/a/com.khan2631.mawangnest/</loc></url>
   <url><loc>https://actparty.app/a/com.khan2631.tugwar/</loc></url>
   <url><loc>https://actparty.app/a/games.spikey.stacktower/</loc></url>
   <url><loc>https://actparty.app/a/app.circleride/</loc></url>
   <url><loc>https://actparty.app/a/com.zmohi.smsforwarder/</loc></url>
   <url><loc>https://actparty.app/a/com.devstudioks.smsrelay/</loc></url>
   <url><loc>https://actparty.app/a/com.zaieru.konbinirush/</loc></url>
-  <url><loc>https://actparty.app/a/com.khan2631.bossrush/</loc></url>
   <url><loc>https://actparty.app/a/com.khan2631.ashenascent/</loc></url>
+  <url><loc>https://actparty.app/a/com.khan2631.bossrush/</loc></url>
   <url><loc>https://actparty.app/a/com.aistudio.festival_locator.fstrck/</loc></url>
   <url><loc>https://actparty.app/a/live.akinware.railrunner/</loc></url>
   <url><loc>https://actparty.app/a/com.modoolabs.underhatch/</loc></url>
@@ -127,6 +127,7 @@
   <url><loc>https://actparty.app/a/org.daddyousen.innworldrpg/</loc></url>
   <url><loc>https://actparty.app/a/com.oddbound.game/</loc></url>
   <url><loc>https://actparty.app/a/com.unknotgame.app/</loc></url>
+  <url><loc>https://actparty.app/a/com.cmp.mnemo/</loc></url>
   <url><loc>https://actparty.app/a/com.helallife.scanner/</loc></url>
   <url><loc>https://actparty.app/a/com.chasesmall.sleepsounds/</loc></url>
   <url><loc>https://actparty.app/a/com.coderschain.routineflux/</loc></url>
@@ -142,7 +143,6 @@
   <url><loc>https://actparty.app/a/ru.vp.push300/</loc></url>
   <url><loc>https://actparty.app/a/com.crazyking.getpurple/</loc></url>
   <url><loc>https://actparty.app/a/com.dhivalabs.api_workbench/</loc></url>
-  <url><loc>https://actparty.app/a/com.cmp.mnemo/</loc></url>
   <url><loc>https://actparty.app/a/com.worthsnap.worth_snap/</loc></url>
   <url><loc>https://actparty.app/a/com.brickbit.game/</loc></url>
   <url><loc>https://actparty.app/a/app.netlify.justoddly/</loc></url>
@@ -166,6 +166,8 @@
   <url><loc>https://actparty.app/a/app.whiskovery.mobile/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.doomsdaytycoon/</loc></url>
   <url><loc>https://actparty.app/a/com.tcone.signalloss/</loc></url>
+  <url><loc>https://actparty.app/a/com.subguard.subguard/</loc></url>
+  <url><loc>https://actparty.app/a/com.bidda.kinpulse/</loc></url>
   <url><loc>https://actparty.app/a/com.mrvampcruz.plotworld/</loc></url>
   <url><loc>https://actparty.app/a/com.harusepan.memoryplay/</loc></url>
   <url><loc>https://actparty.app/a/de.lichtinger.budgieflow/</loc></url>
@@ -173,8 +175,6 @@
   <url><loc>https://actparty.app/a/app.happydo/</loc></url>
   <url><loc>https://actparty.app/a/com.alexidaly.landlordmate/</loc></url>
   <url><loc>https://actparty.app/a/com.stdigitallabs.piratecannonsiege/</loc></url>
-  <url><loc>https://actparty.app/a/com.subguard.subguard/</loc></url>
-  <url><loc>https://actparty.app/a/com.bidda.kinpulse/</loc></url>
   <url><loc>https://actparty.app/a/com.duebox.app/</loc></url>
   <url><loc>https://actparty.app/a/live.akinware.potionheroes/</loc></url>
   <url><loc>https://actparty.app/a/fr.dojodestables.app/</loc></url>
@@ -192,8 +192,8 @@
   <url><loc>https://actparty.app/a/com.gifttracker.webview/</loc></url>
   <url><loc>https://actparty.app/a/com.doit2.app/</loc></url>
   <url><loc>https://actparty.app/a/com.yyapps.numihop/</loc></url>
-  <url><loc>https://actparty.app/a/com.scryware.wallpaperwatcher/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.brain/</loc></url>
+  <url><loc>https://actparty.app/a/com.scryware.wallpaperwatcher/</loc></url>
   <url><loc>https://actparty.app/a/com.clawse.app/</loc></url>
   <url><loc>https://actparty.app/a/com.potrohu.app/</loc></url>
   <url><loc>https://actparty.app/a/com.dazix.caelis/</loc></url>
