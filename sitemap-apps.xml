@@ -195,10 +195,11 @@
   <url><loc>https://actparty.app/a/com.coderschain.routineflux/</loc></url>
   <url><loc>https://actparty.app/a/com.doit2.app/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.legalglance/</loc></url>
-  <url><loc>https://actparty.app/a/com.scryware.homemaintenance/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.doomsdaytycoon/</loc></url>
+  <url><loc>https://actparty.app/a/com.scryware.homemaintenance/</loc></url>
   <url><loc>https://actparty.app/a/fr.dojodestables.app/</loc></url>
   <url><loc>https://actparty.app/a/com.stdigitallabs.piratecannonsiege/</loc></url>
+  <url><loc>https://actparty.app/a/app.netlify.justoddly/</loc></url>
   <url><loc>https://actparty.app/a/com.collaxter.oathagainstthehorde/</loc></url>
   <url><loc>https://actparty.app/a/com.bikash.galidash/</loc></url>
   <url><loc>https://actparty.app/a/com.cherishly.mobile.app/</loc></url>
@@ -207,7 +208,6 @@
   <url><loc>https://actparty.app/a/com.angelforge.starwardens/</loc></url>
   <url><loc>https://actparty.app/a/fr.scmedia.pipouisland/</loc></url>
   <url><loc>https://actparty.app/a/com.duneforgegames.dashflash/</loc></url>
-  <url><loc>https://actparty.app/a/app.netlify.justoddly/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.wallpaperwatcher/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.umbrafield/</loc></url>
   <url><loc>https://actparty.app/a/com.greenfogsoftware.unfollowedyou/</loc></url>
@@ -229,8 +229,10 @@
   <url><loc>https://actparty.app/a/com.ederlume.app/</loc></url>
   <url><loc>https://actparty.app/a/com.MrVanity.Admiraldoku/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.brain/</loc></url>
-  <url><loc>https://actparty.app/a/com.bodycalc.jobshift/</loc></url>
+  <url><loc>https://actparty.app/a/com.justoddly.whiskfall/</loc></url>
+  <url><loc>https://actparty.app/a/com.grassfieldstudio.arrowoftime/</loc></url>
   <url><loc>https://actparty.app/a/jp.machiawase.android/</loc></url>
+  <url><loc>https://actparty.app/a/com.bodycalc.jobshift/</loc></url>
   <url><loc>https://actparty.app/a/com.alexidaly.plantmate/</loc></url>
   <url><loc>https://actparty.app/a/com.alexidaly.landlordmate/</loc></url>
   <url><loc>https://actparty.app/a/com.khan2631.luckyfortress/</loc></url>
@@ -247,19 +249,17 @@
   <url><loc>https://actparty.app/a/com.jetsetfire.android/</loc></url>
   <url><loc>https://actparty.app/a/com.hangar31.galactictemps/</loc></url>
   <url><loc>https://actparty.app/a/com.goldapp.simulate/</loc></url>
-  <url><loc>https://actparty.app/a/com.grassfieldstudio.arrowoftime/</loc></url>
-  <url><loc>https://actparty.app/a/com.loa33game.puzzlecollection/</loc></url>
   <url><loc>https://actparty.app/a/com.loa33.aibadukstudy/</loc></url>
-  <url><loc>https://actparty.app/a/com.justoddly.whiskfall/</loc></url>
+  <url><loc>https://actparty.app/a/com.loa33game.puzzlecollection/</loc></url>
   <url><loc>https://actparty.app/a/com.adalberto.scapeluce/</loc></url>
   <url><loc>https://actparty.app/a/com.shifttally.app/</loc></url>
+  <url><loc>https://actparty.app/a/com.medladder.app/</loc></url>
   <url><loc>https://actparty.app/a/com.avengis.rebounded.pocket/</loc></url>
   <url><loc>https://actparty.app/a/com.luxartstudios.omniposthermal/</loc></url>
   <url><loc>https://actparty.app/a/com.xoniapp.mobile/</loc></url>
   <url><loc>https://actparty.app/a/com.naveenkumar.prismblocks/</loc></url>
   <url><loc>https://actparty.app/a/com.maplebooksoftware.maplebook/</loc></url>
   <url><loc>https://actparty.app/a/fr.maxlevelgaming.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.medladder.app/</loc></url>
   <url><loc>https://actparty.app/a/com.dhivalabs.api_workbench/</loc></url>
   <url><loc>https://actparty.app/a/com.dpsforge.idle/</loc></url>
   <url><loc>https://actparty.app/a/com.creativeforoneself2.monglepot/</loc></url>
@@ -374,6 +374,7 @@
   <url><loc>https://actparty.app/a/com.eryngiicode.valerainbow/</loc></url>
   <url><loc>https://actparty.app/a/com.gaellebriet.memopatte/</loc></url>
   <url><loc>https://actparty.app/a/in.qook.app/</loc></url>
+  <url><loc>https://actparty.app/a/com.tolya.blorp/</loc></url>
   <url><loc>https://actparty.app/a/app.bookshine.bible/</loc></url>
   <url><loc>https://actparty.app/a/com.franky.evopuzzle/</loc></url>
   <url><loc>https://actparty.app/a/app.web.worktrack_ce680.twa/</loc></url>
@@ -387,7 +388,6 @@
   <url><loc>https://actparty.app/a/com.logiccraftstudio.cardiologpro/</loc></url>
   <url><loc>https://actparty.app/a/com.alicegames.strongfingers/</loc></url>
   <url><loc>https://actparty.app/a/in.tahin.xpense/</loc></url>
-  <url><loc>https://actparty.app/a/com.tolya.blorp/</loc></url>
   <url><loc>https://actparty.app/a/com.frankensosege.tmtforrunner/</loc></url>
   <url><loc>https://actparty.app/a/com.hanziweave.app/</loc></url>
   <url><loc>https://actparty.app/a/com.mwomeok.app/</loc></url>
