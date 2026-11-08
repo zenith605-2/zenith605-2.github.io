@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://actparty.app/a/com.maniotventures.slingwake/</loc></url>
-  <url><loc>https://actparty.app/a/com.maniotventures.panpanic/</loc></url>
   <url><loc>https://actparty.app/a/com.maniotventures.stillfoot/</loc></url>
   <url><loc>https://actparty.app/a/com.maniotventures.tintrick/</loc></url>
   <url><loc>https://actparty.app/a/com.hangar31.railmind/</loc></url>
@@ -12,8 +10,8 @@
   <url><loc>https://actparty.app/a/app.dajeongjungmae/</loc></url>
   <url><loc>https://actparty.app/a/com.game.mossvale/</loc></url>
   <url><loc>https://actparty.app/a/com.sixfold.arena/</loc></url>
-  <url><loc>https://actparty.app/a/com.rookery.ash/</loc></url>
   <url><loc>https://actparty.app/a/com.rookery.ai/</loc></url>
+  <url><loc>https://actparty.app/a/com.rookery.ash/</loc></url>
   <url><loc>https://actparty.app/a/com.jonghwa.waterpipe/</loc></url>
   <url><loc>https://actparty.app/a/be.nudge.twa/</loc></url>
   <url><loc>https://actparty.app/a/com.modoolabs.underhatch/</loc></url>
@@ -25,13 +23,15 @@
   <url><loc>https://actparty.app/a/kr.co.verveine/</loc></url>
   <url><loc>https://actparty.app/a/com.business_bookie.twa/</loc></url>
   <url><loc>https://actparty.app/a/com.byurim.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.trafficblocks.game/</loc></url>
   <url><loc>https://actparty.app/a/com.oddbound.game/</loc></url>
+  <url><loc>https://actparty.app/a/com.trafficblocks.game/</loc></url>
   <url><loc>https://actparty.app/a/com.justsimplyrecipes.app/</loc></url>
   <url><loc>https://actparty.app/a/app.baileyfitness.twa/</loc></url>
   <url><loc>https://actparty.app/a/com.Skipper.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.maniotventures.globeplop/</loc></url>
+  <url><loc>https://actparty.app/a/com.maniotventures.panpanic/</loc></url>
   <url><loc>https://actparty.app/a/com.maniotventures.splatalanche/</loc></url>
+  <url><loc>https://actparty.app/a/com.maniotventures.globeplop/</loc></url>
+  <url><loc>https://actparty.app/a/com.maniotventures.slingwake/</loc></url>
   <url><loc>https://actparty.app/a/com.archichum.app/</loc></url>
   <url><loc>https://actparty.app/a/com.brickbit.game/</loc></url>
   <url><loc>https://actparty.app/a/com.packlings.app/</loc></url>
