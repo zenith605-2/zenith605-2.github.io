@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://actparty.app/a/com.hangar31.railmind/</loc></url>
-  <url><loc>https://actparty.app/a/com.maniotventures.panpanic/</loc></url>
   <url><loc>https://actparty.app/a/com.maniotventures.splatalanche/</loc></url>
-  <url><loc>https://actparty.app/a/com.maniotventures.stillfoot/</loc></url>
-  <url><loc>https://actparty.app/a/com.maniotventures.slingwake/</loc></url>
-  <url><loc>https://actparty.app/a/com.maniotventures.tintrick/</loc></url>
+  <url><loc>https://actparty.app/a/com.maniotventures.panpanic/</loc></url>
   <url><loc>https://actparty.app/a/com.maniotventures.globeplop/</loc></url>
+  <url><loc>https://actparty.app/a/com.maniotventures.tintrick/</loc></url>
+  <url><loc>https://actparty.app/a/com.maniotventures.slingwake/</loc></url>
+  <url><loc>https://actparty.app/a/com.maniotventures.stillfoot/</loc></url>
+  <url><loc>https://actparty.app/a/com.hangar31.railmind/</loc></url>
   <url><loc>https://actparty.app/a/com.archichum.app/</loc></url>
   <url><loc>https://actparty.app/a/com.unknotgame.app/</loc></url>
   <url><loc>https://actparty.app/a/au.bnest.kimchipop/</loc></url>
@@ -15,8 +15,8 @@
   <url><loc>https://actparty.app/a/app.dajeongjungmae/</loc></url>
   <url><loc>https://actparty.app/a/com.game.mossvale/</loc></url>
   <url><loc>https://actparty.app/a/com.sixfold.arena/</loc></url>
-  <url><loc>https://actparty.app/a/com.rookery.ash/</loc></url>
   <url><loc>https://actparty.app/a/com.rookery.ai/</loc></url>
+  <url><loc>https://actparty.app/a/com.rookery.ash/</loc></url>
   <url><loc>https://actparty.app/a/com.jonghwa.waterpipe/</loc></url>
   <url><loc>https://actparty.app/a/be.nudge.twa/</loc></url>
   <url><loc>https://actparty.app/a/com.modoolabs.underhatch/</loc></url>
@@ -88,13 +88,13 @@
   <url><loc>https://actparty.app/a/org.daddyousen.innworldrpg/</loc></url>
   <url><loc>https://actparty.app/a/com.choidev.notebay/</loc></url>
   <url><loc>https://actparty.app/a/app.holdupmen/</loc></url>
-  <url><loc>https://actparty.app/a/com.dalbit.saju/</loc></url>
   <url><loc>https://actparty.app/a/com.logiccraftstudio.subsniper/</loc></url>
   <url><loc>https://actparty.app/a/com.prvenosq.mircturk/</loc></url>
   <url><loc>https://actparty.app/a/com.tunnelseeker.game/</loc></url>
   <url><loc>https://actparty.app/a/com.mhd3v.reverie/</loc></url>
   <url><loc>https://actparty.app/a/dev.macdroid.app/</loc></url>
   <url><loc>https://actparty.app/a/com.marokart.app/</loc></url>
+  <url><loc>https://actparty.app/a/com.dalbit.saju/</loc></url>
   <url><loc>https://actparty.app/a/com.mbfg.mybunker/</loc></url>
   <url><loc>https://actparty.app/a/com.pickaland.app/</loc></url>
   <url><loc>https://actparty.app/a/com.atdev.crest/</loc></url>
@@ -267,6 +267,7 @@
   <url><loc>https://actparty.app/a/com.dhivalabs.api_workbench/</loc></url>
   <url><loc>https://actparty.app/a/com.bodycalc.jobshift/</loc></url>
   <url><loc>https://actparty.app/a/com.oneapps.ribil/</loc></url>
+  <url><loc>https://actparty.app/a/com.seedling.reader/</loc></url>
   <url><loc>https://actparty.app/a/com.differentslice.clacksort/</loc></url>
   <url><loc>https://actparty.app/a/com.dpsforge.idle/</loc></url>
   <url><loc>https://actparty.app/a/com.avengis.rebounded.pocket/</loc></url>
@@ -277,7 +278,6 @@
   <url><loc>https://actparty.app/a/com.mrvampcruz.plotworld/</loc></url>
   <url><loc>https://actparty.app/a/com.luxartstudios.omniposthermal/</loc></url>
   <url><loc>https://actparty.app/a/com.maplebooksoftware.maplebook/</loc></url>
-  <url><loc>https://actparty.app/a/com.seedling.reader/</loc></url>
   <url><loc>https://actparty.app/a/com.tactictactoe.app/</loc></url>
   <url><loc>https://actparty.app/a/com.farhanslab.banglatoolbox/</loc></url>
   <url><loc>https://actparty.app/a/io.cho.photo_read/</loc></url>
@@ -381,11 +381,11 @@
   <url><loc>https://actparty.app/a/com.eryngiicode.valerainbow/</loc></url>
   <url><loc>https://actparty.app/a/com.theexploringduck.pocketfactory/</loc></url>
   <url><loc>https://actparty.app/a/in.qook.app/</loc></url>
+  <url><loc>https://actparty.app/a/com.medladder.app/</loc></url>
   <url><loc>https://actparty.app/a/com.duneforgegames.dunewords/</loc></url>
   <url><loc>https://actparty.app/a/com.alexs.notimetowaste/</loc></url>
   <url><loc>https://actparty.app/a/com.franky.evopuzzle/</loc></url>
   <url><loc>https://actparty.app/a/azcom.example.myapp/</loc></url>
-  <url><loc>https://actparty.app/a/com.medladder.app/</loc></url>
   <url><loc>https://actparty.app/a/in.tahin.xpense/</loc></url>
   <url><loc>https://actparty.app/a/com.limbo.tales/</loc></url>
   <url><loc>https://actparty.app/a/com.phax.screenbuddy/</loc></url>
