@@ -203,7 +203,20 @@ function paintCounts() {
 }
 
 /// 새 신청·메시지·피드백만 가볍게 다시 센다 (앱 목록·달력은 건드리지 않는다)
+// 포커스·탭 전환마다 부르니 자동화 도구가 화면을 만지면 초당 수 회가 됐다 —
+// 2026-11-10 서버 전체가 몇 분 멈췄다. 숨은 탭에선 안 부르고, 30초에 한 번만.
+let _countsAt = 0;
+let _countsBusy = false;
 async function refreshCounts() {
+  if (document.hidden || _countsBusy) return;
+  const now = Date.now();
+  if (now - _countsAt < 30000) return;
+  _countsAt = now;
+  _countsBusy = true;
+  try { await _refreshCounts(); } finally { _countsBusy = false; }
+}
+
+async function _refreshCounts() {
   const [incoming, chats, fbIn] = await Promise.all([
     incomingRequests().then(r => r.filter(x => (x.status ?? 'pending') === 'pending'))
       .catch(() => D.incoming),
