@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://actparty.app/a/dev.hannah.dutyscan/</loc></url>
   <url><loc>https://actparty.app/a/dev.phoneagent.mvp/</loc></url>
   <url><loc>https://actparty.app/a/com.app.wasgibbetzuessen/</loc></url>
+  <url><loc>https://actparty.app/a/dev.hannah.dutyscan/</loc></url>
   <url><loc>https://actparty.app/a/fr.k2t.app/</loc></url>
   <url><loc>https://actparty.app/a/com.justsimplyrecipes.app/</loc></url>
   <url><loc>https://actparty.app/a/com.byurim.app/</loc></url>
@@ -92,6 +92,7 @@
   <url><loc>https://actparty.app/a/com.jWorldGames.CatSlaps/</loc></url>
   <url><loc>https://actparty.app/a/com.fitmarket.app/</loc></url>
   <url><loc>https://actparty.app/a/com.coinflipstudio.warmdays/</loc></url>
+  <url><loc>https://actparty.app/a/com.logiccraftstudio.subsniper/</loc></url>
   <url><loc>https://actparty.app/a/com.maniotventures.savvyteas/</loc></url>
   <url><loc>https://actparty.app/a/io.cho.photo_read/</loc></url>
   <url><loc>https://actparty.app/a/com.mygastudio.shrewlife/</loc></url>
@@ -100,7 +101,6 @@
   <url><loc>https://actparty.app/a/com.scryware.umbrafield/</loc></url>
   <url><loc>https://actparty.app/a/com.sometimesstudios.washwindow/</loc></url>
   <url><loc>https://actparty.app/a/com.kithara.player/</loc></url>
-  <url><loc>https://actparty.app/a/com.logiccraftstudio.subsniper/</loc></url>
   <url><loc>https://actparty.app/a/com.ieusik.cubecalendar/</loc></url>
   <url><loc>https://actparty.app/a/com.twotheg.voca60/</loc></url>
   <url><loc>https://actparty.app/a/com.worldflixplayer.app/</loc></url>
@@ -332,9 +332,9 @@
   <url><loc>https://actparty.app/a/com.michoagames.lupifriends/</loc></url>
   <url><loc>https://actparty.app/a/com.grom.belote/</loc></url>
   <url><loc>https://actparty.app/a/com.bdslabs.roadcopilot/</loc></url>
-  <url><loc>https://actparty.app/a/com.zmohi.eightpay.salarycalculator/</loc></url>
   <url><loc>https://actparty.app/a/mablic.petalprincess.com/</loc></url>
   <url><loc>https://actparty.app/a/com.achtsamweg.remindful/</loc></url>
+  <url><loc>https://actparty.app/a/com.zmohi.eightpay.salarycalculator/</loc></url>
   <url><loc>https://actparty.app/a/com.izworks.logistics_exam/</loc></url>
   <url><loc>https://actparty.app/a/dev.cogitor.kolobok/</loc></url>
   <url><loc>https://actparty.app/a/in.kinwoo.app/</loc></url>
