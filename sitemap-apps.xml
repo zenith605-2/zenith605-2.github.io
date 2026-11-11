@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://actparty.app/a/com.lanternbench.guessadoo/</loc></url>
-  <url><loc>https://actparty.app/a/com.qocop.byeolbittarot/</loc></url>
   <url><loc>https://actparty.app/a/ch.leutrim.PaulMichele/</loc></url>
   <url><loc>https://actparty.app/a/ch.leutrim.fourgames/</loc></url>
+  <url><loc>https://actparty.app/a/com.lanternbench.guessadoo/</loc></url>
+  <url><loc>https://actparty.app/a/com.qocop.byeolbittarot/</loc></url>
   <url><loc>https://actparty.app/a/com.kinistudio.wonderfair/</loc></url>
   <url><loc>https://actparty.app/a/app.gymcomp/</loc></url>
   <url><loc>https://actparty.app/a/fr.k2t.app/</loc></url>
@@ -67,8 +67,8 @@
   <url><loc>https://actparty.app/a/com.prvenosq.mircturk/</loc></url>
   <url><loc>https://actparty.app/a/com.kangjoshi.babyplayer/</loc></url>
   <url><loc>https://actparty.app/a/com.choidev.odap/</loc></url>
-  <url><loc>https://actparty.app/a/com.naljahanune.date/</loc></url>
   <url><loc>https://actparty.app/a/com.logiccraftstudio.subsniper/</loc></url>
+  <url><loc>https://actparty.app/a/com.naljahanune.date/</loc></url>
   <url><loc>https://actparty.app/a/com.scryware.doomsdaytycoon/</loc></url>
   <url><loc>https://actparty.app/a/com.bidda.swapper/</loc></url>
   <url><loc>https://actparty.app/a/fr.scmedia.pipouisland/</loc></url>
@@ -232,10 +232,10 @@
   <url><loc>https://actparty.app/a/com.maniotventures.pigestal/</loc></url>
   <url><loc>https://actparty.app/a/com.cho.uploadready/</loc></url>
   <url><loc>https://actparty.app/a/com.thurnz.hiitunes/</loc></url>
+  <url><loc>https://actparty.app/a/com.logiccraftstudio.zlotowkapl/</loc></url>
   <url><loc>https://actparty.app/a/com.jegb.starforged/</loc></url>
   <url><loc>https://actparty.app/a/com.tormentarena.game/</loc></url>
   <url><loc>https://actparty.app/a/com.dazix.caelis/</loc></url>
-  <url><loc>https://actparty.app/a/com.logiccraftstudio.zlotowkapl/</loc></url>
   <url><loc>https://actparty.app/a/com.hangar31.railmind/</loc></url>
   <url><loc>https://actparty.app/a/com.hangar31.galactictemps/</loc></url>
   <url><loc>https://actparty.app/a/cloud.oven.app/</loc></url>
@@ -442,13 +442,13 @@
   <url><loc>https://actparty.app/a/com.medladder.app/</loc></url>
   <url><loc>https://actparty.app/a/com.potrohu.app/</loc></url>
   <url><loc>https://actparty.app/a/com.pocketfrolic.pulsepath/</loc></url>
-  <url><loc>https://actparty.app/a/com.pyromagma.pyro_magma/</loc></url>
   <url><loc>https://actparty.app/a/com.yours.yourcallyourrule/</loc></url>
+  <url><loc>https://actparty.app/a/com.pyromagma.pyro_magma/</loc></url>
   <url><loc>https://actparty.app/a/com.raccoon.kernelpanic/</loc></url>
   <url><loc>https://actparty.app/a/com.oddday.dayzip/</loc></url>
   <url><loc>https://actparty.app/a/kr.co.hangulromerge.app/</loc></url>
-  <url><loc>https://actparty.app/a/com.zenith.cardigan/</loc></url>
   <url><loc>https://actparty.app/a/com.swyyty.morningzen/</loc></url>
+  <url><loc>https://actparty.app/a/com.zenith.cardigan/</loc></url>
   <url><loc>https://actparty.app/a/fr.maxlevelgaming.app/</loc></url>
   <url><loc>https://actparty.app/a/io.github.meshlive.app/</loc></url>
   <url><loc>https://actparty.app/a/com.guno.timeshot/</loc></url>
