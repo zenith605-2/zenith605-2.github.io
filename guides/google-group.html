@@ -81,11 +81,113 @@
   </div>
 </header>
 
-<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+  <h1 style="font-size:28px;margin:0 0 6px">Tester sees "Content unavailable"? Fix your Google Group</h1>
+  <p class="stage">Stage 1 of 3 in <a href="/guides/troubleshooting.html">closed test troubleshooting</a>:
+  <b>group</b> &rarr; opt-in &rarr; install.</p>
+
+  <h2 id="content-unavailable">"Content unavailable"</h2>
+
+  <p>If this is what your tester sees, your Google Group is private.</p>
+
+  <figure><img src="/img/guide/closed-test/r1-tester-sees.png" alt="" loading="lazy"><figcaption>What your tester sees</figcaption></figure>
+
+  <p>Open your group, then <b>Group settings &rarr; General</b>. The two
+  dropdowns you need are just below <i>Shared labels</i>, one scroll down.</p>
+
+  <h3>1. Who can see group</h3>
+  <figure><img src="/img/guide/closed-test/r2-who-can-see.png" alt="" loading="lazy"><figcaption>Who can see group</figcaption></figure>
+  <p>Set it to <b>Anyone on the web</b>.</p>
+
+  <h3>2. Who can join group</h3>
+  <figure><img src="/img/guide/closed-test/r3-who-can-join.png" alt="" loading="lazy"><figcaption>Who can join group</figcaption></figure>
+  <p>Set it to <b>Anyone on the web can join</b>. Not "can ask": that one makes
+  every tester wait for you to approve them by hand, and nobody can opt in until
+  you do.</p>
+
+  <h3>3. Save</h3>
+  <figure><img src="/img/guide/closed-test/r4-both-set.png" alt="" loading="lazy"><figcaption>Both set correctly</figcaption></figure>
+  <p>Google warns the change can take a while to take effect. If it still fails
+  right away, wait before touching anything else.</p>
+
+  <h3 id="stage-1-permission">4. Warn your testers about this screen</h3>
+  <figure><img src="/img/guide/closed-test/r5-this-is-normal.png" alt="" loading="lazy"><figcaption>After the fix. This is normal</figcaption></figure>
+  <p>That message is about reading old group posts, which is a separate setting.
+  It has nothing to do with joining. The <b>Join group</b> button works. If you do
+  not tell testers first, they see the message and leave.</p>
+
+  <h3>5. Join once from a second account</h3>
+  <figure><img src="/img/guide/closed-test/r6-member-count.png" alt="" loading="lazy"><figcaption>Joined from a second account</figcaption></figure>
+  <p>Your own account makes a broken group look fine, so test it from another
+  browser profile. The member count should go up with nothing for you to
+  approve.</p>
+
+  <h3>Why this happens</h3>
+  <p>Nobody misconfigured anything. A new group starts like this:</p>
+  <figure><img src="/img/guide/closed-test/r7-defaults.png" alt="" loading="lazy"><figcaption>Google’s defaults for a new group</figcaption></figure>
+  <p>And Play puts the group step first: <i>"For closed tests using a Google
+  Group, users must join the group before opting into your test."</i> A default
+  group is a wall in front of your test, and the error your tester gets never
+  mentions the group at all.</p>
+
+
+  <h2 id="still-unavailable">Still "Content unavailable"?</h2>
+  <p>The URL and a second account usually tell you which of three it is.</p>
+  <ul>
+    <li>The URL contains <code>/a/yourdomain/g/</code> — that is a Workspace
+    group. Accounts outside the domain cannot join it at all. Remake it on a
+    personal Google account.</li>
+    <li>Open the same link on a different Google account. The browser opens with
+    whichever account signed in first; if it works on the other one, it was the
+    account. That is what the "switch accounts" line on the error page means.</li>
+    <li>Same on every account? Then the two settings above are still on their
+    defaults, or the change has not taken effect yet.</li>
+  </ul>
+  <p>The owner sees their own group just fine, so they have no idea anything is
+  wrong. If it is someone else’s group, sending them this gets it fixed fastest:</p>
+  <pre class="box">Your group link shows "Content unavailable" for me. In Group settings → General, could you set Who can see group to Anyone on the web and Who can join group to Anyone on the web can join? It looks normal from your own account.</pre>
+
+  <h2 id="new-group">Making a new group</h2>
+  <p>At <a href="https://groups.google.com/" target="_blank" rel="noopener">groups.google.com</a>,
+  press <b>Create group</b>. The name is free-form; the email prefix becomes the
+  address you hand out.</p>
+  <figure><img src="/img/guide-group-1-en.png" alt="" loading="lazy"><figcaption>The email prefix becomes the group address — myapp-testers@googlegroups.com</figcaption></figure>
+  <p>The next screen is the privacy step, with the defaults shown above. Change
+  both before you finish. On this screen they are labelled <i>Who can search for
+  group</i> and <i>Who can join group</i>.</p>
+
+  <h2 id="connect">Connect the group in Play Console</h2>
+  <p><b>Test and release &rarr; Testing &rarr; Closed testing</b>, open the track,
+  then the <b>Testers</b> tab. Pick <b>Google Groups</b> and type the full address,
+  ending in @googlegroups.com.</p>
+  <figure><img src="/img/guide/closed-test/p4-testers-google-group.png" alt="" loading="lazy"><figcaption>Google Groups, and the full group address. It has to turn into a chip before Save lights up; press Tab if it does not.</figcaption></figure>
+  <p>Two things stop testers even when this is right:</p>
+  <ol>
+    <li class="hot"><b>Save is not enough.</b> The change waits in Publishing
+    overview until you send it for review.</li>
+    <li class="hot"><b>No build, no opt-in.</b> The opt-in link stays shut until a
+    build on that track has been through review.</li>
+  </ol>
+  <p>So the order is: create the group and change the two settings, connect it
+  and send the change for review, get a build on the track through review, and
+  only then invite testers. Both are covered in detail in stage 2.</p>
+  <figure><img src="/img/guide/closed-test/p3-optin-links.png" alt="" loading="lazy"><figcaption>The opt-in link, at the bottom of the same tab. Send testers the web one.</figcaption></figure>
+
+  <a class="next" href="/guides/app-not-available.html">Next &rarr; Stage 2: the opt-in link says "App not available"</a>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> keeps the group address and opt-in link for each app, and
+    walks whoever trades with you through them in order.
+    <a href="/">Free at actparty.app</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">Screens are from Google Groups and Play
+  Console in September 2026. Google rewords these often, so a label may sit
+  somewhere slightly different by the time you read this.</p></article>
 
 <footer class="bot"><div class="wrap"><p>
   <a href="/guides/" data-t="nav_guides">Guides</a> ·
-  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+  <a href="/" data-t="nav_board_home">Back to the board</a></p></div></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">

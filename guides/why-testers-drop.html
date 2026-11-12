@@ -52,11 +52,63 @@
   </div>
 </header>
 
-<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+  <h1 style="font-size:28px;margin:0 0 8px">Why testers disappear</h1>
+  <p class="muted" style="margin:0 0 24px">Four failure modes, in the order they bite</p>
+
+  <h2>1. They cannot install it at all</h2>
+  <p>Your closed test is limited to a few countries and the tester is not in
+  one of them. They tap the link, get "not available in your country", and say
+  nothing — you just watch the counter stall.</p>
+  <p><b>Fix:</b> open the test to all countries unless you have a real reason
+  not to. This is the single most common silent drop-off, and it costs you
+  nothing to prevent.</p>
+
+  <figure><img src="/img/guide-country-edit-en.png" alt="" loading="lazy"><figcaption>Play Console → your test track → Countries / regions. The top checkbox selects them all</figcaption></figure>
+
+  <h2>2. The group link is broken and you cannot see it</h2>
+  <p>If your Google Group's <em>Who can view conversations</em> is set to
+  "Group members", anyone who is not already a member hits a permission wall.
+  You will never see it yourself — you are the owner, so it looks fine from
+  your side.</p>
+  <p><b>Fix:</b> open your group settings and set both "Who can see group" and
+  "Who can join" to <em>Anyone on the web</em>. Then check the link in a
+  private window.</p>
+
+  <figure><img src="/img/guide-group-2-en.png" alt="" loading="lazy"><figcaption>Set both of these to "Anyone on the web" or nobody else can see the group</figcaption></figure>
+
+  <h2>3. They install, then quietly uninstall</h2>
+  <p>Phone storage, a cleanup, or they simply lost interest. The tester list
+  still shows them, so nothing looks wrong. Google still counts them as opted
+  in — but they are not testing, and if you are trading, you are the one
+  holding up your end alone.</p>
+  <p><b>Fix:</b> you cannot prevent it, but you can see it. ACT Party marks a
+  trade when the app is no longer on the phone, so the other side is not left
+  guessing.</p>
+
+  <h2>4. The slow fade</h2>
+  <p>The most common one. Nothing goes wrong; they just stop opening it. Day
+  three is fine, day six is fine, day nine is a maybe. Across
+  <a href="/guides/daily-opens-data.html">48 finished trades we measured</a>,
+  the average was 8.8 opens out of 14 days and only five people hit all 14.</p>
+  <p><b>Fix:</b> reciprocity, not nagging. When someone can see that you opened
+  their app today, they open yours. That loop works better than a reminder,
+  because a reminder from someone who is not doing their own half is just
+  annoying.</p>
+
+  <h2>What none of this is</h2>
+  <p>It is not usually bad faith. Almost every drop-off above is a person who
+  meant to help and hit friction. Design for friction, not for cheating.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> records daily opens automatically, shows both sides who
+    showed up, and flags when someone uninstalls.
+    <a href="/">See how it works — actparty.app</a>
+  </div></article>
 
 <footer class="bot"><div class="wrap"><p>
   <a href="/guides/" data-t="nav_guides">Guides</a> ·
-  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+  <a href="/" data-t="nav_board_home">Back to the board</a></p></div></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">

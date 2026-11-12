@@ -80,11 +80,73 @@
   </div>
 </header>
 
-<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+  <h1 style="font-size:28px;margin:0 0 8px">Closed test troubleshooting</h1>
+  <p class="muted" style="margin:0 0 22px">A tester says it does not work. Find the stage, then the cause.</p>
+
+  <p>Every tester goes through the same three stages, in this order:
+  <b>join your Google Group</b>, <b>opt in</b>, <b>install from Play</b>.
+  Each one fails in its own way, and none of them tells the tester why. They
+  just see a page that will not open, and usually they tell you "the link is
+  broken".</p>
+
+  <p>So start with what they actually saw. Every screen in these pages was
+  reproduced on a real app, from a real tester account, in September 2026.</p>
+
+  <div class="find-wrap">
+  <table class="find">
+    <thead><tr><th>What the tester sees</th><th>Go to</th></tr></thead>
+    <tbody>
+      <tr><td>"Content unavailable" on the group page</td>
+          <td><a href="/guides/google-group.html">1 · Group</a></td></tr>
+      <tr><td>"You don’t have permission to access this content", with a Join group button</td>
+          <td><a href="/guides/google-group.html#stage-1-permission">1 · Group</a> (usually fine)</td></tr>
+      <tr><td>"App not available" on the opt-in page</td>
+          <td><a href="/guides/app-not-available.html">2 · Opt-in</a></td></tr>
+      <tr><td>"Item not found" on Play, right after opting in</td>
+          <td><a href="/guides/country-availability.html#item-not-found">3 · Install</a></td></tr>
+      <tr><td>"This item isn’t available in your country" on Play</td>
+          <td><a href="/guides/country-availability.html">3 · Install</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="part">The three stages</div>
+
+  <h2><span class="step">1</span><a href="/guides/google-group.html">"Content unavailable" — fix your Google Group</a></h2>
+  <p>A new Google Group is private by default. Two settings open it: <b>Who can see
+  group</b> and <b>Who can join group</b>. Then warn testers about a harmless
+  permission message, and check it from a second account.</p>
+
+  <h2><span class="step">2</span><a href="/guides/app-not-available.html">"App not available" on the opt-in page</a></h2>
+  <p>They joined the group and still cannot opt in. Seven causes, most common
+  first: no build through review, the track still on an email list, an unticked
+  list, a typo, a change saved but not sent for review, the wrong link, the wrong
+  account.</p>
+
+  <h2><span class="step">3</span><a href="/guides/country-availability.html">No Install button — open your test to all countries</a></h2>
+  <p>The opt-in page says "You are a tester", but Play will not install. The track
+  does not include their country. Where to check, the production sync, and why
+  the tester stays blocked for a while after you fix it.</p>
+
+  <div class="part">Still stuck</div>
+  <ul>
+    <li>For every screen a tester can hit, including the production rejection,
+    see <a href="/guides/blocked-screens.html">The six screens that stop a closed test</a>.</li>
+    <li>If you have not set up the track yet, start with
+    <a href="/guides/closed-test-setup.html">Set up a closed test, from an empty account</a>.</li>
+  </ul>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> is where developers test each other’s apps to reach the 12
+    testers. When a tester cannot get in, they can report it from the trade card,
+    so you hear about it the same day instead of after they have quietly left.
+    <a href="/">Free at actparty.app</a>
+  </div></article>
 
 <footer class="bot"><div class="wrap"><p>
   <a href="/guides/" data-t="nav_guides">Guides</a> ·
-  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+  <a href="/" data-t="nav_board_home">Back to the board</a></p></div></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">

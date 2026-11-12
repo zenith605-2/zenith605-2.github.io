@@ -55,11 +55,136 @@
   </div>
 </header>
 
-<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+  <h1 style="font-size:28px;margin:0 0 8px">The 9 questions in the production form</h1>
+  <p class="muted" style="margin:0 0 24px">Two of them decide it</p>
+
+  <p>Once 12 testers have been opted in for 14 days you can apply for production.
+  Tapping apply does not send you straight to review — <b>a form appears first.</b>
+  Ten questions, mostly free text, roughly 300 characters per answer.</p>
+
+  <p>This is where people stall. Finishing 14 days and describing what happened
+  during those 14 days are two different jobs.</p>
+
+      <h2>What it asks</h2>
+
+  <p>The button opens a three-step form. Nine questions, and every free-text box
+  is capped at <b>exactly 300 characters</b>. Two are multiple choice. Below is
+  each question in full — translated from the Korean form, so Google's own
+  English wording may differ slightly.</p>
+
+  <p><b>Step 1 &middot; Closed testing</b></p>
+
+  <ol>
+    <li>How did you recruit the users who took part in your closed test? For
+    example, did you ask friends or family? Or did you use a paid testing
+    service?</li>
+
+    <li>How easy was it to recruit testers for your app?
+    <span class="muted">(very hard / hard / neutral / easy / very easy)</span></li>
+
+    <li>Describe how engaged your testers were during the closed test.
+    <span class="muted">Tell us whether testers used all of the app's features,
+    and whether the way they used it matches how you expect real users to use it.
+    If it does not match, explain what differences you expect.</span></li>
+
+    <li><b>Summarise the feedback you received from testers. Also tell us how you
+    collected it.</b></li>
+  </ol>
+
+  <p><b>Step 2 &middot; App info</b></p>
+
+  <ol start="5">
+    <li>Who is the main audience for your app?</li>
+    <li>Describe the value your app provides to users.</li>
+    <li>How many installs do you expect in the first year?
+    <span class="muted">(0-10K / 10K-100K / 100K-1M / 1M+ / don't know)</span></li>
+  </ol>
+
+  <p><b>Step 3 &middot; Production readiness</b></p>
+
+  <ol start="8">
+    <li><b>How did you change the app based on what you learned in the closed
+    test?</b></li>
+    <li>How did you decide the app is ready for production?</li>
+  </ol>
+
+  <p>Questions 4 and 8, in bold, are where it is actually decided. The rest you
+  can write without stopping if you built the app.</p>
+
+  <p>Question 3 is the awkward one if you found your testers by trading. It asks
+  whether their usage matches what real users would do, and to explain the
+  difference if not. Honesty reads better here — saying developers tested each
+  other and how that differs from real use holds together better than an invented
+  sentence.</p>
+
+  <p class="muted">Your answers are not shown on the Play listing. The form says
+  so on screen, so there is no reason to write them like marketing copy.</p>
+
+<figure><img src="/img/guide-form-q9-en.png" alt="" loading="lazy"><figcaption>All nine on one page. Draft the answers before you open it and they fit in 300 characters</figcaption></figure>
+
+<h2>Why those two are hard</h2>
+
+  <p>Two weeks later, "what feedback did I get" usually returns nothing. So you
+  write something plausible — "testers found the UI intuitive and offered a few
+  suggestions". The person reading it sees a few hundred of those a day.</p>
+
+  <p>Compare:</p>
+
+  <blockquote style="margin:14px 0;padding:10px 14px;border-left:3px solid var(--mint)">
+  "One tester said the features came at him all at once and he did not know
+  where to start. I added a three-screen intro on first launch, and he has kept
+  using it since that build."
+  </blockquote>
+
+  <p>One person, one change, what happened after. That shape cannot be invented.</p>
+
+  <h2>So where do the answers come from</h2>
+
+  <p>From what you wrote down. You do not compose them at the end; you retrieve
+  what the 14 days left behind.</p>
+
+  <p>Three things are worth keeping.</p>
+
+  <ul>
+    <li><b>Who tested, and for how many days</b> — per person, not "12 for 14 days"</li>
+    <li><b>The feedback verbatim</b> — do not summarise it</li>
+    <li><b>What you replied</b> — that reply <em>is</em> your answer to "what did you change"</li>
+  </ul>
+
+  <p>The third one matters most. Reply to feedback when it arrives and there is
+  nothing to reconstruct later.</p>
+
+  <h2>Nobody opens it all 14 days, by the way</h2>
+
+  <p>Across <a href="/guides/daily-opens-data.html">48 finished trades we
+  measured</a>, testers opened the app on 8.8 of 14 days on average. Five of 48
+  hit all 14. One never opened it at all.</p>
+
+  <p>So you do not need to claim your testers used it every day. Google counts
+  how long they stayed opted in, not how often they opened it — see
+  <a href="/guides/what-google-checks.html">what Google actually checks</a>.</p>
+
+  <h2>If you get rejected, do you start over</h2>
+
+  <p>No. A rejection means you apply again; it does not un-enrol your testers.
+  They are still opted in and the days keep counting. Fill in what was thin and
+  submit again.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> records daily opens automatically and exports your feedback
+    and your replies, grouped by version, as one page — ready to paste into
+    those two questions. <a href="/">Try it free at actparty.app</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">
+    Google changes this form regularly. The list above is as of September 2026
+    and the exact wording varies by account.
+  </p></article>
 
 <footer class="bot"><div class="wrap"><p>
   <a href="/guides/" data-t="nav_guides">Guides</a> ·
-  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+  <a href="/" data-t="nav_board_home">Back to the board</a></p></div></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">

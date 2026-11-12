@@ -112,6 +112,17 @@ def add_ko(out):
     return head + '<body>' + body
 
 
+# 검색에 올릴 만큼 내용이 있는 앱만 색인한다 (2026-11-12). 711개 페이지가 83~126단어로
+# 대부분 같은 안내 문구라 구글이 앱 페이지 79개를 "크롤링됨 - 색인 안 됨"으로 뺐고,
+# 사이트 전체 색인도 32개에 머물렀다. 설명이 짧은 페이지는 noindex,follow 로 두고
+# (주소·링크는 그대로) 사이트맵에서 뺀다. 설명이 채워지면 다음 빌드에서 자동으로 올라간다.
+RICH_MIN = 200
+
+
+def is_rich(a):
+    return len(a.get('description') or '') + len(a.get('long_description') or '') >= RICH_MIN
+
+
 def page(a, others=()):
     return add_ko(_page(a, others))
 
@@ -131,6 +142,17 @@ def _page(a, others=()):
     # 출시 표시가 된 앱만 링크를 건다 — 깨진 링크는 안 거는 것만 못하다.
     store = (f'https://play.google.com/store/apps/details?id={pkg}'
              if pkg and a.get('released_at') else '')
+    # 앱 주인이 쓴 긴 설명 — 페이지마다 다른 유일한 본문이라 검색에 보이게 싣는다
+    long_desc = (a.get('long_description') or '').strip()[:3000]
+    looking = bool(a.get('recruiting')) and not a.get('released_at')
+    headline = (f'{name} — looking for closed testers' if looking
+                else f'{name} — Android app on ACT Party')
+    robots = '' if is_rich(a) else '<meta name="robots" content="noindex,follow">\n'
+    about_card = (f'''  <div class="card" style="margin-bottom:16px">
+    <h2 style="font-size:17px;margin:0 0 8px">About {e(name)}</h2>
+    <p style="white-space:pre-line;line-height:1.65;margin:0">{e(long_desc)}</p>
+  </div>
+''' if long_desc else '')
 
     # 테스트에 참여하는 길. 이 페이지는 앱에서 기록을 공유할 때 찍히는 QR 의
     # 도착지이기도 하다 (2026-09-21) — 스캔한 사람이 여기서 바로 가입하고
@@ -317,9 +339,10 @@ def _page(a, others=()):
 '''
 
     # 검색 결과에 뜨는 한 줄. 설명이 없으면 상태로 대신한다.
-    meta_desc = (f'{name} by {dev} is looking for closed testers on ACT Party. '
-                 f'{cur} of {need} testers so far. '
-                 + (desc if desc else ''))[:300]
+    meta_desc = ((f'{name} by {dev} is looking for closed testers on ACT Party. '
+                  f'{cur} of {need} testers so far. ' if looking
+                  else f'{name} by {dev}, an Android app tested on ACT Party. ')
+                 + (desc or long_desc[:200]))[:300]
 
     ld = {
         '@context': 'https://schema.org',
@@ -341,9 +364,10 @@ def _page(a, others=()):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{e(name)} — looking for closed testers | ACT Party</title>
+<title>{e(headline)} | ACT Party</title>
 <meta name="description" content="{e(meta_desc)}">
 <link rel="canonical" href="{SITE}/a/{e(pkg)}/">
+{robots}
 <!-- 공유 미리보기 카드 (2026-09-21). 앱에서 [모집 글 공유]를 누르면 이
      주소 하나만 나간다 — 카톡·디스코드가 이 태그로 카드를 만든다. 우리 홍보가
      아니라 그 앱이 주인공이어야 해서 제목은 앱 이름, 썸네일은 앱 아이콘이다.
@@ -386,7 +410,7 @@ def _page(a, others=()):
     </div>
   </div>
 
-{join_card}{testing_card}  <!-- 예전에는 패키지·카르마·완료 수 카드와 ACT 소개 두 문단, 버튼 세 개가
+{about_card}{join_card}{testing_card}  <!-- 예전에는 패키지·카르마·완료 수 카드와 ACT 소개 두 문단, 버튼 세 개가
        더 있었다. QR 로 들어온 사람에게 필요한 건 참여 링크뿐이라 너무 많이
        늘어놓는다는 말이 나왔다 (2026-09-22) — 우리 소개는 한 줄로 줄인다. -->
   <!-- ACT 배너 — 한 줄 띠가 너무 작다는 말에 예전 배너(actparty-banner-en,
@@ -636,7 +660,9 @@ def prune_apps(live):
         return
     have = {d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))}
     gone = have - live
-    if len(live) < 20 or len(gone) > len(have) * 0.4:
+    # 기준은 둘 중 큰 쪽 — 오래 안 돌리면 옛 폴더 대부분이 내려간 앱이라 현재 목록이
+    # 멀쩡한데도 매번 건너뛰었다 (2026-11-12, 173개 중 142개)
+    if len(live) < 20 or len(gone) > max(len(have), len(live)) * 0.4:
         print(f'  ! 앱 목록이 이상하다 (현재 {len(live)}, 지울 것 {len(gone)}) '
               f'— 지우지 않고 넘어간다')
         return
@@ -685,7 +711,8 @@ def main():
         with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8',
                   newline='') as f:
             f.write(page(a, others))
-        app_urls.append(f'{SITE}/a/{pkg}/')
+        if is_rich(a):
+            app_urls.append(f'{SITE}/a/{pkg}/')
 
     # 사이트맵을 둘로 나눈다.
     #

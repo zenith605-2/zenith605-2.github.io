@@ -60,11 +60,95 @@
   </div>
 </header>
 
-<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+  <h1 style="font-size:28px;margin:0 0 8px">The six screens that stop a closed test</h1>
+  <p class="muted" style="margin:0 0 24px">Each one has a different cause. Resending the link fixes none of them.</p>
+
+  <p>Testers who cannot get in usually say nothing. When they do speak up it is
+  "it doesn't work", which tells you nothing. The screens, though, all look different.</p>
+
+  <p>These are the screens I hit running <b>more than a hundred</b> closed tests.
+  Almost every time the link was fine and something on the blocked side was not.
+  Show these six and ask which one they saw, and the cause separates itself.</p>
+
+  <h2>1. Group — "Content unavailable"</h2>
+  <figure><img src="/img/guide/guide-err-group-private.png" alt="" loading="lazy"><figcaption>The Google Group page. An uninvited account sees no content and no join button.</figcaption></figure>
+  <p>The group is private, or the account signed into the browser is not the one signed
+  into the Play Store on the phone. That is what "switch accounts" on the page means.</p>
+  <ol>
+    <li>Open the same link with <b>the account signed into your Play Store</b>.</li>
+    <li>If nothing changes, the app owner has to fix the group:
+      <b>Who can search for the group → Anyone on the web</b>,
+      <b>Who can join the group → Anyone can ask</b>.</li>
+    <li class="hot">It always looks fine on the owner's screen. They will never find this alone.</li>
+  </ol>
+  <p>Where those settings live: <a href="/guides/google-group.html">Set up a Google Group for testers</a>.</p>
+
+  <h2>2. Opt-in — "App not available"</h2>
+  <figure><img src="/img/guide/guide-err-optin-unavailable.png" alt="" loading="lazy"><figcaption>The opt-in page: a testing version has not been published yet, or is not available for this account.</figcaption></figure>
+  <p>One of four things.</p>
+  <ol>
+    <li><b>Wrong account.</b> It has to be the account signed into the phone's Play Store.</li>
+    <li><b>The group comes first.</b> With a group, opting in before joining is blocked.</li>
+    <li><b>No testing version yet.</b> The build on the track has to pass review before the link opens.</li>
+    <li><b>You only changed the tester list.</b> Switching from an email list to a Google Group and hitting Save shows this same screen even when the track already has a published build. The change has to go through review with the track before testers see it.</li>
+  </ol>
+
+  <h2>3. Store — "Item not found"</h2>
+  <figure><img src="/img/guide/guide-err-store-notfound.png" alt="" loading="lazy"><figcaption>Opted in, but the install page still is not there.</figcaption></figure>
+  <p>After opting in the store can take <b>about 30 minutes</b> to catch up. Most of the
+  time waiting is the whole fix. If it is the same after 30 minutes, it is a country
+  restriction or the wrong account — see
+  <a href="/guides/country-availability.html">Open your closed test to all countries</a>.</p>
+
+  <h2>4. Store — "not available in your country"</h2>
+  <p>It looks like #3 but the cause is the opposite. #3 opens if you wait; this
+  one never will. Opting in again does nothing, and neither does switching
+  accounts. <b>It is the only screen where the tester can do nothing at all.</b></p>
+  <p>Only the app owner can fix it, by adding that country in Play Console.
+  <a href="/guides/country-availability.html">Open your closed test to all countries</a>
+  covers where that setting lives.</p>
+  <p><b>If you are the tester</b>, say so instead of waiting. Otherwise the owner
+  never learns their app is unavailable where you are — from their side, someone
+  who vanished for a country restriction looks exactly like someone who changed
+  their mind.</p>
+  <ul>
+    <li>On ACT Party: <b>⋮ → "Not available in my country"</b> on the trade card.
+    No karma hit, and the owner is told which country could not install it.</li>
+    <li>If the trade is already running, use <b>⋮ → "End by agreement"</b> and
+    give the reason. When they accept, <b>both</b> sides close. Plain "Drop" only
+    ends yours — they keep opening your app for 14 days knowing nothing.</li>
+  </ul>
+
+  <h2>5. Console — "Your app requires more testing"</h2>
+  <figure><img src="/img/guide/guide-err-console-reject.png" alt="" loading="lazy"><figcaption>The production access application, rejected. The 14 days restart from the review date.</figcaption></figure>
+  <p>This one is not for testers — <b>the app owner sees it</b>. The line that matters is the
+  last one: 12 testers for 14 more days <b>starting from the review date</b>. Days you
+  collected before applying do not carry over. Applying early makes you later.</p>
+
+  <h2>6. The rejection email — two reasons</h2>
+  <figure><img src="/img/guide/guide-err-reject-mail.png" alt="" loading="lazy"><figcaption>The rejection email states the reasons in two lines.</figcaption></figure>
+  <ul>
+    <li><b>Testers did not engage with the app.</b> Opt-ins that never open it count against you.</li>
+    <li><b>You did not follow testing guidance</b> — collecting feedback and acting on it
+      through app updates. No build shipped during the 14 days shows up here.</li>
+  </ul>
+  <p>So you need a record of <b>days the app was actually opened</b> and <b>updates you
+  shipped from feedback</b>. Both are numbers the questionnaire asks for —
+  <a href="/guides/production-form.html">the nine production questions</a>.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b> asks testers which of these screens they hit and only notifies the
+    developer when it is their side. Daily opens are recorded automatically from Android
+    usage stats. <a href="/">Use it free at actparty.app</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">Screens are from September 2026. Google rewords
+  these often, so the wording may differ slightly.</p></article>
 
 <footer class="bot"><div class="wrap"><p>
   <a href="/guides/" data-t="nav_guides">Guides</a> ·
-  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+  <a href="/" data-t="nav_board_home">Back to the board</a></p></div></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">

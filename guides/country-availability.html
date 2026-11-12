@@ -81,11 +81,152 @@
   </div>
 </header>
 
-<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+  <h1 style="font-size:28px;margin:0 0 6px">"You are a tester" but no Install button? Open your test to all countries</h1>
+  <p class="stage">Stage 3 of 3 in <a href="/guides/troubleshooting.html">closed test troubleshooting</a>:
+  group &rarr; opt-in &rarr; <b>install</b>.</p>
+
+  <h2 id="item-not-found">"Item not found", right after opting in</h2>
+  <p>Usually nothing is wrong. After a tester opts in, the store can take
+  <b>about 30 minutes</b> to show them the app. Tell them to wait.</p>
+  <p>If it is still "Item not found" after 30 minutes, it is one of two things:</p>
+  <ul>
+    <li>Play on the phone is signed in to a different account than the one that
+    opted in — <a href="/guides/app-not-available.html#wrong-account">stage 2, cause 7</a>.</li>
+    <li>Their country is not in the track — the rest of this page.</li>
+  </ul>
+
+  <h2 id="not-in-country">"This item isn’t available in your country"</h2>
+  <p>This is the cruel one. The opt-in page keeps saying <b>You are a tester</b>
+  in green:</p>
+  <figure><img src="/img/guide/closed-test/t10-optin-ok-but-blocked.png" alt="" loading="lazy"><figcaption>Opted in. This tester still cannot install.</figcaption></figure>
+  <p>They open Play and get this instead:</p>
+  <figure><img src="/img/guide/closed-test/store-country-blocked-en.png" alt="" loading="lazy"><figcaption>No Install button, and "This item isn’t available in your country." Recreated in English from a tester’s phone.</figcaption></figure>
+  <p>So the tester assumes your app does not ship where they live and gives up.
+  Nothing on their side can change that. The real answer is in your console:
+  a closed test only reaches the countries its track targets.</p>
+
+  <h2>How common is it</h2>
+
+  <p>Across the 72 apps on ACT Party, <b>22</b> have had at least one tester
+  report this. Roughly one app in three. Twenty of those reports are still
+  unresolved, and this is where the blocked testers were.</p>
+
+  <table>
+    <tr><th>Tester country</th><th>Still blocked</th></tr>
+    <tr><td>United Kingdom (GB)</td><td class="n">9</td></tr>
+    <tr><td>Brazil (BR)</td><td class="n">4</td></tr>
+    <tr><td>Sweden (SE)</td><td class="n">2</td></tr>
+    <tr><td>Switzerland, US, Korea, Japan, India</td><td class="n">1 each</td></tr>
+  </table>
+
+  <p class="muted" style="font-size:13px">As of 7 September 2026. These are only
+  the people who bothered to report it in the app, so the ones who quietly left
+  are not counted here.</p>
+
+  
+  <h2 id="where">Where to look</h2>
+  <p><b>Test and release &rarr; Testing &rarr; Closed testing</b>, open the track.
+  The country count is in the track header, one line under the title.</p>
+  <figure><img src="/img/guide/closed-test/p1-closed-track-overview.png" alt="" loading="lazy"><figcaption>Track summary. If the number of countries is small, this is your problem.</figcaption></figure>
+  <p>For the detail, open the <b>Countries / regions</b> tab and use the filter.</p>
+  <figure><img src="/img/guide/closed-test/k5-not-targeted-176.png" alt="" loading="lazy"><figcaption>The diagnostic. This track targets 1 country and excludes 176. Not targeted must read 0.</figcaption></figure>
+  <figure><img src="/img/guide/closed-test/k2-not-targeted-filter.png" alt="" loading="lazy"><figcaption>A healthy track. Targeted 177, Not targeted 0.</figcaption></figure>
+
+  <h2>First: is this track tied to production?</h2>
+
+  <p>This is where it forks. A track's country list can be <b>synced with
+  production</b> or <b>its own</b>. If you see a line like this, it is synced.</p>
+
+  <p class="note">Synced with Production (Phone, Tablet, Chrome OS, Android XR).
+  This track currently targets the same countries and regions as production.</p>
+
+  <figure><img src="/img/guide-country-sync-en.png" alt="" loading="lazy"><figcaption>Top: the line that says it is synced. Bottom: that is why Edit countries / regions is greyed out</figcaption></figure>
+
+  <ul>
+    <li><b>Synced</b> — the <b>Edit countries / regions</b> button on the right
+      is greyed out. You cannot change it here. Widen <b>production</b> and this
+      track follows, or press <b>Unsync</b> first if you want the test track to
+      differ.</li>
+    <li><b>It says "Not synced with Production · This track manages its own
+      countries and regions separately"</b> — this track keeps its own list, and
+      <b>Edit countries / regions</b> is live. Widen it right there.</li>
+  </ul>
+
+  <p class="muted">Unsyncing is reversible. Once unsynced, a <b>Sync</b> link
+  appears in the same spot, and pressing it puts the track back on production's
+  list.</p>
+
+  <p>If you have never shipped anything to production there is nothing to sync
+  with, so it is usually the second case. Either way, <b>that one line on the
+  screen tells you which</b>.</p>
+
+  
+  <h2 id="widen">Widening it</h2>
+  <figure><img src="/img/guide/closed-test/k4-japan-only.png" alt="" loading="lazy"><figcaption>How it happens: a short list picked early. One country ticked, and nothing on the screen warns you.</figcaption></figure>
+  <ol>
+    <li>Press <b>Edit countries / regions</b> (if the track is synced, see above first).</li>
+    <li>Tick the checkbox in the header row. It selects every country at once — you
+    do not have to click them one by one.</li>
+    <li class="hot"><b>Save, then send the change for review</b> from Publishing
+    overview. Selecting and walking away changes nothing, and so does saving on
+    its own — <a href="/guides/app-not-available.html#not-sent">same as a tester change</a>.</li>
+    <li>If you run open testing, internal testing or production separately, check
+    each track.</li>
+  </ol>
+  <figure><img src="/img/guide/closed-test/k6-reselect-all.png" alt="" loading="lazy"><figcaption>The header checkbox fixing a restricted track. Rows still say Not targeted until you save and submit.</figcaption></figure>
+  <figure><img src="/img/guide/closed-test/k1-countries-all.png" alt="" loading="lazy"><figcaption>Done. 177 targeted, 0 not targeted.</figcaption></figure>
+  <p>While you are in edit mode the Sync and Edit links go grey. That is normal —
+  it just means you are in the middle of choosing.</p>
+
+  <h2 id="after">After the fix</h2>
+  <div class="note warn"><b>The tester stays blocked for a while.</b> We watched
+  the console go back to 177 countries while the same tester’s store page still had
+  no Install button. It caught up later on its own. Tell them to retry in an hour
+  instead of changing anything else.</div>
+
+  <h2>What about the people you already lost</h2>
+
+  <p>After you widen the list you have to go back and tell them to try again.
+  Nobody retries on their own. An app that failed once does not get a second
+  tap three days later.</p>
+
+  
+  <h2 id="works">What it looks like when it works</h2>
+  <figure><img src="/img/guide/closed-test/t8-store-installable.png" alt="" loading="lazy"><figcaption>An opted-in tester in a targeted country. A normal store page with an Install button — there is no badge saying this is a test build.</figcaption></figure>
+  <div class="note ok"><b>All three stages done</b> when the tester has installed
+  the app from Play. From here the 14 days are about daily use, not access.</div>
+
+  <h2>Is opening everything safe</h2>
+
+  <p>For a closed test, usually yes. That track is only visible to people who
+  opted in, so a wider country list does not let strangers in. Reasons not to
+  open it are usually one of these.</p>
+
+  <ul>
+    <li>Legal or regulatory limits — finance, health, gambling</li>
+    <li>Your servers only exist in one region and the app is unusable elsewhere</li>
+    <li>Paid apps — some countries require a payments profile on your account</li>
+  </ul>
+
+  <p>If none of those apply, open it. You can narrow production later. There is
+  no reason to be narrow while you are still testing.</p>
+
+  
+  <div class="note" style="margin:26px 0">
+    ACT Party notifies you the moment a tester taps "it is not available in my
+    country", and shows you who was blocked and where. If someone else in that same
+    country later installs it, the report is revoked automatically.
+    <a href="/">Free at actparty.app</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">Screens are from Play Console in
+  September 2026. Google moves and renames things often; if you cannot find it,
+  check the Play Console Help.</p></article>
 
 <footer class="bot"><div class="wrap"><p>
   <a href="/guides/" data-t="nav_guides">Guides</a> ·
-  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+  <a href="/" data-t="nav_board_home">Back to the board</a></p></div></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">

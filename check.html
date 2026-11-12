@@ -34,16 +34,16 @@
 <div class="wrap narrow" style="padding-top:30px">
 
   <h1 style="font-size:27px;margin:0 0 10px" data-t="chk_h">Check your tester links</h1>
-  <p class="lead" data-t="chk_lead"></p>
+  <p class="lead" data-t="chk_lead">We check your group and opt-in links from outside, the way a tester sees them. If something is wrong, the fix opens right below.</p>
 
   <!-- 주인 계정으로는 무엇을 해도 정상으로 보인다. 이 한 줄이 이 페이지의 이유다. -->
   <div class="note warn" style="margin:18px 0 26px">
-    <p style="margin:0" data-t="chk_owner_warn"></p>
+    <p style="margin:0" data-t="chk_owner_warn"><b>It always looks fine from your own account.</b> You are the owner, so the group opens and the opt-in page loads. That is why broken links go unnoticed.</p>
   </div>
 
   <!-- ── 1. 그룹 ── 익명으로 열어 보면 바로 판별된다 -->
   <h2 style="margin:0 0 4px;font-size:19px" data-t="chk_g_h">1. Google Group link</h2>
-  <p class="muted" style="margin:0 0 10px" data-t="chk_g_sub"></p>
+  <p class="muted" style="margin:0 0 10px" data-t="chk_g_sub">We open it signed out. This one we can answer for you.</p>
   <div class="row">
     <input type="url" id="g" style="flex:1;min-width:240px"
            placeholder="https://groups.google.com/g/my-testers">
@@ -59,7 +59,7 @@
        구글이 자동화 브라우저 로그인에 캡차를 걸어 접었다. 우회하지 않는다.
        그래서 여기는 직접 열어 보고 고르게 한다 — 고르면 고칠 단계가 펼쳐진다. -->
   <h2 style="margin:38px 0 4px;font-size:19px" data-t="chk_o_h">2. Opt-in link</h2>
-  <p class="muted" style="margin:0 0 10px" data-t="chk_o_sub"></p>
+  <p class="muted" style="margin:0 0 10px" data-t="chk_o_sub">Google tells you nothing before sign-in. A package that does not exist gets the same login screen, so this one you have to open yourself with another account.</p>
   <div class="row">
     <input type="url" id="o" style="flex:1;min-width:240px"
            placeholder="https://play.google.com/apps/testing/com.example.app">
@@ -70,7 +70,7 @@
 
   <!-- 자동 확인이 늦거나 막히면 직접 보고 고르게 한다 -->
   <div id="manual" hidden style="margin-top:18px">
-    <p class="hint" data-t="chk_o_slow"></p>
+    <p class="hint" data-t="chk_o_slow">When the automatic check is slow, looking yourself is faster.</p>
     <div class="row" style="margin:8px 0 10px">
       <a class="btn ghost sm" id="oopen" target="_blank" rel="noopener noreferrer"
          data-t="chk_o_open">Open it</a>
@@ -80,7 +80,7 @@
       <button class="btn ghost sm" data-v="ok" data-t="chk_a_ok">The app name showed up</button>
       <button class="btn ghost sm" data-v="na" data-t="chk_a_na">App not available</button>
       <button class="btn ghost sm" data-v="store" data-t="chk_a_store">Store: item not found</button>
-      <button class="btn ghost sm" data-v="country" data-t="chk_a_country">Not in your country</button>
+      <button class="btn ghost sm" data-v="country" data-t="chk_a_country">Not available in your country</button>
     </div>
   </div>
 
@@ -88,7 +88,7 @@
        align-items:center;justify-content:space-between;flex-wrap:wrap">
     <div>
       <h3 style="margin:0 0 2px" data-t="cta_reg_h">Looking for testers?</h3>
-      <p class="muted" style="margin:0" data-t="chk_cta_p"></p>
+      <p class="muted" style="margin:0" data-t="chk_cta_p">If the links are fine, the next problem is 12 testers.</p>
     </div>
     <a class="btn" href="/console.html?new=1" data-t="register_app">Register an app</a>
   </div>
