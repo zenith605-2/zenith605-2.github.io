@@ -682,6 +682,7 @@ const T = {
   c_money:      ['수익화', 'Monetization', '収益化', '变现', '變現'],
   c_policy:     ['심사·정책', 'Review & policy', '審査・ポリシー', '审核与政策', '審核與政策'],
   c_fb:         ['피드백', 'Feedback', 'フィードバック', '反馈', '回饋'],
+  c_store:      ['스토어 피드백', 'Store listing review', 'ストア掲載の意見', '商店页意见', '商店頁意見'],
   prog_today:   ['오늘 {a}/{b} 인증', '{a}/{b} verified today', '今日 {a}/{b} 認証', '今日 {a}/{b} 已认证', '今日 {a}/{b} 已認證'],
   prog_active:  ['활동 {a}명', '{a} active', 'アクティブ {a}名', '{a} 名活跃', '{a} 名活躍'],
   prog_trades:  ['품앗이 {a}건', '{a} trades', '交換 {a}件', '互测 {a} 项', '互測 {a} 項'],
@@ -925,6 +926,7 @@ const CAT_KEY = {
   '고충': 'c_pain', '팁': 'c_tip', '아이디어': 'c_idea', '앱 소개': 'c_show',
   '출시 후기': 'c_launch', '수익화': 'c_money', '심사·정책': 'c_policy',
   '피드백': 'c_fb',
+  '스토어 피드백': 'c_store',
 };
 
 export function catLabel(c) {
