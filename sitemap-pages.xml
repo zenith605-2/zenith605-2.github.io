@@ -46,6 +46,10 @@
   <url><loc>https://actparty.app/ja/guides/why-testers-drop.html</loc></url>
   <url><loc>https://actparty.app/zh-Hans/guides/why-testers-drop.html</loc></url>
   <url><loc>https://actparty.app/zh-Hant/guides/why-testers-drop.html</loc></url>
+  <url><loc>https://actparty.app/ko/guides/paid-app-testing.html</loc></url>
+  <url><loc>https://actparty.app/ja/guides/paid-app-testing.html</loc></url>
+  <url><loc>https://actparty.app/zh-Hans/guides/paid-app-testing.html</loc></url>
+  <url><loc>https://actparty.app/zh-Hant/guides/paid-app-testing.html</loc></url>
   <url><loc>https://actparty.app/google-play-12-testers.html</loc></url>
   <url><loc>https://actparty.app/ko/google-play-12-testers.html</loc></url>
   <url><loc>https://actparty.app/ja/google-play-12-testers.html</loc></url>
@@ -66,6 +70,12 @@
   <url><loc>https://actparty.app/ja/android-closed-testing-data.html</loc></url>
   <url><loc>https://actparty.app/zh-Hans/android-closed-testing-data.html</loc></url>
   <url><loc>https://actparty.app/zh-Hant/android-closed-testing-data.html</loc></url>
+  <url><loc>https://actparty.app/closed-testing-calculator.html</loc></url>
+  <url><loc>https://actparty.app/ko/closed-testing-calculator.html</loc></url>
+  <url><loc>https://actparty.app/ja/closed-testing-calculator.html</loc></url>
+  <url><loc>https://actparty.app/zh-Hans/closed-testing-calculator.html</loc></url>
+  <url><loc>https://actparty.app/zh-Hant/closed-testing-calculator.html</loc></url>
+  <url><loc>https://actparty.app/p/65618886.html</loc></url>
   <url><loc>https://actparty.app/p/c4620309.html</loc></url>
   <url><loc>https://actparty.app/p/63178bdb.html</loc></url>
   <url><loc>https://actparty.app/p/22282616.html</loc></url>
@@ -167,14 +177,4 @@
   <url><loc>https://actparty.app/p/68b388d0.html</loc></url>
   <url><loc>https://actparty.app/p/3800f82f.html</loc></url>
   <url><loc>https://actparty.app/p/ca1d7e14.html</loc></url>
-  <url><loc>https://actparty.app/closed-testing-calculator.html</loc></url>
-  <url><loc>https://actparty.app/ko/closed-testing-calculator.html</loc></url>
-  <url><loc>https://actparty.app/ja/closed-testing-calculator.html</loc></url>
-  <url><loc>https://actparty.app/zh-Hans/closed-testing-calculator.html</loc></url>
-  <url><loc>https://actparty.app/zh-Hant/closed-testing-calculator.html</loc></url>
-  <url><loc>https://actparty.app/guides/paid-app-testing.html</loc></url>
-  <url><loc>https://actparty.app/ko/guides/paid-app-testing.html</loc></url>
-  <url><loc>https://actparty.app/ja/guides/paid-app-testing.html</loc></url>
-  <url><loc>https://actparty.app/zh-Hans/guides/paid-app-testing.html</loc></url>
-  <url><loc>https://actparty.app/zh-Hant/guides/paid-app-testing.html</loc></url>
 </urlset>
