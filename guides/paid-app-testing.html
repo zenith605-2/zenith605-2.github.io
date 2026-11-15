@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testing a paid app: license testers and promo codes</title>
+<meta name="description" content="Closed testers of a paid app or an app with in-app purchases are charged real money by default. Add them as license testers so Play shows test cards, or hand out promo codes for a paid app. What testers see, the limits, and the order to set it up.">
+<link rel="canonical" href="https://actparty.app/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/paid-app-testing.html">
+<meta property="og:image" content="https://actparty.app/img/og-en.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/app.css?v=126">
+<style>
+  /* 구간마다 주소를 달아 두면 "당신은 2번"이라고 정확히 보낼 수 있다 */
+  #doc h2 { position: relative }
+  #doc .anchor-copy {
+    margin-left: 10px; padding: 3px 9px; font-size: 11.5px;
+    border: 1px solid #d7dbe0; border-radius: 999px;
+    background: #fff; color: #5b6570; cursor: pointer;
+    vertical-align: middle; font-weight: 500;
+  }
+  #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+  /* 화면 캡처가 글보다 먼저 읽힌다 — 본문 폭을 넘지 않게만 잡아 준다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; display: block; border-radius: 10px;
+    border: 1px solid #e3e6ea; background: #fff;
+  }
+  #doc figcaption {
+    font-size: 13px; color: #5b6672; margin-top: 8px; line-height: 1.6;
+  }
+  #doc h2 { margin-top: 34px }
+  #doc li.hot {
+    background: #fff1f2; border-left: 3px solid #e11d48;
+    border-radius: 6px; padding: 9px 12px; margin: 10px 0; color: #9f1239;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <a href="/check.html" data-t="nav_check">Link check</a>
+      <a href="/guides/" data-t="nav_guides">Guides</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=127';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=124';
+import { sectionAnchors } from '/assets/anchors.js?v=124';
+
+const DOC = {
+  ko: `
+  <h1 style="font-size:28px;margin:0 0 8px">유료 앱·인앱 결제 앱을 테스트받는 법</h1>
+  <p class="muted" style="margin:0 0 24px">그냥 두면 테스터가 실제 돈을 냅니다 — 테스트 카드나 코드로 열어 두세요.</p>
+
+  <p>비공개 테스트라고 결제가 공짜가 되지는 않습니다. 구글 문서 그대로, <b>비공개·공개 테스트의
+  유료 앱은 테스터도 사야 하고</b>, 인앱 결제도 <b>라이선스 테스터가 아니면 실제로 청구</b>됩니다.
+  품앗이 상대에게 "결제 화면까지 봐 주세요"라고 하면서 이걸 안 열어 두면, 테스터는 결제 창
+  앞에서 멈추거나 그냥 앱을 닫습니다.</p>
+
+  <p>방법은 둘입니다. 앱 안에서 파는 상품(일회성 제품·구독)은 <b>라이선스 테스트</b>,
+  앱 자체가 유료면 <b>프로모션 코드</b>입니다.</p>
+
+  <h2>1. 인앱 결제·구독 — 라이선스 테스터로 등록</h2>
+  <ol>
+    <li>Play Console 왼쪽 아래 <b>설정 → 라이선스 테스트</b>로 갑니다. 앱 안이 아니라 계정 설정입니다.</li>
+    <li><b>Google 그룹</b>에 비공개 테스트에 쓰는 그룹 주소(<code>이름@googlegroups.com</code>)를 넣고 저장합니다.
+      그룹에 가입한 테스터 전원이 한 번에 라이선스 테스터가 됩니다. 이메일 목록(최대 2,000명)도 됩니다.</li>
+    <li>테스트할 상품·구독은 <b>활성</b> 상태여야 합니다. 초안이면 결제 창이 뜨지 않습니다.</li>
+  </ol>
+  <p>그러면 테스터의 결제 창에 <b>"테스트 카드, 항상 승인"</b> 같은 테스트 결제 수단이 나오고,
+  테스트 구매라는 표시가 붙습니다. 돈은 나가지 않습니다.</p>
+  <ul>
+    <li><b>구독은 빨리 돕니다.</b> 1주·1개월 구독은 5분마다, 1년 구독은 30분마다 갱신되고 최대 6번까지입니다.
+      무료 체험은 3분입니다. 테스터가 "구독이 금방 끝났다"고 해도 정상입니다.</li>
+    <li>"항상 거절" 카드로 결제 실패 화면도 볼 수 있습니다. 실패 처리를 봐 달라고 하기 좋습니다.</li>
+    <li>테스터 폰에 계정이 여럿이면 앱을 내려받은 계정으로 결제합니다. 그 계정이 그룹에 든 계정이어야 합니다.</li>
+  </ul>
+
+  <h2>2. 앱 자체가 유료 — 프로모션 코드</h2>
+  <p>유료 앱은 비공개 테스트에서도 값을 내야 설치됩니다. 무료로 주려면
+  <b>Play로 수익 창출 → 프로모션 코드 → 프로모션 코드 만들기</b>에서 코드를 만들어 테스터에게 하나씩 보냅니다.</p>
+  <ul>
+    <li>유료 앱 코드는 따로 연동하지 않아도 됩니다. 테스터는 Play 스토어 앱의 <b>코드 사용</b>이나
+      play.google.com의 <b>사용</b> 버튼에 넣습니다.</li>
+    <li>유료 앱·일회성 제품 코드는 <b>앱 하나에 분기당 500개</b>입니다. 남은 코드는 다음 분기로 넘어가지 않습니다.</li>
+    <li>코드는 <b>한 사람에 하나</b>입니다. 품앗이 상대가 12명이면 12개를 따로 보내세요.</li>
+  </ul>
+  <p>인앱 상품이나 구독도 프로모션 코드로 줄 수 있지만, 앱에 인앱 프로모션 처리를 넣어야 합니다.
+  테스트 단계라면 1번 라이선스 테스트가 훨씬 간단합니다.</p>
+
+  <h2>3. 테스터에게 미리 알리기</h2>
+  <p>결제를 열어 둔 건 테스터가 모릅니다. 앱 소개나 첫 메시지에 한 줄 적어 두세요.</p>
+  <ul>
+    <li>"결제 창에 <b>테스트 카드</b>가 보이면 그걸 고르세요. 실제로 청구되지 않습니다."</li>
+    <li>"유료 앱이라 <b>코드</b>를 보내 드릴게요. Play 스토어 → 프로필 → 결제 및 구독 → 코드 사용."</li>
+  </ul>
+  <p>테스트 카드가 안 보인다는 테스터는 대개 그룹에 가입한 계정과 결제하는 계정이 다릅니다.</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b>에서는 앱 소개에 이 안내를 적어 두면 품앗이 상대가 설치 전에 읽습니다.
+    테스터는 실제 돈을 쓰지 않고 결제 화면까지 보고 피드백을 줄 수 있습니다.
+    <a href="/">actparty.app에서 무료로 쓰기</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">2026년 10월 Play Console과 구글 문서 기준입니다
+  (<a href="https://developer.android.com/google/play/billing/test">결제 테스트</a>,
+  <a href="https://support.google.com/googleplay/android-developer/answer/6321495">프로모션 코드</a>).</p>`,
+
+  en: `
+  <h1 style="font-size:28px;margin:0 0 8px">Testing a paid app or in-app purchases</h1>
+  <p class="muted" style="margin:0 0 24px">Left alone, your testers pay real money. Open it up with test cards or codes.</p>
+
+  <p>A closed test does not make purchases free. In Google's own words, <b>testers of a paid app on a
+  closed or open track still have to buy it</b>, and in-app purchases are <b>charged for real unless the
+  tester is a license tester</b>. Ask a swap partner to "check the paywall" without setting this up and
+  they stop at the payment sheet, or just close the app.</p>
+
+  <p>There are two tools. For things sold inside the app (one-time products and subscriptions), use
+  <b>license testing</b>. If the app itself costs money, use <b>promo codes</b>.</p>
+
+  <h2>1. In-app purchases and subscriptions: add license testers</h2>
+  <ol>
+    <li>In Play Console, open <b>Settings → License testing</b> at the bottom left. It is an account setting, not inside the app.</li>
+    <li>Under <b>Google Groups</b>, enter the group you use for the closed test
+      (<code>name@googlegroups.com</code>) and save. Everyone in the group becomes a license tester at once.
+      Email lists (up to 2,000 addresses) work too.</li>
+    <li>The products and subscriptions you want tested must be <b>active</b>. Drafts do not open a purchase sheet.</li>
+  </ol>
+  <p>Testers then see test payment methods such as <b>"Test card, always approves"</b>, with a test purchase
+  notice on the sheet. Nobody is charged.</p>
+  <ul>
+    <li><b>Subscriptions run fast.</b> Weekly and monthly plans renew every 5 minutes, yearly every 30 minutes,
+      up to six renewals. A free trial lasts 3 minutes. If a tester says the subscription ended quickly, that is expected.</li>
+    <li>The "always declines" card shows your failed payment screen, which is worth asking testers to check.</li>
+    <li>On a phone with several accounts, the purchase uses the account that downloaded the app. That account has to be in the group.</li>
+  </ul>
+
+  <h2>2. The app itself is paid: promo codes</h2>
+  <p>A paid app has to be bought even in a closed test. To give it away, create codes in
+  <b>Monetize with Play → Promo codes → Create promo code</b> and send one to each tester.</p>
+  <ul>
+    <li>Paid app codes need no extra integration. Testers enter them under <b>Redeem code</b> in the Play Store app
+      or with the <b>Redeem</b> button on play.google.com.</li>
+    <li>Paid app and one-time product codes are limited to <b>500 per app per quarter</b>. Unused codes do not carry over.</li>
+    <li>A code is <b>for one person</b>. Twelve swap partners need twelve codes.</li>
+  </ul>
+  <p>Promo codes can also cover in-app products and subscriptions, but your app has to handle in-app promotions.
+  During testing, license testing in step 1 is far simpler.</p>
+
+  <h2>3. Tell testers before they start</h2>
+  <p>Testers cannot tell that you opened up payments. Put one line in your app description or first message:</p>
+  <ul>
+    <li>"If the payment sheet shows a <b>test card</b>, pick it. You will not be charged."</li>
+    <li>"It is a paid app, so I will send you a <b>code</b>: Play Store → profile → Payments and subscriptions → Redeem code."</li>
+  </ul>
+  <p>A tester who sees no test card is usually paying with a different account from the one that joined the group.</p>
+
+  <div class="note" style="margin:26px 0">
+    On <b>ACT Party</b>, put this note in your app description and swap partners read it before they install.
+    Testers spend no real money and can still reach your paywall and tell you what they think.
+    <a href="/">Use it free at actparty.app</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">Based on Play Console and Google's docs as of October 2026
+  (<a href="https://developer.android.com/google/play/billing/test">billing testing</a>,
+  <a href="https://support.google.com/googleplay/android-developer/answer/6321495">promo codes</a>).</p>`,
+
+  ja: `
+  <h1 style="font-size:28px;margin:0 0 8px">有料アプリ・アプリ内課金をテストしてもらう方法</h1>
+  <p class="muted" style="margin:0 0 24px">そのままだとテスターが本当にお金を払います。テストカードかコードで開けておきましょう。</p>
+
+  <p>クローズドテストでも課金は無料になりません。Googleの説明どおり、<b>クローズド・オープンテストの有料アプリは
+  テスターも購入が必要</b>で、アプリ内課金も<b>ライセンステスターでなければ実際に請求</b>されます。
+  相互テストの相手に「課金画面まで見てください」と頼むなら、ここを開けておかないと支払い画面で止まります。</p>
+
+  <p>方法は二つです。アプリ内で売るもの（一回限りのアイテム・定期購入）は<b>ライセンステスト</b>、
+  アプリ自体が有料なら<b>プロモーションコード</b>です。</p>
+
+  <h2>1. アプリ内課金・定期購入 — ライセンステスターに登録</h2>
+  <ol>
+    <li>Play Console 左下の <b>設定 → ライセンス テスト</b> を開きます。アプリ内ではなくアカウントの設定です。</li>
+    <li><b>Google グループ</b>に、クローズドテストで使っているグループのアドレス（<code>名前@googlegroups.com</code>）を入れて保存します。
+      グループに参加したテスター全員が一度にライセンステスターになります。メールリスト（最大2,000件）でも可能です。</li>
+    <li>テストしたいアイテム・定期購入は<b>有効</b>になっている必要があります。下書きのままだと購入画面が出ません。</li>
+  </ol>
+  <p>するとテスターの購入画面に<b>「テストカード、常に承認」</b>などのテスト用の支払い方法が出て、
+  テスト購入の表示が付きます。請求はされません。</p>
+  <ul>
+    <li><b>定期購入は早く回ります。</b>週・月単位は5分ごと、年単位は30分ごとに更新され、最大6回までです。
+      無料体験は3分です。「すぐ終わった」と言われても正常です。</li>
+    <li>「常に拒否」のカードで決済失敗の画面も確認できます。</li>
+    <li>端末に複数のアカウントがある場合、アプリをダウンロードしたアカウントで決済されます。そのアカウントがグループに入っている必要があります。</li>
+  </ul>
+
+  <h2>2. アプリ自体が有料 — プロモーションコード</h2>
+  <p>有料アプリはクローズドテストでも購入しないとインストールできません。無料で渡すには
+  <b>Play で収益化 → プロモーション コード → プロモーション コードを作成</b>でコードを作り、テスターに一つずつ送ります。</p>
+  <ul>
+    <li>有料アプリのコードは追加の実装なしで使えます。テスターはPlayストアアプリの<b>コードを利用</b>か、
+      play.google.com の<b>利用</b>ボタンで入力します。</li>
+    <li>有料アプリ・一回限りのアイテムのコードは<b>1アプリにつき四半期500個</b>まで。余りは次の四半期に繰り越されません。</li>
+    <li>コードは<b>1人に1個</b>です。相手が12人なら12個を別々に送ってください。</li>
+  </ul>
+  <p>アプリ内アイテムや定期購入もコードで渡せますが、アプリ内プロモーションの実装が必要です。
+  テスト段階なら1のライセンステストの方がずっと簡単です。</p>
+
+  <h2>3. テスターに先に伝える</h2>
+  <p>課金を開けたことはテスターには分かりません。アプリ説明か最初のメッセージに一行書いておきましょう。</p>
+  <ul>
+    <li>「購入画面に<b>テストカード</b>が出たらそれを選んでください。請求されません。」</li>
+    <li>「有料アプリなので<b>コード</b>を送ります。Playストア → プロフィール → お支払いと定期購入 → コードを利用。」</li>
+  </ul>
+  <p>テストカードが出ないテスターは、たいていグループに参加したアカウントと支払うアカウントが違います。</p>
+
+  <div class="note" style="margin:26px 0">
+    <b>ACT Party</b>ではアプリ紹介にこの案内を書いておけば、相互テストの相手がインストール前に読みます。
+    テスターは実際のお金を使わずに課金画面まで見て、感想を返せます。
+    <a href="/">actparty.app で無料で使う</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">2026年10月時点の Play Console と Google のドキュメントに基づきます
+  （<a href="https://developer.android.com/google/play/billing/test">課金テスト</a>、
+  <a href="https://support.google.com/googleplay/android-developer/answer/6321495">プロモーションコード</a>）。</p>`,
+
+  'zh-Hans': `
+  <h1 style="font-size:28px;margin:0 0 8px">付费应用和应用内购买怎么测试</h1>
+  <p class="muted" style="margin:0 0 24px">不处理的话，测试者要付真钱。用测试卡或促销码把它打开。</p>
+
+  <p>封闭测试并不会让购买变免费。按 Google 的说明，<b>封闭或开放测试中的付费应用，测试者也要购买</b>；
+  应用内购买<b>除非测试者是许可测试人员，否则会真实扣款</b>。如果请互测伙伴“帮忙看看付费页”却没开这个，
+  他们会停在付款界面，或者直接关掉应用。</p>
+
+  <p>有两种办法：应用内出售的东西（一次性商品、订阅）用<b>许可测试</b>；应用本身收费用<b>促销码</b>。</p>
+
+  <h2>1. 应用内购买和订阅 — 加为许可测试人员</h2>
+  <ol>
+    <li>在 Play 管理中心左下角进入 <b>设置 → 许可测试</b>。这是账号设置，不在应用里。</li>
+    <li>在 <b>Google 群组</b>里填入封闭测试用的群组地址（<code>名称@googlegroups.com</code>）并保存。
+      加入群组的测试者会一次性全部成为许可测试人员。也可以用电子邮件列表（最多 2,000 个）。</li>
+    <li>要测试的商品和订阅必须是<b>有效</b>状态。草稿状态不会弹出购买界面。</li>
+  </ol>
+  <p>之后测试者的购买界面会出现<b>“测试卡，始终批准”</b>等测试付款方式，并标明是测试购买，不会扣款。</p>
+  <ul>
+    <li><b>订阅会跑得很快。</b>周订阅和月订阅每 5 分钟续订一次，年订阅每 30 分钟一次，最多 6 次。免费试用 3 分钟。
+      测试者说“订阅很快就结束了”是正常的。</li>
+    <li>用“始终拒绝”的卡可以看到付款失败的界面。</li>
+    <li>手机上有多个账号时，会用下载应用的那个账号付款。这个账号必须在群组里。</li>
+  </ul>
+
+  <h2>2. 应用本身收费 — 促销码</h2>
+  <p>付费应用在封闭测试中也要购买才能安装。想免费给测试者，在
+  <b>通过 Play 创收 → 促销码 → 创建促销码</b>中生成，并一人一个发给测试者。</p>
+  <ul>
+    <li>付费应用的促销码不需要额外集成。测试者在 Play 商店应用的<b>兑换代码</b>或 play.google.com 的<b>兑换</b>按钮中输入。</li>
+    <li>付费应用和一次性商品的促销码<b>每个应用每季度 500 个</b>，没用完的不会顺延。</li>
+    <li>一个码<b>只给一个人</b>。12 位互测伙伴需要 12 个码。</li>
+  </ul>
+  <p>应用内商品和订阅也能用促销码，但应用需要处理应用内促销。测试阶段用第 1 种许可测试简单得多。</p>
+
+  <h2>3. 提前告诉测试者</h2>
+  <p>测试者不知道你已经开放了付款。在应用介绍或第一条消息里写一句：</p>
+  <ul>
+    <li>“付款界面出现<b>测试卡</b>就选它，不会扣款。”</li>
+    <li>“这是付费应用，我会发你一个<b>兑换码</b>：Play 商店 → 头像 → 付款和订阅 → 兑换代码。”</li>
+  </ul>
+  <p>看不到测试卡的测试者，多半是加入群组的账号和付款的账号不是同一个。</p>
+
+  <div class="note" style="margin:26px 0">
+    在 <b>ACT Party</b> 里把这段说明写进应用介绍，互测伙伴在安装前就会看到。
+    测试者不用花真钱，也能看到付费页并给你反馈。
+    <a href="/">在 actparty.app 免费使用</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">依据 2026 年 10 月的 Play 管理中心和 Google 文档
+  （<a href="https://developer.android.com/google/play/billing/test">结算测试</a>、
+  <a href="https://support.google.com/googleplay/android-developer/answer/6321495">促销码</a>）。</p>`,
+
+  'zh-Hant': `
+  <h1 style="font-size:28px;margin:0 0 8px">付費應用程式與應用程式內購買怎麼測試</h1>
+  <p class="muted" style="margin:0 0 24px">不處理的話，測試者要付真錢。用測試卡或促銷代碼把它打開。</p>
+
+  <p>封閉測試並不會讓購買變免費。依 Google 的說明，<b>封閉或開放測試中的付費應用程式，測試者也要購買</b>；
+  應用程式內購買<b>除非測試者是授權測試人員，否則會實際扣款</b>。如果請互測夥伴「幫忙看看付費頁」卻沒開這個，
+  他們會停在付款畫面，或直接關掉應用程式。</p>
+
+  <p>有兩種辦法：應用程式內販售的東西（一次性產品、訂閱）用<b>授權測試</b>；應用程式本身收費用<b>促銷代碼</b>。</p>
+
+  <h2>1. 應用程式內購買與訂閱 — 加為授權測試人員</h2>
+  <ol>
+    <li>在 Play 管理中心左下角進入 <b>設定 → 授權測試</b>。這是帳戶設定，不在應用程式內。</li>
+    <li>在 <b>Google 網路論壇</b>填入封閉測試用的群組地址（<code>名稱@googlegroups.com</code>）並儲存。
+      加入群組的測試者會一次全部成為授權測試人員。也可以用電子郵件清單（最多 2,000 個）。</li>
+    <li>要測試的產品與訂閱必須是<b>啟用</b>狀態。草稿狀態不會跳出購買畫面。</li>
+  </ol>
+  <p>之後測試者的購買畫面會出現<b>「測試卡，一律核准」</b>等測試付款方式，並標示為測試購買，不會扣款。</p>
+  <ul>
+    <li><b>訂閱會跑得很快。</b>週訂閱與月訂閱每 5 分鐘續訂一次，年訂閱每 30 分鐘一次，最多 6 次。免費試用 3 分鐘。
+      測試者說「訂閱很快就結束了」是正常的。</li>
+    <li>用「一律拒絕」的卡可以看到付款失敗的畫面。</li>
+    <li>手機上有多個帳戶時，會用下載應用程式的那個帳戶付款。這個帳戶必須在群組裡。</li>
+  </ul>
+
+  <h2>2. 應用程式本身收費 — 促銷代碼</h2>
+  <p>付費應用程式在封閉測試中也要購買才能安裝。想免費給測試者，在
+  <b>透過 Play 營利 → 促銷代碼 → 建立促銷代碼</b>中產生，並一人一個發給測試者。</p>
+  <ul>
+    <li>付費應用程式的促銷代碼不需要額外整合。測試者在 Play 商店應用程式的<b>兌換代碼</b>或 play.google.com 的<b>兌換</b>按鈕輸入。</li>
+    <li>付費應用程式與一次性產品的代碼<b>每個應用程式每季 500 個</b>，沒用完的不會遞延。</li>
+    <li>一個代碼<b>只給一個人</b>。12 位互測夥伴需要 12 個代碼。</li>
+  </ul>
+  <p>應用程式內產品與訂閱也能用促銷代碼，但應用程式需要處理應用程式內促銷。測試階段用第 1 種授權測試簡單得多。</p>
+
+  <h2>3. 事先告訴測試者</h2>
+  <p>測試者不知道你已經開放付款。在應用程式介紹或第一則訊息裡寫一句：</p>
+  <ul>
+    <li>「付款畫面出現<b>測試卡</b>就選它，不會扣款。」</li>
+    <li>「這是付費應用程式，我會傳一個<b>兌換代碼</b>給你：Play 商店 → 頭像 → 付款和訂閱 → 兌換代碼。」</li>
+  </ul>
+  <p>看不到測試卡的測試者，多半是加入群組的帳戶和付款的帳戶不是同一個。</p>
+
+  <div class="note" style="margin:26px 0">
+    在 <b>ACT Party</b> 把這段說明寫進應用程式介紹，互測夥伴在安裝前就會看到。
+    測試者不用花真錢，也能看到付費頁並給你回饋。
+    <a href="/">在 actparty.app 免費使用</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">依據 2026 年 10 月的 Play 管理中心與 Google 文件
+  （<a href="https://developer.android.com/google/play/billing/test">帳款測試</a>、
+  <a href="https://support.google.com/googleplay/android-developer/answer/6321495">促銷代碼</a>）。</p>`,
+
+};
+
+document.getElementById('langSlot').innerHTML = langPicker();
+document.getElementById('doc').innerHTML = DOC[LANG] ?? DOC.en;
+sectionAnchors(LANG);
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

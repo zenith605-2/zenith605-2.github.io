@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Closed testing calculator: when do 12 testers reach 14 days? (free) | ACT Party</title>
+<meta name="description" content="Free Google Play closed testing calculator. Enter the day each tester opted in (and left, if they did) and see the first day you can apply for production. No sign-up.">
+<link rel="canonical" href="https://actparty.app/closed-testing-calculator.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/closed-testing-calculator.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/closed-testing-calculator.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/closed-testing-calculator.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/closed-testing-calculator.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/closed-testing-calculator.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/closed-testing-calculator.html">
+<meta property="og:title" content="Closed testing calculator: when do 12 testers reach 14 days? (free) | ACT Party">
+<meta property="og:description" content="Free Google Play closed testing calculator. Enter the day each tester opted in (and left, if they did) and see the first day you can apply for production. No sign-up.">
+<meta property="og:url" content="https://actparty.app/closed-testing-calculator.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=126">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is day 14 or day 15 the day I can apply?", "acceptedAnswer": {"@type": "Answer", "text": "Count 14 full days from the opt-in date: someone who opted in on the 1st has 14 days on the 15th. The console can lag by about a day."}}, {"@type": "Question", "name": "What if a tester opts out and joins again?", "acceptedAnswer": {"@type": "Answer", "text": "Their continuous stretch starts again from the new opt-in. Enter the new date as a separate tester."}}, {"@type": "Question", "name": "Does uninstalling the app count as leaving?", "acceptedAnswer": {"@type": "Answer", "text": "Google's rule is written in terms of being opted in. Ask testers to stay opted in until you launch."}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><b>English</b> · <a href="/ko/closed-testing-calculator.html" hreflang="ko">한국어</a> · <a href="/ja/closed-testing-calculator.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/closed-testing-calculator.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/closed-testing-calculator.html" hreflang="zh-Hant">繁體中文</a></p>
+<h1 style="font-size:28px;margin:0 0 8px">Closed testing 14-day calculator</h1>
+<p class="muted" style="margin:0 0 24px">Enter when each tester opted in. See the first day 12 of them have 14 continuous days. Free, no sign-up, runs in your browser.</p>
+
+<style>
+  /* 한 줄에 한 명 — 번호 · 옵트인 · 나간 날. 폰 폭에서도 두 줄로 꺾이지 않게 */
+  #calc .grid { display: grid; grid-template-columns: 28px 1fr 1fr; gap: 6px 8px; align-items: center }
+  #calc .grid input { width: 100%; min-width: 0; box-sizing: border-box }
+  #calc .hd { font-size: 12px }
+  #out { position: sticky; top: 0; background: inherit; padding: 2px 0 12px; line-height: 1.7; z-index: 1 }
+</style>
+<div id="calc" class="note" style="padding:16px 18px;margin:18px 0 8px">
+  <div id="out"></div>
+  <div class="grid" id="rows"></div>
+  <p style="margin:12px 0 0">
+    <button type="button" class="btn ghost sm" id="addRow"></button>
+    <button type="button" class="btn ghost sm" id="resetRows"></button>
+  </p>
+</div>
+<script>
+(function(){
+  var T = {"joined": "Opted in", "left": "Left (if they did)", "add": "+ Add tester", "reset": "Reset", "today": "Today", "calc": "Calculate", "ok": "You can apply for production on <b>{d}</b> (12 testers opted in for 14 days on that day).", "already": "<b>Already met</b> since {d}. The production access button should be open — if not, give the console a day to update.", "short": "Not yet reachable: only <b>{n}</b> testers can be counted. Add {m} more and keep everyone opted in.", "nowline": "Today: {c} of 12 testers have 14+ continuous days. {k} are still counting.", "empty": "Enter at least one opt-in date.", "tester": "Tester"};
+  var DAY = 864e5, N = 12, NEED = 14;
+  var IS = 'background:var(--ink800);color:var(--ink100);border:1px solid var(--ink600);border-radius:8px;padding:5px 8px;color-scheme:dark;font:inherit';
+  var rows = document.getElementById('rows'), out = document.getElementById('out');
+  document.getElementById('addRow').textContent = T.add;
+  document.getElementById('resetRows').textContent = T.reset;
+  function d2n(s){ if(!s) return null; var p=s.split('-'); return Date.UTC(+p[0],+p[1]-1,+p[2])/DAY; }
+  function n2d(n){ return new Date(n*DAY).toISOString().slice(0,10); }
+  function today(){ var t=new Date(); return Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())/DAY; }
+  function cell(html, cls){ var s=document.createElement('span'); if(cls) s.className=cls; s.innerHTML=html; rows.appendChild(s); return s; }
+  function row(i){
+    cell(String(i+1), 'muted hd');
+    cell('<input type="date" class="j" aria-label="'+T.tester+' '+(i+1)+' '+T.joined+'" style="'+IS+'">');
+    cell('<input type="date" class="l" aria-label="'+T.tester+' '+(i+1)+' '+T.left+'" style="'+IS+'">');
+  }
+  function reset(){
+    rows.innerHTML='';
+    cell('#', 'muted hd'); cell(T.joined, 'muted hd'); cell(T.left, 'muted hd');
+    for(var i=0;i<N;i++) row(i);
+    calc();
+  }
+  rows.addEventListener('input', calc);
+  // 테스터 한 명 = [옵트인한 날, 나간 날 또는 무한]. 날 X 에 그 사람이 세지려면
+  // 옵트인 뒤 14일이 지났고(X - 옵트인 >= 14) 아직 안 나갔어야(X < 나간 날) 한다.
+  function counted(ts, x){ var c=0; ts.forEach(function(t){ if(x-t[0]>=NEED && x<t[1]) c++; }); return c; }
+  function calc(){
+    var ts=[], js=rows.querySelectorAll('.j'), ls=rows.querySelectorAll('.l');
+    js.forEach(function(e, i){
+      var j=d2n(e.value), l=d2n(ls[i].value);
+      if(j!==null) ts.push([j, l===null?Infinity:l]);
+    });
+    if(!ts.length){ out.innerHTML='<span class="muted">'+T.empty+'</span>'; return; }
+    var now=today(), lo=Math.min.apply(null, ts.map(function(t){return t[0];}));
+    var first=null;
+    for(var x=lo; x<=Math.max(now, lo)+400; x++){ if(counted(ts,x)>=N){ first=x; break; } }
+    var html='';
+    if(first===null){
+      var alive=ts.filter(function(t){return t[1]===Infinity;}).length;
+      html=T.short.replace('{n}',alive).replace('{m}',Math.max(N-alive,1));
+    } else if(first<=now){ html=T.already.replace('{d}',n2d(first)); }
+    else { html=T.ok.replace('{d}',n2d(first)); }
+    var c=counted(ts,now), k=ts.filter(function(t){return t[0]<=now && now<t[1] && now-t[0]<NEED;}).length;
+    out.innerHTML=html+'<br><span class="muted" style="font-size:13px">'+T.nowline.replace('{c}',c).replace('{k}',k)+'</span>';
+  }
+  document.getElementById('addRow').onclick=function(){ row(rows.querySelectorAll('.j').length); };
+  document.getElementById('resetRows').onclick=reset;
+  reset();
+})();
+</script>
+<h2>How it is calculated</h2>
+<p>Google's rule for new personal developer accounts is a closed test with
+<b>at least 12 testers who have been opted in for at least the last 14 days continuously</b>
+(<a href="https://support.google.com/googleplay/android-developer/answer/14151465">Google Play Console Help</a>). So the clock runs per tester, from their
+opt-in, and someone who leaves stops counting. The calculator looks for the first day on
+which 12 testers each have 14 unbroken days behind them.</p>
+<ul class="steps">
+  <li>The 12 do not have to join on the same day. The date is set by the 12th to reach 14 days.</li>
+  <li>If someone leaves, they no longer count — add a replacement and keep the others opted in.</li>
+  <li>Opening the app every day is not part of this rule. See <a href="/guides/what-google-checks.html">what Google actually checks</a>.</li>
+</ul>
+
+<h2>Questions people ask</h2>
+<dl class="faq">
+<dt>Is day 14 or day 15 the day I can apply?</dt><dd>Count 14 full days from the opt-in date: someone who opted in on the 1st has 14 days on the 15th. The console can lag by about a day.</dd><dt>What if a tester opts out and joins again?</dt><dd>Their continuous stretch starts again from the new opt-in. Enter the new date as a separate tester.</dd><dt>Does uninstalling the app count as leaving?</dt><dd>Google&#x27;s rule is written in terms of being opted in. Ask testers to stay opted in until you launch.</dd>
+</dl>
+<div class="note" style="margin:26px 0">Need the 12 testers in the first place? On <b>ACT Party</b> developers swap closed tests for free, and each day a tester opens your app is recorded automatically. <a href="/">See the board</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party&referrer=utm_source%3Dactparty_site%26utm_medium%3Dlanding">Get the app</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">Back to the board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=126';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=126';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

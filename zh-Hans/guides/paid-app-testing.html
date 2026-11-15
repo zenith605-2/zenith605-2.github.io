@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>付费应用和应用内购买怎么测试 | ACT Party</title>
+<meta name="description" content="不处理的话，测试者要付真钱。用测试卡或促销码把它打开。">
+<link rel="canonical" href="https://actparty.app/zh-Hans/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/guides/paid-app-testing.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/guides/paid-app-testing.html">
+<meta property="og:image" content="https://actparty.app/img/og-en.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/app.css?v=126">
+<style>
+  /* 구간마다 주소를 달아 두면 "당신은 2번"이라고 정확히 보낼 수 있다 */
+  #doc h2 { position: relative }
+  #doc .anchor-copy {
+    margin-left: 10px; padding: 3px 9px; font-size: 11.5px;
+    border: 1px solid #d7dbe0; border-radius: 999px;
+    background: #fff; color: #5b6570; cursor: pointer;
+    vertical-align: middle; font-weight: 500;
+  }
+  #doc .anchor-copy:hover { background: #f3f5f7; color: #1f2933 }
+  #doc ol li, #doc ul li { margin-bottom: 8px; line-height: 1.65 }
+  /* 화면 캡처가 글보다 먼저 읽힌다 — 본문 폭을 넘지 않게만 잡아 준다 */
+  #doc figure { margin: 18px 0 22px }
+  #doc figure img {
+    max-width: 100%; display: block; border-radius: 10px;
+    border: 1px solid #e3e6ea; background: #fff;
+  }
+  #doc figcaption {
+    font-size: 13px; color: #5b6672; margin-top: 8px; line-height: 1.6;
+  }
+  #doc h2 { margin-top: 34px }
+  #doc li.hot {
+    background: #fff1f2; border-left: 3px solid #e11d48;
+    border-radius: 6px; padding: 9px 12px; margin: 10px 0; color: #9f1239;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <a href="/check.html" data-t="nav_check">Link check</a>
+      <a href="/guides/" data-t="nav_guides">Guides</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px"><p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/guides/paid-app-testing.html" hreflang="en">English</a> · <a href="/ko/guides/paid-app-testing.html" hreflang="ko">한국어</a> · <a href="/ja/guides/paid-app-testing.html" hreflang="ja">日本語</a> · <b>简体中文</b> · <a href="/zh-Hant/guides/paid-app-testing.html" hreflang="zh-Hant">繁體中文</a></p>
+  <h1 style="font-size:28px;margin:0 0 8px">付费应用和应用内购买怎么测试</h1>
+  <p class="muted" style="margin:0 0 24px">不处理的话，测试者要付真钱。用测试卡或促销码把它打开。</p>
+
+  <p>封闭测试并不会让购买变免费。按 Google 的说明，<b>封闭或开放测试中的付费应用，测试者也要购买</b>；
+  应用内购买<b>除非测试者是许可测试人员，否则会真实扣款</b>。如果请互测伙伴“帮忙看看付费页”却没开这个，
+  他们会停在付款界面，或者直接关掉应用。</p>
+
+  <p>有两种办法：应用内出售的东西（一次性商品、订阅）用<b>许可测试</b>；应用本身收费用<b>促销码</b>。</p>
+
+  <h2>1. 应用内购买和订阅 — 加为许可测试人员</h2>
+  <ol>
+    <li>在 Play 管理中心左下角进入 <b>设置 → 许可测试</b>。这是账号设置，不在应用里。</li>
+    <li>在 <b>Google 群组</b>里填入封闭测试用的群组地址（<code>名称@googlegroups.com</code>）并保存。
+      加入群组的测试者会一次性全部成为许可测试人员。也可以用电子邮件列表（最多 2,000 个）。</li>
+    <li>要测试的商品和订阅必须是<b>有效</b>状态。草稿状态不会弹出购买界面。</li>
+  </ol>
+  <p>之后测试者的购买界面会出现<b>“测试卡，始终批准”</b>等测试付款方式，并标明是测试购买，不会扣款。</p>
+  <ul>
+    <li><b>订阅会跑得很快。</b>周订阅和月订阅每 5 分钟续订一次，年订阅每 30 分钟一次，最多 6 次。免费试用 3 分钟。
+      测试者说“订阅很快就结束了”是正常的。</li>
+    <li>用“始终拒绝”的卡可以看到付款失败的界面。</li>
+    <li>手机上有多个账号时，会用下载应用的那个账号付款。这个账号必须在群组里。</li>
+  </ul>
+
+  <h2>2. 应用本身收费 — 促销码</h2>
+  <p>付费应用在封闭测试中也要购买才能安装。想免费给测试者，在
+  <b>通过 Play 创收 → 促销码 → 创建促销码</b>中生成，并一人一个发给测试者。</p>
+  <ul>
+    <li>付费应用的促销码不需要额外集成。测试者在 Play 商店应用的<b>兑换代码</b>或 play.google.com 的<b>兑换</b>按钮中输入。</li>
+    <li>付费应用和一次性商品的促销码<b>每个应用每季度 500 个</b>，没用完的不会顺延。</li>
+    <li>一个码<b>只给一个人</b>。12 位互测伙伴需要 12 个码。</li>
+  </ul>
+  <p>应用内商品和订阅也能用促销码，但应用需要处理应用内促销。测试阶段用第 1 种许可测试简单得多。</p>
+
+  <h2>3. 提前告诉测试者</h2>
+  <p>测试者不知道你已经开放了付款。在应用介绍或第一条消息里写一句：</p>
+  <ul>
+    <li>“付款界面出现<b>测试卡</b>就选它，不会扣款。”</li>
+    <li>“这是付费应用，我会发你一个<b>兑换码</b>：Play 商店 → 头像 → 付款和订阅 → 兑换代码。”</li>
+  </ul>
+  <p>看不到测试卡的测试者，多半是加入群组的账号和付款的账号不是同一个。</p>
+
+  <div class="note" style="margin:26px 0">
+    在 <b>ACT Party</b> 里把这段说明写进应用介绍，互测伙伴在安装前就会看到。
+    测试者不用花真钱，也能看到付费页并给你反馈。
+    <a href="/">在 actparty.app 免费使用</a>
+  </div>
+
+  <p class="muted" style="font-size:13px">依据 2026 年 10 月的 Play 管理中心和 Google 文档
+  （<a href="https://developer.android.com/google/play/billing/test">结算测试</a>、
+  <a href="https://support.google.com/googleplay/android-developer/answer/6321495">促销码</a>）。</p></article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=127';
+import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=124';
+import { sectionAnchors } from '/assets/anchors.js?v=124';
+
+
+document.getElementById('langSlot').innerHTML = langPicker();
+sectionAnchors(LANG);
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

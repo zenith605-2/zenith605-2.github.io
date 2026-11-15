@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>비공개 테스트 14일 계산기 — 12명이 언제 14일을 채우나 (무료) | ACT Party</title>
+<meta name="description" content="구글 플레이 비공개 테스트 계산기. 테스터마다 옵트인한 날(나간 날)을 넣으면 프로덕션 신청이 가능한 첫날을 알려 줍니다. 가입 없이 무료.">
+<link rel="canonical" href="https://actparty.app/ko/closed-testing-calculator.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/closed-testing-calculator.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/closed-testing-calculator.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/closed-testing-calculator.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/closed-testing-calculator.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/closed-testing-calculator.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/closed-testing-calculator.html">
+<meta property="og:title" content="비공개 테스트 14일 계산기 — 12명이 언제 14일을 채우나 (무료) | ACT Party">
+<meta property="og:description" content="구글 플레이 비공개 테스트 계산기. 테스터마다 옵트인한 날(나간 날)을 넣으면 프로덕션 신청이 가능한 첫날을 알려 줍니다. 가입 없이 무료.">
+<meta property="og:url" content="https://actparty.app/ko/closed-testing-calculator.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=126">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "14일째에 신청하나요, 15일째에 신청하나요?", "acceptedAnswer": {"@type": "Answer", "text": "옵트인한 날부터 만 14일입니다. 1일에 옵트인한 사람은 15일에 14일이 됩니다. 콘솔 반영은 하루쯤 늦을 수 있습니다."}}, {"@type": "Question", "name": "테스터가 옵트아웃했다가 다시 들어오면요?", "acceptedAnswer": {"@type": "Answer", "text": "다시 옵트인한 날부터 새로 이어집니다. 새 날짜를 다른 테스터 줄에 넣어 계산하세요."}}, {"@type": "Question", "name": "앱을 지우면 나간 걸로 치나요?", "acceptedAnswer": {"@type": "Answer", "text": "구글 조건은 옵트인 기준으로 적혀 있습니다. 출시할 때까지 옵트인은 유지해 달라고 부탁하세요."}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/closed-testing-calculator.html" hreflang="en">English</a> · <b>한국어</b> · <a href="/ja/closed-testing-calculator.html" hreflang="ja">日本語</a> · <a href="/zh-Hans/closed-testing-calculator.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/closed-testing-calculator.html" hreflang="zh-Hant">繁體中文</a></p>
+<h1 style="font-size:28px;margin:0 0 8px">비공개 테스트 14일 계산기</h1>
+<p class="muted" style="margin:0 0 24px">테스터마다 옵트인한 날을 넣으면, 12명이 동시에 14일을 채우는 첫날을 계산합니다. 무료, 가입 없음, 브라우저 안에서만 계산.</p>
+
+<style>
+  /* 한 줄에 한 명 — 번호 · 옵트인 · 나간 날. 폰 폭에서도 두 줄로 꺾이지 않게 */
+  #calc .grid { display: grid; grid-template-columns: 28px 1fr 1fr; gap: 6px 8px; align-items: center }
+  #calc .grid input { width: 100%; min-width: 0; box-sizing: border-box }
+  #calc .hd { font-size: 12px }
+  #out { position: sticky; top: 0; background: inherit; padding: 2px 0 12px; line-height: 1.7; z-index: 1 }
+</style>
+<div id="calc" class="note" style="padding:16px 18px;margin:18px 0 8px">
+  <div id="out"></div>
+  <div class="grid" id="rows"></div>
+  <p style="margin:12px 0 0">
+    <button type="button" class="btn ghost sm" id="addRow"></button>
+    <button type="button" class="btn ghost sm" id="resetRows"></button>
+  </p>
+</div>
+<script>
+(function(){
+  var T = {"joined": "옵트인한 날", "left": "나간 날 (나갔다면)", "add": "+ 테스터 추가", "reset": "초기화", "today": "오늘", "calc": "계산하기", "ok": "<b>{d}</b>부터 프로덕션 신청을 할 수 있어요 (그날 12명이 14일을 채움).", "already": "<b>{d}부터 이미 채웠어요.</b> 프로덕션 신청 버튼이 열려 있어야 합니다 — 안 열렸으면 콘솔 반영을 하루 기다려 보세요.", "short": "아직 못 채워요: 셀 수 있는 테스터가 <b>{n}명</b>뿐입니다. {m}명을 더 받고 모두 옵트인을 유지하세요.", "nowline": "오늘 기준: 12명 중 {c}명이 14일 이상 연속, {k}명은 아직 세는 중.", "empty": "옵트인한 날을 하나 이상 넣어 주세요.", "tester": "테스터"};
+  var DAY = 864e5, N = 12, NEED = 14;
+  var IS = 'background:var(--ink800);color:var(--ink100);border:1px solid var(--ink600);border-radius:8px;padding:5px 8px;color-scheme:dark;font:inherit';
+  var rows = document.getElementById('rows'), out = document.getElementById('out');
+  document.getElementById('addRow').textContent = T.add;
+  document.getElementById('resetRows').textContent = T.reset;
+  function d2n(s){ if(!s) return null; var p=s.split('-'); return Date.UTC(+p[0],+p[1]-1,+p[2])/DAY; }
+  function n2d(n){ return new Date(n*DAY).toISOString().slice(0,10); }
+  function today(){ var t=new Date(); return Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())/DAY; }
+  function cell(html, cls){ var s=document.createElement('span'); if(cls) s.className=cls; s.innerHTML=html; rows.appendChild(s); return s; }
+  function row(i){
+    cell(String(i+1), 'muted hd');
+    cell('<input type="date" class="j" aria-label="'+T.tester+' '+(i+1)+' '+T.joined+'" style="'+IS+'">');
+    cell('<input type="date" class="l" aria-label="'+T.tester+' '+(i+1)+' '+T.left+'" style="'+IS+'">');
+  }
+  function reset(){
+    rows.innerHTML='';
+    cell('#', 'muted hd'); cell(T.joined, 'muted hd'); cell(T.left, 'muted hd');
+    for(var i=0;i<N;i++) row(i);
+    calc();
+  }
+  rows.addEventListener('input', calc);
+  // 테스터 한 명 = [옵트인한 날, 나간 날 또는 무한]. 날 X 에 그 사람이 세지려면
+  // 옵트인 뒤 14일이 지났고(X - 옵트인 >= 14) 아직 안 나갔어야(X < 나간 날) 한다.
+  function counted(ts, x){ var c=0; ts.forEach(function(t){ if(x-t[0]>=NEED && x<t[1]) c++; }); return c; }
+  function calc(){
+    var ts=[], js=rows.querySelectorAll('.j'), ls=rows.querySelectorAll('.l');
+    js.forEach(function(e, i){
+      var j=d2n(e.value), l=d2n(ls[i].value);
+      if(j!==null) ts.push([j, l===null?Infinity:l]);
+    });
+    if(!ts.length){ out.innerHTML='<span class="muted">'+T.empty+'</span>'; return; }
+    var now=today(), lo=Math.min.apply(null, ts.map(function(t){return t[0];}));
+    var first=null;
+    for(var x=lo; x<=Math.max(now, lo)+400; x++){ if(counted(ts,x)>=N){ first=x; break; } }
+    var html='';
+    if(first===null){
+      var alive=ts.filter(function(t){return t[1]===Infinity;}).length;
+      html=T.short.replace('{n}',alive).replace('{m}',Math.max(N-alive,1));
+    } else if(first<=now){ html=T.already.replace('{d}',n2d(first)); }
+    else { html=T.ok.replace('{d}',n2d(first)); }
+    var c=counted(ts,now), k=ts.filter(function(t){return t[0]<=now && now<t[1] && now-t[0]<NEED;}).length;
+    out.innerHTML=html+'<br><span class="muted" style="font-size:13px">'+T.nowline.replace('{c}',c).replace('{k}',k)+'</span>';
+  }
+  document.getElementById('addRow').onclick=function(){ row(rows.querySelectorAll('.j').length); };
+  document.getElementById('resetRows').onclick=reset;
+  reset();
+})();
+</script>
+<h2>이렇게 계산합니다</h2>
+<p>새 개인 개발자 계정의 조건은 <b>최소 12명의 테스터가 지난 14일 이상 계속 옵트인한 비공개
+테스트</b>입니다 (<a href="https://support.google.com/googleplay/android-developer/answer/14151465">Play Console 고객센터</a>). 그래서 14일은 테스터마다
+옵트인한 날부터 따로 세고, 나간 사람은 더 이상 세지 않습니다. 계산기는 12명이 각자 끊김 없이
+14일을 채운 첫날을 찾습니다.</p>
+<ul class="steps">
+  <li>12명이 같은 날 들어올 필요는 없습니다. 날짜는 열두 번째로 14일을 채우는 사람이 정합니다.</li>
+  <li>나간 사람은 빠집니다 — 한 명을 새로 받고, 나머지는 옵트인을 유지하세요.</li>
+  <li>매일 앱을 여는지는 이 조건에 없습니다. <a href="/ko/guides/what-google-checks.html">구글이 실제로 보는 것</a>을 참고하세요.</li>
+</ul>
+
+<h2>자주 묻는 질문</h2>
+<dl class="faq">
+<dt>14일째에 신청하나요, 15일째에 신청하나요?</dt><dd>옵트인한 날부터 만 14일입니다. 1일에 옵트인한 사람은 15일에 14일이 됩니다. 콘솔 반영은 하루쯤 늦을 수 있습니다.</dd><dt>테스터가 옵트아웃했다가 다시 들어오면요?</dt><dd>다시 옵트인한 날부터 새로 이어집니다. 새 날짜를 다른 테스터 줄에 넣어 계산하세요.</dd><dt>앱을 지우면 나간 걸로 치나요?</dt><dd>구글 조건은 옵트인 기준으로 적혀 있습니다. 출시할 때까지 옵트인은 유지해 달라고 부탁하세요.</dd>
+</dl>
+<div class="note" style="margin:26px 0">12명부터 구해야 한다면 — <b>ACT Party</b>에서는 개발자끼리 비공개 테스트를 무료로 품앗이하고, 테스터가 앱을 연 날이 자동으로 기록됩니다. <a href="/">보드 보기</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party&referrer=utm_source%3Dactparty_site%26utm_medium%3Dlanding">앱 받기</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/ko/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=126';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=126';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

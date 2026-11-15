@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>クローズドテスト14日計算機 — 12人がいつ14日に届くか（無料） | ACT Party</title>
+<meta name="description" content="Google Play クローズドテストの無料計算機。テスターごとのオプトイン日（離脱日）を入れると、製品版を申請できる最初の日が分かります。登録不要。">
+<link rel="canonical" href="https://actparty.app/ja/closed-testing-calculator.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/closed-testing-calculator.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/closed-testing-calculator.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/closed-testing-calculator.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/closed-testing-calculator.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/closed-testing-calculator.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/closed-testing-calculator.html">
+<meta property="og:title" content="クローズドテスト14日計算機 — 12人がいつ14日に届くか（無料） | ACT Party">
+<meta property="og:description" content="Google Play クローズドテストの無料計算機。テスターごとのオプトイン日（離脱日）を入れると、製品版を申請できる最初の日が分かります。登録不要。">
+<meta property="og:url" content="https://actparty.app/ja/closed-testing-calculator.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=126">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "申請できるのは14日目ですか、15日目ですか？", "acceptedAnswer": {"@type": "Answer", "text": "オプトイン日から満14日です。1日にオプトインした人は15日に14日になります。Console の反映は1日ほど遅れることがあります。"}}, {"@type": "Question", "name": "テスターがオプトアウトして戻ってきたら？", "acceptedAnswer": {"@type": "Answer", "text": "再オプトインした日から改めて数えます。新しい日付を別のテスター行に入れて計算してください。"}}, {"@type": "Question", "name": "アプリを削除したら離脱扱いですか？", "acceptedAnswer": {"@type": "Answer", "text": "Google の条件はオプトインを基準に書かれています。リリースまではオプトインを続けてもらうよう頼みましょう。"}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/closed-testing-calculator.html" hreflang="en">English</a> · <a href="/ko/closed-testing-calculator.html" hreflang="ko">한국어</a> · <b>日本語</b> · <a href="/zh-Hans/closed-testing-calculator.html" hreflang="zh-Hans">简体中文</a> · <a href="/zh-Hant/closed-testing-calculator.html" hreflang="zh-Hant">繁體中文</a></p>
+<h1 style="font-size:28px;margin:0 0 8px">クローズドテスト 14日計算機</h1>
+<p class="muted" style="margin:0 0 24px">テスターごとのオプトイン日を入れると、12人が同時に14日に届く最初の日を計算します。無料・登録不要・ブラウザ内で計算。</p>
+
+<style>
+  /* 한 줄에 한 명 — 번호 · 옵트인 · 나간 날. 폰 폭에서도 두 줄로 꺾이지 않게 */
+  #calc .grid { display: grid; grid-template-columns: 28px 1fr 1fr; gap: 6px 8px; align-items: center }
+  #calc .grid input { width: 100%; min-width: 0; box-sizing: border-box }
+  #calc .hd { font-size: 12px }
+  #out { position: sticky; top: 0; background: inherit; padding: 2px 0 12px; line-height: 1.7; z-index: 1 }
+</style>
+<div id="calc" class="note" style="padding:16px 18px;margin:18px 0 8px">
+  <div id="out"></div>
+  <div class="grid" id="rows"></div>
+  <p style="margin:12px 0 0">
+    <button type="button" class="btn ghost sm" id="addRow"></button>
+    <button type="button" class="btn ghost sm" id="resetRows"></button>
+  </p>
+</div>
+<script>
+(function(){
+  var T = {"joined": "オプトイン日", "left": "離脱日（あれば）", "add": "+ テスター追加", "reset": "リセット", "today": "今日", "calc": "計算する", "ok": "<b>{d}</b> から製品版の申請ができます（その日に12人が14日に到達）。", "already": "<b>{d} から条件を満たしています。</b>製品版アクセスのボタンが開いているはずです — まだなら Console の反映を1日待ってください。", "short": "まだ届きません：数えられるテスターが <b>{n}人</b> だけです。あと {m}人 集めて、全員オプトインを続けてください。", "nowline": "今日の時点：12人中 {c}人 が14日以上連続、{k}人 はカウント中。", "empty": "オプトイン日を1つ以上入力してください。", "tester": "テスター"};
+  var DAY = 864e5, N = 12, NEED = 14;
+  var IS = 'background:var(--ink800);color:var(--ink100);border:1px solid var(--ink600);border-radius:8px;padding:5px 8px;color-scheme:dark;font:inherit';
+  var rows = document.getElementById('rows'), out = document.getElementById('out');
+  document.getElementById('addRow').textContent = T.add;
+  document.getElementById('resetRows').textContent = T.reset;
+  function d2n(s){ if(!s) return null; var p=s.split('-'); return Date.UTC(+p[0],+p[1]-1,+p[2])/DAY; }
+  function n2d(n){ return new Date(n*DAY).toISOString().slice(0,10); }
+  function today(){ var t=new Date(); return Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())/DAY; }
+  function cell(html, cls){ var s=document.createElement('span'); if(cls) s.className=cls; s.innerHTML=html; rows.appendChild(s); return s; }
+  function row(i){
+    cell(String(i+1), 'muted hd');
+    cell('<input type="date" class="j" aria-label="'+T.tester+' '+(i+1)+' '+T.joined+'" style="'+IS+'">');
+    cell('<input type="date" class="l" aria-label="'+T.tester+' '+(i+1)+' '+T.left+'" style="'+IS+'">');
+  }
+  function reset(){
+    rows.innerHTML='';
+    cell('#', 'muted hd'); cell(T.joined, 'muted hd'); cell(T.left, 'muted hd');
+    for(var i=0;i<N;i++) row(i);
+    calc();
+  }
+  rows.addEventListener('input', calc);
+  // 테스터 한 명 = [옵트인한 날, 나간 날 또는 무한]. 날 X 에 그 사람이 세지려면
+  // 옵트인 뒤 14일이 지났고(X - 옵트인 >= 14) 아직 안 나갔어야(X < 나간 날) 한다.
+  function counted(ts, x){ var c=0; ts.forEach(function(t){ if(x-t[0]>=NEED && x<t[1]) c++; }); return c; }
+  function calc(){
+    var ts=[], js=rows.querySelectorAll('.j'), ls=rows.querySelectorAll('.l');
+    js.forEach(function(e, i){
+      var j=d2n(e.value), l=d2n(ls[i].value);
+      if(j!==null) ts.push([j, l===null?Infinity:l]);
+    });
+    if(!ts.length){ out.innerHTML='<span class="muted">'+T.empty+'</span>'; return; }
+    var now=today(), lo=Math.min.apply(null, ts.map(function(t){return t[0];}));
+    var first=null;
+    for(var x=lo; x<=Math.max(now, lo)+400; x++){ if(counted(ts,x)>=N){ first=x; break; } }
+    var html='';
+    if(first===null){
+      var alive=ts.filter(function(t){return t[1]===Infinity;}).length;
+      html=T.short.replace('{n}',alive).replace('{m}',Math.max(N-alive,1));
+    } else if(first<=now){ html=T.already.replace('{d}',n2d(first)); }
+    else { html=T.ok.replace('{d}',n2d(first)); }
+    var c=counted(ts,now), k=ts.filter(function(t){return t[0]<=now && now<t[1] && now-t[0]<NEED;}).length;
+    out.innerHTML=html+'<br><span class="muted" style="font-size:13px">'+T.nowline.replace('{c}',c).replace('{k}',k)+'</span>';
+  }
+  document.getElementById('addRow').onclick=function(){ row(rows.querySelectorAll('.j').length); };
+  document.getElementById('resetRows').onclick=reset;
+  reset();
+})();
+</script>
+<h2>計算のしかた</h2>
+<p>新しい個人デベロッパーアカウントの条件は、<b>少なくとも12人のテスターが直近14日以上続けてオプトインしているクローズドテスト</b>です
+（<a href="https://support.google.com/googleplay/android-developer/answer/14151465">Play Console ヘルプ</a>）。14日はテスターごとにオプトインした日から数え、離脱した人は数えません。
+計算機は、12人がそれぞれ途切れずに14日を満たす最初の日を探します。</p>
+<ul class="steps">
+  <li>12人が同じ日に参加する必要はありません。日付は12番目に14日に届く人で決まります。</li>
+  <li>離脱した人は外れます — 代わりを1人入れて、ほかの人はオプトインを続けてもらいましょう。</li>
+  <li>毎日アプリを開くことはこの条件に含まれません。<a href="/ja/guides/what-google-checks.html">Google が実際に見ているもの</a>も参照してください。</li>
+</ul>
+
+<h2>よくある質問</h2>
+<dl class="faq">
+<dt>申請できるのは14日目ですか、15日目ですか？</dt><dd>オプトイン日から満14日です。1日にオプトインした人は15日に14日になります。Console の反映は1日ほど遅れることがあります。</dd><dt>テスターがオプトアウトして戻ってきたら？</dt><dd>再オプトインした日から改めて数えます。新しい日付を別のテスター行に入れて計算してください。</dd><dt>アプリを削除したら離脱扱いですか？</dt><dd>Google の条件はオプトインを基準に書かれています。リリースまではオプトインを続けてもらうよう頼みましょう。</dd>
+</dl>
+<div class="note" style="margin:26px 0">まず12人を集めるなら — <b>ACT Party</b> では開発者同士でクローズドテストを無料で交換でき、テスターがアプリを開いた日が自動で記録されます。<a href="/">ボードを見る</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party&referrer=utm_source%3Dactparty_site%26utm_medium%3Dlanding">アプリを入手</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/ja/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=126';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=126';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>

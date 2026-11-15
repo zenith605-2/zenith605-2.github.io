@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>封闭测试 14 天计算器 — 12 位测试人员何时满 14 天（免费） | ACT Party</title>
+<meta name="description" content="免费的 Google Play 封闭测试计算器。输入每位测试人员的加入日期（和退出日期），即可知道最早可以申请正式版的日子。无需注册。">
+<link rel="canonical" href="https://actparty.app/zh-Hans/closed-testing-calculator.html">
+<link rel="alternate" hreflang="en" href="https://actparty.app/closed-testing-calculator.html">
+<link rel="alternate" hreflang="ko" href="https://actparty.app/ko/closed-testing-calculator.html">
+<link rel="alternate" hreflang="ja" href="https://actparty.app/ja/closed-testing-calculator.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://actparty.app/zh-Hans/closed-testing-calculator.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://actparty.app/zh-Hant/closed-testing-calculator.html">
+<link rel="alternate" hreflang="x-default" href="https://actparty.app/closed-testing-calculator.html">
+<meta property="og:title" content="封闭测试 14 天计算器 — 12 位测试人员何时满 14 天（免费） | ACT Party">
+<meta property="og:description" content="免费的 Google Play 封闭测试计算器。输入每位测试人员的加入日期（和退出日期），即可知道最早可以申请正式版的日子。无需注册。">
+<meta property="og:url" content="https://actparty.app/zh-Hans/closed-testing-calculator.html">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/assets/app.css?v=126">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "第 14 天还是第 15 天可以申请？", "acceptedAnswer": {"@type": "Answer", "text": "从加入日起满 14 天。1 日加入的人在 15 日满 14 天。Console 可能会晚一天更新。"}}, {"@type": "Question", "name": "测试人员退出后又重新加入呢？", "acceptedAnswer": {"@type": "Answer", "text": "从重新加入的日期重新计算。把新日期填在另一行。"}}, {"@type": "Question", "name": "卸载应用算退出吗？", "acceptedAnswer": {"@type": "Answer", "text": "Google 的条件是按\"选择加入\"来写的。请测试人员在上线前保持加入。"}}]}</script>
+<style>
+  #doc h2 { margin-top: 30px }
+  #doc .steps li { margin-bottom: 10px; line-height: 1.65 }
+  #doc .faq dt { font-weight: 700; margin-top: 16px }
+  #doc .faq dd { margin: 4px 0 0; line-height: 1.65 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/launched.html" data-t="nav_launched">Launched</a>
+      <a href="/parties.html" data-t="nav_party">Parties</a>
+      <a href="/community.html" data-t="nav_board">Board</a>
+      <a href="/how.html" data-t="nav_how">What is ACT Party?</a>
+      <span id="authSlot"></span>
+      <span id="langSlot"></span>
+    </nav>
+  </div>
+</header>
+
+<article class="doc wrap narrow" id="doc" style="padding-top:30px">
+<p class="muted" style="font-size:12.5px;margin:0 0 18px"><a href="/closed-testing-calculator.html" hreflang="en">English</a> · <a href="/ko/closed-testing-calculator.html" hreflang="ko">한국어</a> · <a href="/ja/closed-testing-calculator.html" hreflang="ja">日本語</a> · <b>简体中文</b> · <a href="/zh-Hant/closed-testing-calculator.html" hreflang="zh-Hant">繁體中文</a></p>
+<h1 style="font-size:28px;margin:0 0 8px">封闭测试 14 天计算器</h1>
+<p class="muted" style="margin:0 0 24px">输入每位测试人员的加入日期，算出 12 人同时满 14 天的第一天。免费、无需注册、只在浏览器内计算。</p>
+
+<style>
+  /* 한 줄에 한 명 — 번호 · 옵트인 · 나간 날. 폰 폭에서도 두 줄로 꺾이지 않게 */
+  #calc .grid { display: grid; grid-template-columns: 28px 1fr 1fr; gap: 6px 8px; align-items: center }
+  #calc .grid input { width: 100%; min-width: 0; box-sizing: border-box }
+  #calc .hd { font-size: 12px }
+  #out { position: sticky; top: 0; background: inherit; padding: 2px 0 12px; line-height: 1.7; z-index: 1 }
+</style>
+<div id="calc" class="note" style="padding:16px 18px;margin:18px 0 8px">
+  <div id="out"></div>
+  <div class="grid" id="rows"></div>
+  <p style="margin:12px 0 0">
+    <button type="button" class="btn ghost sm" id="addRow"></button>
+    <button type="button" class="btn ghost sm" id="resetRows"></button>
+  </p>
+</div>
+<script>
+(function(){
+  var T = {"joined": "加入日期", "left": "退出日期（如有）", "add": "+ 添加测试人员", "reset": "重置", "today": "今天", "calc": "计算", "ok": "从 <b>{d}</b> 起可以申请正式版（当天 12 人满 14 天）。", "already": "<b>从 {d} 起已满足。</b>正式版访问按钮应已开放 — 如果还没有，请等 Console 更新一天。", "short": "暂时无法满足：只有 <b>{n}</b> 位测试人员可计入。再找 {m} 位，并让所有人保持加入。", "nowline": "截至今天：12 人中 {c} 人已连续 14 天以上，{k} 人仍在计算中。", "empty": "请至少输入一个加入日期。", "tester": "测试人员"};
+  var DAY = 864e5, N = 12, NEED = 14;
+  var IS = 'background:var(--ink800);color:var(--ink100);border:1px solid var(--ink600);border-radius:8px;padding:5px 8px;color-scheme:dark;font:inherit';
+  var rows = document.getElementById('rows'), out = document.getElementById('out');
+  document.getElementById('addRow').textContent = T.add;
+  document.getElementById('resetRows').textContent = T.reset;
+  function d2n(s){ if(!s) return null; var p=s.split('-'); return Date.UTC(+p[0],+p[1]-1,+p[2])/DAY; }
+  function n2d(n){ return new Date(n*DAY).toISOString().slice(0,10); }
+  function today(){ var t=new Date(); return Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())/DAY; }
+  function cell(html, cls){ var s=document.createElement('span'); if(cls) s.className=cls; s.innerHTML=html; rows.appendChild(s); return s; }
+  function row(i){
+    cell(String(i+1), 'muted hd');
+    cell('<input type="date" class="j" aria-label="'+T.tester+' '+(i+1)+' '+T.joined+'" style="'+IS+'">');
+    cell('<input type="date" class="l" aria-label="'+T.tester+' '+(i+1)+' '+T.left+'" style="'+IS+'">');
+  }
+  function reset(){
+    rows.innerHTML='';
+    cell('#', 'muted hd'); cell(T.joined, 'muted hd'); cell(T.left, 'muted hd');
+    for(var i=0;i<N;i++) row(i);
+    calc();
+  }
+  rows.addEventListener('input', calc);
+  // 테스터 한 명 = [옵트인한 날, 나간 날 또는 무한]. 날 X 에 그 사람이 세지려면
+  // 옵트인 뒤 14일이 지났고(X - 옵트인 >= 14) 아직 안 나갔어야(X < 나간 날) 한다.
+  function counted(ts, x){ var c=0; ts.forEach(function(t){ if(x-t[0]>=NEED && x<t[1]) c++; }); return c; }
+  function calc(){
+    var ts=[], js=rows.querySelectorAll('.j'), ls=rows.querySelectorAll('.l');
+    js.forEach(function(e, i){
+      var j=d2n(e.value), l=d2n(ls[i].value);
+      if(j!==null) ts.push([j, l===null?Infinity:l]);
+    });
+    if(!ts.length){ out.innerHTML='<span class="muted">'+T.empty+'</span>'; return; }
+    var now=today(), lo=Math.min.apply(null, ts.map(function(t){return t[0];}));
+    var first=null;
+    for(var x=lo; x<=Math.max(now, lo)+400; x++){ if(counted(ts,x)>=N){ first=x; break; } }
+    var html='';
+    if(first===null){
+      var alive=ts.filter(function(t){return t[1]===Infinity;}).length;
+      html=T.short.replace('{n}',alive).replace('{m}',Math.max(N-alive,1));
+    } else if(first<=now){ html=T.already.replace('{d}',n2d(first)); }
+    else { html=T.ok.replace('{d}',n2d(first)); }
+    var c=counted(ts,now), k=ts.filter(function(t){return t[0]<=now && now<t[1] && now-t[0]<NEED;}).length;
+    out.innerHTML=html+'<br><span class="muted" style="font-size:13px">'+T.nowline.replace('{c}',c).replace('{k}',k)+'</span>';
+  }
+  document.getElementById('addRow').onclick=function(){ row(rows.querySelectorAll('.j').length); };
+  document.getElementById('resetRows').onclick=reset;
+  reset();
+})();
+</script>
+<h2>计算方法</h2>
+<p>新个人开发者账号的条件是：<b>封闭测试中至少有 12 位测试人员在过去 14 天以上持续选择加入</b>
+（<a href="https://support.google.com/googleplay/android-developer/answer/14151465">Play 管理中心帮助</a>）。所以 14 天按每位测试人员各自的加入日期计算，退出的人不再计入。
+计算器会找出 12 人各自连续满 14 天的第一天。</p>
+<ul class="steps">
+  <li>12 人不必同一天加入。日期由第 12 位满 14 天的人决定。</li>
+  <li>退出的人不再计入 — 补一位新的，其他人保持加入。</li>
+  <li>每天打开应用不在这条规则里。请参考 <a href="/zh-Hans/guides/what-google-checks.html">Google 实际检查什么</a>。</li>
+</ul>
+
+<h2>常见问题</h2>
+<dl class="faq">
+<dt>第 14 天还是第 15 天可以申请？</dt><dd>从加入日起满 14 天。1 日加入的人在 15 日满 14 天。Console 可能会晚一天更新。</dd><dt>测试人员退出后又重新加入呢？</dt><dd>从重新加入的日期重新计算。把新日期填在另一行。</dd><dt>卸载应用算退出吗？</dt><dd>Google 的条件是按&quot;选择加入&quot;来写的。请测试人员在上线前保持加入。</dd>
+</dl>
+<div class="note" style="margin:26px 0">还没凑齐 12 人？在 <b>ACT Party</b>，开发者之间免费互换封闭测试，测试人员打开应用的日子会自动记录。<a href="/">查看看板</a> · <a href="https://play.google.com/store/apps/details?id=kr.testerparty.tester_party&referrer=utm_source%3Dactparty_site%26utm_medium%3Dlanding">获取应用</a></div>
+</article>
+
+<footer class="bot"><div class="wrap"><p>
+  <a href="/zh-Hans/guides/" data-t="nav_guides">Guides</a> ·
+  <a href="/" data-t="nav_board_home">App board</a></p></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+import { mountAuth } from '/assets/api.js?v=126';
+import { t, applyDom, langPicker, wireLangPicker } from '/assets/i18n.js?v=126';
+document.getElementById('langSlot').innerHTML = langPicker();
+applyDom();
+wireLangPicker();
+mountAuth('authSlot', t);
+</script>
+</body>
+</html>
