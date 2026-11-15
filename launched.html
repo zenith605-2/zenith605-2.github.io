@@ -31,6 +31,14 @@
 .lc-month{grid-column:1/-1;font-size:14px;font-weight:700;margin:8px 0 -2px;color:var(--ink300)}
 .lc-meta{font-size:12.5px;color:var(--ink300);margin:6px 0 0;font-variant-numeric:tabular-nums}
 .lc-meta b{color:var(--mint)}
+.lc-dlg{border:1px solid var(--ink600);background:var(--ink800);color:inherit;border-radius:16px;padding:0;max-width:min(680px,94vw);width:100%}
+.lc-dlg::backdrop{background:rgba(0,0,0,.6)}
+.lc-dlg-in{padding:18px 20px}
+.lc-dlg h4{font-size:14px;margin:16px 0 8px}
+.lc-badges{display:flex;gap:10px;flex-wrap:wrap}
+.lc-badges img{max-width:100%;height:auto}
+.lc-btns{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 0}
+.lc-cv{width:100%;height:auto;border-radius:10px;border:1px solid var(--ink600);display:block}
 </style>
 </head>
 <body>
@@ -222,8 +230,8 @@ function card(a) {
       ${a.description ? `<p class="desc">${esc(a.description)}</p>` : ''}
       <p class="lc-meta">${a.play_installs != null ? `⬇ <b>${band(a.play_installs)}</b>${
         grow > 0 ? ` (${W('이번 주 늘어남', 'growing this week')})` : ''} · ` : ''}${esc(catName)}</p>
-      ${store ? `<p style="margin:10px 0 0"><a class="btn ghost sm" href="${store}" target="_blank"
-         rel="nofollow noopener">${t('view_store')} ↗</a></p>` : ''}
+      <p style="margin:10px 0 0;display:flex;gap:6px;flex-wrap:wrap">${store ? `<a class="btn ghost sm" href="${store}" target="_blank"
+         rel="nofollow noopener">${t('view_store')} ↗</a>` : ''}${a.package_name && a.app_id ? `<button class="btn ghost sm" data-share="${esc(String(a.app_id))}">${W('배지·공유', 'Badge & share')}</button>` : ''}</p>
     </div></div>`;
 }
 
@@ -247,6 +255,114 @@ function render() {
   }
   document.getElementById('list').innerHTML = html || `<p class="muted">${t('lc_none')}</p>`;
 }
+
+
+// ── 배지·공유 카드 (2026-11-15 사용자 "배지랑 공유 카드도") ──
+// 개발자가 자기 사이트·README·레딧에 달면 링크가 생긴다. Play 등록정보에는 넣지 말라고 적는다.
+const SITE = 'https://actparty.app';
+function appPage(a) { return `${SITE}/a/${encodeURIComponent(a.package_name)}/`; }
+function badgeCodes(a, theme) {
+  const img = `${SITE}/img/badge-passed-${theme}.svg`;
+  const alt = 'Passed closed testing with ACT Party';
+  return {
+    html: `<a href="${appPage(a)}"><img src="${img}" alt="${alt}" width="250" height="54"></a>`,
+    md: `[![${alt}](${img})](${appPage(a)})`,
+  };
+}
+function loadImg(src) {
+  return new Promise((ok) => {
+    if (!src) return ok(null);
+    const im = new Image(); im.crossOrigin = 'anonymous';
+    im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src;
+  });
+}
+function rr(c, x, y, w, h, r) { c.beginPath(); c.roundRect(x, y, w, h, r); }
+async function drawCard(a, cv) {
+  const c = cv.getContext('2d'); const Wd = 1200, Ht = 630; cv.width = Wd; cv.height = Ht;
+  c.fillStyle = '#0e1116'; c.fillRect(0, 0, Wd, Ht);
+  c.fillStyle = 'rgba(61,220,151,0.10)'; c.beginPath(); c.arc(1080, 80, 300, 0, 7); c.fill();
+  const icon = await loadImg(a.icon_url);
+  c.save(); rr(c, 80, 150, 220, 220, 48); c.clip();
+  if (icon) c.drawImage(icon, 80, 150, 220, 220);
+  else { c.fillStyle = '#1f2630'; c.fillRect(80, 150, 220, 220);
+    c.fillStyle = '#3ddc97'; c.font = '900 110px Segoe UI, Roboto, sans-serif'; c.textAlign = 'center';
+    c.fillText((a.name || '?').slice(0, 1), 190, 300); c.textAlign = 'left'; }
+  c.restore();
+  const F = 'Segoe UI, Roboto, Helvetica, Arial, sans-serif';
+  c.fillStyle = '#3ddc97'; c.font = `700 30px ${F}`; c.fillText('NOW ON GOOGLE PLAY', 350, 190);
+  let name = a.name || ''; let fs = 72; c.font = `800 ${fs}px ${F}`;
+  while (c.measureText(name).width > 770 && fs > 36) { fs -= 4; c.font = `800 ${fs}px ${F}`; }
+  if (c.measureText(name).width > 770) { while (c.measureText(name + '…').width > 770) name = name.slice(0, -1); name += '…'; }
+  c.fillStyle = '#ffffff'; c.fillText(name, 350, 275);
+  c.fillStyle = '#9aa4b2'; c.font = `500 30px ${F}`;
+  const by = a.developer_name ? `by ${a.developer_name}` : '';
+  const when = a.released_at ? `launched ${String(a.released_at).slice(0, 10)}` : '';
+  c.fillText([by, when].filter(Boolean).join('  ·  '), 350, 330);
+  // 아래 띠: ACT 배지 + 문구
+  c.fillStyle = '#161b22'; rr(c, 80, 450, 1040, 110, 24); c.fill();
+  c.fillStyle = '#3ddc97'; rr(c, 110, 475, 60, 60, 16); c.fill();
+  c.fillStyle = '#0e1116'; c.font = `900 22px ${F}`; c.textAlign = 'center'; c.fillText('ACT', 140, 513); c.textAlign = 'left';
+  c.fillStyle = '#ffffff'; c.font = `700 32px ${F}`; c.fillText('Passed closed testing with ACT Party', 195, 502);
+  c.fillStyle = '#9aa4b2'; c.font = `500 24px ${F}`; c.fillText('12 testers · 14 days · actparty.app', 195, 538);
+}
+function copyText(txt, btn) {
+  navigator.clipboard.writeText(txt).then(() => {
+    const o = btn.textContent; btn.textContent = W('복사됨', 'Copied'); setTimeout(() => btn.textContent = o, 1400);
+  });
+}
+async function openShare(a) {
+  let dlg = document.getElementById('shareDlg');
+  if (!dlg) {
+    dlg = document.createElement('dialog'); dlg.id = 'shareDlg'; dlg.className = 'lc-dlg';
+    document.body.appendChild(dlg);
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  }
+  const dark = badgeCodes(a, 'dark'), light = badgeCodes(a, 'light');
+  const post = W(
+    `${a.name} 이(가) 구글 플레이에 출시됐어요. 비공개 테스트 12명·14일은 ACT Party 에서 채웠습니다. ${appPage(a)}`,
+    `${a.name} is now live on Google Play. We got through closed testing (12 testers, 14 days) with ACT Party. ${appPage(a)}`);
+  dlg.innerHTML = `
+    <div class="lc-dlg-in">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <h3 style="margin:0;font-size:17px">${esc(a.name)} — ${W('배지·공유 카드', 'Badge & share card')}</h3>
+        <button class="btn ghost sm" data-x>✕</button></div>
+      <p class="lc-meta">${W('자기 사이트·README·블로그·레딧에 붙이세요. Play 스토어 설명·스크린샷에는 넣지 마세요.',
+        'Use it on your site, README, blog or Reddit. Do not put it in your Play Store listing text or screenshots.')}</p>
+      <h4>${W('배지', 'Badge')}</h4>
+      <div class="lc-badges"><img src="/img/badge-passed-dark.svg" alt="" width="250" height="54">
+        <img src="/img/badge-passed-light.svg" alt="" width="250" height="54"></div>
+      <div class="lc-btns">
+        <button class="btn ghost sm" data-c="dh">HTML (${W('어두운', 'dark')})</button>
+        <button class="btn ghost sm" data-c="lh">HTML (${W('밝은', 'light')})</button>
+        <button class="btn ghost sm" data-c="dm">Markdown</button></div>
+      <h4>${W('공유 카드', 'Share card')} <span class="lc-meta">1200×630</span></h4>
+      <canvas id="shareCv" class="lc-cv"></canvas>
+      <div class="lc-btns">
+        <button class="btn sm" data-d>${W('이미지 저장', 'Download image')}</button>
+        <button class="btn ghost sm" data-p>${W('소개 문구 복사', 'Copy post text')}</button></div>
+    </div>`;
+  dlg.querySelector('[data-x]').onclick = () => dlg.close();
+  const map = { dh: dark.html, lh: light.html, dm: dark.md };
+  dlg.querySelectorAll('[data-c]').forEach(b => b.onclick = () => copyText(map[b.dataset.c], b));
+  dlg.querySelector('[data-p]').onclick = (e) => copyText(post, e.target);
+  dlg.showModal();
+  const cv = dlg.querySelector('#shareCv');
+  await drawCard(a, cv);
+  dlg.querySelector('[data-d]').onclick = () => {
+    try {
+      cv.toBlob((bl) => {
+        const u = URL.createObjectURL(bl); const l = document.createElement('a');
+        l.href = u; l.download = `${(a.package_name || 'app')}-act-party.png`; l.click();
+        setTimeout(() => URL.revokeObjectURL(u), 2000);
+      }, 'image/png');
+    } catch (_) { alert(W('이미지를 만들 수 없어요. 화면을 길게 눌러 저장해 주세요.', 'Could not export. Long-press the image to save.')); }
+  };
+}
+document.getElementById('list').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-share]'); if (!b) return;
+  const a = rows.find(r => String(r.app_id) === b.dataset.share);
+  if (a) openShare(a);
+});
 
 try {
   let data;
