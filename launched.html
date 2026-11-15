@@ -18,7 +18,7 @@
 .lc-box h3{font-size:13px;margin:0 0 10px;color:var(--ink300);font-weight:600}
 .lc-big{font-size:26px;font-weight:800;margin:0;font-variant-numeric:tabular-nums}
 .lc-row{display:flex;align-items:center;gap:8px;font-size:12.5px;margin:4px 0;cursor:pointer}
-.lc-row .lc-lb{width:52px;flex:none;color:var(--ink300);white-space:nowrap}
+.lc-row .lc-lb{width:58px;flex:none;color:var(--ink300);white-space:nowrap}
 .lc-row .lc-tr{flex:1;height:8px;background:var(--ink600);border-radius:4px;overflow:hidden}
 .lc-row .lc-fl{display:block;height:100%;background:var(--mint);border-radius:4px}
 .lc-row .lc-n{width:40px;text-align:right;font-variant-numeric:tabular-nums}
@@ -123,7 +123,28 @@ const nf = new Intl.NumberFormat(KO ? 'ko-KR' : 'en-US');
 const ym = (d) => String(d).slice(0, 7);
 const ymLabel = (k) => KO ? `${k.slice(0, 4)}년 ${Number(k.slice(5))}월` : k;
 const ymShort = (k) => KO ? `${Number(k.slice(5))}월` : k.slice(2);
-const BUCKETS = [[0, 9, '0–9'], [10, 99, '10+'], [100, 999, '100+'], [1000, 9999, '1K+'], [10000, 1e12, '10K+']];
+// Play 구간(10+·100+·1K+)은 너무 넓다 — 출시 앱 대부분이 10~49 에 몰려 있다 (2026-11-15 사용자).
+const BUCKETS = [[0, 9, '10 미만'], [10, 19, '10+'], [20, 29, '20+'], [30, 49, '30+'], [50, 99, '50+'],
+                 [100, 199, '100+'], [200, 499, '200+'], [500, 999, '500+'], [1000, 2999, '1K+'],
+                 [3000, 1e12, '3K+']];
+if (!KO) BUCKETS[0][2] = '<10';
+// 카드에는 정확한 수 대신 촘촘한 구간으로 (2026-11-15 사용자 "구간으로 하는데 촘촘히").
+// 작은 앱의 정확한 숫자가 그대로 보이면 민망할 수 있다 — 정렬·합계는 정확한 수로 한다.
+const STEPS = [1, 5, 10, 15, 20, 25, 30, 40, 50, 70, 100, 150, 200, 300, 400, 500, 700,
+               1000, 1500, 2000, 3000, 4000, 5000, 7000, 10000, 15000, 20000, 30000, 50000,
+               70000, 100000, 200000, 500000, 1000000];
+function shortN(v) {
+  if (v >= 1000000) return (v / 1000000) + 'M';
+  if (v >= 1000) return (v / 1000) + 'K';
+  return String(v);
+}
+function band(n) {
+  if (n == null) return null;
+  if (n < 1) return '0';
+  let b = 1;
+  for (const st of STEPS) if (n >= st) b = st;
+  return shortN(b) + '+';
+}
 
 let rows = [];
 const state = { cat: 'all', sort: 'recent', month: null, bucket: null };
@@ -199,8 +220,8 @@ function card(a) {
       <p class="app-name">${esc(a.name)} <span class="tag mint">${t('t_launched')}</span></p>
       <p class="muted who"><span class="emo">🧑</span>${esc(a.developer_name || t('no_name'))} · ${ago(a.released_at)}</p>
       ${a.description ? `<p class="desc">${esc(a.description)}</p>` : ''}
-      <p class="lc-meta">${a.play_installs != null ? `⬇ <b>${nf.format(a.play_installs)}</b>${
-        grow > 0 ? ` (+${nf.format(grow)} ${W('이번 주', 'this week')})` : ''} · ` : ''}${esc(catName)}</p>
+      <p class="lc-meta">${a.play_installs != null ? `⬇ <b>${band(a.play_installs)}</b>${
+        grow > 0 ? ` (${W('이번 주 늘어남', 'growing this week')})` : ''} · ` : ''}${esc(catName)}</p>
       ${store ? `<p style="margin:10px 0 0"><a class="btn ghost sm" href="${store}" target="_blank"
          rel="nofollow noopener">${t('view_store')} ↗</a></p>` : ''}
     </div></div>`;
