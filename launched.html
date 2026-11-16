@@ -240,7 +240,8 @@ function spark(id) {
   const w = 120, h = 26, pad = 2;
   const xs = pts.map(p => new Date(p.day).getTime());
   const ys = pts.map(p => p.installs);
-  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  // 바닥을 0으로 — 최저~최고로 늘리면 작은 증가도 가파르게 보였다
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = 0, y1 = Math.max(...ys);
   const X = t => pad + (x1 === x0 ? 0 : (t - x0) / (x1 - x0)) * (w - pad * 2);
   const Y = v => h - pad - (y1 === y0 ? 0.5 : (v - y0) / (y1 - y0)) * (h - pad * 2);
   const line = pts.map((p, i) => `${X(xs[i]).toFixed(1)},${Y(ys[i]).toFixed(1)}`).join(' ');
@@ -423,7 +424,8 @@ try {
   } catch (_) {
     data = (await publicApps()).filter(a => !!a.released_at);   // 새 함수가 없을 때
   }
-  rows = data.map(a => ({ ...a, _cat: catOf(a) }));
+  // ACT Party 자신은 목록에서 뺀다 (2026-11-16 사용자)
+  rows = data.filter(a => a.package_name !== 'kr.testerparty.tester_party').map(a => ({ ...a, _cat: catOf(a) }));
   try {
     const hr = await sb.rpc('launched_history', { p_days: 90 });
     if (!hr.error) for (const p of hr.data ?? []) (hist[p.app_id] ||= []).push(p);
