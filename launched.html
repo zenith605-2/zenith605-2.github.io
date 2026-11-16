@@ -31,6 +31,8 @@
 .lc-month{grid-column:1/-1;font-size:14px;font-weight:700;margin:8px 0 -2px;color:var(--ink300)}
 .lc-meta{font-size:12.5px;color:var(--ink300);margin:6px 0 0;font-variant-numeric:tabular-nums}
 .lc-meta b{color:var(--mint)}
+.lc-trend{display:flex;align-items:center;gap:10px;margin:6px 0 0;font-size:12px;color:var(--ink300);font-variant-numeric:tabular-nums}
+.lc-trend svg{flex:0 0 auto;display:block}
 .lc-dlg{border:1px solid var(--ink600);background:var(--ink800);color:inherit;border-radius:16px;padding:0;max-width:min(680px,94vw);width:100%}
 .lc-dlg::backdrop{background:rgba(0,0,0,.6)}
 .lc-dlg-in{padding:18px 20px}
@@ -211,10 +213,51 @@ function renderBar() {
   const sel = document.getElementById('sort');
   const hasGrowth = rows.some(a => a.installs_7d_ago != null && a.play_installs != null);
   sel.innerHTML = [['recent', W('최근 출시순', 'Newest')], ['downloads', W('다운로드 많은 순', 'Most downloads')],
-    ...(hasGrowth ? [['growth', W('이번 주 많이 늘어난 순', 'Fastest this week')]] : [])]
+    ...(hasGrowth ? [['growth', W('이번 주 많이 늘어난 순', 'Fastest this week')]] : []),
+    ...(rows.some(a => a.play_rating_count) ? [['rating', W('별점 높은 순', 'Top rated')],
+      ['reviews', W('리뷰 많은 순', 'Most reviews')]] : [])]
     .map(([v, l]) => `<option value="${v}"${state.sort === v ? ' selected' : ''}>${l}</option>`).join('');
   sel.onchange = () => { state.sort = sel.value; render(); };
   document.getElementById('bar').hidden = false;
+}
+
+// 다운로드·별점·리뷰 — 글자로만 (⬇ 같은 이모지는 안 쓴다, 2026-11-16 사용자 "이모지가 비추천인데")
+// 날짜별 기록 — 출시 앱 추이 그래프 (v2_224, 2026-11-16 사용자 "계속 기록해서 그래프화")
+let hist = {};
+// 출시일과 며칠째 — "출시 11/12 · 4일째"
+function releasedLine(a) {
+  if (!a.released_at) return '';
+  const d = new Date(a.released_at);
+  const days = Math.max(1, Math.floor((Date.now() - d.getTime()) / 86400000) + 1);
+  const md = `${d.getMonth() + 1}/${d.getDate()}`;
+  return `${W('출시', 'Launched')} ${md} · ${KO ? days + '일째' : 'day ' + days}`;
+}
+// 다운로드 추이 — 작은 선 그래프. 숫자는 안 쓰고 모양만 (작은 앱의 정확한 수는 안 보인다)
+function spark(id) {
+  const pts = (hist[id] || []).filter(p => p.installs != null);
+  if (pts.length < 2) return '';
+  const w = 120, h = 26, pad = 2;
+  const xs = pts.map(p => new Date(p.day).getTime());
+  const ys = pts.map(p => p.installs);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const X = t => pad + (x1 === x0 ? 0 : (t - x0) / (x1 - x0)) * (w - pad * 2);
+  const Y = v => h - pad - (y1 === y0 ? 0.5 : (v - y0) / (y1 - y0)) * (h - pad * 2);
+  const line = pts.map((p, i) => `${X(xs[i]).toFixed(1)},${Y(ys[i]).toFixed(1)}`).join(' ');
+  const lx = X(xs[xs.length - 1]), ly = Y(ys[ys.length - 1]);
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-label="${W('다운로드 추이', 'Download trend')}">
+    <polyline points="${line}" fill="none" stroke="var(--ink300)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="2.5" fill="var(--mint)"/></svg>`;
+}
+
+function statsLine(a, grow) {
+  const parts = [];
+  if (a.play_installs != null) parts.push(`${W('다운로드', 'Downloads')} <b>${band(a.play_installs)}</b>${
+    grow > 0 ? ` (${W('이번 주 늘어남', 'growing this week')})` : ''}`);
+  if (a.play_rating != null && a.play_rating_count) {
+    parts.push(`${W('별점', 'Rating')} <b>${Number(a.play_rating).toFixed(1)}</b>`);
+    parts.push(`${W('리뷰', 'Reviews')} <b>${a.play_rating_count}</b>`);
+  }
+  return parts.length ? parts.join(' · ') + ' · ' : '';
 }
 
 function card(a) {
@@ -225,13 +268,14 @@ function card(a) {
   return `<div class="card app-card">
     ${iconHtml(a.icon_url, a.name)}
     <div style="min-width:0;flex:1">
-      <p class="app-name">${esc(a.name)} <span class="tag mint">${t('t_launched')}</span></p>
-      <p class="muted who"><span class="emo">🧑</span>${esc(a.developer_name || t('no_name'))} · ${ago(a.released_at)}</p>
+      <p class="app-name">${esc(a.name)}</p>
+      <p class="muted who"><span class="emo">🧑</span>${esc(a.developer_name || t('no_name'))}</p>
       ${a.description ? `<p class="desc">${esc(a.description)}</p>` : ''}
-      <p class="lc-meta">${a.play_installs != null ? `⬇ <b>${band(a.play_installs)}</b>${
-        grow > 0 ? ` (${W('이번 주 늘어남', 'growing this week')})` : ''} · ` : ''}${esc(catName)}</p>
+      <p class="lc-meta">${statsLine(a, grow)}${esc(catName)}</p>
+      <p class="lc-trend"><span>${releasedLine(a)}</span>${spark(a.app_id)}</p>
       <p style="margin:10px 0 0;display:flex;gap:6px;flex-wrap:wrap">${store ? `<a class="btn ghost sm" href="${store}" target="_blank"
-         rel="nofollow noopener">${t('view_store')} ↗</a>` : ''}${a.package_name && a.app_id ? `<button class="btn ghost sm" data-share="${esc(String(a.app_id))}">${W('배지·공유', 'Badge & share')}</button>` : ''}</p>
+         rel="nofollow noopener">${t('view_store')} ↗</a>` : ''}${a.package_name ? `<a class="btn ghost sm"
+         href="/a/${encodeURIComponent(a.package_name)}/">${W('앱 페이지', 'App page')}</a>` : ''}${a.package_name && a.app_id ? `<button class="btn ghost sm" data-share="${esc(String(a.app_id))}">${W('배지·공유', 'Badge & share')}</button>` : ''}</p>
     </div></div>`;
 }
 
@@ -243,6 +287,11 @@ function render() {
   else if (state.sort === 'growth') list.sort((a, b) =>
     ((b.play_installs ?? 0) - (b.installs_7d_ago ?? b.play_installs ?? 0)) -
     ((a.play_installs ?? 0) - (a.installs_7d_ago ?? a.play_installs ?? 0)));
+  // 별점순은 리뷰가 있는 앱만 위로, 같으면 리뷰 많은 쪽 먼저
+  else if (state.sort === 'rating') list.sort((a, b) =>
+    ((b.play_rating_count ? b.play_rating : -1) - (a.play_rating_count ? a.play_rating : -1)) ||
+    ((b.play_rating_count ?? 0) - (a.play_rating_count ?? 0)));
+  else if (state.sort === 'reviews') list.sort((a, b) => (b.play_rating_count ?? 0) - (a.play_rating_count ?? 0));
   else list.sort((a, b) => String(b.released_at).localeCompare(String(a.released_at)));
   document.getElementById('found').textContent = list.length ? `${list.length}${t('lc_count')}` : '';
   let html = '', last = '';
@@ -374,6 +423,10 @@ try {
     data = (await publicApps()).filter(a => !!a.released_at);   // 새 함수가 없을 때
   }
   rows = data.map(a => ({ ...a, _cat: catOf(a) }));
+  try {
+    const hr = await sb.rpc('launched_history', { p_days: 90 });
+    if (!hr.error) for (const p of hr.data ?? []) (hist[p.app_id] ||= []).push(p);
+  } catch (_) { /* 기록 함수가 없으면 그래프만 빠진다 */ }
   render();
   const want = new URLSearchParams(location.search).get('share');
   if (want) { const a = rows.find(r => r.package_name === want); if (a) openShare(a); }
