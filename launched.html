@@ -253,9 +253,8 @@ function spark(id) {
 
 function statsLine(a, grow) {
   const parts = [];
-  // 이번 주 늘어난 수를 글자로 — 선 그래프는 숫자가 없어 읽을 수가 없었다 (2026-11-16 사용자)
-  if (a.play_installs != null) parts.push(`${W('다운로드', 'Downloads')} <b>${band(a.play_installs)}</b>${
-    grow > 0 ? ` · ${W('이번 주', 'this week')} <b>+${grow}</b>` : ''}`);
+  // 총 다운로드 구간만 (2026-11-16 사용자 "그냥 토탈 값만 있으면 될 것 같아")
+  if (a.play_installs != null) parts.push(`${W('다운로드', 'Downloads')} <b>${band(a.play_installs)}</b>`);
   if (a.play_rating != null && a.play_rating_count) {
     parts.push(`${W('별점', 'Rating')} <b>${Number(a.play_rating).toFixed(1)}</b>`);
     parts.push(`${W('리뷰', 'Reviews')} <b>${a.play_rating_count}</b>`);
