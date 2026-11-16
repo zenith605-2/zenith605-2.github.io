@@ -253,8 +253,9 @@ function spark(id) {
 
 function statsLine(a, grow) {
   const parts = [];
+  // 이번 주 늘어난 수를 글자로 — 선 그래프는 숫자가 없어 읽을 수가 없었다 (2026-11-16 사용자)
   if (a.play_installs != null) parts.push(`${W('다운로드', 'Downloads')} <b>${band(a.play_installs)}</b>${
-    grow > 0 ? ` (${W('이번 주 늘어남', 'growing this week')})` : ''}`);
+    grow > 0 ? ` · ${W('이번 주', 'this week')} <b>+${grow}</b>` : ''}`);
   if (a.play_rating != null && a.play_rating_count) {
     parts.push(`${W('별점', 'Rating')} <b>${Number(a.play_rating).toFixed(1)}</b>`);
     parts.push(`${W('리뷰', 'Reviews')} <b>${a.play_rating_count}</b>`);
@@ -274,7 +275,7 @@ function card(a) {
       <p class="muted who"><span class="emo">🧑</span>${esc(a.developer_name || t('no_name'))}</p>
       ${a.description ? `<p class="desc">${esc(a.description)}</p>` : ''}
       <p class="lc-meta">${statsLine(a, grow)}${esc(catName)}</p>
-      <p class="lc-trend"><span>${releasedLine(a)}</span>${spark(a.app_id)}</p>
+      <p class="lc-trend"><span>${releasedLine(a)}</span></p>
       <p style="margin:10px 0 0;display:flex;gap:6px;flex-wrap:wrap">${store ? `<a class="btn ghost sm" href="${store}" target="_blank"
          rel="nofollow noopener">${t('view_store')} ↗</a>` : ''}${a.package_name ? `<a class="btn ghost sm"
          href="/a/${encodeURIComponent(a.package_name)}/">${W('앱 페이지', 'App page')}</a>` : ''}${a.package_name && a.app_id ? `<button class="btn ghost sm" data-share="${esc(String(a.app_id))}">${W('배지·공유', 'Badge & share')}</button>` : ''}</p>
