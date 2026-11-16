@@ -235,7 +235,8 @@ function releasedLine(a) {
 // 다운로드 추이 — 작은 선 그래프. 숫자는 안 쓰고 모양만 (작은 앱의 정확한 수는 안 보인다)
 function spark(id) {
   const pts = (hist[id] || []).filter(p => p.installs != null);
-  if (pts.length < 2) return '';
+  // 수가 실제로 변했을 때만 — 평평한 선은 읽을 게 없다
+  if (pts.length < 2 || pts.every(p => p.installs === pts[0].installs)) return '';
   const w = 120, h = 26, pad = 2;
   const xs = pts.map(p => new Date(p.day).getTime());
   const ys = pts.map(p => p.installs);
