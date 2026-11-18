@@ -42,6 +42,9 @@
     font-size: 13px; color: #5b6672; margin-top: 8px; line-height: 1.6;
   }
   #doc h2 { margin-top: 34px }
+  #doc figure.phone img { max-width: 300px }
+  #doc .pair { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start }
+  #doc .pair figure { flex: 1 1 240px; margin: 10px 0 }
   #doc li.hot {
     background: #fff1f2; border-left: 3px solid #e11d48;
     border-radius: 6px; padding: 9px 12px; margin: 10px 0; color: #9f1239;
@@ -75,6 +78,10 @@
   품앗이 상대에게 "결제 화면까지 봐 주세요"라고 하면서 이걸 안 열어 두면, 테스터는 결제 창
   앞에서 멈추거나 그냥 앱을 닫습니다.</p>
 
+  <p>11월에 ₩1,100짜리 시험 앱을 직접 올려 확인했습니다. 일반 테스터 계정으로 옵트인하면
+  설치 버튼 자리에 가격 버튼이 뜹니다. 누르면 진짜로 결제됩니다.</p>
+  <figure class="phone"><img src="/img/guide/paid-test/phone-price.png" alt="" loading="lazy"><figcaption>일반 테스터가 옵트인한 뒤 본 스토어 화면. [설치] 대신 ₩1,100</figcaption></figure>
+
   <p>방법은 둘입니다. 앱 안에서 파는 상품(일회성 제품·구독)은 <b>라이선스 테스트</b>,
   앱 자체가 유료면 <b>프로모션 코드</b>입니다.</p>
 
@@ -85,8 +92,17 @@
       그룹에 가입한 테스터 전원이 한 번에 라이선스 테스터가 됩니다. 이메일 목록(최대 2,000명)도 됩니다.</li>
     <li>테스트할 상품·구독은 <b>활성</b> 상태여야 합니다. 초안이면 결제 창이 뜨지 않습니다.</li>
   </ol>
+  <figure><img src="/img/guide/paid-test/ko-license.png" alt="" loading="lazy"><figcaption>목록 앞 체크박스가 켜져 있어야 그 목록이 라이선스 테스터입니다. 오른쪽 아래 [변경사항 저장]까지</figcaption></figure>
   <p>그러면 테스터의 결제 창에 <b>"테스트 카드, 항상 승인"</b> 같은 테스트 결제 수단이 나오고,
-  테스트 구매라는 표시가 붙습니다. 돈은 나가지 않습니다.</p>
+  테스트 구매라는 표시가 붙습니다. 돈은 나가지 않습니다. 유료 앱 자체도 라이선스 테스터라면
+  이 테스트 카드로 살 수 있습니다.</p>
+  <div class="pair">
+    <figure class="phone"><img src="/img/guide/paid-test/phone-testcard.png" alt="" loading="lazy"><figcaption>라이선스 테스터의 결제창. "테스트 주문이므로 청구되지 않습니다"</figcaption></figure>
+    <figure class="phone"><img src="/img/guide/paid-test/phone-refund-install.png" alt="" loading="lazy"><figcaption>산 뒤. [환불]과 [설치]가 생깁니다</figcaption></figure>
+  </div>
+  <p class="note">직접 해 봤을 때 구매 직후 <b>"다운로드할 수 없음"</b> 창이 한 번 떴습니다.
+  닫고 스토어 페이지를 다시 열자 [설치]가 있었습니다. 테스터가 실패로 알고 멈추지 않게 미리 말해 두세요.</p>
+  <figure class="phone"><img src="/img/guide/paid-test/phone-cant-download.png" alt="" loading="lazy"><figcaption>테스트 구매 직후 한 번 뜬 창. 다시 열면 설치됩니다</figcaption></figure>
   <ul>
     <li><b>구독은 빨리 돕니다.</b> 1주·1개월 구독은 5분마다, 1년 구독은 30분마다 갱신되고 최대 6번까지입니다.
       무료 체험은 3분입니다. 테스터가 "구독이 금방 끝났다"고 해도 정상입니다.</li>
@@ -103,13 +119,22 @@
     <li>유료 앱·일회성 제품 코드는 <b>앱 하나에 분기당 500개</b>입니다. 남은 코드는 다음 분기로 넘어가지 않습니다.</li>
     <li>코드는 <b>한 사람에 하나</b>입니다. 품앗이 상대가 12명이면 12개를 따로 보내세요.</li>
   </ul>
+  <figure><img src="/img/guide/paid-test/ko-promo-form.png" alt="" loading="lazy"><figcaption>유형은 유료 앱. 시작·종료 날짜와 코드 수만 넣습니다</figcaption></figure>
+  <ul>
+    <li class="hot"><b>시작 시각은 지금보다 뒤</b>여야 합니다. 이미 지난 시각이면 날짜 칸이 빨개지고 저장되지 않습니다.</li>
+    <li>유료 앱에는 <b>일회용 코드</b>만 됩니다. 여러 번 쓰는 맞춤 코드는 구독 상품 전용입니다.</li>
+  </ul>
+  <figure><img src="/img/guide/paid-test/ko-promo-past.png" alt="" loading="lazy"><figcaption>시작 시각을 지난 시각으로 두면 이렇게 막힙니다</figcaption></figure>
+  <figure class="phone"><img src="/img/guide/paid-test/phone-redeem.png" alt="" loading="lazy"><figcaption>코드를 넣은 일반 테스터. ₩1,100에 줄이 그어지고 무료</figcaption></figure>
   <p>인앱 상품이나 구독도 프로모션 코드로 줄 수 있지만, 앱에 인앱 프로모션 처리를 넣어야 합니다.
   테스트 단계라면 1번 라이선스 테스트가 훨씬 간단합니다.</p>
+  <p class="muted">무료로 테스트하고 나중에 유료로 돌리는 길은 막혀 있습니다. 콘솔 안내대로 무료·유료는
+  게시 전까지만 바꿀 수 있고, 게시한 무료 앱은 유료로 바꿀 수 없습니다.</p>
 
   <h2>3. 테스터에게 미리 알리기</h2>
   <p>결제를 열어 둔 건 테스터가 모릅니다. 앱 소개나 첫 메시지에 한 줄 적어 두세요.</p>
   <ul>
-    <li>"결제 창에 <b>테스트 카드</b>가 보이면 그걸 고르세요. 실제로 청구되지 않습니다."</li>
+    <li>"결제 창에 <b>테스트 카드</b>가 보이면 그걸 고르세요. 실제로 청구되지 않습니다. 다운로드할 수 없다고 나오면 스토어 페이지를 다시 열어 주세요."</li>
     <li>"유료 앱이라 <b>코드</b>를 보내 드릴게요. Play 스토어 → 프로필 → 결제 및 구독 → 코드 사용."</li>
   </ul>
   <p>테스트 카드가 안 보인다는 테스터는 대개 그룹에 가입한 계정과 결제하는 계정이 다릅니다.</p>
@@ -120,7 +145,7 @@
     <a href="/">actparty.app에서 무료로 쓰기</a>
   </div>
 
-  <p class="muted" style="font-size:13px">2026년 10월 Play Console과 구글 문서 기준입니다
+  <p class="muted" style="font-size:13px">2026년 10월 Play Console과 구글 문서 기준, 화면은 2026년 11월 직접 해 본 것입니다
   (<a href="https://developer.android.com/google/play/billing/test">결제 테스트</a>,
   <a href="https://support.google.com/googleplay/android-developer/answer/6321495">프로모션 코드</a>).</p></article>
 
@@ -133,6 +158,12 @@
 import { mountAuth } from '/assets/api.js?v=127';
 import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=127';
 import { sectionAnchors } from '/assets/anchors.js?v=124';
+
+/* 2026-11-06~14 직접 해 본 캡처: 시험 앱 Closed Test Checklist(유료 ₩1,100).
+   폰은 한국어 Play 스토어뿐이라 모든 언어판이 같은 폰 그림을 쓴다 */
+const FIG = (name, cap, cls) => '<figure' + (cls ? ' class="' + cls + '"' : '') +
+  '><img src="/img/guide/paid-test/' + name + '.png" alt="" loading="lazy"><figcaption>' + cap + '</figcaption></figure>';
+const PHONE = (name, cap) => FIG(name, cap, 'phone');
 
 
 document.getElementById('langSlot').innerHTML = langPicker();

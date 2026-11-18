@@ -42,6 +42,9 @@
     font-size: 13px; color: #5b6672; margin-top: 8px; line-height: 1.6;
   }
   #doc h2 { margin-top: 34px }
+  #doc figure.phone img { max-width: 300px }
+  #doc .pair { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start }
+  #doc .pair figure { flex: 1 1 240px; margin: 10px 0 }
   #doc li.hot {
     background: #fff1f2; border-left: 3px solid #e11d48;
     border-radius: 6px; padding: 9px 12px; margin: 10px 0; color: #9f1239;
@@ -128,6 +131,12 @@
 import { mountAuth } from '/assets/api.js?v=127';
 import { t, applyDom, langPicker, wireLangPicker, LANG } from '/assets/i18n.js?v=127';
 import { sectionAnchors } from '/assets/anchors.js?v=124';
+
+/* 2026-11-06~14 직접 해 본 캡처: 시험 앱 Closed Test Checklist(유료 ₩1,100).
+   폰은 한국어 Play 스토어뿐이라 모든 언어판이 같은 폰 그림을 쓴다 */
+const FIG = (name, cap, cls) => '<figure' + (cls ? ' class="' + cls + '"' : '') +
+  '><img src="/img/guide/paid-test/' + name + '.png" alt="" loading="lazy"><figcaption>' + cap + '</figcaption></figure>';
+const PHONE = (name, cap) => FIG(name, cap, 'phone');
 
 
 document.getElementById('langSlot').innerHTML = langPicker();
