@@ -86,6 +86,9 @@ const DOC = {
   <h1 style="font-size:28px;margin:0 0 8px">유료 앱·인앱 결제 앱을 테스트받는 법</h1>
   <p class="muted" style="margin:0 0 24px">그냥 두면 테스터가 실제 돈을 냅니다 — 테스트 카드나 코드로 열어 두세요.</p>
 
+  <p><b>크게 2가지 방법이 있습니다.</b> 앱 안에서 파는 상품(일회성 제품·구독)은 <b>① 라이선스 테스터</b>로
+  등록해 테스트 카드로 결제하게 하고, 앱 자체가 유료면 <b>② 프로모션 코드</b>를 한 장씩 나눠 줍니다.</p>
+
   <p>비공개 테스트라고 결제가 공짜가 되지는 않습니다. 구글 문서 그대로, <b>비공개·공개 테스트의
   유료 앱은 테스터도 사야 하고</b>, 인앱 결제도 <b>라이선스 테스터가 아니면 실제로 청구</b>됩니다.
   품앗이 상대에게 "결제 화면까지 봐 주세요"라고 하면서 이걸 안 열어 두면, 테스터는 결제 창
@@ -94,9 +97,6 @@ const DOC = {
   <p>11월에 ₩1,100짜리 시험 앱을 직접 올려 확인했습니다. 일반 테스터 계정으로 옵트인하면
   설치 버튼 자리에 가격 버튼이 뜹니다. 누르면 진짜로 결제됩니다.</p>
   ${PHONE('phone-price', '일반 테스터가 옵트인한 뒤 본 스토어 화면. [설치] 대신 ₩1,100')}
-
-  <p>방법은 둘입니다. 앱 안에서 파는 상품(일회성 제품·구독)은 <b>라이선스 테스트</b>,
-  앱 자체가 유료면 <b>프로모션 코드</b>입니다.</p>
 
   <h2>1. 인앱 결제·구독 — 라이선스 테스터로 등록</h2>
   <ol>
@@ -116,11 +116,8 @@ const DOC = {
     <li>"항상 거절" 카드로 결제 실패 화면도 볼 수 있습니다. 실패 처리를 봐 달라고 하기 좋습니다.</li>
     <li>테스터 폰에 계정이 여럿이면 앱을 내려받은 계정으로 결제합니다. 그 계정이 그룹에 든 계정이어야 합니다.</li>
   </ul>
-  ${PHONE('phone-testcard', '라이선스 테스터의 결제창. "테스트 주문이므로 청구되지 않습니다"')}
-  <p class="note">직접 해 봤을 때 구매 직후 <b>"다운로드할 수 없음"</b> 창이 한 번 떴습니다.
-  닫고 스토어 페이지를 다시 열자 [설치]가 있었습니다. 테스터가 실패로 알고 멈추지 않게 미리 말해 두세요.</p>
-  <div class="pair">
-    ${PHONE('phone-cant-download', '테스트 구매 직후 한 번 뜬 창. 다시 열면 설치됩니다')}
+  <div class=\"pair\">
+    ${PHONE('phone-testcard', '라이선스 테스터의 결제창. "테스트 주문이므로 청구되지 않습니다"')}
     ${PHONE('phone-refund-install', '산 뒤. [환불]과 [설치]가 생깁니다')}
   </div>
 
@@ -148,7 +145,7 @@ const DOC = {
   <h2>3. 테스터에게 미리 알리기</h2>
   <p>결제를 열어 둔 건 테스터가 모릅니다. 앱 소개나 첫 메시지에 한 줄 적어 두세요.</p>
   <ul>
-    <li>"결제 창에 <b>테스트 카드</b>가 보이면 그걸 고르세요. 실제로 청구되지 않습니다. 다운로드할 수 없다고 나오면 스토어 페이지를 다시 열어 주세요."</li>
+    <li>"결제 창에 <b>테스트 카드</b>가 보이면 그걸 고르세요. 실제로 청구되지 않습니다."</li>
     <li>"유료 앱이라 <b>코드</b>를 보내 드릴게요. Play 스토어 → 프로필 → 결제 및 구독 → 코드 사용."</li>
   </ul>
   <p>테스트 카드가 안 보인다는 테스터는 대개 그룹에 가입한 계정과 결제하는 계정이 다릅니다.</p>
@@ -167,6 +164,10 @@ const DOC = {
   <h1 style="font-size:28px;margin:0 0 8px">Testing a paid app or in-app purchases</h1>
   <p class="muted" style="margin:0 0 24px">Left alone, your testers pay real money. Open it up with test cards or codes.</p>
 
+  <p><b>There are two ways.</b> For things sold inside the app (one-time products and subscriptions),
+  add testers as <b>1. license testers</b> so they pay with a test card. If the app itself is paid, hand out
+  <b>2. promo codes</b>, one per tester.</p>
+
   <p>A closed test does not make purchases free. In Google's own words, <b>testers of a paid app on a
   closed or open track still have to buy it</b>, and in-app purchases are <b>charged for real unless the
   tester is a license tester</b>. Ask a swap partner to "check the paywall" without setting this up and
@@ -176,8 +177,6 @@ const DOC = {
   where Install would be, and tapping it charges them for real.</p>
   ${PHONE('phone-price', 'A regular tester after opting in. A ₩1,100 button instead of Install (Korean Play Store)')}
 
-  <p>There are two tools. For things sold inside the app (one-time products and subscriptions), use
-  <b>license testing</b>. If the app itself costs money, use <b>promo codes</b>.</p>
 
   <h2>1. In-app purchases and subscriptions: add license testers</h2>
   <ol>
@@ -196,11 +195,8 @@ const DOC = {
     <li>The "always declines" card shows your failed payment screen, which is worth asking testers to check.</li>
     <li>On a phone with several accounts, the purchase uses the account that downloaded the app. That account has to be in the group.</li>
   </ul>
-  ${PHONE('phone-testcard', 'License tester checkout: a test card, and a note that the order will not be charged')}
-  <p class="note">In our run a <b>"Can't download"</b> dialog popped up right after the purchase. After closing it and
-  reopening the store page, Install was there. Warn testers so they do not take it as a failure.</p>
-  <div class="pair">
-    ${PHONE('phone-cant-download', 'Shown once right after the test purchase. Reopen the page and it installs')}
+  <div class=\"pair\">
+    ${PHONE('phone-testcard', 'License tester checkout: a test card, and a note that the order will not be charged')}
     ${PHONE('phone-refund-install', 'After buying: Refund and Install')}
   </div>
 
@@ -227,7 +223,7 @@ const DOC = {
   <h2>3. Tell testers before they start</h2>
   <p>Testers cannot tell that you opened up payments. Put one line in your app description or first message:</p>
   <ul>
-    <li>"If the payment sheet shows a <b>test card</b>, pick it. You will not be charged. If it says Can't download, reopen the store page."</li>
+    <li>"If the payment sheet shows a <b>test card</b>, pick it. You will not be charged."</li>
     <li>"It is a paid app, so I will send you a <b>code</b>: Play Store → profile → Payments and subscriptions → Redeem code."</li>
   </ul>
   <p>A tester who sees no test card is usually paying with a different account from the one that joined the group.</p>

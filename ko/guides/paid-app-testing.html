@@ -73,6 +73,9 @@
   <h1 style="font-size:28px;margin:0 0 8px">유료 앱·인앱 결제 앱을 테스트받는 법</h1>
   <p class="muted" style="margin:0 0 24px">그냥 두면 테스터가 실제 돈을 냅니다 — 테스트 카드나 코드로 열어 두세요.</p>
 
+  <p><b>크게 2가지 방법이 있습니다.</b> 앱 안에서 파는 상품(일회성 제품·구독)은 <b>① 라이선스 테스터</b>로
+  등록해 테스트 카드로 결제하게 하고, 앱 자체가 유료면 <b>② 프로모션 코드</b>를 한 장씩 나눠 줍니다.</p>
+
   <p>비공개 테스트라고 결제가 공짜가 되지는 않습니다. 구글 문서 그대로, <b>비공개·공개 테스트의
   유료 앱은 테스터도 사야 하고</b>, 인앱 결제도 <b>라이선스 테스터가 아니면 실제로 청구</b>됩니다.
   품앗이 상대에게 "결제 화면까지 봐 주세요"라고 하면서 이걸 안 열어 두면, 테스터는 결제 창
@@ -81,9 +84,6 @@
   <p>11월에 ₩1,100짜리 시험 앱을 직접 올려 확인했습니다. 일반 테스터 계정으로 옵트인하면
   설치 버튼 자리에 가격 버튼이 뜹니다. 누르면 진짜로 결제됩니다.</p>
   <figure class="phone"><img src="/img/guide/paid-test/phone-price.png" alt="" loading="lazy"><figcaption>일반 테스터가 옵트인한 뒤 본 스토어 화면. [설치] 대신 ₩1,100</figcaption></figure>
-
-  <p>방법은 둘입니다. 앱 안에서 파는 상품(일회성 제품·구독)은 <b>라이선스 테스트</b>,
-  앱 자체가 유료면 <b>프로모션 코드</b>입니다.</p>
 
   <h2>1. 인앱 결제·구독 — 라이선스 테스터로 등록</h2>
   <ol>
@@ -103,11 +103,8 @@
     <li>"항상 거절" 카드로 결제 실패 화면도 볼 수 있습니다. 실패 처리를 봐 달라고 하기 좋습니다.</li>
     <li>테스터 폰에 계정이 여럿이면 앱을 내려받은 계정으로 결제합니다. 그 계정이 그룹에 든 계정이어야 합니다.</li>
   </ul>
-  <figure class="phone"><img src="/img/guide/paid-test/phone-testcard.png" alt="" loading="lazy"><figcaption>라이선스 테스터의 결제창. "테스트 주문이므로 청구되지 않습니다"</figcaption></figure>
-  <p class="note">직접 해 봤을 때 구매 직후 <b>"다운로드할 수 없음"</b> 창이 한 번 떴습니다.
-  닫고 스토어 페이지를 다시 열자 [설치]가 있었습니다. 테스터가 실패로 알고 멈추지 않게 미리 말해 두세요.</p>
   <div class="pair">
-    <figure class="phone"><img src="/img/guide/paid-test/phone-cant-download.png" alt="" loading="lazy"><figcaption>테스트 구매 직후 한 번 뜬 창. 다시 열면 설치됩니다</figcaption></figure>
+    <figure class="phone"><img src="/img/guide/paid-test/phone-testcard.png" alt="" loading="lazy"><figcaption>라이선스 테스터의 결제창. "테스트 주문이므로 청구되지 않습니다"</figcaption></figure>
     <figure class="phone"><img src="/img/guide/paid-test/phone-refund-install.png" alt="" loading="lazy"><figcaption>산 뒤. [환불]과 [설치]가 생깁니다</figcaption></figure>
   </div>
 
@@ -135,7 +132,7 @@
   <h2>3. 테스터에게 미리 알리기</h2>
   <p>결제를 열어 둔 건 테스터가 모릅니다. 앱 소개나 첫 메시지에 한 줄 적어 두세요.</p>
   <ul>
-    <li>"결제 창에 <b>테스트 카드</b>가 보이면 그걸 고르세요. 실제로 청구되지 않습니다. 다운로드할 수 없다고 나오면 스토어 페이지를 다시 열어 주세요."</li>
+    <li>"결제 창에 <b>테스트 카드</b>가 보이면 그걸 고르세요. 실제로 청구되지 않습니다."</li>
     <li>"유료 앱이라 <b>코드</b>를 보내 드릴게요. Play 스토어 → 프로필 → 결제 및 구독 → 코드 사용."</li>
   </ul>
   <p>테스트 카드가 안 보인다는 테스터는 대개 그룹에 가입한 계정과 결제하는 계정이 다릅니다.</p>
