@@ -45,6 +45,13 @@
   #doc figure.phone img { max-width: 300px }
   #doc .pair { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start }
   #doc .pair figure { flex: 1 1 240px; margin: 10px 0 }
+  /* 서두 두 갈래 — 작은 글은 안 읽는다, 큰 제목만 본다 (2026-11-19 사용자) */
+  #doc .ways { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0 30px }
+  @media (max-width: 640px) { #doc .ways { grid-template-columns: 1fr } }
+  #doc .way { border: 1px solid var(--ink600); border-radius: 14px; padding: 18px 20px; background: var(--ink800) }
+  #doc .way .n { font-size: 14px; font-weight: 800; color: var(--green, #3ddc97); letter-spacing: .04em }
+  #doc .way .t { font-weight: 800; font-size: 26px; margin: 6px 0 6px; line-height: 1.25 }
+  #doc .way p { margin: 0; font-size: 15px; color: var(--ink300); line-height: 1.5 }
   #doc li.hot {
     background: #fff1f2; border-left: 3px solid #e11d48;
     border-radius: 6px; padding: 9px 12px; margin: 10px 0; color: #9f1239;

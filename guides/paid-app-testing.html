@@ -39,6 +39,13 @@
   #doc figure.phone img { max-width: 300px }
   #doc .pair { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start }
   #doc .pair figure { flex: 1 1 240px; margin: 10px 0 }
+  /* 서두 두 갈래 — 작은 글은 안 읽는다, 큰 제목만 본다 (2026-11-19 사용자) */
+  #doc .ways { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0 30px }
+  @media (max-width: 640px) { #doc .ways { grid-template-columns: 1fr } }
+  #doc .way { border: 1px solid var(--ink600); border-radius: 14px; padding: 18px 20px; background: var(--ink800) }
+  #doc .way .n { font-size: 14px; font-weight: 800; color: var(--green, #3ddc97); letter-spacing: .04em }
+  #doc .way .t { font-weight: 800; font-size: 26px; margin: 6px 0 6px; line-height: 1.25 }
+  #doc .way p { margin: 0; font-size: 15px; color: var(--ink300); line-height: 1.5 }
   #doc li.hot {
     background: #fff1f2; border-left: 3px solid #e11d48;
     border-radius: 6px; padding: 9px 12px; margin: 10px 0; color: #9f1239;
@@ -86,8 +93,10 @@ const DOC = {
   <h1 style="font-size:28px;margin:0 0 8px">유료 앱·인앱 결제 앱을 테스트받는 법</h1>
   <p class="muted" style="margin:0 0 24px">그냥 두면 테스터가 실제 돈을 냅니다 — 테스트 카드나 코드로 열어 두세요.</p>
 
-  <p><b>크게 2가지 방법이 있습니다.</b> 앱 안에서 파는 상품(일회성 제품·구독)은 <b>① 라이선스 테스터</b>로
-  등록해 테스트 카드로 결제하게 하고, 앱 자체가 유료면 <b>② 프로모션 코드</b>를 한 장씩 나눠 줍니다.</p>
+  <div class="ways">
+    <div class="way"><div class="n">방법 1</div><div class="t">라이선스 테스터</div><p>인앱 결제·구독 → 테스트 카드로 결제, 청구 안 됨</p></div>
+    <div class="way"><div class="n">방법 2</div><div class="t">프로모션 코드</div><p>앱 자체가 유료 → 코드 한 장씩, 무료 설치</p></div>
+  </div>
 
   <p>비공개 테스트라고 결제가 공짜가 되지는 않습니다. 구글 문서 그대로, <b>비공개·공개 테스트의
   유료 앱은 테스터도 사야 하고</b>, 인앱 결제도 <b>라이선스 테스터가 아니면 실제로 청구</b>됩니다.
@@ -164,9 +173,10 @@ const DOC = {
   <h1 style="font-size:28px;margin:0 0 8px">Testing a paid app or in-app purchases</h1>
   <p class="muted" style="margin:0 0 24px">Left alone, your testers pay real money. Open it up with test cards or codes.</p>
 
-  <p><b>There are two ways.</b> For things sold inside the app (one-time products and subscriptions),
-  add testers as <b>1. license testers</b> so they pay with a test card. If the app itself is paid, hand out
-  <b>2. promo codes</b>, one per tester.</p>
+  <div class="ways">
+    <div class="way"><div class="n">WAY 1</div><div class="t">License testers</div><p>In-app purchases &amp; subscriptions → test card, never charged</p></div>
+    <div class="way"><div class="n">WAY 2</div><div class="t">Promo codes</div><p>The app itself is paid → one code per tester, free install</p></div>
+  </div>
 
   <p>A closed test does not make purchases free. In Google's own words, <b>testers of a paid app on a
   closed or open track still have to buy it</b>, and in-app purchases are <b>charged for real unless the
