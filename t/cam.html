@@ -680,7 +680,7 @@ var fix=null,prevFix=null,v=0,head=null,fixes=0,gaps=[],spdSrc='-',lastAcc=0,dem
 function onFix(la,lo,acc,h,spd,t){
   fixes++;lastAcc=acc;
   if(fix){gaps.push(t-fix.t);if(gaps.length>10)gaps.shift()}
-  prevFix=fix;fix={la:la,lo:lo,t:t,mt:t};var frozen=prevFix&&(spd!=null&&spd>0?spd:v)>5&&dist(prevFix.la,prevFix.lo,la,lo)<1&&t-prevFix.t<5000;if(frozen){if(!(spd!=null&&spd>0)){fix=prevFix;prevFix=null;return}fix.mt=prevFix.mt}
+  prevFix=fix;fix={la:la,lo:lo,t:t,mt:t};var frozen=tunNear&&prevFix&&(spd!=null&&spd>0?spd:v)>5&&dist(prevFix.la,prevFix.lo,la,lo)<1&&t-prevFix.t<5000;if(frozen){if(!(spd!=null&&spd>0)){fix=prevFix;prevFix=null;return}fix.mt=prevFix.mt}
   var calc=null;
   if(prevFix){var dt=(t-prevFix.t)/1000;if(dt>0.2&&dt<5){var dm=dist(prevFix.la,prevFix.lo,la,lo);calc=dm/dt;if(dm>3)head=brg(prevFix.la,prevFix.lo,la,lo)}}
   if(spd!=null&&!isNaN(spd)&&spd>0){v=v*0.3+spd*0.7;spdSrc='차'}else if(calc!=null){v=v*0.5+calc*0.5;spdSrc='계산'}else if(spd===0){v=0;spdSrc='차'}
@@ -1211,6 +1211,7 @@ function tickBody(){
   /* 터널 등 GPS 끊김: 안내 중이면 마지막 속도로 경로를 따라(최대 4분), 아니면 직진으로(최대 40초) 추정 위치를 이어 간다. 카메라 경고도 이 위치로 계속 */
   var drDt=DR.lt?Math.min(0.5,(now-DR.lt)/1000):0;DR.lt=now;
   if(DR.fix!==(fix.mt||fix.t)){DR.fix=fix.mt||fix.t;DR.s=null;DR.d=0;if(NAV&&NAV.R&&NAV.R.length>1){var dp=project(fix.la,fix.lo);if(dp&&dp.d<30)DR.s=NAV.S[dp.i]+dp.t*(NAV.S[dp.i+1]-NAV.S[dp.i])}}
+  tunNear=false;if(NAV&&NAV.F&&NAV.S){for(var ti=Math.max(0,NAV.idx-5);ti<NAV.S.length-1&&NAV.S[ti]<NAV.s+300;ti++)if(NAV.S[ti]>NAV.s-100&&(NAV.F[ti]===2||NAV.F[ti]===4)){tunNear=true;break}}
   var drOn=false,drI=-1;if(NAV&&DR.s!=null&&NAV.F){var di=Math.max(0,NAV.idx);while(di<NAV.S.length-2&&NAV.S[di+1]<DR.s+(DR.d||0))di++;drI=di}
   var inTun=drI>=0&&(NAV.F[drI]===2||NAV.F[drI]===4),tv=inTun&&NAV.V&&NAV.V[drI]>5?NAV.V[drI]/3.6:0;
   DR.d=(DR.d||0)+(age>(inTun?1.2:2.5)&&tv?tv:v)*drDt;
@@ -1278,7 +1279,7 @@ function tickBody(){
 }
 
 /* 한 번의 오류로 화면 갱신이 영영 멈추지 않게: 오류는 진단 줄에 남기고 다음 프레임 계속 */
-var lastErr='',errN=0,bootT0=Date.now(),DSP=null,DR={fix:null,s:null,on:false};
+var tunNear=false,lastErr='',errN=0,bootT0=Date.now(),DSP=null,DR={fix:null,s:null,on:false};
 /* 후진 카메라 등으로 브라우저가 가려지면 requestAnimationFrame 이 멈출 수 있어, 가려진 동안은 1초마다 직접 돌려 경고를 이어 간다. 가려진 시간·그동안 받은 위치 수는 진단 줄에 */
 var HID={t:0,f:0,ticks:0,last:''};
 document.addEventListener('visibilitychange',function(){if(document.hidden){HID.t=Date.now();HID.f=fixes;HID.ticks=0}else if(HID.t){HID.last=' · 가려짐 '+Math.round((Date.now()-HID.t)/1000)+'초 위치 '+(fixes-HID.f)+'회 갱신 '+HID.ticks+'회';HID.t=0}});
