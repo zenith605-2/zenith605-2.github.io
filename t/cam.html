@@ -521,13 +521,23 @@ function tmDrawTurn(g){if(!TMM)return;var k=g?g.s+'_'+g.t:null;if(k===tmTurnKey)
   var shaft=P.map(function(q){return LL(q.la,q.lo)}),head=[LL(L[0],L[1]),LL(tip.la,tip.lo),LL(R[0],R[1])];
   [['#1b2533',26,998],['#ffffff',18,999]].forEach(function(st){var o={strokeColor:st[0],strokeWeight:st[1],strokeOpacity:1,zIndex:st[2],map:TMM};
     try{tmTurn.push(new Tmapv3.Polyline(Object.assign({path:shaft},o)));tmTurn.push(new Tmapv3.Polyline(Object.assign({path:head},o)))}catch(e){}})}
-function tmDrawRoute(fs,pins){tmLines.forEach(function(l){try{l.setMap(null)}catch(e){}});tmLines=[];tmPins.forEach(function(m){try{m.setMap(null)}catch(e){}});tmPins=[];
+/* 긴 경로에서 멈춤 방지: 짧은 교통 색 구간은 옆에 합치고(최대 약 40조각), 8m 안 점은 솎는다 */
+function segLen(c){var L=0;for(var i=1;i<c.length;i++)L+=dist(c[i-1][1],c[i-1][0],c[i][1],c[i][0]);return L}
+var tmJob=0;function runJobs(J,tok){var k=0;(function step(){if(tok!==tmJob)return;for(var n=0;n<6&&k<J.length;n++,k++){try{J[k]()}catch(e){}}if(k<J.length)setTimeout(step,16);else tmTurnKey=null})()}
+function slimRoute(fs){if(!fs.length)return fs;var th=200,out=fs;
+  for(var k=0;k<6;k++){var a=out.map(function(f){return{c:f.properties.c,co:f.geometry.coordinates.slice(),L:segLen(f.geometry.coordinates)}});
+    for(var i=0;i<a.length;i++){if(a[i].L<th){var nb=i>0?a[i-1]:a[i+1];if(nb)a[i].c=nb.c}}
+    var m=[];a.forEach(function(x){var l=m[m.length-1];if(l&&l.c===x.c){l.co=l.co.concat(x.co.slice(1));l.L+=x.L}else m.push(x)});
+    out=m.map(function(x){return{properties:{c:x.c},geometry:{coordinates:x.co}}});if(out.length<=25)break;th*=2}
+  out.forEach(function(f){var c=f.geometry.coordinates,r=[c[0]],last=c[0];for(var i=1;i<c.length-1;i++){if(dist(last[1],last[0],c[i][1],c[i][0])>=8){r.push(c[i]);last=c[i]}}if(c.length>1)r.push(c[c.length-1]);f.geometry.coordinates=r});
+  return out}
+function tmDrawRoute(fs,pins){fs=slimRoute(fs);var JOB=[],tok=++tmJob;tmLines.forEach(function(l){try{l.setMap(null)}catch(e){}});tmLines=[];tmPins.forEach(function(m){try{m.setMap(null)}catch(e){}});tmPins=[];
   var col={1:'#22b14c',2:'#f5b400',3:'#ff7a00',4:'#e3151a'},dk={1:'#16803a',2:'#b88600',3:'#c25500',4:'#a50e12'};
-  fs.forEach(function(ft){var c=ft.properties.c;try{tmLines.push(new Tmapv3.Polyline({path:ft.geometry.coordinates.map(function(q){return LL(q[1],q[0])}),strokeColor:col[c]||'#2b7bff',strokeWeight:14,strokeOpacity:1,outlineColor:dk[c]||'#1546b8',outlineWidth:3,zIndex:10,map:TMM}))}catch(e){}});tmTurnKey=null;
-  var RT=PREV||NAV;if(RT&&RT.R&&RT.R.length>1&&RT.S){var s0=PREV?0:(NAV.s||0),s1=Math.min(RT.S[RT.S.length-1]-15,s0+(PREV?1e9:4000)),step=PREV?Math.max(80,(s1-s0)/60):70;
+  fs.forEach(function(ft){var c=ft.properties.c;try{JOB.push(function(){tmLines.push(new Tmapv3.Polyline({path:ft.geometry.coordinates.map(function(q){return LL(q[1],q[0])}),strokeColor:col[c]||'#2b7bff',strokeWeight:14,strokeOpacity:1,outlineColor:dk[c]||'#1546b8',outlineWidth:3,zIndex:10,map:TMM}))})}catch(e){}});tmTurnKey=null;
+  var RT=PREV||NAV;if(RT&&RT.R&&RT.R.length>1&&RT.S){var s0=PREV?0:(NAV.s||0),s1=PREV?-1:Math.min(RT.S[RT.S.length-1]-15,s0+3000),step=250;
     for(var sd=s0+40;sd<s1;sd+=step){var A=routePointAt(RT,sd),B=routePointAt(RT,sd+6),h=brg(A.la,A.lo,B.la,B.lo),L=move(B.la,B.lo,h+150,5),R=move(B.la,B.lo,h-150,5);
-      try{tmLines.push(new Tmapv3.Polyline({path:[LL(L[0],L[1]),LL(B.la,B.lo),LL(R[0],R[1])],strokeColor:'#ffffff',strokeWeight:3,strokeOpacity:1,zIndex:11,map:TMM}))}catch(e){}}}
-  pins.forEach(function(p){var ic=tmIcon(p.ic);if(!ic)return;try{tmPins.push(new Tmapv3.Marker({position:LL(p.la,p.lo),icon:ic.url,iconSize:new Tmapv3.Size(Math.round(ic.w*0.8),Math.round(ic.h*0.8)),anchor:'bottom',map:TMM}))}catch(e){}})}
+      (function(L,R,B){JOB.push(function(){tmLines.push(new Tmapv3.Polyline({path:[LL(L[0],L[1]),LL(B.la,B.lo),LL(R[0],R[1])],strokeColor:'#ffffff',strokeWeight:3,strokeOpacity:1,zIndex:11,map:TMM}))})})(L,R,B)}}
+  pins.forEach(function(p){var ic=tmIcon(p.ic);if(!ic)return;try{JOB.push(function(){tmPins.push(new Tmapv3.Marker({position:LL(p.la,p.lo),icon:ic.url,iconSize:new Tmapv3.Size(Math.round(ic.w*0.8),Math.round(ic.h*0.8)),anchor:'bottom',map:TMM}))})}catch(e){}});runJobs(JOB,tok)}
 function initMap(){
   if(ENG==='tmap'){if(TMM)return;loadTmap(function(){try{curStyle=nightNow()?'NIGHT':'ROAD';TMM=new Tmapv3.Map('map',{center:LL(37.4979,127.0276),width:'100%',height:'100%',zoom:17,mapType:curStyle});
       TMM.on('ConfigLoad',function(){try{TMM.setInteractive(false)}catch(e){}mapReady=true;camSrcAt=null;tmZ=tmB=tmMppZ=null;drawRoute(true)})}catch(e){ENG='ml';TMM=null;initMap()}},function(){ENG='ml';initMap()});return}
@@ -921,7 +931,7 @@ function previewRoute(r,d){PREV={R:r.R,C:r.C,S:r.S,dest:d};drawRoute(true);fitRo
 function endPreview(){if(!PREV)return;PREV=null;tmZ=tmB=tmMppZ=null;camSrcAt=null;drawRoute(true)}
 function fitRoute(R){if(!mapReady||!R||R.length<2)return;var a0=90,a1=-90,o0=180,o1=-180;R.forEach(function(p){if(p[0]<a0)a0=p[0];if(p[0]>a1)a1=p[0];if(p[1]<o0)o0=p[1];if(p[1]>o1)o1=p[1]});
   var pw=$('rtSheet').querySelector('.panel').offsetWidth,W=$('map').clientWidth,H=$('map').clientHeight,aw=Math.max(120,W-pw-90),ah=Math.max(120,H-110),c={la:(a0+a1)/2,lo:(o0+o1)/2};
-  if(TMM){TMM.setBearing(0);tmB=0;var z=18;for(;z>6;z-=0.25){TMM.setZoom(z);TMM.setCenter(LL(c.la,c.lo));var p=mapPx(a1,o0),q=mapPx(a0,o1);if(Math.abs(q.x-p.x)<=aw&&Math.abs(q.y-p.y)<=ah)break}
+  if(TMM){TMM.setBearing(0);tmB=0;var z=14;for(var it=0;it<2;it++){TMM.setZoom(z);TMM.setCenter(LL(c.la,c.lo));var p=mapPx(a1,o0),q=mapPx(a0,o1),w=Math.max(1,Math.abs(q.x-p.x)),hh=Math.max(1,Math.abs(q.y-p.y));z=Math.max(6,Math.min(18,z+Math.log(Math.min(aw/w,ah/hh))/Math.LN2))}TMM.setZoom(z);TMM.setCenter(LL(c.la,c.lo));
     var m0=mapPx(c.la,c.lo),m1=mapPx(c.la,c.lo+0.01),mpx=0.01/Math.max(1,Math.abs(m1.x-m0.x)),dx=(pw+(W-pw)/2)-W/2;TMM.setCenter(LL(c.la,c.lo-dx*mpx));tmZ=null;tmMppZ=null;return}
   map.fitBounds([[o0,a0],[o1,a1]],{padding:{left:pw+50,right:80,top:60,bottom:60},bearing:0,duration:0})}
 function applyRoute(d,r){
@@ -945,7 +955,7 @@ function route(){
 }
 function drawRoute(force){if(!mapReady)return;
   var RT=PREV||NAV||(ARR?{R:[],C:[],dest:ARR.dest}:null),on=RT&&RT.R&&RT.R.length;
-  if(TMM&&!force&&NAV&&!PREV&&tmRouteRef===NAV.R&&Math.abs(NAV.s-tmDrawS)<150)return;
+  if(TMM&&!force&&NAV&&!PREV&&tmRouteRef===NAV.R&&Math.abs(NAV.s-tmDrawS)<400)return;
   var fs=[];if(on){var R=RT.R,C=RT.C||[],i0=PREV?0:Math.max(0,NAV.idx),cur=null;for(var i=i0;i<R.length-1;i++){var c=C[i]||0;if(!cur||cur.properties.c!==c){if(cur)fs.push(cur);cur={type:'Feature',properties:{c:c},geometry:{type:'LineString',coordinates:[[R[i][1],R[i][0]]]}}}cur.geometry.coordinates.push([R[i+1][1],R[i+1][0]])}if(cur)fs.push(cur)}
   var pins=RT?[{la:RT.dest.la,lo:RT.dest.lo,ic:'dest'}].concat(((NAV&&!PREV)?NAV.via||[]:[]).map(function(p){return{la:p.la,lo:p.lo,ic:'via'}})):[];
   if(TMM){tmRouteRef=RT?RT.R:null;tmDrawS=NAV&&!PREV?NAV.s:0;tmDrawRoute(fs,pins);return}
