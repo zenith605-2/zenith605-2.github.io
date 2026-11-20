@@ -35,15 +35,17 @@
 var $=function(id){return document.getElementById(id)};
 $('ua').textContent=navigator.userAgent+'\n화면 '+screen.width+'x'+screen.height+' / 창 '+innerWidth+'x'+innerHeight;
 
-var updates=0,last=0,gaps=[];
+var updates=0,last=0,gaps=[],ages=[];
 function setGeo(cls,txt){var e=$('geo');e.className='big '+cls;e.textContent=txt}
 if(!('geolocation' in navigator)){setGeo('bad','지원 안 함')}
 else{
   navigator.geolocation.watchPosition(function(p){
     updates++;var now=Date.now();if(last){gaps.push(now-last);if(gaps.length>10)gaps.shift()}last=now;
     var c=p.coords;setGeo('ok','됨');
+    var age=now-p.timestamp;ages.push(age);if(ages.length>10)ages.shift();
+    var avgAge=Math.round(ages.reduce(function(a,b){return a+b},0)/ages.length);
     var avg=gaps.length?Math.round(gaps.reduce(function(a,b){return a+b},0)/gaps.length)+'ms':'-';
-    $('geoInfo').textContent='위도 '+c.latitude.toFixed(6)+'\n경도 '+c.longitude.toFixed(6)+'\n정확도 '+Math.round(c.accuracy)+'m\n방향 '+(c.heading==null?'없음':Math.round(c.heading)+'°')+'\n받은 횟수 '+updates+' / 평균 간격 '+avg;
+    $('geoInfo').textContent='위도 '+c.latitude.toFixed(6)+'\n경도 '+c.longitude.toFixed(6)+'\n정확도 '+Math.round(c.accuracy)+'m\n방향 '+(c.heading==null?'없음':Math.round(c.heading)+'°')+'\n받은 횟수 '+updates+' / 평균 간격 '+avg+'\n위치 지연(측정 후 도착까지) '+Math.round(age)+'ms / 평균 '+avgAge+'ms';
     if(c.speed==null){$('spd').textContent='값 없음';$('spd').className='big bad'}
     else{$('spd').textContent=Math.round(c.speed*3.6)+' km/h';$('spd').className='big ok'}
   },function(e){setGeo('bad','안 됨');$('geoInfo').textContent='오류 '+e.code+': '+e.message},
@@ -53,15 +55,15 @@ else{
 var ac=null;
 $('beep').onclick=function(){
   try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();
-    var o=ac.createOscillator(),g=ac.createGain();o.frequency.value=1200;o.connect(g);g.connect(ac.destination);
+    var t0=performance.now();var o=ac.createOscillator(),g=ac.createGain();o.frequency.value=1200;o.connect(g);g.connect(ac.destination);
     g.gain.setValueAtTime(0.4,ac.currentTime);o.start();o.stop(ac.currentTime+0.4);
-    $('sndInfo').textContent='삑 소리를 보냈습니다. 들렸나요?';
+    var lat=Math.round(((ac.baseLatency||0)+(ac.outputLatency||0))*1000);$('sndInfo').textContent='삑 소리를 보냈습니다. 들렸나요? 오디오 출력 지연 '+lat+'ms';
   }catch(e){$('sndInfo').textContent='오디오 오류: '+e.message}
 };
 $('voice').onclick=function(){
   if(!('speechSynthesis' in window)){$('sndInfo').textContent='음성 안내 지원 안 함';return}
   var u=new SpeechSynthesisUtterance('전방 300미터, 제한속도 60킬로미터 단속 구간입니다');u.lang='ko-KR';
-  speechSynthesis.speak(u);$('sndInfo').textContent='음성을 보냈습니다. 한국어로 들렸나요? 한국어 음성 '+speechSynthesis.getVoices().filter(function(v){return /ko/i.test(v.lang)}).length+'개';
+  var t1=performance.now();u.onstart=function(){$('sndInfo').textContent+='\n음성 시작까지 '+Math.round(performance.now()-t1)+'ms'};speechSynthesis.speak(u);$('sndInfo').textContent='음성을 보냈습니다. 한국어로 들렸나요? 한국어 음성 '+speechSynthesis.getVoices().filter(function(v){return /ko/i.test(v.lang)}).length+'개';
 };
 $('flash').onclick=function(){document.body.classList.add('red');setTimeout(function(){document.body.classList.remove('red')},3000)};
 
