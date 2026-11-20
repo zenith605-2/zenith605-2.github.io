@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>웹 네비 시안</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#1b1d22;font-family:system-ui,sans-serif;color:#fff}
+  #stage{position:fixed;inset:0;overflow:hidden}
+  #rot{position:absolute;left:50%;top:58%;width:170vmax;height:170vmax;margin:-85vmax 0 0 -85vmax;transition:transform .25s linear}
+  #map{width:100%;height:100%;background:#2a2d33}
+  .leaflet-tile-pane{filter:brightness(.62) contrast(1.15) saturate(.7)}
+  #car{position:fixed;left:50%;top:58%;width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-bottom:52px solid #3d8bff;transform:translate(-50%,-60%);filter:drop-shadow(0 0 8px #3d8bff);z-index:500}
+  #turn{position:fixed;left:24px;top:24px;background:#0f6b3f;border-radius:18px;padding:16px 26px;display:flex;align-items:center;gap:20px;z-index:600;box-shadow:0 6px 20px #0008}
+  #turn .ar{font-size:64px;line-height:1}
+  #turn .d{font-size:46px;font-weight:800}
+  #turn .r{font-size:24px;opacity:.9}
+  #limit{position:fixed;right:30px;top:28px;width:128px;height:128px;border-radius:50%;background:#fff;border:14px solid #e02020;box-sizing:border-box;color:#111;font-size:54px;font-weight:900;display:flex;align-items:center;justify-content:center;z-index:600}
+  #speed{position:fixed;right:30px;top:178px;width:128px;text-align:center;z-index:600}
+  #speed .v{font-size:64px;font-weight:800;line-height:1}
+  #speed .u{font-size:20px;opacity:.7}
+  #bottom{position:fixed;left:24px;right:24px;bottom:22px;display:flex;gap:14px;z-index:600}
+  .pill{background:#000c;border-radius:16px;padding:14px 22px;font-size:28px;font-weight:700}
+  #cam{background:#a35b00}
+  #cam.near{background:#d97a00}
+  #warn{position:fixed;inset:0;pointer-events:none;z-index:550;box-shadow:inset 0 0 0 0 #f00;transition:box-shadow .15s,background .15s}
+  body.over #warn{box-shadow:inset 0 0 0 26px #ff1a1a;background:#ff00002e}
+  body.over #speed .v{color:#ff4040}
+  #mode{position:fixed;left:24px;bottom:96px;z-index:600;display:flex;gap:10px}
+  #mode button{font-size:20px;padding:12px 18px;border-radius:12px;border:0;background:#333a;color:#fff}
+  #mode button.on{background:#3d8bff}
+  .leaflet-control-attribution{font-size:11px}
+</style>
+</head>
+<body>
+<div id="stage"><div id="rot"><div id="map"></div></div></div>
+<div id="car"></div>
+<div id="warn"></div>
+<div id="turn"><div class="ar" id="tar">↰</div><div><div class="d" id="td">-</div><div class="r" id="tr">-</div></div></div>
+<div id="limit">60</div>
+<div id="speed"><div class="v" id="sv">0</div><div class="u">km/h</div></div>
+<div id="mode"><button id="bDemo" class="on">시연 주행</button><button id="bReal">내 위치</button><button id="bSound">소리 켜기</button></div>
+<div id="bottom"><div class="pill" id="cam">📷 단속 -</div><div class="pill" id="eta">도착 -</div></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* 시안: 지도는 OpenStreetMap, 실제 판은 티맵 지도로 바꾼다 */
+var R=[[37.503505, 127.024936], [37.503269, 127.025045], [37.502867, 127.025183], [37.50254, 127.025323], [37.50196, 127.025562], [37.501545, 127.02576], [37.50098, 127.02604], [37.500714, 127.026158], [37.500403, 127.026311], [37.499665, 127.026675], [37.49947, 127.026773], [37.49934, 127.026838], [37.498825, 127.027074], [37.498586, 127.027182], [37.498453, 127.027245], [37.498095, 127.027422], [37.497984, 127.027473], [37.497925, 127.027502], [37.497866, 127.027531], [37.497887, 127.027606], [37.497891, 127.027621], [37.497904, 127.027663], [37.497923, 127.02773], [37.498009, 127.028008], [37.4981, 127.028307], [37.498141, 127.028439], [37.498225, 127.02872], [37.498437, 127.029417], [37.498687, 127.03025], [37.498883, 127.030896], [37.498934, 127.031073], [37.499003, 127.031296], [37.499209, 127.032002], [37.499465, 127.032827], [37.499557, 127.033126], [37.499817, 127.033998], [37.500276, 127.035532], [37.500326, 127.035699], [37.500399, 127.035937], [37.500517, 127.036339], [37.500635, 127.036737], [37.500652, 127.036793], [37.500712, 127.036994], [37.500752, 127.037123], [37.50079, 127.037245], [37.500924, 127.03768], [37.50117, 127.038474], [37.501397, 127.039198], [37.501608, 127.039882], [37.501654, 127.040038], [37.501799, 127.040536], [37.502039, 127.041248], [37.502361, 127.042344]];
+var CAM={p:[37.499465,127.032827],limit:60};
+var TURN={i:18,arrow:'↰',name:'강남역 사거리에서 좌회전',road:'테헤란로'};
+var map=L.map('map',{zoomControl:false,attributionControl:true,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,keyboard:false,touchZoom:false}).setView(R[0],17);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+L.polyline(R,{color:'#3d8bff',weight:14,opacity:.85}).addTo(map);
+L.circleMarker(CAM.p,{radius:14,color:'#fff',weight:3,fillColor:'#d97a00',fillOpacity:1}).addTo(map);
+
+function dist(a,b){var k=Math.PI/180,x=(b[1]-a[1])*k*Math.cos((a[0]+b[0])/2*k),y=(b[0]-a[0])*k;return Math.sqrt(x*x+y*y)*6371000}
+function bearing(a,b){var k=Math.PI/180,y=Math.sin((b[1]-a[1])*k)*Math.cos(b[0]*k),x=Math.cos(a[0]*k)*Math.sin(b[0]*k)-Math.sin(a[0]*k)*Math.cos(b[0]*k)*Math.cos((b[1]-a[1])*k);return (Math.atan2(y,x)/k+360)%360}
+var seg=[],total=0;for(var i=0;i<R.length-1;i++){var d=dist(R[i],R[i+1]);seg.push(d);total+=d}
+function at(s){for(var i=0;i<seg.length;i++){if(s<=seg[i]){var t=s/seg[i];return{p:[R[i][0]+(R[i+1][0]-R[i][0])*t,R[i][1]+(R[i+1][1]-R[i][1])*t],h:bearing(R[i],R[i+1]),i:i}}s-=seg[i]}return{p:R[R.length-1],h:bearing(R[R.length-2],R[R.length-1]),i:seg.length-1}}
+function along(i){var s=0;for(var j=0;j<i;j++)s+=seg[j];return s}
+var turnS=along(TURN.i),camS=along(33);
+
+var ac=null,soundOn=false,lastBeep=0,spoken={};
+function beep(f,len){if(!soundOn)return;ac=ac||new (window.AudioContext||window.webkitAudioContext)();var o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.35,ac.currentTime);o.start();o.stop(ac.currentTime+len)}
+function say(key,t){if(!soundOn||spoken[key]||!('speechSynthesis' in window))return;spoken[key]=1;var u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';speechSynthesis.speak(u)}
+document.getElementById('bSound').onclick=function(){soundOn=true;this.classList.add('on');this.textContent='소리 켜짐';beep(900,.15)};
+
+var mode='demo',s=0,v=0,lastT=performance.now(),realPos=null,realH=0,realV=0;
+function profile(s){if(s<turnS-60)return 50;if(s<turnS+30)return 22;if(s<camS-260)return 58;if(s<camS-40)return 72;return 48}
+function render(p,h,kmh,sNow){
+  map.setView(p,17,{animate:false});
+  document.getElementById('rot').style.transform='rotate('+(-h)+'deg)';
+  document.getElementById('sv').textContent=Math.round(kmh);
+  var toTurn=turnS-sNow,toCam=camS-sNow;
+  if(toTurn>0){document.getElementById('tar').textContent=TURN.arrow;document.getElementById('td').textContent=Math.round(toTurn/10)*10+'m';document.getElementById('tr').textContent=TURN.name;if(toTurn<300)say('t300','300미터 앞 '+TURN.name+'입니다')}
+  else{document.getElementById('tar').textContent='↑';document.getElementById('td').textContent=Math.max(0,Math.round((total-sNow)/10)*10)+'m';document.getElementById('tr').textContent=TURN.road+' 따라 직진'}
+  var cam=document.getElementById('cam');
+  if(toCam>0){cam.textContent='📷 단속 '+CAM.limit+' · '+Math.round(toCam/10)*10+'m';cam.className='pill'+(toCam<300?' near':'');if(toCam<400)say('c400','전방 400미터 제한속도 '+CAM.limit+'킬로미터 단속 구간입니다')}
+  else{cam.textContent='📷 다음 단속 없음';cam.className='pill'}
+  var over=toCam>0&&toCam<400&&kmh>CAM.limit;
+  document.body.classList.toggle('over',over);
+  if(over&&performance.now()-lastBeep>600){beep(1400,.18);lastBeep=performance.now();say('over','속도를 줄이세요')}
+  var remain=Math.max(0,total-sNow),eta=new Date(Date.now()+remain/Math.max(kmh,20)*3.6*1000);
+  document.getElementById('eta').textContent='도착 '+eta.getHours()+':'+String(eta.getMinutes()).padStart(2,'0')+' · '+(remain/1000).toFixed(1)+'km';
+}
+function tick(t){
+  var dt=Math.min(.1,(t-lastT)/1000);lastT=t;
+  if(mode==='demo'){var target=profile(s);v+=(target-v)*Math.min(1,dt*0.8);s+=v/3.6*dt*3;if(s>=total){s=0;v=0;spoken={}}var a=at(s);render(a.p,a.h,v,s)}
+  else if(realPos){render(realPos,realH,realV,-1e9)}
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+document.getElementById('bDemo').onclick=function(){mode='demo';this.classList.add('on');document.getElementById('bReal').classList.remove('on')};
+document.getElementById('bReal').onclick=function(){
+  mode='real';this.classList.add('on');document.getElementById('bDemo').classList.remove('on');
+  if(!navigator.geolocation){alert('위치 정보를 지원하지 않습니다');return}
+  navigator.geolocation.watchPosition(function(p){realPos=[p.coords.latitude,p.coords.longitude];if(p.coords.heading!=null&&!isNaN(p.coords.heading))realH=p.coords.heading;realV=(p.coords.speed||0)*3.6},function(e){alert('위치 오류: '+e.message)},{enableHighAccuracy:true,maximumAge:0});
+};
+</script>
+</body>
+</html>
