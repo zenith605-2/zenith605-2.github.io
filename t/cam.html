@@ -286,6 +286,9 @@
   #cctvBig.on{display:block}#cctvBig video{width:100%;aspect-ratio:16/9;display:block;background:#000}#cctvBig .nm{color:#fff;font-size:16px;font-weight:700;padding:10px 14px}
   #cctvBig button{position:absolute;right:10px;top:10px;width:42px;height:42px;border:0;border-radius:50%;background:#0009;color:#fff;font-size:20px}
   #drChip{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:12;background:#333d;color:#fff;font-size:14px;font-weight:700;border-radius:16px;padding:6px 14px;display:none}#drChip.show{display:block}
+  #tSub{font-size:13px;opacity:.8;margin-top:1px;max-width:230px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#tSub:empty{display:none}
+  #limNow{width:52px;height:52px;border-radius:50%;background:#fff;border:7px solid #e3151a;box-sizing:border-box;color:#111;font-size:21px;font-weight:900;display:none;align-items:center;justify-content:center;box-shadow:0 2px 8px #0004;letter-spacing:-1px}
+  #limNow.show{display:flex}#alertBox.on #limNow{display:none}body.overLim #spd{color:#e3151a}
 </style>
 </head>
 <body>
@@ -298,7 +301,7 @@
 <div id="warn"></div>
 
 <div id="left">
-  <div id="turn"><svg id="tArrow" viewBox="0 0 100 100"></svg><div><div id="tDist">-</div><div id="tName"></div></div></div>
+  <div id="turn"><svg id="tArrow" viewBox="0 0 100 100"></svg><div><div id="tDist">-</div><div id="tName"></div><div id="tSub"></div></div></div>
   <div id="next"><svg id="nArrow" viewBox="0 0 100 100"></svg><span id="nDist"></span></div>
   <button id="restChip"></button>
   <div id="incChip"></div>
@@ -310,6 +313,7 @@
 <div id="accBox"><svg viewBox="0 0 100 90"><polygon points="50,6 95,84 5,84" fill="#ffc81e" stroke="#e3151a" stroke-width="8" stroke-linejoin="round"/><path d="M50 30v26" stroke="#111" stroke-width="9" stroke-linecap="round"/><circle cx="50" cy="69" r="5.5" fill="#111"/></svg><b id="accD">-</b><span id="accT"></span></div>
 <div id="bumpBox"><svg viewBox="0 0 100 90"><polygon points="50,6 95,84 5,84" fill="#ffc81e" stroke="#e3151a" stroke-width="8" stroke-linejoin="round"/><path d="M24 70 Q50 42 76 70 Z" fill="#111"/><rect x="18" y="69" width="64" height="5" fill="#111"/></svg><b id="bumpD">-</b></div>
 <div id="alertBox">
+  <div id="limNow"></div>
   <div id="spd">-</div>
   <div id="signWrap"><div class="lim" id="lim">60</div>
     <svg id="sgChild" viewBox="0 0 100 92"><polygon points="50,6 95,86 5,86" fill="#fff" stroke="#e02020" stroke-width="10" stroke-linejoin="round"/><circle cx="40" cy="44" r="6" fill="#111"/><circle cx="61" cy="50" r="5" fill="#111"/><path d="M40 51 L36 68 M40 51 L46 66 M40 54 L31 60 M40 54 L50 58 M61 56 L58 70 M61 56 L65 70 M61 59 L53 61 M61 59 L69 63" stroke="#111" stroke-width="5" stroke-linecap="round" fill="none"/></svg>
@@ -1011,7 +1015,7 @@ function parseRoute(d){
     if(g.type==='LineString'&&p.index==null)return;
     if(g.type==='LineString'){var base=R.length,skip=0;g.coordinates.forEach(function(xy,i){if(R.length&&i===0){var L=R[R.length-1];if(L[0]===xy[1]&&L[1]===xy[0]){skip=1;return}}R.push([xy[1],xy[0]]);C.push(0);T.push(p.roadType==null?-1:p.roadType);F.push(+p.facilityType||0);V.push(0)});(g.traffic||[]).forEach(function(tr){for(var k=tr[0];k<tr[1];k++){var gi=base+k-skip;if(gi>=0&&gi<C.length){C[gi]=tr[2];V[gi]=+tr[3]||0}}})}
     else if(g.type==='Point'&&p.turnType==null&&/^B/.test(p.pointType||'')){G.push({la:g.coordinates[1],lo:g.coordinates[0],t:185,name:'',pname:'경유지',ri:Math.max(0,R.length-1)})}
-    else if(g.type==='Point'&&p.turnType!=null){G.push({la:g.coordinates[1],lo:g.coordinates[0],t:p.turnType,name:p.nextRoadName||'',pname:p.name||'',ri:Math.max(0,R.length-1)})}
+    else if(g.type==='Point'&&p.turnType!=null){var dm=/에서\s*(.+?)\s*방면/.exec(p.description||'');G.push({dir:dm?dm[1].split('/').filter(function(x){return x.trim()}).slice(0,2).join(' · '):'',la:g.coordinates[1],lo:g.coordinates[0],t:p.turnType,name:p.nextRoadName||'',pname:p.name||'',ri:Math.max(0,R.length-1)})}
     if(p.totalTime)time=p.totalTime;if(p.totalFare!=null&&p.totalTime)fare=p.totalFare;
   });
   var S=[0];for(var i=1;i<R.length;i++)S.push(S[i-1]+dist(R[i-1][0],R[i-1][1],R[i][0],R[i][1]));
@@ -1106,6 +1110,17 @@ $('cctvBtn').onclick=function(){if($('cctvBar').classList.contains('on'))cctvClo
   row.addEventListener('pointerdown',function(e){st={x:e.clientX,l:row.scrollLeft};row._dragged=false});
   row.addEventListener('pointermove',function(e){if(!st)return;var dx=e.clientX-st.x;if(Math.abs(dx)>6){row._dragged=true;row.scrollLeft=st.l-dx}});
   ['pointerup','pointercancel','pointerleave'].forEach(function(n){row.addEventListener(n,function(){st=null;setTimeout(function(){row._dragged=false},50)})})})();
+function limRoute(N){var R=N.R,n=R.length,step=Math.max(1,Math.ceil(n/480)),idx=[];for(var i=0;i<n;i+=step)idx.push(i);if(idx[idx.length-1]!==n-1)idx.push(n-1);
+  var body='responseType=1&coords='+idx.map(function(i){return R[i][1].toFixed(6)+','+R[i][0].toFixed(6)}).join('|');
+  api('road/matchToRoads500?version=1',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body}).then(function(d){if(!(NAV&&NAV.R===R))return;
+    var M=((d||{}).resultData||{}).matchedPoints||[],at={};M.forEach(function(m){if(m.sourceIndex!=null){var v=+m.speed||0;at[m.sourceIndex]=(m.roadCategory>=11||v<20)?0:v}});
+    var L=new Array(n),cur=at[0]||0,k=0;for(var i=0;i<n;i++){while(k<idx.length-1&&idx[k+1]<=i){k++;if(at[k]!=null)cur=at[k]}L[i]=cur}
+    NAV.LIM=L}).catch(function(){})}
+function limNear(la,lo){if(LIMN.busy)return;LIMN.busy=1;api('road/nearToRoad?version=1&lat='+la.toFixed(6)+'&lon='+lo.toFixed(6)).then(function(d){var h=((d||{}).resultData||{}).header||{},v=+h.speed||0;LIMN.v=(h.roadCategory>=11||v<20)?0:v;LIMN.la=la;LIMN.lo=lo;LIMN.t=Date.now()}).catch(function(){LIMN.t=Date.now()}).then(function(){LIMN.busy=0})}
+function limNow(la,lo,kmh,now){var v=0;
+  if(NAV&&NAV.R){if(!PREV&&NAV.R!==LIMR&&now-LIMT>5000&&now-(NAV.t0||0)>1500){LIMR=NAV.R;LIMT=now;NAV.LIM=null;limRoute(NAV)}if(NAV.LIM)v=NAV.LIM[Math.max(0,Math.min(NAV.LIM.length-1,NAV.idx))]||0}
+  else{if(kmh>10&&now-LIMN.t>15000&&dist(la,lo,LIMN.la,LIMN.lo)>150)limNear(la,lo);if(now-LIMN.t<60000&&dist(la,lo,LIMN.la,LIMN.lo)<300)v=LIMN.v}
+  var e=$('limNow');if(v){if(e.textContent!==String(v))e.textContent=v;e.classList.add('show')}else e.classList.remove('show');document.body.classList.toggle('overLim',!!v&&kmh>v+5)}
 function endNav(){cctvClose();try{LS.removeItem('navResume')}catch(e){}show('incChip',0);fastR=null;show('fastCard',0);show('jamChip',0);show('hwBox',0);if(TMM)tmDrawTurn(null);RWX=null;setTimeout(updWxWarn,0);favDismissed=false;setTimeout(showFav,1500);NAV=null;document.body.classList.remove('nav');setTimeout(mapResize,60);drawRoute(true)}
 function project(la,lo){
   var R=NAV.R,best=null,from=Math.max(0,NAV.idx-5),to=Math.min(R.length-2,NAV.idx+120),kx=111320*Math.cos(la*D2R),ky=111320;
@@ -1127,7 +1142,7 @@ function navTick(la,lo,kmh,now){
   NAV.nextD=nx?nx.s-NAV.s:null;if(TMM)tmDrawTurn(nx&&nx.s-NAV.s<500?nx:null);
   if(nx){var dd=nx.s-NAV.s,nm=ttName(nx.t);
     $('tArrow').innerHTML=AR[arrowKind(nx.t)];$('tDist').innerHTML=bigD(dd);
-    $('tName').textContent=nx.t===201?NAV.dest.name:nx.t===185?'경유지 · '+((NAV.via||[])[0]||{name:''}).name:(nx.pname||nx.name||nm);
+    $('tName').textContent=nx.t===201?NAV.dest.name:nx.t===185?'경유지 · '+((NAV.via||[])[0]||{name:''}).name:nx.dir?nx.dir+' 방면':(nx.pname||nx.name||nm);$('tSub').textContent=nx.dir&&nx.t!==201&&nx.t!==185?(nx.pname&&!/^(교차로|분기점)$/.test(nx.pname)?nx.pname:''):'';
     if(nx2&&nx2.s-nx.s<400){$('nArrow').innerHTML=AR[arrowKind(nx2.t)];$('nDist').textContent=fmtD(nx2.s-NAV.s);show('next',1)}
     else if(nx.t!==201){$('nArrow').innerHTML=AR.dest;$('nDist').textContent=fmtD(remain);show('next',1)}else show('next',0);
     var far=kmh>70?1000:300,key=String(nx.s);
@@ -1234,7 +1249,7 @@ function tickBody(){
   if(mapReady&&mapOn&&!TMM&&!PREV&&!FREE){var mH=$('map').clientHeight;map.jumpTo({center:[mlo,mla],bearing:(mh==null||!CFG.rot)?0:mh,zoom:zoomNow(kmh,now),pitch:VIEW==='3d'?50:0,padding:{top:mH*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo,head);
     var cp=map.project([mlo,mla]);$('carMk').style.left=cp.x+'px';$('carMk').style.top=cp.y+'px'}
   $('carMk').style.transform='translate(-50%,-50%) rotate('+((!CFG.rot&&mh!=null)?mh:0)+'deg)';
-  var nv=navTick(la,lo,kmh,now);
+  try{limNow(la,lo,kmh,now)}catch(e){}var nv=navTick(la,lo,kmh,now);
   if(nv){var eta=new Date(now+nv.rt*1000),h=eta.getHours();var mins=Math.round(nv.rt/60),rtT=mins>=60?Math.floor(mins/60)+'시간 '+(mins%60)+'분':mins+'분';$('bInfo').innerHTML='<span>'+(h<12?'오전':'오후')+' <b>'+String(h%12||12).padStart(2,'0')+':'+String(eta.getMinutes()).padStart(2,'0')+'</b></span><span><b>'+bigD(nv.remain).replace('<small>','</b><span>').replace('</small>','</span>')+'</span><span>'+rtT+' 남음</span><span class="gray">'+NAV.dest.name.replace(/</g,'')+'</span>'}
   else if(!NAV){var d0=new Date(),h0=d0.getHours();var DN=['일','월','화','수','목','금','토'];var tH='<span class="bsearch"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>어디로 갈까요?</span><span class="gray">'+(d0.getMonth()+1)+'월 '+d0.getDate()+'일 ('+DN[d0.getDay()]+')</span><span>'+(h0<12?'오전':'오후')+' <b>'+String(h0%12||12).padStart(2,'0')+':'+String(d0.getMinutes()).padStart(2,'0')+'</b></span>';if(bInfoH!==tH){bInfoH=tH;$('bInfo').innerHTML=tH}}
   var over=false,zone=false,alertD=target?alertFor(target.c[2]):alertFor(0);
@@ -1280,7 +1295,7 @@ function tickBody(){
 }
 
 /* 한 번의 오류로 화면 갱신이 영영 멈추지 않게: 오류는 진단 줄에 남기고 다음 프레임 계속 */
-var tunNear=false,lastErr='',errN=0,bootT0=Date.now(),DSP=null,DR={fix:null,s:null,on:false};
+var tunNear=false,LIMR=null,LIMT=0,LIMN={v:0,la:0,lo:0,t:0,busy:0},lastErr='',errN=0,bootT0=Date.now(),DSP=null,DR={fix:null,s:null,on:false};
 /* 후진 카메라 등으로 브라우저가 가려지면 requestAnimationFrame 이 멈출 수 있어, 가려진 동안은 1초마다 직접 돌려 경고를 이어 간다. 가려진 시간·그동안 받은 위치 수는 진단 줄에 */
 var HID={t:0,f:0,ticks:0,last:''};
 document.addEventListener('visibilitychange',function(){if(document.hidden){HID.t=Date.now();HID.f=fixes;HID.ticks=0}else if(HID.t){HID.last=' · 가려짐 '+Math.round((Date.now()-HID.t)/1000)+'초 위치 '+(fixes-HID.f)+'회 갱신 '+HID.ticks+'회';HID.t=0}});
