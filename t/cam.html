@@ -1210,12 +1210,13 @@ function tickBody(){
   var age=(now-(fix.mt||fix.t))/1000,la=fix.la,lo=fix.lo;
   /* 터널 등 GPS 끊김: 안내 중이면 마지막 속도로 경로를 따라(최대 4분), 아니면 직진으로(최대 40초) 추정 위치를 이어 간다. 카메라 경고도 이 위치로 계속 */
   var drDt=DR.lt?Math.min(0.5,(now-DR.lt)/1000):0;DR.lt=now;
-  if(DR.fix!==(fix.mt||fix.t)){DR.fix=fix.mt||fix.t;DR.s=null;DR.d=0;if(NAV&&NAV.R&&NAV.R.length>1){var dp=project(fix.la,fix.lo);if(dp&&dp.d<30)DR.s=NAV.S[dp.i]+dp.t*(NAV.S[dp.i+1]-NAV.S[dp.i])}}
+  if(DR.fix!==(fix.mt||fix.t)){DR.fix=fix.mt||fix.t;DR.s=null;DR.te=0;DR.d=0;if(NAV&&NAV.R&&NAV.R.length>1){var dp=project(fix.la,fix.lo);if(dp&&dp.d<30)DR.s=NAV.S[dp.i]+dp.t*(NAV.S[dp.i+1]-NAV.S[dp.i])}}
   tunNear=false;if(NAV&&NAV.F&&NAV.S){for(var ti=Math.max(0,NAV.idx-5);ti<NAV.S.length-1&&NAV.S[ti]<NAV.s+300;ti++)if(NAV.S[ti]>NAV.s-100&&(NAV.F[ti]===2||NAV.F[ti]===4)){tunNear=true;break}}
   var drOn=false,drI=-1;if(NAV&&DR.s!=null&&NAV.F){var di=Math.max(0,NAV.idx);while(di<NAV.S.length-2&&NAV.S[di+1]<DR.s+(DR.d||0))di++;drI=di}
-  var inTun=drI>=0&&(NAV.F[drI]===2||NAV.F[drI]===4),tv=inTun&&NAV.V&&NAV.V[drI]>5?NAV.V[drI]/3.6:0;
+  var inTun=drI>=0&&(NAV.F[drI]===2||NAV.F[drI]===4),tv0=inTun&&NAV.V&&NAV.V[drI]>5?NAV.V[drI]/3.6:0,tv=tv0&&v>4?(tv0+v)/2:tv0,tunEnd=1e12;
+  if(inTun){var te=drI;while(te<NAV.F.length-1&&(NAV.F[te]===2||NAV.F[te]===4))te++;DR.te=NAV.S[te]}if(DR.te)tunEnd=DR.te;
   DR.d=(DR.d||0)+(age>(inTun?1.2:2.5)&&tv?tv:v)*drDt;
-  if(age>(inTun?1.2:2.5)&&(v>4||tv)&&NAV&&DR.s!=null&&age<(inTun?600:240)){var dq=routePoint(Math.min(NAV.total-1,DR.s+DR.d));la=dq.la;lo=dq.lo;head=dq.h;drOn=true}
+  if(age>(inTun?1.2:2.5)&&(v>4||tv)&&NAV&&DR.s!=null&&age<(inTun?600:240)){DR.d=Math.min(DR.d,Math.max(0,tunEnd+30-DR.s));var dq=routePoint(Math.min(NAV.total-1,DR.s+DR.d));la=dq.la;lo=dq.lo;head=dq.h;drOn=true}
   else if(age>2.5&&v>4&&head!=null&&age<40){var p=move(la,lo,head,v*age);la=p[0];lo=p[1];drOn=true}
   else if(head!=null&&v>1){var p=move(la,lo,head,v*Math.min(2,age));la=p[0];lo=p[1]}
   if(drOn!==DR.on){DR.on=drOn;show('drChip',drOn)}if(drOn)$('drChip').textContent=(inTun?'터널':'GPS 신호 없음')+' · 추정 위치로 안내 중';
