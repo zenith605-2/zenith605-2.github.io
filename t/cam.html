@@ -285,12 +285,14 @@
   #cctvBig{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,90vw);z-index:41;background:#000;border-radius:14px;overflow:hidden;display:none;box-shadow:0 10px 40px #000a}
   #cctvBig.on{display:block}#cctvBig video{width:100%;aspect-ratio:16/9;display:block;background:#000}#cctvBig .nm{color:#fff;font-size:16px;font-weight:700;padding:10px 14px}
   #cctvBig button{position:absolute;right:10px;top:10px;width:42px;height:42px;border:0;border-radius:50%;background:#0009;color:#fff;font-size:20px}
+  #drChip{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:12;background:#333d;color:#fff;font-size:14px;font-weight:700;border-radius:16px;padding:6px 14px;display:none}#drChip.show{display:block}
 </style>
 </head>
 <body>
 <button id="kbSink" tabindex="-1" aria-hidden="true" style="position:fixed;left:-200px;top:0;width:1px;height:1px;opacity:0"></button><div id="snd">화면을 한 번 누르면 경고음이 켜집니다</div><span id="loadMsg" hidden></span>
 <div id="boot"><div class="bx"><div class="sp"></div><div class="bt">지도를 불러오는 중</div></div></div><script>setTimeout(function(){var b=document.getElementById('boot');if(b)b.style.display='none'},15000)</script>
 <div id="map"></div>
+<div id="drChip">GPS 신호 없음 · 추정 위치로 안내 중</div>
 <div id="lp"><button class="x" type="button">✕</button><div class="body"></div></div>
 <div id="carMk"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="36" fill="#fff"/><circle cx="40" cy="40" r="36" fill="none" stroke="#1d6ff2" stroke-width="5"/><path d="M40 16 L56 56 L40 47 L24 56 Z" fill="#1d6ff2" stroke="#1d6ff2" stroke-width="3" stroke-linejoin="round"/></svg></div>
 <div id="warn"></div>
@@ -678,7 +680,7 @@ var fix=null,prevFix=null,v=0,head=null,fixes=0,gaps=[],spdSrc='-',lastAcc=0,dem
 function onFix(la,lo,acc,h,spd,t){
   fixes++;lastAcc=acc;
   if(fix){gaps.push(t-fix.t);if(gaps.length>10)gaps.shift()}
-  prevFix=fix;fix={la:la,lo:lo,t:t};
+  prevFix=fix;fix={la:la,lo:lo,t:t,mt:t};if(prevFix&&spd!=null&&spd>5&&dist(prevFix.la,prevFix.lo,la,lo)<1)fix.mt=prevFix.mt;
   var calc=null;
   if(prevFix){var dt=(t-prevFix.t)/1000;if(dt>0.2&&dt<5){var dm=dist(prevFix.la,prevFix.lo,la,lo);calc=dm/dt;if(dm>3)head=brg(prevFix.la,prevFix.lo,la,lo)}}
   if(spd!=null&&!isNaN(spd)&&spd>0){v=v*0.3+spd*0.7;spdSrc='차'}else if(calc!=null){v=v*0.5+calc*0.5;spdSrc='계산'}else if(spd===0){v=0;spdSrc='차'}
@@ -1205,8 +1207,14 @@ $('bMid').addEventListener('click',function(){if(!NAV)$('navBtn').onclick()});
 function tickBody(){
   var now=Date.now();
   if(!fix){$('diag').textContent='위치 기다리는 중';return}
-  var age=Math.min(2,(now-fix.t)/1000),la=fix.la,lo=fix.lo;
-  if(head!=null&&v>1){var p=move(la,lo,head,v*age);la=p[0];lo=p[1]}
+  var age=(now-(fix.mt||fix.t))/1000,la=fix.la,lo=fix.lo;
+  /* 터널 등 GPS 끊김: 안내 중이면 마지막 속도로 경로를 따라(최대 4분), 아니면 직진으로(최대 40초) 추정 위치를 이어 간다. 카메라 경고도 이 위치로 계속 */
+  if(DR.fix!==(fix.mt||fix.t)){DR.fix=fix.mt||fix.t;DR.s=null;if(NAV&&NAV.R&&NAV.R.length>1){var dp=project(fix.la,fix.lo);if(dp&&dp.d<30)DR.s=NAV.S[dp.i]+dp.t*(NAV.S[dp.i+1]-NAV.S[dp.i])}}
+  var drOn=false;
+  if(age>2.5&&v>4&&NAV&&DR.s!=null&&age<240){var dq=routePoint(Math.min(NAV.total-1,DR.s+v*age));la=dq.la;lo=dq.lo;head=dq.h;drOn=true}
+  else if(age>2.5&&v>4&&head!=null&&age<40){var p=move(la,lo,head,v*age);la=p[0];lo=p[1];drOn=true}
+  else if(head!=null&&v>1){var p=move(la,lo,head,v*Math.min(2,age));la=p[0];lo=p[1]}
+  if(drOn!==DR.on){DR.on=drOn;show('drChip',drOn)}
   var kmh=v*3.6;$('spd').textContent=Math.round(kmh);
   var mla=la,mlo=lo,mh=head;
   if(NAV&&NAV.R&&NAV.R.length>1){var sp=project(la,lo);if(sp&&sp.d<30){var A=NAV.R[sp.i],B=NAV.R[sp.i+1];mla=A[0]+(B[0]-A[0])*sp.t;mlo=A[1]+(B[1]-A[1])*sp.t;if(v>2){var sh=brg(A[0],A[1],B[0],B[1]);if(head==null||Math.abs(adiff(head,sh))<45)mh=sh}}}
@@ -1267,7 +1275,7 @@ function tickBody(){
 }
 
 /* 한 번의 오류로 화면 갱신이 영영 멈추지 않게: 오류는 진단 줄에 남기고 다음 프레임 계속 */
-var lastErr='',errN=0,bootT0=Date.now(),DSP=null;
+var lastErr='',errN=0,bootT0=Date.now(),DSP=null,DR={fix:null,s:null,on:false};
 /* 후진 카메라 등으로 브라우저가 가려지면 requestAnimationFrame 이 멈출 수 있어, 가려진 동안은 1초마다 직접 돌려 경고를 이어 간다. 가려진 시간·그동안 받은 위치 수는 진단 줄에 */
 var HID={t:0,f:0,ticks:0,last:''};
 document.addEventListener('visibilitychange',function(){if(document.hidden){HID.t=Date.now();HID.f=fixes;HID.ticks=0}else if(HID.t){HID.last=' · 가려짐 '+Math.round((Date.now()-HID.t)/1000)+'초 위치 '+(fixes-HID.f)+'회 갱신 '+HID.ticks+'회';HID.t=0}});
