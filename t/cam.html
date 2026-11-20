@@ -168,9 +168,9 @@
   .sbar .clr{flex:none;width:30px;height:30px;border:0;border-radius:50%;background:#c9ced6;color:#fff;font-size:15px;font-weight:800;display:none;padding:0}
   .sbar.has .clr{display:block}
   .sbar .go{flex:none;height:44px;padding:0 18px;border:0;border-radius:12px;background:#2b7bff;color:#fff;font-size:17px;font-weight:700}
-  .chips{display:flex;gap:8px;margin:12px 0 2px;overflow-x:auto;scrollbar-width:none}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 2px}
   .chips::-webkit-scrollbar{display:none}
-  .chips button{flex:none;display:flex;align-items:center;gap:6px;height:38px;padding:0 13px 0 10px;border:1px solid #e1e5ea;background:#fff;border-radius:19px;font-size:15px;font-weight:600;color:#2a2f36;white-space:nowrap}
+  .chips button{flex:none;display:flex;align-items:center;gap:5px;height:36px;padding:0 12px 0 9px;border:1px solid #e1e5ea;background:#fff;border-radius:19px;font-size:15px;font-weight:600;color:#2a2f36;white-space:nowrap}
   .chips button svg{width:18px;height:18px;flex:none}
   .sec{font-size:13px;font-weight:700;color:#8a9099;margin:18px 2px 2px}
   .pl{display:flex;align-items:flex-start;gap:12px;padding:12px 2px;border-bottom:1px solid #eef0f3;cursor:pointer}
@@ -701,6 +701,14 @@ var IC={pin:'<svg viewBox="0 0 24 24"><path d="M12 22s7-6.3 7-12a7 7 0 1 0-14 0c
   sc:'<svg viewBox="0 0 24 24"><path d="M13.5 2 5 13.5h6L9.5 22 19 9.5h-6z" fill="#e3151a"/></svg>',
   rest:'<svg viewBox="0 0 24 24"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z" fill="#1f5fd6"/><path d="M16 10.5h1.5a2.5 2.5 0 0 1 0 5H16" fill="none" stroke="#1f5fd6" stroke-width="2"/><path d="M8 3.5c0 1.5 1.5 1.5 1.5 3M12 3.5c0 1.5 1.5 1.5 1.5 3" fill="none" stroke="#1f5fd6" stroke-width="1.6" stroke-linecap="round"/></svg>',
   nap:'<svg viewBox="0 0 24 24"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z" fill="#4a8a3f"/><path d="M16 10.5h1.5a2.5 2.5 0 0 1 0 5H16" fill="none" stroke="#4a8a3f" stroke-width="2"/></svg>',
+  ev:'<svg viewBox="0 0 24 24"><rect x="5" y="3" width="10" height="18" rx="2" fill="#16a34a"/><path d="M10.5 6.5 8 12h3l-1 5 3.5-6.5h-3z" fill="#fff"/><path d="M15 9h2a1.5 1.5 0 0 1 1.5 1.5V16a1.5 1.5 0 0 0 3 0V8l-2-2" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  store:'<svg viewBox="0 0 24 24"><path d="M4 9h16l-1.2 11H5.2z" fill="#f59e0b"/><path d="M8.5 9V7a3.5 3.5 0 0 1 7 0v2" fill="none" stroke="#f59e0b" stroke-width="2"/></svg>',
+  cafe:'<svg viewBox="0 0 24 24"><path d="M4 8h12v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" fill="#8b5a2b"/><path d="M16 9.5h1.5a2.5 2.5 0 0 1 0 5H16" fill="none" stroke="#8b5a2b" stroke-width="2"/></svg>',
+  food:'<svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/><path d="M16 21V3c-2 1-3 4-3 8h3" fill="#ef4444" stroke="#ef4444" stroke-width="2" stroke-linejoin="round"/></svg>',
+  wash:'<svg viewBox="0 0 24 24"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z" fill="#0ea5e9"/></svg>',
+  mart:'<svg viewBox="0 0 24 24"><path d="M3 4h3l2.2 10.5h10L20.5 7H7" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linejoin="round"/><circle cx="9.5" cy="19" r="1.7" fill="#7c3aed"/><circle cx="17" cy="19" r="1.7" fill="#7c3aed"/></svg>',
+  pharm:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="#10b981"/><path d="M12 7.5v9M7.5 12h9" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>',
+  bank:'<svg viewBox="0 0 24 24"><path d="M12 3 3 8h18z" fill="#475569"/><path d="M5 10v7M9.7 10v7M14.3 10v7M19 10v7" stroke="#475569" stroke-width="2"/><rect x="3" y="18" width="18" height="2.5" fill="#475569"/></svg>',
   park:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="#2b7bff"/><path d="M9.5 17V7h3.2a3 3 0 0 1 0 6H9.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/></svg>'};
 function secH(t){var d=document.createElement('div');d.className='sec';d.textContent=t;return d}
 function placeItem(dd,sub,ic){
@@ -711,9 +719,17 @@ function placeItem(dd,sub,ic){
   A.push(['집',function(){setHome('homeDest',dd)}],['회사',function(){setHome('workDest',dd)}],['★',function(){addFav(dd)}]);
   var acts=el.querySelector('.ac');A.forEach(function(a){var bt=document.createElement('button');bt.textContent=a[0];if(a[2])bt.className='via';bt.onclick=function(e){e.stopPropagation();a[1]();bt.textContent=a[2]?'추가함':a[0]+' ✓';bt.classList.add('done')};acts.appendChild(bt)});
   return el}
-function renderQuick(){var box=$('quick');box.innerHTML='';var on=NAV?'경로 위 ':'';var L=[['sc',on+'슈퍼차저','sc'],['rest',on+'휴게소','rest'],['park','주변 주차장','park']];if(NAV)L.push(['dpark','목적지 주차장','park']);
-  L.forEach(function(o){var b=document.createElement('button');b.innerHTML=IC[o[2]]+'<span></span>';b.querySelector('span').textContent=o[1];b.onclick=function(){quick(o[0])};box.appendChild(b)})}
+var CATS=[['ev','충전소','전기차충전소'],['store','편의점','편의점'],['cafe','카페','카페'],['food','음식점','음식점'],['wash','세차장','세차장'],['mart','마트','마트'],['pharm','약국','약국'],['bank','은행','은행']];
+function renderQuick(){var box=$('quick');box.innerHTML='';var on=NAV?'경로 위 ':'';var L=[['sc',on+'슈퍼차저','sc'],['park','주차장','park']];if(NAV)L.push(['dpark','목적지 주차장','park']);L.push(['rest',on+'휴게소','rest']);
+  CATS.forEach(function(c){L.push(['cat:'+c[2],c[1],c[0]])});
+  L.forEach(function(o){var b=document.createElement('button');b.type='button';b.innerHTML=IC[o[2]]+'<span></span>';b.querySelector('span').textContent=o[1];b.onclick=function(){quick(o[0])};box.appendChild(b)})}
 function quick(kind){var box=$('results'),c=fix||{la:37.4979,lo:127.0276};box.innerHTML='';
+  if(kind.indexOf('cat:')===0){var cn=kind.slice(4),cat=CATS.filter(function(x){return x[2]===cn})[0]||['pin',cn];box.innerHTML='<div class="note">찾는 중…</div>';hideKb();
+    api('pois/search/around?version=1&centerLat='+c.la+'&centerLon='+c.lo+'&categories='+encodeURIComponent(cn)+'&radius=3&count=40&reqCoordType=WGS84GEO&resCoordType=WGS84GEO').then(function(d){
+      var seen={},ps=poiList(d).filter(function(p){return !/(주차장|정문|후문|입구|출구)\d*$/.test(p.name.trim())||cn==='주차장'}).map(function(p){var l=poiLL(p);return{p:p,l:l,d:dist(c.la,c.lo,l.la,l.lo)}}).filter(function(x){if(seen[x.p.name])return false;seen[x.p.name]=1;return true}).sort(function(a,b){return a.d-b.d}).slice(0,20);
+      box.innerHTML='';if(!ps.length){box.innerHTML='<div class="note">3km 안에 없습니다</div>';return}box.appendChild(secH('가까운 '+cat[1]));
+      ps.forEach(function(x){var addr=[x.p.middleAddrName,x.p.lowerAddrName].filter(Boolean).join(' ');box.appendChild(placeItem({name:x.p.name,la:x.l.la,lo:x.l.lo},fmtD(x.d)+(addr?' · '+addr:''),cat[0]))})
+    }).catch(function(e){box.innerHTML='<div class="note">검색 실패: '+e.message+'</div>'});return}
   if(kind==='park'||kind==='dpark'){    var t=kind==='dpark'&&NAV?NAV.dest:c;box.innerHTML='<div class="note">찾는 중…</div>';
     api('pois/search/around?version=1&centerLat='+t.la+'&centerLon='+t.lo+'&categories='+encodeURIComponent('주차장')+'&radius=1&count=15&reqCoordType=WGS84GEO&resCoordType=WGS84GEO').then(function(d){
       var ps=(((d||{}).searchPoiInfo||{}).pois||{}).poi||[];box.innerHTML='';if(ps.length)box.appendChild(secH(kind==='dpark'?NAV.dest.name+' 주변 주차장':'주변 주차장'));else box.innerHTML='<div class="note">반경 1km 안에 주차장이 없습니다</div>';
