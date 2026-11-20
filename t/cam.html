@@ -38,7 +38,13 @@
   #sgChild{width:56px;height:52px;right:-22px;top:-14px}
   #sgSig{width:62px;height:104px;left:28px;top:7px}
   #alertBox.child #sgChild,#alertBox.sig #sgSig{display:block}
-  #alertBox.sig .lim{display:none}
+  #alertBox.sig #sgSig{display:none}
+  .lim{flex-direction:column}
+  .lim b{font-weight:900;line-height:1}
+  .tl{display:flex;gap:3px;background:#222;border-radius:7px;padding:3px 5px;margin-bottom:2px}
+  .tl i{display:block;width:8px;height:8px;border-radius:50%}
+  #alertBox.sx .lim b{font-size:40px}
+  #alertBox.sig .tl{transform:scale(1.8)}
   #pill{display:none;background:#e3151a;color:#fff;font-size:34px;font-weight:800;border-radius:8px;padding:2px 14px;min-width:96px;text-align:center;box-shadow:0 3px 10px #0004}
   #alertBox.on #pill{display:block}
   body.over #pill{animation:blink .55s steps(2,jump-none) infinite}
@@ -264,11 +270,11 @@ $('stopNav').onclick=function(){endNav();show('menuSheet',0)};
 /* 카메라 데이터 */
 var CAMS=[],GRID={};
 function cellKey(la,lo){return Math.floor(la*100)+'_'+Math.floor(lo*100)}
-function indexCams(arr){var fx={};try{fx=JSON.parse(LS.getItem('camfix')||'{}')}catch(e){}for(var q in fx){if(arr[q]){arr[q][0]=fx[q][0];arr[q][1]=fx[q][1]}}CAMS=arr;GRID={};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(GRID[k]=GRID[k]||[]).push(i)}camSrcAt=null}
+function indexCams(arr){var fx={};try{fx=JSON.parse(LS.getItem('camfix2')||'{}')}catch(e){}for(var q in fx){if(arr[q]){arr[q][0]=fx[q][0];arr[q][1]=fx[q][1]}}CAMS=arr;GRID={};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(GRID[k]=GRID[k]||[]).push(i)}camSrcAt=null}
 function loadCams(){
-  var VER='cams-20261020';
+  var VER='cams-20261020b';
   try{var c=LS.getItem(VER);if(c){indexCams(JSON.parse(c));$('loadMsg').textContent='카메라 '+CAMS.length.toLocaleString()+'개 (저장본)';return}}catch(e){}
-  fetch('cams.json?v=20261020').then(function(r){return r.json()}).then(function(a){indexCams(a);$('loadMsg').textContent='카메라 '+a.length.toLocaleString()+'개 받음';try{for(var k in LS)if(k.indexOf('cams-')===0)LS.removeItem(k);LS.setItem(VER,JSON.stringify(a))}catch(e){}})
+  fetch('cams.json?v=20261020b').then(function(r){return r.json()}).then(function(a){indexCams(a);$('loadMsg').textContent='카메라 '+a.length.toLocaleString()+'개 받음';try{for(var k in LS)if(k.indexOf('cams-')===0)LS.removeItem(k);LS.setItem(VER,JSON.stringify(a))}catch(e){}})
   .catch(function(e){$('loadMsg').textContent='카메라 데이터를 못 받았습니다: '+e.message});
 }
 
@@ -282,10 +288,11 @@ function makeImg(id){
   if(id==='sig'){cv.width=22*R;cv.height=40*R;x.scale(R,R);x.fillStyle='#222';x.strokeStyle='#fff';x.lineWidth=2;x.beginPath();x.roundRect(2,2,18,36,5);x.fill();x.stroke();['#ff3030','#ffc400','#22c55e'].forEach(function(c,i){x.fillStyle=c;x.beginPath();x.arc(11,10+i*10,3.6,0,7);x.fill()})}
   else if(id==='chev'){cv.width=14*R;cv.height=14*R;x.scale(R,R);x.strokeStyle='#fff';x.lineWidth=3;x.lineCap='round';x.lineJoin='round';x.beginPath();x.moveTo(4,2);x.lineTo(10,7);x.lineTo(4,12);x.stroke()}
   else if(id==='dest'){cv.width=56*R;cv.height=66*R;x.scale(R,R);x.fillStyle='#2b7bff';x.beginPath();x.moveTo(28,64);x.bezierCurveTo(14,46,4,36,4,24);x.arc(28,24,24,Math.PI,0);x.bezierCurveTo(52,36,42,46,28,64);x.fill();x.fillStyle='#fff';x.font='800 15px system-ui,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('도착',28,24)}
-  else if(/^limz?-/.test(id)){var n=id.split('-')[1],z=id.indexOf('limz')===0,S=46;cv.width=S*R;cv.height=S*R;x.scale(R,R);
+  else if(/^limx?z?-/.test(id)){var n=id.split('-')[1],z=/z-/.test(id),xx=/^limx/.test(id),S=46;cv.width=S*R;cv.height=S*R;x.scale(R,R);
     if(z){x.fillStyle='#ffcc00';x.beginPath();x.arc(S/2,S/2,S/2,0,7);x.fill()}
     x.fillStyle='#e3151a';x.beginPath();x.arc(S/2,S/2,z?19:21,0,7);x.fill();x.fillStyle='#fff';x.beginPath();x.arc(S/2,S/2,z?13.5:15,0,7);x.fill();
-    x.fillStyle='#111';x.font='800 '+(n.length>2?13:16)+'px system-ui,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(n,S/2,S/2+1)}
+    if(xx){x.fillStyle='#222';x.beginPath();x.roundRect(S/2-8,S/2-12,16,6,3);x.fill();['#ff3030','#ffc400','#22c55e'].forEach(function(c,i){x.fillStyle=c;x.beginPath();x.arc(S/2-4.5+i*4.5,S/2-9,1.7,0,7);x.fill()})}
+    x.fillStyle='#111';x.font='800 '+(n.length>2?12:(xx?14:16))+'px system-ui,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(n,S/2,S/2+(xx?4:1))}
   else return;
   map.addImage(id,x.getImageData(0,0,cv.width,cv.height),{pixelRatio:R});
 }
@@ -310,7 +317,7 @@ function updCamSrc(la,lo){
   if(!mapReady||!CAMS.length)return;
   if(camSrcAt&&dist(camSrcAt[0],camSrcAt[1],la,lo)<400)return;camSrcAt=[la,lo];
   var f=[],c0=Math.floor(la*100),c1=Math.floor(lo*100);
-  for(var a=-3;a<=3;a++)for(var b=-3;b<=3;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];f.push({type:'Feature',geometry:{type:'Point',coordinates:[c[1],c[0]]},properties:{ic:c[3]==='S'?(c[5]===2?'limz-':'lim-')+c[2]:'sig',o:c[3]==='S'?1:0}})}}
+  for(var a=-3;a<=3;a++)for(var b=-3;b<=3;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];f.push({type:'Feature',geometry:{type:'Point',coordinates:[c[1],c[0]]},properties:{ic:c[3]==='R'?'sig':'lim'+(c[3]==='X'?'x':'')+(c[5]===2?'z':'')+'-'+c[2],o:c[3]==='R'?0:1}})}}
   map.getSource('cams').setData({type:'FeatureCollection',features:f});
 }
 
@@ -511,7 +518,7 @@ function toggleDemo(){
   if(demo){demo=null;return}
   if(NAV&&NAV.R.length>1){demo={route:true,s:Math.max(0,NAV.s),t:Date.now(),kmh:55};return}
   var base=fix||{la:37.4979,lo:127.0276},best=null,bd=1e9;
-  for(var i=0;i<CAMS.length;i++){var c=CAMS[i];if(c[3]!=='S')continue;var d=dist(base.la,base.lo,c[0],c[1]);if(d<bd){bd=d;best=c}}
+  for(var i=0;i<CAMS.length;i++){var c=CAMS[i];if(c[3]==='R')continue;var d=dist(base.la,base.lo,c[0],c[1]);if(d<bd){bd=d;best=c}}
   if(!best)return;
   var h=45,st=move(best[0],best[1],h+180,900);
   demo={la:st[0],lo:st[1],h:h,t:Date.now(),kmh:Math.max(75,best[2]+15)};prevFix=null;fix=null;passed={};target=null;
@@ -523,7 +530,7 @@ setInterval(function(){if(!demo)return;var now=Date.now(),dt=(now-demo.t)/1000;d
 
 /* 카메라 경고 */
 var lastPassed=null,target=null,passed={},announced={},lastBeep=0,section=null;
-function fixCam(b){var id=target?target.id:lastPassed;if(id==null||!fix){b.textContent='고칠 카메라 없음';setTimeout(function(){b.textContent='카메라 여기'},1500);return}var fx={};try{fx=JSON.parse(LS.getItem('camfix')||'{}')}catch(e){}fx[id]=[fix.la,fix.lo];LS.setItem('camfix',JSON.stringify(fx));var old=dist(CAMS[id][0],CAMS[id][1],fix.la,fix.lo);CAMS[id][0]=fix.la;CAMS[id][1]=fix.lo;indexCams(CAMS);passed[id]=Date.now();if(target&&target.id===id)target=null;b.textContent='고침 ('+Math.round(old)+'m 옮김)';setTimeout(function(){b.textContent='카메라 여기'},2500)}
+function fixCam(b){var id=target?target.id:lastPassed;if(id==null||!fix){b.textContent='고칠 카메라 없음';setTimeout(function(){b.textContent='카메라 여기'},1500);return}var fx={};try{fx=JSON.parse(LS.getItem('camfix2')||'{}')}catch(e){}fx[id]=[fix.la,fix.lo];LS.setItem('camfix2',JSON.stringify(fx));var old=dist(CAMS[id][0],CAMS[id][1],fix.la,fix.lo);CAMS[id][0]=fix.la;CAMS[id][1]=fix.lo;indexCams(CAMS);passed[id]=Date.now();if(target&&target.id===id)target=null;b.textContent='고침 ('+Math.round(old)+'m 옮김)';setTimeout(function(){b.textContent='카메라 여기'},2500)}
 function findAhead(la,lo,h){
   var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;
   for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;
@@ -533,8 +540,9 @@ function findAhead(la,lo,h){
       if(!best||d<best.d)best={id:id,c:c,d:d}}}
   return best;
 }
-function setAlert(cls,lim,pill,tag){var b=$('alertBox');b.className=cls;$('lim').textContent=lim;$('lim').className='lim'+(/child/.test(cls)?' z':'');$('pill').textContent=pill;$('tag').textContent=tag||''}
-function camTag(c){if(c[4]===1)return'구간단속 시작';if(c[4]===2)return'구간단속 끝';if(c[5]===2)return'어린이보호';if(c[3]!=='S')return'신호단속';return'과속단속'}
+var TL='<span class="tl"><i style="background:#ff3030"></i><i style="background:#ffc400"></i><i style="background:#22c55e"></i></span>';
+function setAlert(cls,lim,pill,tag){var b=$('alertBox');b.className=cls;$('lim').innerHTML=(/sx|sig/.test(cls)?TL:'')+(lim?'<b>'+lim+'</b>':'');$('lim').className='lim'+(/child/.test(cls)?' z':'');$('pill').textContent=pill;$('tag').textContent=tag||''}
+function camTag(c){if(c[4]===1)return'구간단속 시작';if(c[4]===2)return'구간단속 끝';if(c[5]===2)return'어린이보호';if(c[3]==='R')return'신호단속';if(c[3]==='X')return'신호과속';return'과속단속'}
 function tick(){
   var now=Date.now();
   if(!fix){$('diag').textContent='위치 기다리는 중';requestAnimationFrame(tick);return}
@@ -558,7 +566,7 @@ function tick(){
   var avg=null;
   if(section){section.m+=dist(section.lastLa,section.lastLo,la,lo);section.lastLa=la;section.lastLo=lo;avg=section.m/Math.max(1,(now-section.t)/1000)*3.6;if(avg>section.lim)over=true;if(section.m>30000)section=null}
   if(target&&target.d<alertD+30){var c=target.c,d=dist(la,lo,c[0],c[1]);target.d=Math.min(target.d,d);
-    setAlert('on'+(c[3]!=='S'?' sig':'')+(c[5]===2?' child':'')+(c[4]>0?' sec':''),c[2]||'',fmtD(d),camTag(c));
+    setAlert('on'+(c[3]==='R'?' sig':'')+(c[3]==='X'?' sx':'')+(c[5]===2?' child':'')+(c[4]>0?' sec':''),c[2]||'',fmtD(d),camTag(c));
     zone=c[5]>0&&d<alertD;
     if(d<alertD&&!announced[target.id]){announced[target.id]=1;var r=Math.round(d/50)*50;
       say((c[5]===2?'어린이보호구역, ':'')+'전방 '+r+'미터, '+(c[2]?'제한속도 '+c[2]+', ':'')+(c[4]===1?'구간단속 시작입니다':'단속 카메라입니다'),880,2)}
