@@ -914,7 +914,7 @@ function fitRoute(R){if(!mapReady||!R||R.length<2)return;var a0=90,a1=-90,o0=180
   map.fitBounds([[o0,a0],[o1,a1]],{padding:{left:pw+50,right:80,top:60,bottom:60},bearing:0,duration:0})}
 function applyRoute(d,r){
   endPreview();hideArrive(true);  NAV={dest:d,fare:r.fare,opt:r.opt[0],R:r.R,S:r.S,G:r.G,C:r.C,T:r.T,total:r.dist,time:r.time,idx:0,s:0,offT:0,lastRoute:Date.now(),spoken:{},via:[],t0:Date.now()};
-  document.body.classList.add('nav');setTimeout(mapResize,60);sayParts(['start'],true,'',520,1);lastDrawIdx=-1;routePois(NAV);routeHits(NAV);incMatch();camSrcAt=null;buildTbar();drawRoute();routeWeather();
+  document.body.classList.add('nav');setTimeout(mapResize,60);sayParts(['start'],true,'경로 안내를 시작합니다',520,1);lastDrawIdx=-1;routePois(NAV);routeHits(NAV);incMatch();camSrcAt=null;buildTbar();drawRoute();routeWeather();
 }
 $('reroute').onclick=function(){if(NAV)route()};
 /* 더 빠른 경로 제안 (티맵식): 3분마다 다시 찾고, 다른 길인데 3분 이상 빠르면 묻는다. 같은 길이면 교통 정보·도착 시각만 조용히 새로 */
@@ -979,8 +979,8 @@ function navTick(la,lo,kmh,now){
     if(nx2&&nx2.s-nx.s<400){$('nArrow').innerHTML=AR[arrowKind(nx2.t)];$('nDist').textContent=fmtD(nx2.s-NAV.s);show('next',1)}
     else if(nx.t!==201){$('nArrow').innerHTML=AR.dest;$('nDist').textContent=fmtD(remain);show('next',1)}else show('next',0);
     var far=kmh>70?1000:300,key=String(nx.s);
-    if(dd<far&&dd>120&&!NAV.spoken[key+'f']){NAV.spoken[key+'f']=1;sayParts(['a'+dk(dd),tk(nx.t)],true,fmtD(Math.round(dd/50)*50).replace('km','킬로미터').replace('m','미터')+' 앞 '+nm+'입니다',520,2)}
-    if(dd<60&&!NAV.spoken[key+'n']){NAV.spoken[key+'n']=1;sayParts([tk(nx.t)],true,nm+'입니다',520,1)}
+    if(dd<far&&dd>120&&!NAV.spoken[key+'f']&&now-(NAV.t0||0)>3200){NAV.spoken[key+'f']=1;sayParts(['a'+dk(dd),tk(nx.t)],true,fmtD(Math.round(dd/50)*50).replace('km','킬로미터').replace('m','미터')+' 앞 '+nm+'입니다',520,2)}
+    if(dd<60&&!NAV.spoken[key+'n']&&now-(NAV.t0||0)>3200){NAV.spoken[key+'n']=1;sayParts([tk(nx.t)],true,nm+'입니다',520,1)}
   }
   var frac=NAV.total?Math.max(0,Math.min(1,NAV.s/NAV.total)):0;$('tbarDone').style.width=(frac*100)+'%';$('tbarDot').style.left=(frac*100)+'%';$('progFill').style.height=((1-frac)*100)+'%';$('progDot').style.bottom='calc('+((1-frac)*100)+'% - 13px)';
   return{remain:remain,rt:NAV.total?NAV.time*remain/NAV.total:0};
