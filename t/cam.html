@@ -555,14 +555,17 @@ function applyNight(force){document.body.classList.toggle('night',nightNow());if
 setInterval(applyNight,60000);document.body.classList.toggle('night',nightNow());
 /* 지도 아이콘: 카메라·방지턱은 가는 방향 것만 (안내 중엔 경로 위, 아니면 앞쪽 부채꼴), 슈퍼차저·휴게소는 전부 */
 function sideOk(segH,la,lo,p){var d=dist(la,lo,p[0],p[1]);if(d<1)return true;var df=adiff(segH,brg(la,lo,p[0],p[1])),lat=d*Math.sin(df*D2R);return lat>=-10&&lat<=30}
-function routeHits(N){var cam={},bmp={},R=N.R,S=N.S,last=-1e9;
+function projSeg(la,lo,A,B){var kx=111320*Math.cos(la*D2R),ky=111320,ax=(A[1]-lo)*kx,ay=(A[0]-la)*ky,bx=(B[1]-lo)*kx,by=(B[0]-la)*ky,dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy,t=L2?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L2)):0;return[A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t]}
+function routeHits(N){var cpos={},cam={},bmp={},R=N.R,S=N.S,last=-1e9;
   for(var i=0;i<R.length-1;i++){if(S[i]-last<20)continue;last=S[i];var h=brg(R[i][0],R[i][1],R[i+1][0],R[i+1][1]),c0=Math.floor(R[i][0]*100),c1=Math.floor(R[i][1]*100);
     for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var k=(c0+a)+'_'+(c1+b),ids=GRID[k];
-      if(ids)ids.forEach(function(id){if(cam[id]!=null)return;var c=CAMS[id],d=dist(R[i][0],R[i][1],c[0],c[1]);if(d<35&&sideOk(h,R[i][0],R[i][1],c))cam[id]=S[i]});
+      if(ids)ids.forEach(function(id){if(cam[id]!=null)return;var c=CAMS[id],d=dist(R[i][0],R[i][1],c[0],c[1]);if(d<35&&sideOk(h,R[i][0],R[i][1],c)){cam[id]=S[i];var bp=null,bd=1e9;for(var q=Math.max(0,i-3);q<Math.min(R.length-1,i+3);q++){var pp=projSeg(c[0],c[1],R[q],R[q+1]),dd=dist(c[0],c[1],pp[0],pp[1]);if(dd<bd){bd=dd;bp=pp}}cpos[id]=bp}});
       var bs=BGRID[k];if(bs)bs.forEach(function(id){if(bmp[id]!=null)return;var p=BUMPS[id];if(dist(R[i][0],R[i][1],p[0],p[1])<18)bmp[id]=S[i]})}}
-  N.cams=cam;N.bumps=bmp}
+  N.cams=cam;N.bumps=bmp;N.camPos=cpos}
 var camSrcT=0,camSrcH=null;
 function aheadOk(la,lo,h,p,max){var d=dist(la,lo,p[0],p[1]);if(d>max)return false;if(d<15)return true;var df=adiff(h,brg(la,lo,p[0],p[1]));if(Math.abs(df)>30)return false;var lat=d*Math.sin(df*D2R);return lat>=-6&&lat<=30}
+/* 카메라 아이콘은 도로 가운데에 (티맵처럼): 안내 중엔 경로 선 위로, 아니면 600m 안·옆 35m 안이면 내 진행 선 위로. 경고 판정은 원래 좌표 */
+function camDraw(id,c,la,lo,h){if(NAV&&NAV.camPos&&NAV.camPos[id])return NAV.camPos[id];if(h==null)return c;var d=dist(la,lo,c[0],c[1]);if(d>600||d<5)return c;var df=adiff(h,brg(la,lo,c[0],c[1])),lat=d*Math.sin(df*D2R),al=d*Math.cos(df*D2R);if(Math.abs(lat)>35||al<0)return c;return move(la,lo,h,al)}
 function updCamSrc(la,lo,h){
   if(!mapReady||!CAMS.length)return;var now=Date.now();
   if(camSrcAt&&now-camSrcT<1500&&dist(camSrcAt[0],camSrcAt[1],la,lo)<60&&(h==null||camSrcH==null||Math.abs(adiff(h,camSrcH))<15))return;camSrcAt=[la,lo];camSrcT=now;camSrcH=h;
@@ -570,7 +573,7 @@ function updCamSrc(la,lo,h){
   var camOk=function(id,c){if(nav){var cs=NAV.cams[id];return cs!=null&&cs>s0-30&&cs<s0+3000}if(h==null)return false;return aheadOk(la,lo,h,c,2500)};
   var bumpOk=function(id,p){if(nav){var bs=NAV.bumps[id];return bs!=null&&bs>s0-20&&bs<s0+800}if(h==null)return false;return aheadOk(la,lo,h,p,600)};
   for(var a=-3;a<=3;a++)for(var b=-3;b<=3;b++){var ck=(c0+a)+'_'+(c1+b),ids=GRID[ck];
-    if(ids)for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];if(!camOk(ids[j],c))continue;f.push({type:'Feature',geometry:{type:'Point',coordinates:[c[1],c[0]]},properties:{ic:c[3]==='R'?'sig':'lim'+(c[3]==='X'?'x':'')+(c[5]===2?'z':'')+'-'+c[2],o:c[3]==='R'?0:1}})}
+    if(ids)for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];if(!camOk(ids[j],c))continue;var cp=camDraw(ids[j],c,la,lo,h);f.push({type:'Feature',geometry:{type:'Point',coordinates:[cp[1],cp[0]]},properties:{ic:c[3]==='R'?'sig':'lim'+(c[3]==='X'?'x':'')+(c[5]===2?'z':'')+'-'+c[2],o:c[3]==='R'?0:1}})}
     if(CFG.bumpOn&&Math.abs(a)<=1&&Math.abs(b)<=1&&BGRID[ck])BGRID[ck].forEach(function(i){var p=BUMPS[i];if(bumpOk(i,p))f.push({type:'Feature',geometry:{type:'Point',coordinates:[p[1],p[0]]},properties:{ic:'bump',o:-1}})});
     if(CFG.poiOn&&PGRID[ck])PGRID[ck].forEach(function(t){var p=poiOf(t);f.push({type:'Feature',geometry:{type:'Point',coordinates:[p[1],p[0]]},properties:{ic:t[0]==='sc'?'sc':'rest'+p[3],o:2}})})}
   (function(){var L=NAV&&NAV.inc?NAV.inc.filter(function(x){return x.s>NAV.s-30&&x.s-NAV.s<5000}).map(function(x){return x.q}):INC.filter(function(q){return dist(la,lo,q[0],q[1])<2000});L.forEach(function(q){f.push({type:'Feature',geometry:{type:'Point',coordinates:[q[1],q[0]]},properties:{ic:'inc',o:3}})})})();
