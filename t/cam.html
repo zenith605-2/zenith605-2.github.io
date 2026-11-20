@@ -35,13 +35,13 @@
   <div class="panel" id="spdBox"><div class="v" id="spd">-</div><div class="u">km/h</div></div>
   <div class="panel"><div id="sec"></div><div id="limit" class="off">-</div><div id="camTxt">주변 단속 카메라 없음</div><div id="camSub"></div><div id="bar"><i id="barI"></i></div></div>
 </div>
-<div id="btns"><button id="demo">시연</button><button id="mute">소리 끄기</button></div>
+<div id="btns"><button id="demo">시연</button><button id="mute">소리 끄기</button><button id="fixBtn">카메라 여기</button></div>
 <div id="diag"></div>
 <script>
 var $=function(i){return document.getElementById(i)};
 var CAMS=[],GRID={};
 function cellKey(la,lo){return Math.floor(la*100)+'_'+Math.floor(lo*100)}
-function indexCams(arr){CAMS=arr;GRID={};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(GRID[k]=GRID[k]||[]).push(i)}}
+function indexCams(arr){var fx={};try{fx=JSON.parse(localStorage.getItem('camfix')||'{}')}catch(e){}for(var q in fx){if(arr[q]){arr[q][0]=fx[q][0];arr[q][1]=fx[q][1]}}CAMS=arr;GRID={};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(GRID[k]=GRID[k]||[]).push(i)}}
 function loadCams(){
   var VER='cams-20261020';
   try{var c=localStorage.getItem(VER);if(c){indexCams(JSON.parse(c));$('loadMsg').textContent='카메라 '+CAMS.length.toLocaleString()+'개 (저장본)';return}}catch(e){}
@@ -77,6 +77,7 @@ if('speechSynthesis' in window){voicesReady();speechSynthesis.onvoiceschanged=vo
 function beep(f,len,n){if(muted||!ac)return;for(var i=0;i<(n||1);i++){var o=ac.createOscillator(),g=ac.createGain(),t0=ac.currentTime+i*(len+0.08);o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(0.4,t0);g.gain.setValueAtTime(0,t0+len);o.start(t0);o.stop(t0+len)}}
 function say(t,fallbackN){if(muted)return;if(KO){var u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=1.1;speechSynthesis.cancel();speechSynthesis.speak(u)}else beep(880,0.12,fallbackN||2)}
 $('go').onclick=function(){ac=new (window.AudioContext||window.webkitAudioContext)();beep(660,0.1,1);$('start').style.display='none';if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){})};
+$('fixBtn').onclick=function(){var id=target?target.id:lastPassed;if(id==null||!fix){this.textContent='고칠 카메라 없음';var b=this;setTimeout(function(){b.textContent='카메라 여기'},1500);return}var fx={};try{fx=JSON.parse(localStorage.getItem('camfix')||'{}')}catch(e){}fx[id]=[fix.la,fix.lo];localStorage.setItem('camfix',JSON.stringify(fx));var old=dist(CAMS[id][0],CAMS[id][1],fix.la,fix.lo);CAMS[id][0]=fix.la;CAMS[id][1]=fix.lo;indexCams(CAMS);passed[id]=Date.now();if(target&&target.id===id)target=null;this.textContent='고침 ('+Math.round(old)+'m 옮김)';var b=this;setTimeout(function(){b.textContent='카메라 여기'},2500)};
 $('mute').onclick=function(){muted=!muted;this.textContent=muted?'소리 켜기':'소리 끄기'};
 
 /* 시연: 가장 가까운 속도 카메라를 향해 900m 앞에서 75km/h로 달린다 */
@@ -92,7 +93,7 @@ $('demo').onclick=function(){
 setInterval(function(){if(!demo)return;var now=Date.now(),dt=(now-demo.t)/1000;demo.t=now;var p=move(demo.la,demo.lo,demo.h,demo.kmh/3.6*dt);demo.la=p[0];demo.lo=p[1];onFix(p[0],p[1],3,demo.h,demo.kmh/3.6,now)},1000);
 
 /* 경고 판단 */
-var target=null,passed={},announced={},lastBeep=0,section=null;
+var lastPassed=null,target=null,passed={},announced={},lastBeep=0,section=null;
 function findAhead(la,lo,h){
   var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;
   for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;
@@ -112,7 +113,7 @@ function tick(){
   if(head!=null&&v>1.5&&CAMS.length){
     var t=findAhead(la,lo,head);
     if(target&&(!t||t.id!==target.id)){var tc=CAMS[target.id];var dNow=dist(la,lo,tc[0],tc[1]);var behind=Math.abs(adiff(head,brg(la,lo,tc[0],tc[1])))>90;
-      if(behind||dNow>target.d+40){passed[target.id]=now;if(tc[4]===1)section={lim:tc[2],t:now,m:0,lastLa:la,lastLo:lo};if(tc[4]===2&&section){section=null;say('구간단속이 끝났습니다',1)}target=null}}
+      if(behind||dNow>target.d+40){passed[target.id]=now;lastPassed=target.id;setTimeout(function(){lastPassed=null},20000);if(tc[4]===1)section={lim:tc[2],t:now,m:0,lastLa:la,lastLo:lo};if(tc[4]===2&&section){section=null;say('구간단속이 끝났습니다',1)}target=null}}
     if(t&&(!target||t.d<target.d+40))target=t;
   }
   for(var k in passed)if(now-passed[k]>120000)delete passed[k];
@@ -121,7 +122,7 @@ function tick(){
   if(target){var c=target.c,d=dist(la,lo,c[0],c[1]);target.d=Math.min(target.d,d);
     $('limit').className=c[2]?'':'off';$('limit').textContent=c[2]||'-';
     var name=c[4]===1?'구간단속 시작':c[4]===2?'구간단속 끝':c[3]==='S'?'과속 단속':'신호·기타 단속';
-    $('camTxt').textContent=name+' '+Math.round(d/10)*10+'m';
+    $('camTxt').textContent=name+' '+(d<100?'곧 통과':Math.round(d/50)*50+'m');
     $('camSub').textContent=c[5]===2?'어린이보호구역':c[5]===1?'보호구역':'';
     $('barI').style.width=Math.max(0,Math.min(100,(1-d/alertD)*100))+'%';
     zone=c[5]>0&&d<alertD;
