@@ -14,7 +14,7 @@
   #carMk{position:fixed;left:50%;top:calc((100% - 60px)*0.68);width:54px;height:54px;transform:translate(-50%,-50%);filter:drop-shadow(0 2px 6px #0006);z-index:3;pointer-events:none;color:#e9e9e9}
   #carMk svg{width:100%;height:100%}
   #warn{position:fixed;inset:0;pointer-events:none;z-index:4}
-  body.over #warn{box-shadow:inset 0 0 0 24px #ff1a1a;background:#ff000030;animation:blink .55s steps(2,jump-none) infinite}
+  body.over #warn{background:#ff00001f;animation:blink .55s steps(2,jump-none) infinite}
   body.zone:not(.over) #warn{box-shadow:inset 0 0 0 12px #ffcc00}
   @keyframes blink{0%{opacity:1}100%{opacity:.12}}
 
@@ -566,9 +566,19 @@ if('speechSynthesis' in window){voicesReady();speechSynthesis.onvoiceschanged=vo
 function beep(f,len,n,vol){if(muted||!ac)return;var gv=0.5*(vol==null?CFG.volW:vol);for(var i=0;i<(n||1);i++){var o=ac.createOscillator(),g=ac.createGain(),t0=ac.currentTime+i*(len+0.08);o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(gv,t0);g.gain.setValueAtTime(0,t0+len);o.start(t0);o.stop(t0+len)}}
 function say(t,f,n,guide){if(muted)return;var vol=guide?CFG.volG:CFG.volW;if(KO){var u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=1.1;u.volume=vol;speechSynthesis.cancel();speechSynthesis.speak(u)}else beep(f||880,0.12,n||2,vol)}
 function unlockAudio(){try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state!=='running')ac.resume();}catch(e){}setTimeout(function(){show('snd',!ac||ac.state!=='running')},300)}
-addEventListener('pointerdown',function(){var was=ac&&ac.state==='running';unlockAudio();if(!was)setTimeout(function(){if(ac&&ac.state==='running')beep(660,0.08,1)},350)},true);
+addEventListener('pointerdown',function(){var was=ac&&ac.state==='running';unlockAudio();setTimeout(function(){if(ac&&ac.state==='running'&&!window._vp){window._vp=1;voPreload()}},400);if(!was)setTimeout(function(){if(ac&&ac.state==='running')beep(660,0.08,1)},350)},true);
 unlockAudio();setTimeout(showFav,600);
 if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){});
+/* 녹음 음성: 제미나이 TTS 로 미리 만든 조각(t/vo/*.m4a)을 이어 붙여 재생. 못 받으면 예전처럼 삑 */
+var VO={},voSrc=[],voGen=0,VOD=[];for(var vd=50;vd<=1000;vd+=50)VOD.push(vd);VOD.push(1500,2000);
+function dk(m){var b=VOD[0];VOD.forEach(function(x){if(Math.abs(x-m)<Math.abs(b-m))b=x});return b}
+function tk(t){if(t>=131&&t<=142)return 't131';if(t>=182&&t<=189)return 't185';return TT[t]?'t'+t:'t11'}
+function voLoad(k){if(VO[k])return VO[k];return VO[k]=fetch('vo/'+k+'.m4a').then(function(r){if(!r.ok)throw 0;return r.arrayBuffer()}).then(function(b){return new Promise(function(res,rej){ac.decodeAudioData(b,res,rej)})}).catch(function(){delete VO[k];return null})}
+function sayParts(keys,guide,text,f,n){if(muted)return;keys=keys.filter(Boolean);if(!ac||ac.state!=='running'||!keys.length)return say(text,f,n,guide);
+  var gen=++voGen;Promise.all(keys.map(voLoad)).then(function(bs){if(gen!==voGen)return;if(bs.some(function(b){return!b}))return say(text,f,n,guide);
+    voSrc.forEach(function(x){try{x.stop()}catch(e){}});voSrc=[];var g=ac.createGain();g.gain.value=Math.min(1,(guide?CFG.volG:CFG.volW)*1.2);g.connect(ac.destination);var t=ac.currentTime+0.04;
+    bs.forEach(function(b){var sr=ac.createBufferSource();sr.buffer=b;sr.connect(g);sr.start(t);voSrc.push(sr);t+=b.duration+0.05})})}
+function voPreload(){['cam_s','cam_sig','cam_sx','child','sec_start','sec_end','reroute','arrive','start','t12','t13','t11','t14','d300','d500','d1000','a300','a1000','lim30','lim50','lim60','lim80'].forEach(voLoad)}
 $('mute').onclick=function(){muted=!muted;$('muteIc').innerHTML=muted?MUTE_OFF:MUTE_ON};
 
 
@@ -786,7 +796,7 @@ function quick(kind){var box=$('results'),c=fix||{la:37.4979,lo:127.0276};box.in
   box.innerHTML='';box.appendChild(secH(title));
   items.slice(0,20).forEach(function(x){box.appendChild(placeItem({name:nm(x.p),la:x.p[0],lo:x.p[1]},(kind==='rest'?(x.p[3]==='R'?'졸음쉼터 · ':'휴게소 · '):'')+x.sub,kind==='sc'?'sc':(x.p[3]==='R'?'nap':'rest')))});
   var m=document.createElement('div');m.className='note';m.textContent=kind==='sc'?'슈퍼차저 위치: OpenStreetMap 기준(일부만 등록돼 있을 수 있음). 실시간 빈자리는 아직 없습니다.':'휴게소 · 졸음쉼터: OpenStreetMap 기준';box.appendChild(m);hideKb()}
-function addVia(d){if(!NAV)return;NAV.via=(NAV.via||[]).concat([{name:d.name,la:d.la,lo:d.lo}]).slice(0,5);show('navSheet',0);say('경유지를 추가했습니다',520,1,1);route()}
+function addVia(d){if(!NAV)return;NAV.via=(NAV.via||[]).concat([{name:d.name,la:d.la,lo:d.lo}]).slice(0,5);show('navSheet',0);sayParts(['via_add'],true,'경유지를 추가했습니다',520,1);route()}
 $('clearVia').onclick=function(){if(NAV){NAV.via=[];route()}show('menuSheet',0)};
 /* 경로 주변 슈퍼차저 · 휴게소 (경로를 따라 간 거리) */
 function routePois(N){var out={},R=N.R,S=N.S,last=-1e9;
@@ -862,7 +872,7 @@ function fitRoute(R){if(!mapReady||!R||R.length<2)return;var a0=90,a1=-90,o0=180
   map.fitBounds([[o0,a0],[o1,a1]],{padding:{left:pw+50,right:80,top:60,bottom:60},bearing:0,duration:0})}
 function applyRoute(d,r){
   endPreview();  NAV={dest:d,fare:r.fare,opt:r.opt[0],R:r.R,S:r.S,G:r.G,C:r.C,total:r.dist,time:r.time,idx:0,s:0,offT:0,lastRoute:Date.now(),spoken:{},via:[]};
-  document.body.classList.add('nav');setTimeout(mapResize,60);lastDrawIdx=-1;routePois(NAV);routeHits(NAV);camSrcAt=null;buildTbar();drawRoute();routeWeather();
+  document.body.classList.add('nav');setTimeout(mapResize,60);sayParts(['start'],true,'',520,1);lastDrawIdx=-1;routePois(NAV);routeHits(NAV);camSrcAt=null;buildTbar();drawRoute();routeWeather();
 }
 $('reroute').onclick=function(){if(NAV)route()};
 function route(){
@@ -893,10 +903,10 @@ function navTick(la,lo,kmh,now){
   var pr=project(la,lo);if(!pr)return null;
   NAV.idx=pr.i;NAV.s=NAV.S[pr.i]+pr.t*(NAV.S[pr.i+1]-NAV.S[pr.i]);
   if(Math.abs(NAV.idx-lastDrawIdx)>=3){lastDrawIdx=NAV.idx;drawRoute()}
-  if(pr.d>50&&v>3){if(!NAV.offT)NAV.offT=now;if(now-NAV.offT>4000&&now-NAV.lastRoute>15000){NAV.offT=0;$('tDist').textContent='경로 다시 찾는 중';say('경로를 다시 찾습니다',440,1);route();return null}}else NAV.offT=0;
+  if(pr.d>50&&v>3){if(!NAV.offT)NAV.offT=now;if(now-NAV.offT>4000&&now-NAV.lastRoute>15000){NAV.offT=0;$('tDist').textContent='경로 다시 찾는 중';sayParts(['reroute'],true,'경로를 다시 찾습니다',440,1);route();return null}}else NAV.offT=0;
   var remain=NAV.total-NAV.s;
-  if(remain<30||dist(la,lo,NAV.dest.la,NAV.dest.lo)<30){say('목적지에 도착했습니다',660,3);endNav();return null}
-  NAV.G.forEach(function(g){if(g.t===185&&!g.done&&g.s<NAV.s-5){g.done=1;if(NAV.via&&NAV.via.length)NAV.via.shift();say('경유지에 도착했습니다',660,2,1);drawRoute()}});
+  if(remain<30||dist(la,lo,NAV.dest.la,NAV.dest.lo)<30){sayParts(['arrive'],true,'목적지에 도착했습니다',660,3);endNav();return null}
+  NAV.G.forEach(function(g){if(g.t===185&&!g.done&&g.s<NAV.s-5){g.done=1;if(NAV.via&&NAV.via.length)NAV.via.shift();sayParts(['via_arrive'],true,'경유지에 도착했습니다',660,2);drawRoute()}});
   var nx=null,nx2=null;for(var i=0;i<NAV.G.length;i++){if(NAV.G[i].s>NAV.s+3&&NAV.G[i].t!==200){if(!nx)nx=NAV.G[i];else{nx2=NAV.G[i];break}}}
   NAV.nextD=nx?nx.s-NAV.s:null;if(TMM)tmDrawTurn(nx&&nx.s-NAV.s<500?nx:null);
   if(nx){var dd=nx.s-NAV.s,nm=ttName(nx.t);
@@ -905,8 +915,8 @@ function navTick(la,lo,kmh,now){
     if(nx2&&nx2.s-nx.s<400){$('nArrow').innerHTML=AR[arrowKind(nx2.t)];$('nDist').textContent=fmtD(nx2.s-NAV.s);show('next',1)}
     else if(nx.t!==201){$('nArrow').innerHTML=AR.dest;$('nDist').textContent=fmtD(remain);show('next',1)}else show('next',0);
     var far=kmh>70?1000:300,key=String(nx.s);
-    if(dd<far&&dd>120&&!NAV.spoken[key+'f']){NAV.spoken[key+'f']=1;say(fmtD(Math.round(dd/50)*50).replace('km','킬로미터').replace('m','미터')+' 앞 '+nm+'입니다',520,2,1)}
-    if(dd<60&&!NAV.spoken[key+'n']){NAV.spoken[key+'n']=1;say(nm+'입니다',520,1,1)}
+    if(dd<far&&dd>120&&!NAV.spoken[key+'f']){NAV.spoken[key+'f']=1;sayParts(['a'+dk(dd),tk(nx.t)],true,fmtD(Math.round(dd/50)*50).replace('km','킬로미터').replace('m','미터')+' 앞 '+nm+'입니다',520,2)}
+    if(dd<60&&!NAV.spoken[key+'n']){NAV.spoken[key+'n']=1;sayParts([tk(nx.t)],true,nm+'입니다',520,1)}
   }
   var frac=NAV.total?Math.max(0,Math.min(1,NAV.s/NAV.total)):0;$('tbarDone').style.width=(frac*100)+'%';$('tbarDot').style.left=(frac*100)+'%';$('progFill').style.height=((1-frac)*100)+'%';$('progDot').style.bottom='calc('+((1-frac)*100)+'% - 13px)';
   return{remain:remain,rt:NAV.total?NAV.time*remain/NAV.total:0};
@@ -970,7 +980,7 @@ function tick(){
   if(head!=null&&v>1.5&&CAMS.length){
     var t=findAhead(la,lo,head);
     if(target&&(!t||t.id!==target.id)){var tc=CAMS[target.id];var dNow=dist(la,lo,tc[0],tc[1]);var behind=Math.abs(adiff(head,brg(la,lo,tc[0],tc[1])))>90;
-      if(behind||dNow>target.d+40){passed[target.id]=now;lastPassed=target.id;if(TRIP)TRIP.cams++;if(tc[4]===1)section={lim:tc[2],t:now,m:0,lastLa:la,lastLo:lo};if(tc[4]===2&&section){section=null;say('구간단속이 끝났습니다',880,1)}target=null}}
+      if(behind||dNow>target.d+40){passed[target.id]=now;lastPassed=target.id;if(TRIP)TRIP.cams++;if(tc[4]===1)section={lim:tc[2],t:now,m:0,lastLa:la,lastLo:lo};if(tc[4]===2&&section){section=null;sayParts(['sec_end'],false,'구간단속이 끝났습니다',880,1)}target=null}}
     if(t&&(!target||t.d<target.d+40))target=t;
   }
   for(var k in passed)if(now-passed[k]>120000)delete passed[k];
@@ -981,7 +991,7 @@ function tick(){
     setAlert('on'+(c[3]==='R'?' sig':'')+(c[3]==='X'?' sx':'')+(c[5]===2?' child':'')+(c[4]>0?' sec':''),c[2]||'',fmtD(d),camTag(c));
     zone=c[5]>0&&d<alertD;
     if(d<alertD&&!announced[target.id]){announced[target.id]=1;if(TRIP)TRIP.alerts++;var r=Math.round(d/50)*50;
-      say((c[5]===2?'어린이보호구역, ':'')+'전방 '+r+'미터, '+(c[2]?'제한속도 '+c[2]+', ':'')+(c[4]===1?'구간단속 시작입니다':'단속 카메라입니다'),880,2)}
+      sayParts([c[5]===2?'child':null,'d'+dk(d),(c[2]&&c[2]%10===0&&c[2]>=20&&c[2]<=120)?'lim'+c[2]:null,c[4]===1?'sec_start':(c[3]==='R'?'cam_sig':c[3]==='X'?'cam_sx':'cam_s')],false,(c[5]===2?'어린이보호구역, ':'')+'전방 '+r+'미터, '+(c[2]?'제한속도 '+c[2]+', ':'')+(c[4]===1?'구간단속 시작입니다':'단속 카메라입니다'),880,2)}
     if(c[2]&&d<alertD&&kmh>c[2])over=true;
   }else if(section){setAlert('on sec',section.lim,'평균 '+Math.round(avg||0),'구간단속 중')}
   else setAlert('','','');
