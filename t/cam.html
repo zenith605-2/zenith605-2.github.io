@@ -413,15 +413,20 @@ function loadExtra(){
 }
 
 /* 지도 */
-var zoff=Number(LS.getItem('zoomOff')||0),mapReady=false,map=null,mapOn=LS.getItem('mapOff')!=='1',camSrcAt=null;
+var zoff=0,manZT=0,zCur=16.5,zLastT=0,mapReady=false,map=null,mapOn=LS.getItem('mapOff')!=='1',camSrcAt=null;
 function setMap(on){mapOn=on;document.body.classList.toggle('nomap',!on);LS.setItem('mapOff',on?'0':'1');if(on&&!map)initMap();if(map)setTimeout(function(){map.resize()},50)}
-function setZ(d){zoff=Math.max(-6,Math.min(3,zoff+d));LS.setItem('zoomOff',String(zoff))}
+function setZ(d){zoff=Math.max(-6,Math.min(3,zoff+d));manZT=Date.now()}
+/* 자동 축척: 빠를수록 넓게, 회전 300m 안이면 가깝게. 손으로 바꾸면 8초 유지 뒤 움직일 때 천천히 자동으로 돌아감 */
+function autoZoom(kmh){var z=kmh<15?17:kmh<35?16.6:kmh<55?16.1:kmh<75?15.6:kmh<95?15.1:14.6;if(NAV&&NAV.nextD!=null&&NAV.nextD<300&&kmh<75)z=Math.max(z,16.6);return z}
+function zoomNow(kmh,now){var dt=zLastT?Math.min(0.2,(now-zLastT)/1000):0;zLastT=now;
+  if(v>3&&now-manZT>8000&&zoff!==0){zoff*=Math.pow(0.5,dt/1.5);if(Math.abs(zoff)<0.03)zoff=0}
+  var tz=autoZoom(kmh);zCur+=(tz-zCur)*Math.min(1,dt*0.8);return zCur+zoff}
 /* 두 손가락 핀치로 확대·축소 (지도는 계속 내 위치를 따라감) */
 var PT={},pinch0=null;
 function ptGap(){var k=Object.keys(PT);if(k.length<2)return 0;var a=PT[k[0]],b=PT[k[1]];return Math.sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y))}
 $('map').addEventListener('pointerdown',function(e){PT[e.pointerId]={x:e.clientX,y:e.clientY};if(Object.keys(PT).length===2)pinch0={d:ptGap(),z:zoff}});
-$('map').addEventListener('pointermove',function(e){if(!PT[e.pointerId])return;PT[e.pointerId]={x:e.clientX,y:e.clientY};if(pinch0&&Object.keys(PT).length>=2){var g=ptGap();if(g>10&&pinch0.d>10){zoff=Math.max(-6,Math.min(3,pinch0.z+Math.log(g/pinch0.d)/Math.LN2))}e.preventDefault()}});
-function ptEnd(e){delete PT[e.pointerId];if(Object.keys(PT).length<2&&pinch0){pinch0=null;LS.setItem('zoomOff',String(zoff))}}
+$('map').addEventListener('pointermove',function(e){if(!PT[e.pointerId])return;PT[e.pointerId]={x:e.clientX,y:e.clientY};if(pinch0&&Object.keys(PT).length>=2){var g=ptGap();if(g>10&&pinch0.d>10){zoff=Math.max(-6,Math.min(3,pinch0.z+Math.log(g/pinch0.d)/Math.LN2));manZT=Date.now()}e.preventDefault()}});
+function ptEnd(e){delete PT[e.pointerId];if(Object.keys(PT).length<2&&pinch0){pinch0=null;manZT=Date.now()}}
 ['pointerup','pointercancel','pointerleave'].forEach(function(n){$('map').addEventListener(n,ptEnd)});
 $('map').addEventListener('wheel',function(e){e.preventDefault();setZ(e.deltaY>0?-0.25:0.25)},{passive:false});
 $('zIn').onclick=function(){setZ(0.5)};$('zOut').onclick=function(){setZ(-0.5)};
@@ -809,6 +814,7 @@ function navTick(la,lo,kmh,now){
   if(remain<30||dist(la,lo,NAV.dest.la,NAV.dest.lo)<30){say('목적지에 도착했습니다',660,3);endNav();return null}
   NAV.G.forEach(function(g){if(g.t===185&&!g.done&&g.s<NAV.s-5){g.done=1;if(NAV.via&&NAV.via.length)NAV.via.shift();say('경유지에 도착했습니다',660,2,1);drawRoute()}});
   var nx=null,nx2=null;for(var i=0;i<NAV.G.length;i++){if(NAV.G[i].s>NAV.s+3&&NAV.G[i].t!==200){if(!nx)nx=NAV.G[i];else{nx2=NAV.G[i];break}}}
+  NAV.nextD=nx?nx.s-NAV.s:null;
   if(nx){var dd=nx.s-NAV.s,nm=ttName(nx.t);
     $('tArrow').innerHTML=AR[arrowKind(nx.t)];$('tDist').innerHTML=bigD(dd);
     $('tName').textContent=nx.t===201?NAV.dest.name:nx.t===185?'경유지 · '+((NAV.via||[])[0]||{name:''}).name:(nx.pname||nx.name||nm);
@@ -866,7 +872,7 @@ function tick(){
   var kmh=v*3.6;$('spd').textContent=Math.round(kmh);
   var mla=la,mlo=lo,mh=head;
   if(NAV&&NAV.R&&NAV.R.length>1){var sp=project(la,lo);if(sp&&sp.d<30){var A=NAV.R[sp.i],B=NAV.R[sp.i+1];mla=A[0]+(B[0]-A[0])*sp.t;mlo=A[1]+(B[1]-A[1])*sp.t;if(v>2){var sh=brg(A[0],A[1],B[0],B[1]);if(head==null||Math.abs(adiff(head,sh))<45)mh=sh}}}
-  if(mapReady&&mapOn){var mH=$('map').clientHeight;map.jumpTo({center:[mlo,mla],bearing:(mh==null||!CFG.rot)?0:mh,zoom:(kmh>70?15.5:16.5)+zoff,pitch:0,padding:{top:mH*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo,head);
+  if(mapReady&&mapOn){var mH=$('map').clientHeight;map.jumpTo({center:[mlo,mla],bearing:(mh==null||!CFG.rot)?0:mh,zoom:zoomNow(kmh,now),pitch:0,padding:{top:mH*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo,head);
     var cp=map.project([mlo,mla]);$('carMk').style.left=cp.x+'px';$('carMk').style.top=cp.y+'px'}
   $('carMk').style.transform='translate(-50%,-50%) rotate('+((!CFG.rot&&mh!=null)?mh:0)+'deg)';
   var nv=navTick(la,lo,kmh,now);
