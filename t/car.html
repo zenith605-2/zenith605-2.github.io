@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>차 브라우저 시험</title>
+<style>
+  body{margin:0;font-family:system-ui,sans-serif;background:#111;color:#eee;transition:background .15s}
+  body.red{background:#c00}
+  main{max-width:1100px;margin:0 auto;padding:24px}
+  h1{font-size:34px;margin:0 0 16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+  .card{background:#222;border-radius:14px;padding:18px}
+  .card h2{font-size:20px;margin:0 0 10px;color:#aaa;font-weight:600}
+  .big{font-size:44px;font-weight:700}
+  .ok{color:#4c4}.bad{color:#f66}.wait{color:#fc3}
+  button{font-size:24px;padding:16px 22px;border-radius:12px;border:0;background:#3a6df0;color:#fff;margin:6px 6px 0 0}
+  pre{white-space:pre-wrap;word-break:break-all;font-size:15px;color:#bbb;margin:0}
+</style>
+</head>
+<body>
+<main>
+  <h1>차 브라우저 시험</h1>
+  <div class="grid">
+    <div class="card"><h2>1. 위치 정보</h2><div id="geo" class="big wait">확인 중</div><pre id="geoInfo"></pre></div>
+    <div class="card"><h2>2. 속도</h2><div id="spd" class="big">-</div><pre id="spdInfo">주행 중에 숫자가 바뀌는지 봐 주세요</pre></div>
+    <div class="card"><h2>3. 소리</h2><button id="beep">삑 소리</button><button id="voice">음성 안내</button><pre id="sndInfo"></pre></div>
+    <div class="card"><h2>4. 빨간 화면</h2><button id="flash">빨간 화면 3초</button></div>
+    <div class="card"><h2>5. 화면이 켜져 있는 시간</h2><div id="alive" class="big">0초</div><pre id="aliveInfo"></pre></div>
+    <div class="card"><h2>기기 정보</h2><pre id="ua"></pre></div>
+  </div>
+</main>
+<script>
+var $=function(id){return document.getElementById(id)};
+$('ua').textContent=navigator.userAgent+'\n화면 '+screen.width+'x'+screen.height+' / 창 '+innerWidth+'x'+innerHeight;
+
+var updates=0,last=0,gaps=[];
+function setGeo(cls,txt){var e=$('geo');e.className='big '+cls;e.textContent=txt}
+if(!('geolocation' in navigator)){setGeo('bad','지원 안 함')}
+else{
+  navigator.geolocation.watchPosition(function(p){
+    updates++;var now=Date.now();if(last){gaps.push(now-last);if(gaps.length>10)gaps.shift()}last=now;
+    var c=p.coords;setGeo('ok','됨');
+    var avg=gaps.length?Math.round(gaps.reduce(function(a,b){return a+b},0)/gaps.length)+'ms':'-';
+    $('geoInfo').textContent='위도 '+c.latitude.toFixed(6)+'\n경도 '+c.longitude.toFixed(6)+'\n정확도 '+Math.round(c.accuracy)+'m\n방향 '+(c.heading==null?'없음':Math.round(c.heading)+'°')+'\n받은 횟수 '+updates+' / 평균 간격 '+avg;
+    if(c.speed==null){$('spd').textContent='값 없음';$('spd').className='big bad'}
+    else{$('spd').textContent=Math.round(c.speed*3.6)+' km/h';$('spd').className='big ok'}
+  },function(e){setGeo('bad','안 됨');$('geoInfo').textContent='오류 '+e.code+': '+e.message},
+  {enableHighAccuracy:true,maximumAge:0,timeout:20000});
+}
+
+var ac=null;
+$('beep').onclick=function(){
+  try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    var o=ac.createOscillator(),g=ac.createGain();o.frequency.value=1200;o.connect(g);g.connect(ac.destination);
+    g.gain.setValueAtTime(0.4,ac.currentTime);o.start();o.stop(ac.currentTime+0.4);
+    $('sndInfo').textContent='삑 소리를 보냈습니다. 들렸나요?';
+  }catch(e){$('sndInfo').textContent='오디오 오류: '+e.message}
+};
+$('voice').onclick=function(){
+  if(!('speechSynthesis' in window)){$('sndInfo').textContent='음성 안내 지원 안 함';return}
+  var u=new SpeechSynthesisUtterance('전방 300미터, 제한속도 60킬로미터 단속 구간입니다');u.lang='ko-KR';
+  speechSynthesis.speak(u);$('sndInfo').textContent='음성을 보냈습니다. 한국어로 들렸나요? 한국어 음성 '+speechSynthesis.getVoices().filter(function(v){return /ko/i.test(v.lang)}).length+'개';
+};
+$('flash').onclick=function(){document.body.classList.add('red');setTimeout(function(){document.body.classList.remove('red')},3000)};
+
+var start=Date.now(),hidden=0;
+document.addEventListener('visibilitychange',function(){if(document.hidden)hidden++});
+setInterval(function(){$('alive').textContent=Math.round((Date.now()-start)/1000)+'초';$('aliveInfo').textContent='화면이 가려진 횟수 '+hidden},1000);
+</script>
+</body>
+</html>
