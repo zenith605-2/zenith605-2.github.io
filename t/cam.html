@@ -268,6 +268,20 @@
   #lp .x{position:absolute;right:6px;top:6px;width:36px;height:36px;border:0;border-radius:50%;background:#0000;font-size:18px;color:#888;z-index:1}
   body.night #lp{background:#1c1f24;color:#eee}
   #lpPin{position:fixed;z-index:5;width:30px;height:40px;margin:-40px 0 0 -15px;pointer-events:none;display:none}
+  #cctvBtn{display:none}body.nav #cctvBtn{display:flex}
+  #cctvBar{position:fixed;left:16px;right:84px;bottom:84px;z-index:9;background:#111c;backdrop-filter:blur(6px);border-radius:14px;padding:8px 0 10px;display:none;color:#fff}
+  #cctvBar.on{display:block;animation:lpIn2 .18s ease-out}@keyframes lpIn2{from{opacity:0;transform:translateY(12px)}}
+  #cctvBar .hd{display:flex;align-items:center;gap:8px;padding:0 10px 8px 14px;font-size:15px}#cctvBar .hd span{color:#aaa;font-size:13px;flex:1}
+  #cctvBar .hd button{width:34px;height:34px;border:0;border-radius:50%;background:#ffffff1a;color:#fff;font-size:16px}
+  #cctvRow{display:flex;gap:10px;overflow-x:auto;padding:0 14px;scrollbar-width:none;cursor:grab;touch-action:pan-x;user-select:none}#cctvRow::-webkit-scrollbar{display:none}
+  .cc{flex:0 0 212px}.cc .vw{width:212px;height:120px;border-radius:10px;background:#000;overflow:hidden;position:relative}.cc video{width:100%;height:100%;object-fit:cover;pointer-events:none}
+  .cc .vw i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#888;font-style:normal;font-size:13px}
+  .cc .dd{position:absolute;left:6px;top:6px;background:#2b7bff;color:#fff;font-size:13px;font-weight:800;border-radius:6px;padding:1px 7px}
+  .cc .nm{font-size:13px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#ddd}
+  #cctvRow .note{color:#aaa;font-size:14px;padding:30px 4px}
+  #cctvBig{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,90vw);z-index:41;background:#000;border-radius:14px;overflow:hidden;display:none;box-shadow:0 10px 40px #000a}
+  #cctvBig.on{display:block}#cctvBig video{width:100%;aspect-ratio:16/9;display:block;background:#000}#cctvBig .nm{color:#fff;font-size:16px;font-weight:700;padding:10px 14px}
+  #cctvBig button{position:absolute;right:10px;top:10px;width:42px;height:42px;border:0;border-radius:50%;background:#0009;color:#fff;font-size:20px}
 </style>
 </head>
 <body>
@@ -306,9 +320,12 @@
   <button class="rb" id="viewBtn" title="지도 보기"><span id="viewLbl" style="font-size:13px;font-weight:800;line-height:1">2D</span></button>
   <button class="rb" id="recenter" title="현위치" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="#2b7bff"/><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   <button class="rb" id="navBtn" title="목적지"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15 15 L21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg></button>
+  <button class="rb" id="cctvBtn" title="경로 CCTV"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 10.5l6-3.5v10l-6-3.5z" fill="currentColor"/></svg></button>
   <div id="zoomGrp"><button class="rb" id="zIn">+</button><button class="rb" id="zOut">−</button></div>
   <button class="rb" id="mute" title="소리"><svg viewBox="0 0 24 24" id="muteIc"></svg></button>
 </div>
+<div id="cctvBar"><div class="hd"><b>가는 길 CCTV</b><span id="cctvN"></span><button type="button" id="cctvX">✕</button></div><div id="cctvRow"></div></div>
+<div id="cctvBig"><video id="cctvBigV" muted playsinline autoplay></video><div class="nm" id="cctvBigN"></div><button type="button" id="cctvBigX">✕</button></div>
 <div id="prog"><div id="progFill"></div><div id="progDot"></div></div>
 <div id="diag"></div>
 
@@ -1048,7 +1065,34 @@ $('arrLog').onclick=function(){hideArrive(true);$('mTrips').onclick()};
 $('arrFav').onclick=function(){if(ARR){addFav(ARR.dest);this.textContent='✓'}};
 $('arrGo').onclick=function(){if(!ARR)return;var d=ARR.dest,o=ARR.opt||'0',c=fix||{la:37.4979,lo:127.0276};this.textContent='경로 찾는 중…';var b=this;
   fetchRoute(c,d,o).then(function(r){r.opt=[o,''];b.textContent='목적지로 계속 안내';applyRoute(d,r)}).catch(function(e){b.textContent='경로 실패'})};
-function endNav(){try{LS.removeItem('navResume')}catch(e){}show('incChip',0);fastR=null;show('fastCard',0);show('jamChip',0);show('hwBox',0);if(TMM)tmDrawTurn(null);RWX=null;setTimeout(updWxWarn,0);favDismissed=false;setTimeout(showFav,1500);NAV=null;document.body.classList.remove('nav');setTimeout(mapResize,60);drawRoute(true)}
+/* 가는 길 CCTV: 경로 앞 40km 안 국가교통정보센터 CCTV를 순서대로 썸네일(실시간 영상)로. 보이는 카드만 재생, 끌어서 넘김 */
+var CC={list:[],hls:{},loading:0};
+function hlsLoad(cb){if(window.Hls||document.createElement('video').canPlayType('application/vnd.apple.mpegurl'))return cb();var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js';sc.onload=cb;sc.onerror=cb;document.head.appendChild(sc)}
+function ccPlay(v,url,id){if(CC.hls[id])return;if(window.Hls&&Hls.isSupported()){var h=new Hls({maxBufferLength:4,lowLatencyMode:true});h.loadSource(url);h.attachMedia(v);h.on(Hls.Events.ERROR,function(e,d){if(d.fatal){var i=v.parentNode.querySelector('i');if(i){i.textContent='영상 없음';i.style.display=''}}});CC.hls[id]=h}else{v.src=url;CC.hls[id]={destroy:function(){v.removeAttribute('src');v.load()}}}
+  v.onplaying=function(){var i=v.parentNode.querySelector('i');if(i)i.style.display='none'};var p=v.play();if(p&&p.catch)p.catch(function(){})}
+function ccStop(id){var h=CC.hls[id];if(h){try{h.destroy()}catch(e){}delete CC.hls[id]}}
+function ccStopAll(){Object.keys(CC.hls).forEach(ccStop)}
+function ccVisible(){var row=$('cctvRow'),r=row.getBoundingClientRect();Array.prototype.forEach.call(row.querySelectorAll('.cc'),function(c){var b=c.getBoundingClientRect(),on=b.right>r.left-40&&b.left<r.right+40,id=c.dataset.i;if(on&&Object.keys(CC.hls).length<6)ccPlay(c.querySelector('video'),CC.list[id].u,id);else if(!on)ccStop(id)})}
+function cctvClose(){$('cctvBar').classList.remove('on');ccStopAll();cctvBigClose()}
+function cctvBigClose(){$('cctvBig').classList.remove('on');ccStop('big')}
+function cctvOpen(){if(!NAV){toast('길 안내 중에 볼 수 있어요');return}var bar=$('cctvBar'),row=$('cctvRow');bar.classList.add('on');row.innerHTML='<div class="note">CCTV 찾는 중…</div>';$('cctvN').textContent='';
+  var R=NAV.R,S=NAV.S,i0=NAV.idx||0,a=[],x0=999,x1=-999,y0=999,y1=-999;for(var i=i0;i<R.length&&S[i]-NAV.s<40000;i++){var p=R[i];if(Math.max(x1,p[1])-Math.min(x0,p[1])>1.4||Math.max(y1,p[0])-Math.min(y0,p[0])>1.4)break;x0=Math.min(x0,p[1]);x1=Math.max(x1,p[1]);y0=Math.min(y0,p[0]);y1=Math.max(y1,p[0]);a.push(i)}
+  if(a.length<2){row.innerHTML='<div class="note">앞쪽 경로가 짧습니다</div>';return}
+  fetch(RELAY.replace(/tmap\/?$/,'')+'cctv?minX='+(x0-0.01)+'&maxX='+(x1+0.01)+'&minY='+(y0-0.01)+'&maxY='+(y1+0.01)).then(function(r){return r.json().then(function(d){return{st:r.status,d:d}})}).then(function(o){
+    if(o.st===503){row.innerHTML='<div class="note">CCTV 연결 준비 중입니다 (인증키 연결 전)</div>';return}
+    var out=[];(o.d.list||[]).forEach(function(c){var bd=1e9,bs=0;for(var k=0;k<a.length-1;k++){var A=R[a[k]],B=R[a[k+1]];var q=projSeg(c[0],c[1],A,B),dd=dist(c[0],c[1],q[0],q[1]);if(dd<bd){bd=dd;bs=S[a[k]]+dist(A[0],A[1],q[0],q[1])}}if(bd<150&&bs>NAV.s-100)out.push({la:c[0],lo:c[1],n:c[2].replace(/^\[[^\]]*\]\s*/,''),u:c[3],s:bs})});
+    out.sort(function(x,y){return x.s-y.s});var seen={};out=out.filter(function(c){var k=Math.round(c.s/150);if(seen[k])return false;seen[k]=1;return true});CC.list=out;
+    if(!out.length){row.innerHTML='<div class="note">앞쪽 40km 경로에 CCTV가 없습니다</div>';return}
+    $('cctvN').textContent=out.length+'곳 · 끌어서 넘기기';row.innerHTML='';
+    out.forEach(function(c,i){var el=document.createElement('div');el.className='cc';el.dataset.i=i;el.innerHTML='<div class="vw"><video muted playsinline autoplay></video><i>불러오는 중</i><span class="dd"></span></div><div class="nm"></div>';el.querySelector('.dd').textContent=fmtD(Math.max(0,c.s-NAV.s));el.querySelector('.nm').textContent=c.n;
+      el.onclick=function(){if(row._dragged)return;$('cctvBigN').textContent=c.n+' · '+fmtD(Math.max(0,c.s-NAV.s))+' 앞';$('cctvBig').classList.add('on');ccStop('big');ccPlay($('cctvBigV'),c.u,'big')};row.appendChild(el)});
+    hlsLoad(ccVisible)}).catch(function(e){row.innerHTML='<div class="note">불러오지 못했습니다</div>'})}
+$('cctvBtn').onclick=function(){if($('cctvBar').classList.contains('on'))cctvClose();else cctvOpen()};$('cctvX').onclick=cctvClose;$('cctvBigX').onclick=cctvBigClose;
+(function(){var row=$('cctvRow'),st=null,t=null;row.addEventListener('scroll',function(){clearTimeout(t);t=setTimeout(ccVisible,200)});
+  row.addEventListener('pointerdown',function(e){st={x:e.clientX,l:row.scrollLeft};row._dragged=false});
+  row.addEventListener('pointermove',function(e){if(!st)return;var dx=e.clientX-st.x;if(Math.abs(dx)>6){row._dragged=true;row.scrollLeft=st.l-dx}});
+  ['pointerup','pointercancel','pointerleave'].forEach(function(n){row.addEventListener(n,function(){st=null;setTimeout(function(){row._dragged=false},50)})})})();
+function endNav(){cctvClose();try{LS.removeItem('navResume')}catch(e){}show('incChip',0);fastR=null;show('fastCard',0);show('jamChip',0);show('hwBox',0);if(TMM)tmDrawTurn(null);RWX=null;setTimeout(updWxWarn,0);favDismissed=false;setTimeout(showFav,1500);NAV=null;document.body.classList.remove('nav');setTimeout(mapResize,60);drawRoute(true)}
 function project(la,lo){
   var R=NAV.R,best=null,from=Math.max(0,NAV.idx-5),to=Math.min(R.length-2,NAV.idx+120),kx=111320*Math.cos(la*D2R),ky=111320;
   for(var i=from;i<=to;i++){var ax=(R[i][1]-lo)*kx,ay=(R[i][0]-la)*ky,bx=(R[i+1][1]-lo)*kx,by=(R[i+1][0]-la)*ky,dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy,t=L2?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L2)):0,px=ax+t*dx,py=ay+t*dy,dd=Math.sqrt(px*px+py*py);
