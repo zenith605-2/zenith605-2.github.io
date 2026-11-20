@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css">
 <style>
   html,body{margin:0;height:100%;background:#f3efe6;color:#111;font-family:system-ui,sans-serif;overflow:hidden}
-  #map{position:fixed;left:0;right:0;top:0;bottom:78px}
+  #map{position:fixed;left:0;right:0;top:0;bottom:78px;touch-action:none}
   body.nomap{background:#15181d;color:#fff}
   body.nomap #map,body.nomap #carMk,body.nomap #zoomGrp,body.nomap #prog{display:none}
   #carMk{position:fixed;left:50%;top:calc((100% - 78px)*0.68);width:64px;height:64px;transform:translate(-50%,-50%);filter:drop-shadow(0 2px 6px #0006);z-index:3;pointer-events:none;color:#e9e9e9}
@@ -355,7 +355,15 @@ function loadExtra(){
 /* 지도 */
 var zoff=Number(LS.getItem('zoomOff')||0),mapReady=false,map=null,mapOn=LS.getItem('mapOff')!=='1',camSrcAt=null;
 function setMap(on){mapOn=on;document.body.classList.toggle('nomap',!on);LS.setItem('mapOff',on?'0':'1');if(on&&!map)initMap();if(map)setTimeout(function(){map.resize()},50)}
-function setZ(d){zoff=Math.max(-4,Math.min(2,zoff+d));LS.setItem('zoomOff',String(zoff))}
+function setZ(d){zoff=Math.max(-6,Math.min(3,zoff+d));LS.setItem('zoomOff',String(zoff))}
+/* 두 손가락 핀치로 확대·축소 (지도는 계속 내 위치를 따라감) */
+var PT={},pinch0=null;
+function ptGap(){var k=Object.keys(PT);if(k.length<2)return 0;var a=PT[k[0]],b=PT[k[1]];return Math.sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y))}
+$('map').addEventListener('pointerdown',function(e){PT[e.pointerId]={x:e.clientX,y:e.clientY};if(Object.keys(PT).length===2)pinch0={d:ptGap(),z:zoff}});
+$('map').addEventListener('pointermove',function(e){if(!PT[e.pointerId])return;PT[e.pointerId]={x:e.clientX,y:e.clientY};if(pinch0&&Object.keys(PT).length>=2){var g=ptGap();if(g>10&&pinch0.d>10){zoff=Math.max(-6,Math.min(3,pinch0.z+Math.log(g/pinch0.d)/Math.LN2))}e.preventDefault()}});
+function ptEnd(e){delete PT[e.pointerId];if(Object.keys(PT).length<2&&pinch0){pinch0=null;LS.setItem('zoomOff',String(zoff))}}
+['pointerup','pointercancel','pointerleave'].forEach(function(n){$('map').addEventListener(n,ptEnd)});
+$('map').addEventListener('wheel',function(e){e.preventDefault();setZ(e.deltaY>0?-0.25:0.25)},{passive:false});
 $('zIn').onclick=function(){setZ(0.5)};$('zOut').onclick=function(){setZ(-0.5)};
 function makeImg(id){
   if(!map||map.hasImage(id))return;var cv=document.createElement('canvas'),x=cv.getContext('2d'),R=2;
