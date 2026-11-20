@@ -14,7 +14,7 @@
   body.nomap #bigSpd{display:block}
   #bigSpd .v{font-size:170px;font-weight:800;line-height:1}
   #bigSpd .u{font-size:30px;opacity:.7}
-  #carMk{position:fixed;left:50%;top:68%;width:44px;height:84px;transform:translate(-50%,-50%);filter:drop-shadow(0 2px 6px #000a);z-index:3;pointer-events:none;color:#e9e9e9}
+  #carMk{position:fixed;left:50%;top:68%;width:26px;height:50px;transform:translate(-50%,-50%);filter:drop-shadow(0 2px 6px #000a);z-index:3;pointer-events:none;color:#e9e9e9}
   #carMk svg{width:100%;height:100%}
   body.nomap #carMk{display:none}
   #warn{position:fixed;inset:0;pointer-events:none;z-index:4}
@@ -54,6 +54,9 @@
   #eta{display:none;left:170px;bottom:18px;padding:14px 20px;font-size:24px;font-weight:700}
   body.nav #eta{display:block}
   body.nomap #eta{left:18px}
+  #zoom{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:6}
+  #zoom button{width:64px;height:64px;font-size:36px;font-weight:700;border-radius:14px;border:0;background:#22262ddd;color:#fff}
+  body.nomap #zoom{display:none}
   #btns{position:fixed;right:14px;bottom:14px;display:flex;gap:8px;z-index:6;flex-wrap:wrap;justify-content:flex-end;max-width:62vw}
   #btns button{font-size:18px;padding:11px 15px;border-radius:12px;border:0;background:#22262ddd;color:#fff}
   #btns button.main{background:#2b7bff;font-weight:700}
@@ -85,6 +88,7 @@
 <div class="card" id="turnCard"><div id="tArrow">↑</div><div><div id="tDist">-</div><div id="tName"></div></div></div>
 <div class="card" id="spdOv"><div class="v" id="spd2">-</div><div class="u">km/h</div></div>
 <div class="card" id="eta"></div>
+<div id="zoom"><button id="zIn">+</button><button id="zOut">−</button></div>
 <div id="diag"></div>
 <div id="btns"><button id="navBtn" class="main">목적지</button><button id="demo">시연</button><button id="mute">소리 끄기</button><button id="fixBtn">카메라 여기</button><button id="mapBtn">지도 끄기</button><button id="setBtn">설정</button></div>
 
@@ -153,7 +157,7 @@ function loadCams(){
 }
 
 /* 지도 */
-var mapReady=false,map=null,mapOn=LS.getItem('mapOff')!=='1',camSrcAt=null;
+var zoff=Number(LS.getItem('zoomOff')||0),mapReady=false,map=null,mapOn=LS.getItem('mapOff')!=='1',camSrcAt=null;
 function setMap(on){mapOn=on;document.body.classList.toggle('nomap',!on);$('mapBtn').textContent=on?'지도 끄기':'지도 켜기';LS.setItem('mapOff',on?'0':'1');if(on&&!map)initMap();if(map)setTimeout(function(){map.resize()},50)}
 function initMap(){
   if(!window.maplibregl){$('mapBtn').textContent='지도 불러오기 실패';return}
@@ -187,6 +191,8 @@ function updCamSrc(la,lo){
   map.getSource('cams').setData({type:'FeatureCollection',features:f});
 }
 $('mapBtn').onclick=function(){setMap(!mapOn)};
+function setZ(d){zoff=Math.max(-4,Math.min(2,zoff+d));LS.setItem('zoomOff',String(zoff))}
+$('zIn').onclick=function(){setZ(0.5)};$('zOut').onclick=function(){setZ(-0.5)};
 
 /* 위치 */
 var fix=null,prevFix=null,v=0,head=null,fixes=0,gaps=[],spdSrc='-',lastAcc=0,demo=null;
@@ -319,7 +325,7 @@ function tick(){
   var age=Math.min(2,(now-fix.t)/1000),la=fix.la,lo=fix.lo;
   if(head!=null&&v>1){var p=move(la,lo,head,v*age);la=p[0];lo=p[1]}
   var kmh=v*3.6;$('spd').textContent=Math.round(kmh);$('spd2').textContent=Math.round(kmh);
-  if(mapReady&&mapOn){map.jumpTo({center:[lo,la],bearing:head==null?0:head,zoom:kmh>70?15.5:16.5,pitch:0,padding:{top:innerHeight*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo)}
+  if(mapReady&&mapOn){map.jumpTo({center:[lo,la],bearing:head==null?0:head,zoom:(kmh>70?15.5:16.5)+zoff,pitch:0,padding:{top:innerHeight*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo)}
   navTick(la,lo,kmh,now);
   var over=false,zone=false,alertD=alertDist(v);
   if(head!=null&&v>1.5&&CAMS.length){
