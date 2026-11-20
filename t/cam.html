@@ -682,7 +682,7 @@ function updCamSrc(la,lo,h){
 /* 위치 */
 var fix=null,prevFix=null,v=0,head=null,fixes=0,gaps=[],spdSrc='-',lastAcc=0,demo=null;
 function onFix(la,lo,acc,h,spd,t){
-  fixes++;lastAcc=acc;
+  fixes++;lastAcc=acc;if(TL.on){TL.n++;if(fix&&dist(fix.la,fix.lo,la,lo)>=1)TL.mv++;TL.acc=Math.max(TL.acc,acc||0)}
   if(fix){gaps.push(t-fix.t);if(gaps.length>10)gaps.shift()}
   prevFix=fix;fix={la:la,lo:lo,t:t,mt:t};var frozen=tunNear&&prevFix&&(spd!=null&&spd>0?spd:v)>5&&dist(prevFix.la,prevFix.lo,la,lo)<1&&t-prevFix.t<5000;if(frozen){if(!(spd!=null&&spd>0)){fix=prevFix;prevFix=null;return}fix.mt=prevFix.mt}
   var calc=null;
@@ -1227,6 +1227,8 @@ function tickBody(){
   var drDt=DR.lt?Math.min(0.5,(now-DR.lt)/1000):0;DR.lt=now;
   if(DR.fix!==(fix.mt||fix.t)){DR.fix=fix.mt||fix.t;DR.s=null;DR.te=0;DR.d=0;if(NAV&&NAV.R&&NAV.R.length>1){var dp=project(fix.la,fix.lo);if(dp&&dp.d<30)DR.s=NAV.S[dp.i]+dp.t*(NAV.S[dp.i+1]-NAV.S[dp.i])}}
   tunNear=false;if(NAV&&NAV.F&&NAV.S){for(var ti=Math.max(0,NAV.idx-5);ti<NAV.S.length-1&&NAV.S[ti]<NAV.s+300;ti++)if(NAV.S[ti]>NAV.s-100&&(NAV.F[ti]===2||NAV.F[ti]===4)){tunNear=true;break}}
+  if(tunNear&&!TL.on)TL={on:true,t:now,n:0,mv:0,acc:0,dr:0};else if(TL.on&&!tunNear&&now-TL.t>3000){TL.on=false;var tl=Math.round((now-TL.t)/1000)+'초 · 위치 '+TL.n+'회(움직임 '+TL.mv+') · 정확도 최대 '+Math.round(TL.acc)+'m · 추정 '+Math.round(TL.dr)+'초';try{var a=JSON.parse(LS.getItem('tunLog')||'[]');a.unshift(new Date().toTimeString().slice(0,5)+' '+tl);LS.setItem('tunLog',JSON.stringify(a.slice(0,10)))}catch(e){}HID.last=' · 터널 '+tl}
+  if(TL.on&&DR.on)TL.dr+=Math.min(0.5,(DR.lt2?now-DR.lt2:0)/1000);DR.lt2=now;
   var drOn=false,drI=-1;if(NAV&&DR.s!=null&&NAV.F){var di=Math.max(0,NAV.idx);while(di<NAV.S.length-2&&NAV.S[di+1]<DR.s+(DR.d||0))di++;drI=di}
   var inTun=drI>=0&&(NAV.F[drI]===2||NAV.F[drI]===4),tv0=inTun&&NAV.V&&NAV.V[drI]>5?NAV.V[drI]/3.6:0,tv=tv0&&v>4?(tv0+v)/2:tv0,tunEnd=1e12;
   if(inTun){var te=drI;while(te<NAV.F.length-1&&(NAV.F[te]===2||NAV.F[te]===4))te++;DR.te=NAV.S[te]}if(DR.te)tunEnd=DR.te;
@@ -1295,7 +1297,7 @@ function tickBody(){
 }
 
 /* 한 번의 오류로 화면 갱신이 영영 멈추지 않게: 오류는 진단 줄에 남기고 다음 프레임 계속 */
-var tunNear=false,LIMR=null,LIMT=0,LIMN={v:0,la:0,lo:0,t:0,busy:0},lastErr='',errN=0,bootT0=Date.now(),DSP=null,DR={fix:null,s:null,on:false};
+var TL={on:false},tunNear=false,LIMR=null,LIMT=0,LIMN={v:0,la:0,lo:0,t:0,busy:0},lastErr='',errN=0,bootT0=Date.now(),DSP=null,DR={fix:null,s:null,on:false};
 /* 후진 카메라 등으로 브라우저가 가려지면 requestAnimationFrame 이 멈출 수 있어, 가려진 동안은 1초마다 직접 돌려 경고를 이어 간다. 가려진 시간·그동안 받은 위치 수는 진단 줄에 */
 var HID={t:0,f:0,ticks:0,last:''};
 document.addEventListener('visibilitychange',function(){if(document.hidden){HID.t=Date.now();HID.f=fixes;HID.ticks=0}else if(HID.t){HID.last=' · 가려짐 '+Math.round((Date.now()-HID.t)/1000)+'초 위치 '+(fixes-HID.f)+'회 갱신 '+HID.ticks+'회';HID.t=0}});
