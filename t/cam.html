@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>카메라 경고 시험판</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css">
 <style>
   html,body{margin:0;height:100%;background:#101215;color:#fff;font-family:system-ui,sans-serif;overflow:hidden}
   body{transition:background .15s}
   body.over{background:#b30000}
   body.zone:not(.over){background:#3a3200}
-  #wrap{position:fixed;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:22px;box-sizing:border-box}
+  #wrap{position:fixed;inset:0;display:grid;grid-template-columns:1.25fr 1fr;gap:18px;padding:22px;box-sizing:border-box}
   .panel{background:#ffffff12;border-radius:22px;padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative}
   #spdBox .v{font-size:150px;font-weight:800;line-height:1}
   #spdBox .u{font-size:28px;opacity:.7}
@@ -22,21 +23,33 @@
   #bar i{display:block;height:100%;width:0;background:#ffb000;transition:width .2s}
   #sec{position:absolute;top:14px;left:18px;right:18px;font-size:24px;font-weight:700;text-align:center;color:#ffd75a}
   #diag{position:fixed;right:14px;bottom:10px;font-size:14px;opacity:.6;text-align:right;white-space:pre}
-  #btns{position:fixed;left:14px;bottom:10px;display:flex;gap:10px}
+  #btns{position:fixed;right:14px;bottom:54px;display:flex;gap:10px}
   #btns button{font-size:18px;padding:10px 16px;border-radius:10px;border:0;background:#ffffff22;color:#fff}
   #start{position:fixed;inset:0;background:#101215f2;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
   #start button{font-size:40px;padding:26px 60px;border-radius:20px;border:0;background:#3d8bff;color:#fff;font-weight:800}
   #start p{font-size:22px;opacity:.75;margin-top:24px;text-align:center}
+  #mapBox{padding:0;overflow:hidden}
+  #map{position:absolute;inset:0;border-radius:22px}
+  #mapBox .spdOv{position:absolute;left:18px;top:16px;background:#000b;border-radius:16px;padding:8px 18px;z-index:3;text-align:center}
+  #mapBox .spdOv .v{font-size:64px;font-weight:800;line-height:1}
+  #mapBox .spdOv .u{font-size:16px;opacity:.7}
+  #carMk{position:absolute;left:50%;top:68%;width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-bottom:42px solid #2b7bff;transform:translate(-50%,-60%);filter:drop-shadow(0 0 6px #fff);z-index:3;pointer-events:none}
+  body.nomap #mapBox{display:none}
+  body.nomap #wrap{grid-template-columns:1fr 1fr}
+  body:not(.nomap) #spdBox{display:none}
+  body.over #mapBox{box-shadow:0 0 0 10px #ff2020}
 </style>
 </head>
 <body>
 <div id="start"><button id="go">시작</button><p id="loadMsg">카메라 데이터 받는 중…</p></div>
 <div id="wrap">
+  <div class="panel" id="mapBox"><div id="map"></div><div id="carMk"></div><div class="spdOv"><div class="v" id="spd2">-</div><div class="u">km/h</div></div></div>
   <div class="panel" id="spdBox"><div class="v" id="spd">-</div><div class="u">km/h</div></div>
   <div class="panel"><div id="sec"></div><div id="limit" class="off">-</div><div id="camTxt">주변 단속 카메라 없음</div><div id="camSub"></div><div id="bar"><i id="barI"></i></div></div>
 </div>
-<div id="btns"><button id="demo">시연</button><button id="mute">소리 끄기</button><button id="fixBtn">카메라 여기</button></div>
+<div id="btns"><button id="demo">시연</button><button id="mute">소리 끄기</button><button id="fixBtn">카메라 여기</button><button id="mapBtn">지도 끄기</button></div>
 <div id="diag"></div>
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
 var $=function(i){return document.getElementById(i)};
 var CAMS=[],GRID={};
@@ -49,12 +62,36 @@ function loadCams(){
   .catch(function(e){$('loadMsg').textContent='카메라 데이터를 못 받았습니다: '+e.message});
 }
 loadCams();
+setTimeout(function(){setMap(mapOn)},0);
 
 var D2R=Math.PI/180;
 function dist(a,b,c,d){var x=(d-b)*D2R*Math.cos((a+c)/2*D2R),y=(c-a)*D2R;return Math.sqrt(x*x+y*y)*6371000}
 function brg(a,b,c,d){var y=Math.sin((d-b)*D2R)*Math.cos(c*D2R),x=Math.cos(a*D2R)*Math.sin(c*D2R)-Math.sin(a*D2R)*Math.cos(c*D2R)*Math.cos((d-b)*D2R);return (Math.atan2(y,x)/D2R+360)%360}
 function adiff(a,b){var d=((b-a)%360+540)%360-180;return d}
 function move(la,lo,h,m){var dy=m*Math.cos(h*D2R)/111320,dx=m*Math.sin(h*D2R)/(111320*Math.cos(la*D2R));return[la+dy,lo+dx]}
+
+/* 지도 */
+var mapReady=false,map=null,mapOn=localStorage.getItem('mapOff')!=='1',camSrcAt=null;
+function setMap(on){mapOn=on;document.body.classList.toggle('nomap',!on);$('mapBtn').textContent=on?'지도 끄기':'지도 켜기';localStorage.setItem('mapOff',on?'0':'1');if(on&&!map)initMap();if(map)setTimeout(function(){map.resize()},50)}
+function initMap(){
+  if(!window.maplibregl){$('mapBtn').textContent='지도 불러오기 실패';return}
+  map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[127.0276,37.4979],zoom:16.5,pitch:45,interactive:false,attributionControl:{compact:true}});
+  map.on('load',function(){mapReady=true;
+    map.getStyle().layers.forEach(function(l){if(l.type==='fill-extrusion'||/poi/.test(l.id)){map.setLayoutProperty(l.id,'visibility','none');return}if(l.type==='symbol'&&l.layout&&l.layout['text-field'])map.setLayoutProperty(l.id,'text-field',['coalesce',['get','name:ko'],['get','name']])});
+    map.addSource('cams',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+    map.addLayer({id:'cams-c',type:'circle',source:'cams',paint:{'circle-radius':['case',['==',['get','k'],'S'],13,6],'circle-color':['case',['==',['get','z'],2],'#ffcc00',['==',['get','k'],'S'],'#e02020','#888'],'circle-stroke-color':'#fff','circle-stroke-width':3}});
+    map.addLayer({id:'cams-t',type:'symbol',source:'cams',layout:{'text-field':['get','l'],'text-size':13,'text-font':['Noto Sans Bold'],'text-allow-overlap':true},paint:{'text-color':'#fff'}});
+    camSrcAt=null;
+  });
+}
+function updCamSrc(la,lo){
+  if(!map||!map.getSource('cams')||!CAMS.length)return;
+  if(camSrcAt&&dist(camSrcAt[0],camSrcAt[1],la,lo)<400)return;camSrcAt=[la,lo];
+  var f=[],c0=Math.floor(la*100),c1=Math.floor(lo*100);
+  for(var a=-3;a<=3;a++)for(var b=-3;b<=3;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];f.push({type:'Feature',geometry:{type:'Point',coordinates:[c[1],c[0]]},properties:{k:c[3],z:c[5],l:c[2]?String(c[2]):''}})}}
+  map.getSource('cams').setData({type:'FeatureCollection',features:f});
+}
+$('mapBtn').onclick=function(){setMap(!mapOn)};
 
 /* 위치 상태 */
 var fix=null,prevFix=null,v=0,head=null,fixes=0,gaps=[],spdSrc='-',lastAcc=0;
@@ -108,7 +145,8 @@ function tick(){
   if(!fix){$('diag').textContent='위치 기다리는 중';requestAnimationFrame(tick);return}
   var age=Math.min(2,(now-fix.t)/1000),la=fix.la,lo=fix.lo;
   if(head!=null&&v>1){var p=move(la,lo,head,v*age);la=p[0];lo=p[1]}
-  var kmh=v*3.6;$('spd').textContent=Math.round(kmh);
+  var kmh=v*3.6;$('spd').textContent=Math.round(kmh);$('spd2').textContent=Math.round(kmh);
+  if(map&&mapOn&&mapReady){var hh=$('map').clientHeight;map.jumpTo({center:[lo,la],bearing:head==null?0:head,zoom:kmh>70?15.5:16.5,pitch:45,padding:{top:hh*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo)}
   var over=false,zone=false;
   if(head!=null&&v>1.5&&CAMS.length){
     var t=findAhead(la,lo,head);
