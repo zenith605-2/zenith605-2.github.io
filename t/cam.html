@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>카메라 경고 시험판</title>
+<style>
+  html,body{margin:0;height:100%;background:#101215;color:#fff;font-family:system-ui,sans-serif;overflow:hidden}
+  body{transition:background .15s}
+  body.over{background:#b30000}
+  body.zone:not(.over){background:#3a3200}
+  #wrap{position:fixed;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:22px;box-sizing:border-box}
+  .panel{background:#ffffff12;border-radius:22px;padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative}
+  #spdBox .v{font-size:150px;font-weight:800;line-height:1}
+  #spdBox .u{font-size:28px;opacity:.7}
+  #limit{width:150px;height:150px;border-radius:50%;background:#fff;border:16px solid #e02020;box-sizing:border-box;color:#111;font-size:64px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+  #limit.off{opacity:.15}
+  #camTxt{font-size:40px;font-weight:800;text-align:center}
+  #camSub{font-size:24px;opacity:.85;margin-top:8px;text-align:center}
+  #bar{width:90%;height:22px;background:#ffffff22;border-radius:11px;margin-top:18px;overflow:hidden}
+  #bar i{display:block;height:100%;width:0;background:#ffb000;transition:width .2s}
+  #sec{position:absolute;top:14px;left:18px;right:18px;font-size:24px;font-weight:700;text-align:center;color:#ffd75a}
+  #diag{position:fixed;right:14px;bottom:10px;font-size:14px;opacity:.6;text-align:right;white-space:pre}
+  #btns{position:fixed;left:14px;bottom:10px;display:flex;gap:10px}
+  #btns button{font-size:18px;padding:10px 16px;border-radius:10px;border:0;background:#ffffff22;color:#fff}
+  #start{position:fixed;inset:0;background:#101215f2;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
+  #start button{font-size:40px;padding:26px 60px;border-radius:20px;border:0;background:#3d8bff;color:#fff;font-weight:800}
+  #start p{font-size:22px;opacity:.75;margin-top:24px;text-align:center}
+</style>
+</head>
+<body>
+<div id="start"><button id="go">시작</button><p id="loadMsg">카메라 데이터 받는 중…</p></div>
+<div id="wrap">
+  <div class="panel" id="spdBox"><div class="v" id="spd">-</div><div class="u">km/h</div></div>
+  <div class="panel"><div id="sec"></div><div id="limit" class="off">-</div><div id="camTxt">주변 단속 카메라 없음</div><div id="camSub"></div><div id="bar"><i id="barI"></i></div></div>
+</div>
+<div id="btns"><button id="demo">시연</button><button id="mute">소리 끄기</button></div>
+<div id="diag"></div>
+<script>
+var $=function(i){return document.getElementById(i)};
+var CAMS=[],GRID={};
+function cellKey(la,lo){return Math.floor(la*100)+'_'+Math.floor(lo*100)}
+function indexCams(arr){CAMS=arr;GRID={};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(GRID[k]=GRID[k]||[]).push(i)}}
+function loadCams(){
+  var VER='cams-20261020';
+  try{var c=localStorage.getItem(VER);if(c){indexCams(JSON.parse(c));$('loadMsg').textContent='카메라 '+CAMS.length.toLocaleString()+'개 (저장본)';return}}catch(e){}
+  fetch('cams.json?v=20261020').then(function(r){return r.json()}).then(function(a){indexCams(a);$('loadMsg').textContent='카메라 '+a.length.toLocaleString()+'개 받음';try{for(var k in localStorage)if(k.indexOf('cams-')===0)localStorage.removeItem(k);localStorage.setItem(VER,JSON.stringify(a))}catch(e){}})
+  .catch(function(e){$('loadMsg').textContent='카메라 데이터를 못 받았습니다: '+e.message});
+}
+loadCams();
+
+var D2R=Math.PI/180;
+function dist(a,b,c,d){var x=(d-b)*D2R*Math.cos((a+c)/2*D2R),y=(c-a)*D2R;return Math.sqrt(x*x+y*y)*6371000}
+function brg(a,b,c,d){var y=Math.sin((d-b)*D2R)*Math.cos(c*D2R),x=Math.cos(a*D2R)*Math.sin(c*D2R)-Math.sin(a*D2R)*Math.cos(c*D2R)*Math.cos((d-b)*D2R);return (Math.atan2(y,x)/D2R+360)%360}
+function adiff(a,b){var d=((b-a)%360+540)%360-180;return d}
+function move(la,lo,h,m){var dy=m*Math.cos(h*D2R)/111320,dx=m*Math.sin(h*D2R)/(111320*Math.cos(la*D2R));return[la+dy,lo+dx]}
+
+/* 위치 상태 */
+var fix=null,prevFix=null,v=0,head=null,fixes=0,gaps=[],spdSrc='-',lastAcc=0;
+function onFix(la,lo,acc,h,spd,t){
+  fixes++;lastAcc=acc;
+  if(fix){gaps.push(t-fix.t);if(gaps.length>10)gaps.shift()}
+  prevFix=fix;fix={la:la,lo:lo,t:t};
+  var calc=null;
+  if(prevFix){var dt=(t-prevFix.t)/1000;if(dt>0.2&&dt<5){var dm=dist(prevFix.la,prevFix.lo,la,lo);calc=dm/dt;if(dm>3)head=brg(prevFix.la,prevFix.lo,la,lo)}}
+  if(spd!=null&&!isNaN(spd)&&spd>0){v=v*0.3+spd*0.7;spdSrc='차'}else if(calc!=null){v=v*0.5+calc*0.5;spdSrc='계산'}else if(spd===0){v=0;spdSrc='차'}
+  if(h!=null&&!isNaN(h)&&v>1.5)head=h;
+}
+var demo=null;
+if(navigator.geolocation){navigator.geolocation.watchPosition(function(p){if(demo)return;var c=p.coords;onFix(c.latitude,c.longitude,c.accuracy,c.heading,c.speed,Date.now())},function(e){$('camSub').textContent='위치 오류: '+e.message},{enableHighAccuracy:true,maximumAge:0,timeout:30000})}
+
+/* 소리 */
+var ac=null,muted=false,KO=false;
+function voicesReady(){if('speechSynthesis' in window)KO=speechSynthesis.getVoices().some(function(x){return /ko/i.test(x.lang)})}
+if('speechSynthesis' in window){voicesReady();speechSynthesis.onvoiceschanged=voicesReady}
+function beep(f,len,n){if(muted||!ac)return;for(var i=0;i<(n||1);i++){var o=ac.createOscillator(),g=ac.createGain(),t0=ac.currentTime+i*(len+0.08);o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(0.4,t0);g.gain.setValueAtTime(0,t0+len);o.start(t0);o.stop(t0+len)}}
+function say(t,fallbackN){if(muted)return;if(KO){var u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=1.1;speechSynthesis.cancel();speechSynthesis.speak(u)}else beep(880,0.12,fallbackN||2)}
+$('go').onclick=function(){ac=new (window.AudioContext||window.webkitAudioContext)();beep(660,0.1,1);$('start').style.display='none';if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){})};
+$('mute').onclick=function(){muted=!muted;this.textContent=muted?'소리 켜기':'소리 끄기'};
+
+/* 시연: 가장 가까운 속도 카메라를 향해 900m 앞에서 75km/h로 달린다 */
+$('demo').onclick=function(){
+  if(demo){demo=null;this.textContent='시연';return}
+  var base=fix||{la:37.4979,lo:127.0276},best=null,bd=1e9;
+  for(var i=0;i<CAMS.length;i++){var c=CAMS[i];if(c[3]!=='S')continue;var d=dist(base.la,base.lo,c[0],c[1]);if(d<bd){bd=d;best=c}}
+  if(!best){alert('카메라 데이터가 아직 없습니다');return}
+  var h=45,st=move(best[0],best[1],h+180,900);
+  demo={la:st[0],lo:st[1],h:h,t:Date.now(),kmh:Math.max(75,best[2]+15)};prevFix=null;fix=null;passed={};target=null;
+  this.textContent='시연 끝';
+};
+setInterval(function(){if(!demo)return;var now=Date.now(),dt=(now-demo.t)/1000;demo.t=now;var p=move(demo.la,demo.lo,demo.h,demo.kmh/3.6*dt);demo.la=p[0];demo.lo=p[1];onFix(p[0],p[1],3,demo.h,demo.kmh/3.6,now)},1000);
+
+/* 경고 판단 */
+var target=null,passed={},announced={},lastBeep=0,section=null;
+function findAhead(la,lo,h){
+  var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;
+  for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;
+    for(var j=0;j<ids.length;j++){var id=ids[j],c=CAMS[id];if(passed[id])continue;var d=dist(la,lo,c[0],c[1]);if(d>1000||d<5)continue;
+      var df=adiff(h,brg(la,lo,c[0],c[1]));if(Math.abs(df)>25)continue;
+      var lat=d*Math.sin(df*D2R);if(lat<-12||lat>30)continue;
+      if(!best||d<best.d)best={id:id,c:c,d:d}}}
+  return best;
+}
+function tick(){
+  var now=Date.now();
+  if(!fix){$('diag').textContent='위치 기다리는 중';requestAnimationFrame(tick);return}
+  var age=Math.min(2,(now-fix.t)/1000),la=fix.la,lo=fix.lo;
+  if(head!=null&&v>1){var p=move(la,lo,head,v*age);la=p[0];lo=p[1]}
+  var kmh=v*3.6;$('spd').textContent=Math.round(kmh);
+  var over=false,zone=false;
+  if(head!=null&&v>1.5&&CAMS.length){
+    var t=findAhead(la,lo,head);
+    if(target&&(!t||t.id!==target.id)){var tc=CAMS[target.id];var dNow=dist(la,lo,tc[0],tc[1]);var behind=Math.abs(adiff(head,brg(la,lo,tc[0],tc[1])))>90;
+      if(behind||dNow>target.d+40){passed[target.id]=now;if(tc[4]===1)section={lim:tc[2],t:now,m:0,lastLa:la,lastLo:lo};if(tc[4]===2&&section){section=null;say('구간단속이 끝났습니다',1)}target=null}}
+    if(t&&(!target||t.d<target.d+40))target=t;
+  }
+  for(var k in passed)if(now-passed[k]>120000)delete passed[k];
+  if(section){section.m+=dist(section.lastLa,section.lastLo,la,lo);section.lastLa=la;section.lastLo=lo;var avg=section.m/Math.max(1,(now-section.t)/1000)*3.6;$('sec').textContent='구간단속 '+section.lim+' · 평균 '+Math.round(avg)+'km/h · '+(section.m/1000).toFixed(1)+'km';if(avg>section.lim)over=true;if(section.m>30000)section=null}else $('sec').textContent='';
+  var alertD=Math.min(800,Math.max(300,v*25));
+  if(target){var c=target.c,d=dist(la,lo,c[0],c[1]);target.d=Math.min(target.d,d);
+    $('limit').className=c[2]?'':'off';$('limit').textContent=c[2]||'-';
+    var name=c[4]===1?'구간단속 시작':c[4]===2?'구간단속 끝':c[3]==='S'?'과속 단속':'신호·기타 단속';
+    $('camTxt').textContent=name+' '+Math.round(d/10)*10+'m';
+    $('camSub').textContent=c[5]===2?'어린이보호구역':c[5]===1?'보호구역':'';
+    $('barI').style.width=Math.max(0,Math.min(100,(1-d/alertD)*100))+'%';
+    zone=c[5]>0&&d<alertD;
+    if(d<alertD&&!announced[target.id]){announced[target.id]=1;var r=Math.round(d/50)*50;
+      say((c[5]===2?'어린이보호구역, ':'')+'전방 '+r+'미터, '+(c[2]?'제한속도 '+c[2]+', ':'')+(c[4]===1?'구간단속 시작입니다':'단속 카메라입니다'),2)}
+    if(c[2]&&d<alertD&&kmh>c[2])over=true;
+  }else{$('limit').className=section?'':'off';$('limit').textContent=section?section.lim:'-';$('camTxt').textContent='주변 단속 카메라 없음';$('camSub').textContent='';$('barI').style.width='0'}
+  document.body.classList.toggle('over',over);document.body.classList.toggle('zone',zone);
+  if(over&&now-lastBeep>700){beep(1400,0.15,1);lastBeep=now}
+  var g=gaps.length?Math.round(gaps.reduce(function(a,b){return a+b},0)/gaps.length):0;
+  $('diag').textContent=(demo?'시연 중 · ':'')+'정확도 '+Math.round(lastAcc)+'m · 간격 '+g+'ms · 수신 '+fixes+' · 마지막 '+((now-fix.t)/1000).toFixed(1)+'초\n속도 출처 '+spdSrc+' · 방향 '+(head==null?'-':Math.round(head)+'°')+' · 카메라 '+CAMS.length.toLocaleString()+' · 음성 '+(KO?'한국어':'없음(삑)');
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+if(/autodemo/.test(location.search)){var st=document.createElement('style');st.textContent='*{transition:none!important}';document.head.appendChild(st);$('start').style.display='none';var iv=setInterval(function(){if(CAMS.length){clearInterval(iv);$('demo').onclick.call($('demo'))}},200)}
+</script>
+</body>
+</html>
