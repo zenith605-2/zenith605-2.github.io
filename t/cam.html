@@ -113,6 +113,10 @@
   .trip .th{display:flex;align-items:center;gap:10px}.trip .tt{flex:1;font-size:20px}
   .trip .badge{font-size:15px;font-weight:700;background:#e6f3ea;color:#1a7f42;border-radius:14px;padding:4px 10px}
   .trip .tbig{font-size:18px;font-weight:600;margin-top:6px}.trip .tbig b{font-size:34px}.trip .mx{float:right;font-size:18px}
+  .wxc{position:fixed;right:18px;top:16px;z-index:6;display:none;align-items:center;gap:8px;background:#fff;color:#111;border:0;border-radius:26px;padding:8px 16px;box-shadow:0 3px 12px #0003;font-size:18px}
+  .wxc.show{display:flex}.wxc b{font-size:24px}.wxc svg{width:30px;height:30px}
+  .aq{font-size:15px;font-weight:800;border-radius:10px;padding:3px 8px;color:#fff}
+  .hr{display:flex;gap:10px;overflow-x:auto;padding:6px 0}.hr div{flex:none;width:76px;text-align:center;background:#f1f5fb;border-radius:14px;padding:10px 4px;font-size:16px}.hr b{display:block;font-size:22px;margin:4px 0}.hr svg{width:30px;height:30px}
   .sheet{position:fixed;inset:0;background:#000a;z-index:20;display:none}
   .sheet.show{display:block}
   .panel{position:absolute;left:0;top:0;bottom:0;width:min(560px,48vw);background:#fff;color:#111;border-top-right-radius:22px;border-bottom-right-radius:22px;overflow:auto;padding:22px;box-sizing:border-box}
@@ -158,6 +162,7 @@
   <div id="tag"></div>
 </div>
 
+<button id="wx" class="wxc"><span id="wxIc"></span><b id="wxT">-</b><span id="wxA"></span></button>
 <div id="rightBtns">
   <button class="rb" id="navBtn" title="목적지"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#111" stroke-width="2.6"/><path d="M15 15 L21 21" stroke="#111" stroke-width="2.8" stroke-linecap="round"/></svg></button>
   <div id="zoomGrp"><button class="rb" id="zIn">+</button><button class="rb" id="zOut">−</button></div>
@@ -183,6 +188,12 @@
 <div class="sheet" id="rtSheet"><div class="panel">
   <div style="display:flex;align-items:center"><button class="back" id="rtClose">‹</button><h2 style="flex:1;margin:0 0 0 6px" id="rtDest"></h2></div>
   <div id="rtList"></div>
+</div></div>
+
+<div class="sheet" id="wxSheet"><div class="panel full">
+  <div style="display:flex;align-items:center"><h2 style="flex:1">날씨 · 미세먼지</h2><button class="back" id="wxClose">✕</button></div>
+  <div id="wxBody"></div>
+  <p class="muted">날씨·대기질: Open-Meteo (모델 예측값, 측정소 실측과 다를 수 있음)</p>
 </div></div>
 
 <div class="sheet" id="tripSheet"><div class="panel full">
@@ -356,6 +367,7 @@ function onFix(la,lo,acc,h,spd,t){
   if(prevFix){var dt=(t-prevFix.t)/1000;if(dt>0.2&&dt<5){var dm=dist(prevFix.la,prevFix.lo,la,lo);calc=dm/dt;if(dm>3)head=brg(prevFix.la,prevFix.lo,la,lo)}}
   if(spd!=null&&!isNaN(spd)&&spd>0){v=v*0.3+spd*0.7;spdSrc='차'}else if(calc!=null){v=v*0.5+calc*0.5;spdSrc='계산'}else if(spd===0){v=0;spdSrc='차'}
   if(h!=null&&!isNaN(h)&&v>1.5)head=h;
+  if(!wxAt)setTimeout(loadWx,0);
 }
 if(navigator.geolocation){navigator.geolocation.watchPosition(function(p){if(demo)return;var c=p.coords;onFix(c.latitude,c.longitude,c.accuracy,c.heading,c.speed,Date.now())},function(e){$('diag').textContent='위치 오류: '+e.message},{enableHighAccuracy:true,maximumAge:0,timeout:30000})}
 
@@ -456,6 +468,32 @@ function exportCsv(){var list=loadTrips(),rows=[['날짜','출발','도착','출
 $('tripClose').onclick=function(){show('tripSheet',0);show('tripMapBox',0)};
 $('tmClose').onclick=function(){show('tripMapBox',0)};
 $('tripSheet').onclick=function(e){if(e.target===this)show('tripSheet',0)};
+
+
+/* 날씨 · 미세먼지 */
+var WX=null,wxAt=0,wxPos=null;
+function wxKind(c){if(c===0)return'sun';if(c<=3)return'cloud';if(c===45||c===48)return'fog';if((c>=71&&c<=77)||c===85||c===86)return'snow';if(c>=95)return'storm';return'rain'}
+function wxName(c){return{sun:'맑음',cloud:'구름',fog:'안개',snow:'눈',storm:'뇌우',rain:'비'}[wxKind(c)]}
+function wxSvg(c,day){var k=wxKind(c);
+  if(k==='sun')return day===0?'<svg viewBox="0 0 24 24"><path d="M15 3a8 8 0 1 0 6 13A9 9 0 0 1 15 3z" fill="#f2c94c"/></svg>':'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#f5b400"/><g stroke="#f5b400" stroke-width="2" stroke-linecap="round"><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg>';
+  var cl='<path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 18z" fill="#9aa5b4"/>';
+  if(k==='cloud'||k==='fog')return'<svg viewBox="0 0 24 24">'+cl+'</svg>';
+  if(k==='snow')return'<svg viewBox="0 0 24 24">'+cl+'<g fill="#7fb3ff"><circle cx="9" cy="21" r="1.3"/><circle cx="13" cy="22" r="1.3"/><circle cx="17" cy="21" r="1.3"/></g></svg>';
+  return'<svg viewBox="0 0 24 24">'+cl+'<g stroke="#2b7bff" stroke-width="1.8" stroke-linecap="round"><path d="M9 20l-1 2.5M13 20l-1 2.5M17 20l-1 2.5"/></g></svg>'}
+function aqGrade(v,pm25){var t=pm25?[15,35,75]:[30,80,150];if(v==null)return null;return v<=t[0]?['좋음','#2b7bff']:v<=t[1]?['보통','#22a35a']:v<=t[2]?['나쁨','#f08c00']:['매우나쁨','#e3151a']}
+function loadWx(){var c=fix||null;if(!c)return;var now=Date.now();if(WX&&now-wxAt<15*60e3&&wxPos&&dist(wxPos[0],wxPos[1],c.la,c.lo)<5000)return;wxAt=now;wxPos=[c.la,c.lo];
+  var q='latitude='+c.la.toFixed(3)+'&longitude='+c.lo.toFixed(3)+'&timezone=Asia%2FSeoul';
+  Promise.all([fetch('https://api.open-meteo.com/v1/forecast?'+q+'&current=temperature_2m,weather_code,is_day&hourly=temperature_2m,precipitation_probability,weather_code,is_day&forecast_hours=12').then(function(r){return r.json()}),
+    fetch('https://air-quality-api.open-meteo.com/v1/air-quality?'+q+'&current=pm10,pm2_5').then(function(r){return r.json()}).catch(function(){return{}})])
+  .then(function(a){WX={w:a[0],a:a[1]};var cu=a[0].current||{},aq=(a[1]||{}).current||{};
+    $('wxIc').innerHTML=wxSvg(cu.weather_code,cu.is_day);$('wxT').textContent=Math.round(cu.temperature_2m)+'°';
+    var g=aqGrade(aq.pm2_5,true);$('wxA').innerHTML=g?'<span class="aq" style="background:'+g[1]+'">초미세 '+g[0]+'</span>':'';show('wx',1)}).catch(function(){})}
+setInterval(loadWx,60000);setTimeout(loadWx,3000);
+$('wx').onclick=function(){if(!WX)return;var w=WX.w,cu=w.current,aq=(WX.a||{}).current||{},h=w.hourly,g1=aqGrade(aq.pm10,false),g2=aqGrade(aq.pm2_5,true);
+  var html='<div class="item"><span>'+wxName(cu.weather_code)+' '+Math.round(cu.temperature_2m)+'°</span><small>미세먼지 '+(aq.pm10!=null?Math.round(aq.pm10)+'㎍/㎥ '+g1[0]:'-')+' · 초미세먼지 '+(aq.pm2_5!=null?Math.round(aq.pm2_5)+'㎍/㎥ '+g2[0]:'-')+'</small></div><div class="hr">';
+  for(var i=0;i<h.time.length;i++){var hh=Number(h.time[i].slice(11,13));html+='<div>'+(hh<12?'오전 ':'오후 ')+(hh%12||12)+'시'+wxSvg(h.weather_code[i],h.is_day[i])+'<b>'+Math.round(h.temperature_2m[i])+'°</b>'+(h.precipitation_probability[i]!=null?h.precipitation_probability[i]+'%':'')+'</div>'}
+  $('wxBody').innerHTML=html+'</div>';show('wxSheet',1)};
+$('wxClose').onclick=function(){show('wxSheet',0)};$('wxSheet').onclick=function(e){if(e.target===this)show('wxSheet',0)};
 
 /* 길 안내 */
 var NAV=null;
