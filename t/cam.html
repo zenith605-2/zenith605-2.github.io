@@ -251,6 +251,10 @@
   #viewPill.show{display:flex}#viewPill button{width:46px;height:44px;border:0;border-radius:21px;background:none;color:#555;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;gap:1px}
   #viewPill button b{font-size:10px}#viewPill button svg{width:16px;height:16px}#viewPill button.on{background:#2b7bff;color:#fff}#viewPill .vx svg{width:18px;height:18px}
   body.night #viewPill{background:#2a2e35}body.night #viewPill button{color:#c3c8cf}body.night #viewPill button.on{background:#2b7bff;color:#fff}
+  #accBox{position:fixed;left:122px;bottom:82px;z-index:5;display:none;flex-direction:column;align-items:center;gap:3px}#accBox.on{display:flex}
+  #accBox svg{width:58px;height:52px;filter:drop-shadow(0 3px 6px #0005)}#accBox b{background:#e3151a;color:#fff;font-size:18px;font-weight:800;border-radius:7px;padding:1px 9px}
+  #accBox span{background:#ffc81e;color:#111;font-size:13px;font-weight:800;border-radius:6px;padding:1px 7px;white-space:nowrap}
+  body.nomap #accBox{left:calc(50% + 80px)}#bumpBox.on~#accBox,#accBox.on{}
 </style>
 </head>
 <body>
@@ -269,6 +273,7 @@
 </div>
 <div id="fastCard"><div class="ft"><b id="fastT"></b><span id="fastS"></span></div><div class="fa"><button id="fastNo">그대로</button><button id="fastYes">바꾸기</button></div></div>
 <div id="arrCard"><div class="ah"><b id="arrName"></b><button id="arrX" aria-label="닫기"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button></div><div class="as" id="arrSub"></div><div class="aa"><button id="arrFav">★</button><button id="arrGo">목적지로 계속 안내</button></div><div class="at" id="arrTrip"></div><button id="arrLog">주행 기록 보기</button></div>
+<div id="accBox"><svg viewBox="0 0 100 90"><polygon points="50,6 95,84 5,84" fill="#ffc81e" stroke="#e3151a" stroke-width="8" stroke-linejoin="round"/><path d="M50 30v26" stroke="#111" stroke-width="9" stroke-linecap="round"/><circle cx="50" cy="69" r="5.5" fill="#111"/></svg><b id="accD">-</b><span id="accT"></span></div>
 <div id="bumpBox"><svg viewBox="0 0 100 90"><polygon points="50,6 95,84 5,84" fill="#ffc81e" stroke="#e3151a" stroke-width="8" stroke-linejoin="round"/><path d="M24 70 Q50 42 76 70 Z" fill="#111"/><rect x="18" y="69" width="64" height="5" fill="#111"/></svg><b id="bumpD">-</b></div>
 <div id="alertBox">
   <div id="spd">-</div>
@@ -445,16 +450,16 @@ function loadCams(){
   }).catch(function(e){if(!have)$('loadMsg').textContent='카메라 데이터를 못 받았습니다: '+e.message});
 }
 /* 과속방지턱 · 슈퍼차저 · 휴게소 (OSM + 국토부 표준데이터, 하루 한 번 갱신) */
-var BUMPS=[],BGRID={},SC=[],REST=[],PGRID={};
+var BUMPS=[],BGRID={},SC=[],REST=[],PGRID={},ACC=[],AGRID={};
 function gridOf(arr,g,tag){g=g||{};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(g[k]=g[k]||[]).push(tag?[tag,i]:i)}return g}
-function useExtra(b,p){BUMPS=b||[];BGRID=gridOf(BUMPS);SC=p.sc||[];REST=p.rest||[];PGRID=gridOf(REST,gridOf(SC,{},'sc'),'rest');camSrcAt=null}
+function useExtra(b,p,a){if(a){ACC=a;AGRID=gridOf(ACC)}BUMPS=b||[];BGRID=gridOf(BUMPS);SC=p.sc||[];REST=p.rest||[];PGRID=gridOf(REST,gridOf(SC,{},'sc'),'rest');camSrcAt=null}
 function poiOf(t){return t[0]==='sc'?SC[t[1]]:REST[t[1]]}
 function loadExtra(){
   var cur=LS.getItem('extraVer'),have=false;
-  try{var b=LS.getItem('bumpsData'),p=LS.getItem('poisData');if(b&&p){useExtra(JSON.parse(b),JSON.parse(p));have=true}}catch(e){}
+  try{var b=LS.getItem('bumpsData'),p=LS.getItem('poisData'),ac=LS.getItem('accData');if(b&&p){useExtra(JSON.parse(b),JSON.parse(p),ac?JSON.parse(ac):null);have=!!ac}}catch(e){}
   fetch(DATA+'extra-ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(vj){
     if(have&&vj.ver===cur)return;
-    return Promise.all([fetch(DATA+'bumps.json?v='+vj.ver).then(function(r){return r.json()}),fetch(DATA+'pois.json?v='+vj.ver).then(function(r){return r.json()})]).then(function(a){useExtra(a[0],a[1]);
+    return Promise.all([fetch(DATA+'bumps.json?v='+vj.ver).then(function(r){return r.json()}),fetch(DATA+'pois.json?v='+vj.ver).then(function(r){return r.json()}),fetch(DATA+'acc.json?v='+vj.ver).then(function(r){return r.json()}).catch(function(){return[]})]).then(function(a){useExtra(a[0],a[1],a[2]);try{LS.setItem('accData',JSON.stringify(a[2]))}catch(e){}
       try{LS.setItem('bumpsData',JSON.stringify(a[0]));LS.setItem('poisData',JSON.stringify(a[1]));LS.setItem('extraVer',vj.ver)}catch(e){}})
   }).catch(function(){});
 }
@@ -532,13 +537,20 @@ function tmSetIcons(f){var keep={};f.forEach(function(ft){var c=ft.geometry.coor
   for(var k in tmIcons)if(!keep[k]){try{tmIcons[k].setMap(null)}catch(e){}delete tmIcons[k]}}
 /* 다음 회전 지점을 지도 위 흰 화살표로 (티맵처럼). 경로 선 위에 겹쳐 그림 */
 var tmTurn=[],tmTurnKey=null;
+function chaikin(P,n){for(var k=0;k<n;k++){var Q=[P[0]];for(var i=0;i<P.length-1;i++){var a=P[i],b=P[i+1];Q.push([a[0]*0.75+b[0]*0.25,a[1]*0.75+b[1]*0.25],[a[0]*0.25+b[0]*0.75,a[1]*0.25+b[1]*0.75])}Q.push(P[P.length-1]);P=Q}return P}
 function tmDrawTurn(g){if(!TMM)return;var k=g?g.s+'_'+g.t:null;if(k===tmTurnKey)return;tmTurnKey=k;tmTurn.forEach(function(l){try{l.setMap(null)}catch(e){}});tmTurn=[];
-  if(!g||!NAV||g.t===201||g.t===200||g.t===11||g.t===185)return;var P=[];for(var sd=g.s-55;sd<=g.s+35;sd+=3)P.push(routePoint(Math.max(0,Math.min(NAV.total,sd))));if(P.length<3)return;
-  var a=P[P.length-2],tip=P[P.length-1],h=brg(a.la,a.lo,tip.la,tip.lo),L=move(tip.la,tip.lo,h+145,16),R=move(tip.la,tip.lo,h-145,16);
-  var shaft=P.map(function(q){return LL(q.la,q.lo)}),head=[LL(L[0],L[1]),LL(tip.la,tip.lo),LL(R[0],R[1])];
-  [['#1b2533',26,998],['#ffffff',18,999]].forEach(function(st){var o={strokeColor:st[0],strokeWeight:st[1],strokeOpacity:1,zIndex:st[2],map:TMM};
-    try{tmTurn.push(new Tmapv3.Polyline(Object.assign({path:shaft},o)));tmTurn.push(new Tmapv3.Polyline(Object.assign({path:head},o)))}catch(e){}})}
-/* 긴 경로에서 멈춤 방지: 짧은 교통 색 구간은 옆에 합치고(최대 약 40조각), 8m 안 점은 솎는다 */
+  if(!g||!NAV||g.t===201||g.t===200||g.t===11||g.t===14||g.t===185)return;
+  /* 유턴은 갔다 오는 선이 겹쳐 덩어리로 보여서 지도 화살표 생략(왼쪽 카드로 안내). 티맵식 회전 화살표: 회전 지점 앞 50m~뒤 30m 를 부드럽게 다듬은 몸통 + 꽉 찬 삼각형 화살촉 (검은 테두리) */
+  var P=[];for(var sd=g.s-50;sd<=g.s+30;sd+=4){var q=routePoint(Math.max(0,Math.min(NAV.total,sd)));P.push([q.la,q.lo])}if(P.length<4)return;
+  var S=chaikin(P,3),n=S.length,a=S[n-4],tip=S[n-1],h=brg(a[0],a[1],tip[0],tip[1]);
+  var bt=move(tip[0],tip[1],h+180,4),head=move(bt[0],bt[1],h,24),base=S.slice(0,n-1),L=move(bt[0],bt[1],h-90,18),R=move(bt[0],bt[1],h+90,18);
+  var shaft=base.map(function(q){return LL(q[0],q[1])});
+  try{
+    tmTurn.push(new Tmapv3.Polyline({path:shaft,strokeColor:'#1b2533',strokeWeight:24,strokeOpacity:1,zIndex:997,map:TMM}));
+    tmTurn.push(new Tmapv3.Polyline({path:shaft,strokeColor:'#ffffff',strokeWeight:16,strokeOpacity:1,zIndex:998,map:TMM}));
+    var tri=[LL(L[0],L[1]),LL(head[0],head[1]),LL(R[0],R[1])];
+    tmTurn.push(new Tmapv3.Polygon({paths:tri,fillColor:'#ffffff',fillOpacity:1,strokeColor:'#1b2533',strokeWeight:3,zIndex:999,map:TMM}));
+  }catch(e){}}
 function segLen(c){var L=0;for(var i=1;i<c.length;i++)L+=dist(c[i-1][1],c[i-1][0],c[i][1],c[i][0]);return L}
 var tmJob=0;function runJobs(J,tok){var k=0;(function step(){if(tok!==tmJob)return;for(var n=0;n<6&&k<J.length;n++,k++){try{J[k]()}catch(e){}}if(k<J.length)setTimeout(step,16);else tmTurnKey=null})()}
 function slimRoute(fs){if(!fs.length)return fs;var th=200,out=fs;
@@ -1055,7 +1067,9 @@ function findAhead(la,lo,h){
 }
 var TL='<span class="tl"><i style="background:#ff3030"></i><i style="background:#ffc400"></i><i style="background:#22c55e"></i></span>';
 function setAlert(cls,lim,pill,tag){var b=$('alertBox');b.className=cls;$('lim').innerHTML=(/sx|sig/.test(cls)?TL:'')+(lim?'<b>'+lim+'</b>':'');$('lim').className='lim'+(/child/.test(cls)?' z':'');$('pill').textContent=pill;$('tag').textContent=tag||''}
-var bAnn={},restAt=0;
+var bAnn={},aAnn={},restAt=0;
+function accName(t){return{'자전거':'자전거 사고 다발','보행노인':'노인 보행 사고 다발','보행어린이':'어린이 보행 사고 다발','스쿨존어린이':'스쿨존 사고 다발'}[t]||'사고 다발 지역'}
+function findAcc(la,lo,h){var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var ids=AGRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;for(var j=0;j<ids.length;j++){var i=ids[j],p=ACC[i],d=dist(la,lo,p[0],p[1]);if(d>250)continue;var df=adiff(h,brg(la,lo,p[0],p[1]));if(d>40&&(Math.abs(df)>35||Math.abs(d*Math.sin(df*D2R))>60))continue;if(!best||d<best.d)best={i:i,d:d,p:p}}}return best}
 function findBump(la,lo,h,lim){var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;
   for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var ids=BGRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;
     for(var j=0;j<ids.length;j++){var i=ids[j],p=BUMPS[i],d=dist(la,lo,p[0],p[1]);if(d>lim||d<4)continue;var df=adiff(h,brg(la,lo,p[0],p[1]));if(Math.abs(df)>20)continue;if(Math.abs(d*Math.sin(df*D2R))>15)continue;if(!best||d<best.d)best={i:i,d:d}}}
@@ -1131,6 +1145,10 @@ function tick(){
   var bp=(CFG.bumpOn&&head!=null&&kmh>20&&BUMPS.length)?findBump(la,lo,head,kmh>50?250:150):null;
   if(bp){$('bumpD').textContent=fmtD(bp.d);$('bumpBox').className='on';if(!bAnn[bp.i]){bAnn[bp.i]=now;beep(420,0.1,2)}}else $('bumpBox').className='';
   for(var bk in bAnn)if(now-bAnn[bk]>60000)delete bAnn[bk];
+  /* 사고 다발 지역(도로교통공단): 앞 250m, 진행 방향 ±35°, 옆 60m 안. 방지턱 경고가 떠 있으면 그 위로 올림 */
+  var ap=(head!=null&&kmh>10&&ACC.length)?findAcc(la,lo,head):null;
+  if(ap){$('accD').textContent=fmtD(ap.d);$('accT').textContent=accName(ap.p[2]);$('accBox').className='on';$('accBox').style.bottom=bp?'160px':'';if(!aAnn[ap.i]){aAnn[ap.i]=now;beep(600,0.12,1)}}else $('accBox').className='';
+  for(var ak in aAnn)if(now-aAnn[ak]>120000)delete aAnn[ak];
   if(now-restAt>2000){restAt=now;var rc=null;if(NAV&&NAV.rp&&kmh>50)for(var ri=0;ri<NAV.rp.length;ri++){var rq=NAV.rp[ri];if(rq.k==='rest'&&rq.s>NAV.s+300&&rq.s-NAV.s<60000){rc=rq;break}}
     var hw=hwRows(kmh,now);if(hw){$('hwBox').innerHTML=hw;show('hwBox',1);show('restChip',0)}else{show('hwBox',0);if(rc){$('restChip').innerHTML='<b>'+(rc.p[3]==='R'?'졸음쉼터':'휴게소')+'</b> '+rc.p[2].replace(/</g,'')+' · '+fmtD(rc.s-NAV.s);show('restChip',1)}else show('restChip',0)}
     incFetch(now);var ic=incInfo(la,lo,head,now);if(ic){var pp=ic.split('\u0000');$('incChip').innerHTML=pp[0];$('incChip').querySelector('small').textContent=pp[1]||'';show('incChip',1)}else show('incChip',0);
