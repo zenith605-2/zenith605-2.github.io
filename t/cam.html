@@ -157,7 +157,7 @@
 </style>
 </head>
 <body>
-<div id="snd">화면을 한 번 누르면 경고음이 켜집니다</div><span id="loadMsg" hidden></span>
+<button id="kbSink" tabindex="-1" aria-hidden="true" style="position:fixed;left:-200px;top:0;width:1px;height:1px;opacity:0"></button><div id="snd">화면을 한 번 누르면 경고음이 켜집니다</div><span id="loadMsg" hidden></span>
 <div id="map"></div>
 <div id="carMk"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="36" fill="#fff"/><circle cx="40" cy="40" r="36" fill="none" stroke="#1d6ff2" stroke-width="5"/><path d="M40 16 L56 56 L40 47 L24 56 Z" fill="#1d6ff2" stroke="#1d6ff2" stroke-width="3" stroke-linejoin="round"/></svg></div>
 <div id="warn"></div>
@@ -311,11 +311,12 @@ $('volG').oninput=function(){CFG.volG=Number(this.value);LS.setItem('volG',this.
 $('volW').oninput=function(){CFG.volW=Number(this.value);LS.setItem('volW',this.value)};$('volW').onchange=function(){beep(1400,0.15,1,CFG.volW)};
 $('mClose').onclick=function(){show('menuSheet',0)};
 $('menuSheet').onclick=function(e){if(e.target===this)show('menuSheet',0)};
-$('navSheet').onclick=function(e){if(e.target!==this)return;if(kbUp()){document.activeElement.blur();return}show('navSheet',0);showFav()};
-$('setSheet').onclick=function(e){if(e.target!==this)return;if(kbUp()){document.activeElement.blur();return}show('setSheet',0)};
+$('navSheet').onclick=function(e){if(e.target!==this)return;if(kbUp()){hideKb();return}show('navSheet',0);showFav()};
+$('setSheet').onclick=function(e){if(e.target!==this)return;if(kbUp()){hideKb();return}show('setSheet',0)};
+function hideKb(){var a=document.activeElement;if(!a||!/INPUT|TEXTAREA/.test(a.tagName))return;a.readOnly=true;a.disabled=true;a.blur();try{$('kbSink').focus({preventScroll:true})}catch(e){}setTimeout(function(){a.disabled=false;a.readOnly=false},400)}
 function kbUp(){var a=document.activeElement;return !!a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA')&&a.type!=='range'}
 /* 시트 안 빈 곳을 눌러도 키보드만 내려간다 */
-document.addEventListener('pointerdown',function(e){if(!kbUp())return;var t=e.target;if(t.tagName==='INPUT'||t.tagName==='BUTTON'||t.closest('button,.item,.rt'))return;if(t.closest('.panel'))document.activeElement.blur()},true);
+document.addEventListener('pointerdown',function(e){if(!kbUp())return;var t=e.target;if(t.tagName==='INPUT'||t.tagName==='BUTTON'||t.closest('button,.item,.rt'))return;if(t.closest('.panel'))hideKb()},true);
 $('mSet').onclick=function(){show('menuSheet',0);renderSet();show('setSheet',1)};
 $('mMap').onclick=function(){setMap(!mapOn);show('menuSheet',0)};
 $('mDemo').onclick=function(){toggleDemo();show('menuSheet',0)};
@@ -576,7 +577,7 @@ function poiList(d){return(((d||{}).searchPoiInfo||{}).pois||{}).poi||[]}
 function poiQ(q,c,near){return api('pois?version=1&count=12&searchKeyword='+encodeURIComponent(q)+'&centerLat='+c.la+'&centerLon='+c.lo+'&reqCoordType=WGS84GEO&resCoordType=WGS84GEO&searchtypCd='+(near?'R&radius=3':'A')).then(poiList)}
 function poiLL(p){return{la:parseFloat(p.frontLat||p.noorLat),lo:parseFloat(p.frontLon||p.noorLon)}}
 function search(){
-  var q=$('q').value.trim();if(!q)return;$('q').blur();$('results').innerHTML='<div class="muted">찾는 중…</div>';
+  var q=$('q').value.trim();if(!q)return;hideKb();$('results').innerHTML='<div class="muted">찾는 중…</div>';
   var c=fix||{la:37.4979,lo:127.0276},w=q.split(/\s+/),title='';
   /* 결과가 없으면: 붙여서 → 앞 낱말을 장소로 찾고 그 근처에서 나머지 (예: 오리 다이소 = 오리역 근처 다이소) → 반대로 */
   poiQ(q,c).then(function(ps){if(ps.length||w.length<2)return ps;
