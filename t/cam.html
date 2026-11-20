@@ -242,7 +242,7 @@
   <div class="band" id="tollBand"></div>
   <p class="muted">통행료는 예상 금액입니다. 전기차 감면은 2026년 30%, 2027년 20% (전기차로 등록한 하이패스 단말기일 때만). 출퇴근 할인·기타 감면은 반영하지 않습니다.</p>
   <h2 style="font-size:20px;margin-top:22px">야간 모드</h2><div class="opt" id="nightOpts"></div>
-  <h2 style="font-size:20px;margin-top:22px">티맵 키 (길 안내용, 이 차에만 저장)</h2><div class="keyRow"><input id="keyIn" placeholder="앱 키 붙여 넣기" autocomplete="off"><button id="keySave">저장</button></div><p class="muted" id="keyState"></p>
+  <h2 style="font-size:20px;margin-top:22px">티맵 키 (선택 · 비워 두면 중계 서버)</h2><div class="keyRow"><input id="keyIn" placeholder="앱 키 붙여 넣기" autocomplete="off"><button id="keySave">저장</button></div><p class="muted" id="keyState"></p>
   <h2 style="font-size:20px;margin-top:22px">진단 정보 표시</h2><div class="opt"><button id="diagBtn">켜짐</button></div>
 </div></div>
 
@@ -277,6 +277,7 @@ function ttName(t){if(TT[t])return TT[t];if(t>=131&&t<=142)return'회전교차�
 var CFG={tollShow:LS.getItem('tollShow')!=='0',hipass:LS.getItem('hipass')!=='0',evHi:LS.getItem('evHi')==='1',night:LS.getItem('night')||'auto',eff:Number(LS.getItem('eff')||6),kwh:Number(LS.getItem('kwh')||300),a80:LS.getItem('a80')||'1000',a50:LS.getItem('a50')||'600',a0:LS.getItem('a0')||'300',rot:LS.getItem('rotOff')!=='1',volG:Number(LS.getItem('volG')||0.8),volW:Number(LS.getItem('volW')||0.8),car:LS.getItem('carColor')||'#e9e9e9',diag:LS.getItem('diagOff')!=='1',bumpOn:LS.getItem('bumpOn')!=='0',poiOn:LS.getItem('poiOn')!=='0',bigText:LS.getItem('bigText')==='1'};
 document.body.classList.toggle('big',CFG.bigText);
 var KEY=LS.getItem('tmapKey')||'';
+var RELAY='https://chgodrjjalsrgyxuwjyq.supabase.co/functions/v1/webnav/';
 var urlK=(location.search.match(/[?&]k=([^&]+)/)||[])[1];if(urlK)KEY=decodeURIComponent(urlK);
 function optRow(box,opts,cur,cb){$(box).innerHTML='';opts.forEach(function(o){var b=document.createElement('button');b.textContent=o[1];b.className=cur===o[0]?'sel':'';b.onclick=function(){cb(o[0]);renderSet()};$(box).appendChild(b)})}
 function renderSet(){
@@ -291,11 +292,11 @@ function renderSet(){
   document.body.classList.toggle('big',CFG.bigText);camSrcAt=null;
   optRow('nightOpts',[['auto','자동 (19시~6시)'],['on','항상'],['off','사용 안 함']],CFG.night,function(v){CFG.night=v;LS.setItem('night',v);applyNight(true)});
   $('effIn').value=CFG.eff;$('kwhIn').value=CFG.kwh;
-  $('keyState').textContent=KEY?'저장됨 ('+KEY.slice(0,4)+'…'+KEY.slice(-3)+')':'아직 없음';
+  $('keyState').textContent=KEY?'내 키 사용 중 ('+KEY.slice(0,4)+'…'+KEY.slice(-3)+') · 비우고 [저장]을 누르면 중계 서버로 바뀝니다':'중계 서버 사용 중 — 키를 넣지 않아도 됩니다';
   $('diagBtn').textContent=CFG.diag?'켜짐':'꺼짐';$('diag').style.display=CFG.diag?'':'none';
 }
 function onOffRows(box,list){var TB=$(box);TB.innerHTML='';list.forEach(function(o){var row=document.createElement('div');row.className='row';row.innerHTML='<span></span><i></i>';row.querySelector('span').textContent=o[1];row.querySelector('i').textContent=CFG[o[0]]?'켬':'끔';row.querySelector('i').style.color=CFG[o[0]]?'#2b7bff':'#999';row.onclick=function(){CFG[o[0]]=!CFG[o[0]];LS.setItem(o[0],CFG[o[0]]?'1':'0');renderSet()};TB.appendChild(row)})}
-$('keySave').onclick=function(){var k=$('keyIn').value.trim();if(k.length<20){$('keyState').textContent='키가 너무 짧습니다';return}KEY=k;LS.setItem('tmapKey',k);$('keyIn').value='';renderSet()};
+$('keySave').onclick=function(){var k=$('keyIn').value.trim();if(!k){KEY='';LS.removeItem('tmapKey');renderSet();return}if(k.length<20){$('keyState').textContent='키가 너무 짧습니다';return}KEY=k;LS.setItem('tmapKey',k);$('keyIn').value='';renderSet()};
 $('diagBtn').onclick=function(){CFG.diag=!CFG.diag;LS.setItem('diagOff',CFG.diag?'0':'1');renderSet()};
 $('effIn').onchange=function(){var x=Number(this.value);if(x>=2&&x<=12){CFG.eff=x;LS.setItem('eff',String(x))}};$('kwhIn').onchange=function(){var x=Number(this.value);if(x>=0&&x<=1000){CFG.kwh=x;LS.setItem('kwh',String(x))}};
 $('setClose').onclick=function(){show('setSheet',0)};
@@ -464,7 +465,7 @@ function revName(la,lo,cb){api('geo/reversegeocoding?version=1&lat='+la+'&lon='+
 function tripTick(la,lo,kmh,now,over){
   if(demo)return;
   if(over&&!wasOver&&TRIP)TRIP.over++;wasOver=over;
-  if(!TRIP){if(kmh>12){TRIP={st:now,m:0,max:0,over:0,alerts:0,cams:0,fare:0,ha:0,hb:0,av:{t:now,v:kmh/3.6},hat:0,from:'',sla:la,slo:lo,la:la,lo:lo,path:[[+la.toFixed(5),+lo.toFixed(5)]],pl:[la,lo],dest:NAV?NAV.dest.name:''};stillSince=0;var T0=TRIP;if(KEY)revName(la,lo,function(n){T0.from=n})}return}
+  if(!TRIP){if(kmh>12){TRIP={st:now,m:0,max:0,over:0,alerts:0,cams:0,fare:0,ha:0,hb:0,av:{t:now,v:kmh/3.6},hat:0,from:'',sla:la,slo:lo,la:la,lo:lo,path:[[+la.toFixed(5),+lo.toFixed(5)]],pl:[la,lo],dest:NAV?NAV.dest.name:''};stillSince=0;var T0=TRIP;revName(la,lo,function(n){T0.from=n})}return}
   var d=dist(TRIP.la,TRIP.lo,la,lo);if(d<200){TRIP.m+=d}TRIP.la=la;TRIP.lo=lo;
   if(kmh>TRIP.max)TRIP.max=kmh;
   var adt=(now-TRIP.av.t)/1000;if(adt>=1){if(adt<=2.5){var acc=(kmh/3.6-TRIP.av.v)/adt;if(now-TRIP.hat>4000){if(acc>3.0){TRIP.ha++;TRIP.hat=now}else if(acc<-3.4){TRIP.hb++;TRIP.hat=now}}}TRIP.av={t:now,v:kmh/3.6}}if(NAV){if(!TRIP.dest)TRIP.dest=NAV.dest.name;if(NAV.fare)TRIP.fare=NAV.fare}
@@ -473,7 +474,7 @@ function tripTick(la,lo,kmh,now,over){
 }
 function endTrip(at){if(!TRIP)return;var t=TRIP;TRIP=null;if(t.m<300)return;
   var rec={st:t.st,en:at||Date.now(),m:Math.round(t.m),max:Math.round(t.max),over:t.over,alerts:t.alerts,cams:t.cams,toll:t.fare?tollOf(t.fare):0,ha:t.ha,hb:t.hb,from:t.from,dest:t.dest,eff:CFG.eff,kwh:CFG.kwh,path:t.path};
-  if(!rec.dest&&KEY&&t.la){revName(t.la,t.lo,function(n){rec.dest=n;saveTrip(rec)});return}
+  if(!rec.dest&&t.la){revName(t.la,t.lo,function(n){rec.dest=n;saveTrip(rec)});return}
   saveTrip(rec)}
 function saveTrip(rec){
   var list=[];try{list=JSON.parse(LS.getItem('trips')||'[]')}catch(e){}list=list.filter(function(x){return x.st!==rec.st});list.unshift(rec);
@@ -533,7 +534,7 @@ function loadWx(){var c=fix||null;if(!c)return;var now=Date.now();if(WX&&now-wxA
   var q='latitude='+c.la.toFixed(3)+'&longitude='+c.lo.toFixed(3)+'&timezone=Asia%2FSeoul';
   Promise.all([fetch('https://api.open-meteo.com/v1/forecast?'+q+'&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day,precipitation&hourly=temperature_2m,precipitation_probability,weather_code,is_day&forecast_hours=24&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset&forecast_days=7&wind_speed_unit=ms').then(function(r){return r.json()}),
     fetch('https://air-quality-api.open-meteo.com/v1/air-quality?'+q+'&current=pm10,pm2_5').then(function(r){return r.json()}).catch(function(){return{}})])
-  .then(function(a){WX={w:a[0],a:a[1],at:c};if(KEY)revName(c.la,c.lo,function(n){WX.place=n});var cu=a[0].current||{},aq=(a[1]||{}).current||{};
+  .then(function(a){WX={w:a[0],a:a[1],at:c};revName(c.la,c.lo,function(n){WX.place=n});var cu=a[0].current||{},aq=(a[1]||{}).current||{};
     $('wxIc').innerHTML=wxSvg(cu.weather_code,cu.is_day);$('wxT').textContent=Math.round(cu.temperature_2m)+'°';
     var g=aqGrade(aq.pm2_5,true);$('wxA').innerHTML=g?'<span class="aq" style="background:'+g[1]+'">초미세 '+g[0]+'</span>':'';show('wx',1)}).catch(function(){})}
 setInterval(loadWx,60000);setTimeout(loadWx,3000);
@@ -563,13 +564,13 @@ $('wxClose').onclick=function(){show('wxSheet',0)};$('wxSheet').onclick=function
 
 /* 길 안내 */
 var NAV=null;
-function api(path,opt){opt=opt||{};opt.headers=Object.assign({'appKey':KEY,'Accept':'application/json'},opt.headers||{});return fetch('https://apis.openapi.sk.com/tmap/'+path,opt).then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+' '+t.slice(0,120))});return r.json()})}
-$('navBtn').onclick=function(){show('navSheet',1);renderRecent();renderQuick();$('results').innerHTML=KEY?'':'<div class="item">티맵 키가 없습니다. [메뉴 → 설정]에서 먼저 넣어 주세요.</div>';setTimeout(function(){$('q').focus()},50)};
+function api(path,opt){opt=opt||{};opt.headers=Object.assign(KEY?{'appKey':KEY,'Accept':'application/json'}:{'Accept':'application/json'},opt.headers||{});return fetch((KEY?'https://apis.openapi.sk.com/tmap/':RELAY+'tmap/')+path,opt).then(function(r){if(!r.ok)return r.text().then(function(t){var m=t;try{m=JSON.parse(t).error||t}catch(e){}throw new Error((r.status===429?'':'HTTP '+r.status+' ')+String(m).slice(0,120))});return r.json()})}
+$('navBtn').onclick=function(){show('navSheet',1);renderRecent();renderQuick();$('results').innerHTML='';setTimeout(function(){$('q').focus()},50)};
 $('navClose').onclick=function(){show('navSheet',0);showFav()};
 $('q').onkeydown=function(e){if(e.key==='Enter')search()};
 $('qGo').onclick=search;
 function search(){
-  var q=$('q').value.trim();if(!q||!KEY)return;$('results').innerHTML='<div class="muted">찾는 중…</div>';
+  var q=$('q').value.trim();if(!q)return;$('results').innerHTML='<div class="muted">찾는 중…</div>';
   var c=fix||{la:37.4979,lo:127.0276};
   api('pois?version=1&count=12&searchKeyword='+encodeURIComponent(q)+'&centerLat='+c.la+'&centerLon='+c.lo+'&reqCoordType=WGS84GEO&resCoordType=WGS84GEO&searchtypCd=A').then(function(d){
     var ps=(((d||{}).searchPoiInfo||{}).pois||{}).poi||[];
@@ -589,8 +590,7 @@ function placeItem(dd,sub){
 function renderQuick(){var box=$('quick');box.innerHTML='';var L=[['sc','가까운 슈퍼차저'],['rest','휴게소 · 졸음쉼터'],['park','주변 주차장']];if(NAV)L.push(['dpark','목적지 주차장']);
   L.forEach(function(o){var b=document.createElement('button');b.textContent=(NAV&&(o[0]==='sc'||o[0]==='rest')?'경로 위 ':'')+o[1].replace('가까운 ','');if(!NAV)b.textContent=o[1];b.onclick=function(){quick(o[0])};box.appendChild(b)})}
 function quick(kind){var box=$('results'),c=fix||{la:37.4979,lo:127.0276};box.innerHTML='';
-  if(kind==='park'||kind==='dpark'){if(!KEY){box.innerHTML='<div class="item">티맵 키가 없습니다. [메뉴 → 설정]에서 먼저 넣어 주세요.</div>';return}
-    var t=kind==='dpark'&&NAV?NAV.dest:c;box.innerHTML='<div class="muted">찾는 중…</div>';
+  if(kind==='park'||kind==='dpark'){    var t=kind==='dpark'&&NAV?NAV.dest:c;box.innerHTML='<div class="muted">찾는 중…</div>';
     api('pois/search/around?version=1&centerLat='+t.la+'&centerLon='+t.lo+'&categories='+encodeURIComponent('주차장')+'&radius=1&count=15&reqCoordType=WGS84GEO&resCoordType=WGS84GEO').then(function(d){
       var ps=(((d||{}).searchPoiInfo||{}).pois||{}).poi||[];box.innerHTML=ps.length?'<h2 style="font-size:20px">'+(kind==='dpark'?NAV.dest.name.replace(/</g,'')+' 주변 주차장':'주변 주차장')+'</h2>':'<div class="muted">반경 1km 안에 주차장이 없습니다</div>';
       ps.forEach(function(p){var la=parseFloat(p.frontLat||p.noorLat),lo=parseFloat(p.frontLon||p.noorLon);box.appendChild(placeItem({name:p.name,la:la,lo:lo},(kind==='dpark'?'목적지에서 ':'')+fmtD(dist(t.la,t.lo,la,lo))+(kind==='dpark'?'':' · 직선')))})
@@ -629,7 +629,6 @@ function renderRecent(){var r=[];try{r=JSON.parse(LS.getItem('recentDest')||'[]'
 function saveRecent(d){var r=[];try{r=JSON.parse(LS.getItem('recentDest')||'[]')}catch(e){}r=r.filter(function(x){return x.name!==d.name});r.unshift({name:d.name,la:d.la,lo:d.lo});LS.setItem('recentDest',JSON.stringify(r.slice(0,8)))}
 var OPTS=[['0','추천'],['2','최소시간'],['1','무료도로'],['10','최단거리']];
 function startNav(d){
-  if(!KEY)return;
   show('navSheet',0);hideFav();saveRecent(d);
   $('rtList').innerHTML='<div class="muted">경로 찾는 중…</div>';$('rtDest').textContent=d.name;renderPred(d);show('rtSheet',1);
   var c=fix||{la:37.4979,lo:127.0276};
@@ -800,7 +799,7 @@ loadCams();
 loadExtra();
 setMap(mapOn);
 requestAnimationFrame(tick);
-if(/autodemo/.test(location.search)){var iv=setInterval(function(){if(CAMS.length){clearInterval(iv);if(/navdemo/.test(location.search)&&KEY){startNav(/far/.test(location.search)?{name:'대전역',la:36.3324,lo:127.4342}:{name:'양재역',la:37.4842,lo:127.0346});var iv2=setInterval(function(){var f=document.querySelector('#rtList .rt');if(f&&!/shot/.test(location.search)){clearInterval(iv2);f.click();setTimeout(toggleDemo,300)}},300)}else toggleDemo()}},200)}
+if(/autodemo/.test(location.search)){var iv=setInterval(function(){if(CAMS.length){clearInterval(iv);if(/navdemo/.test(location.search)){startNav(/far/.test(location.search)?{name:'대전역',la:36.3324,lo:127.4342}:{name:'양재역',la:37.4842,lo:127.0346});var iv2=setInterval(function(){var f=document.querySelector('#rtList .rt');if(f&&!/shot/.test(location.search)){clearInterval(iv2);f.click();setTimeout(toggleDemo,300)}},300)}else toggleDemo()}},200)}
 </script>
 </body>
 </html>
