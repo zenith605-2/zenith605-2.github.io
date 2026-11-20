@@ -482,9 +482,17 @@ function tmFollow(la,lo,b,z){z+=TMZ;
 function tmSetIcons(f){var keep={};f.forEach(function(ft){var c=ft.geometry.coordinates,k=ft.properties.ic+'@'+c[1].toFixed(5)+','+c[0].toFixed(5);keep[k]=1;if(tmIcons[k])return;var ic=tmIcon(ft.properties.ic);if(!ic)return;var sc=/^(lim|sig)/.test(ft.properties.ic)?0.62:0.7;
     try{tmIcons[k]=new Tmapv3.Marker({position:LL(c[1],c[0]),icon:ic.url,iconSize:new Tmapv3.Size(Math.round(ic.w*sc),Math.round(ic.h*sc)),anchor:'center',map:TMM})}catch(e){}});
   for(var k in tmIcons)if(!keep[k]){try{tmIcons[k].setMap(null)}catch(e){}delete tmIcons[k]}}
+/* 다음 회전 지점을 지도 위 흰 화살표로 (티맵처럼). 경로 선 위에 겹쳐 그림 */
+var tmTurn=[],tmTurnKey=null;
+function tmDrawTurn(g){if(!TMM)return;var k=g?g.s+'_'+g.t:null;if(k===tmTurnKey)return;tmTurnKey=k;tmTurn.forEach(function(l){try{l.setMap(null)}catch(e){}});tmTurn=[];
+  if(!g||!NAV||g.t===201||g.t===200||g.t===11||g.t===185)return;var P=[];for(var sd=g.s-55;sd<=g.s+35;sd+=3)P.push(routePoint(Math.max(0,Math.min(NAV.total,sd))));if(P.length<3)return;
+  var a=P[P.length-2],tip=P[P.length-1],h=brg(a.la,a.lo,tip.la,tip.lo),L=move(tip.la,tip.lo,h+145,16),R=move(tip.la,tip.lo,h-145,16);
+  var shaft=P.map(function(q){return LL(q.la,q.lo)}),head=[LL(L[0],L[1]),LL(tip.la,tip.lo),LL(R[0],R[1])];
+  [['#1b2533',26,998],['#ffffff',18,999]].forEach(function(st){var o={strokeColor:st[0],strokeWeight:st[1],strokeOpacity:1,zIndex:st[2],map:TMM};
+    try{tmTurn.push(new Tmapv3.Polyline(Object.assign({path:shaft},o)));tmTurn.push(new Tmapv3.Polyline(Object.assign({path:head},o)))}catch(e){}})}
 function tmDrawRoute(fs,pins){tmLines.forEach(function(l){try{l.setMap(null)}catch(e){}});tmLines=[];tmPins.forEach(function(m){try{m.setMap(null)}catch(e){}});tmPins=[];
   var col={2:'#f5b400',3:'#ff7a00',4:'#e3151a'},dk={2:'#b88600',3:'#c25500',4:'#a50e12'};
-  fs.forEach(function(ft){var c=ft.properties.c;try{tmLines.push(new Tmapv3.Polyline({path:ft.geometry.coordinates.map(function(q){return LL(q[1],q[0])}),strokeColor:col[c]||'#2b7bff',strokeWeight:9,outlineColor:dk[c]||'#1546b8',outlineWidth:2,map:TMM}))}catch(e){}});
+  fs.forEach(function(ft){var c=ft.properties.c;try{tmLines.push(new Tmapv3.Polyline({path:ft.geometry.coordinates.map(function(q){return LL(q[1],q[0])}),strokeColor:col[c]||'#2b7bff',strokeWeight:14,strokeOpacity:1,outlineColor:dk[c]||'#1546b8',outlineWidth:3,zIndex:10,map:TMM}))}catch(e){}});tmTurnKey=null;
   pins.forEach(function(p){var ic=tmIcon(p.ic);if(!ic)return;try{tmPins.push(new Tmapv3.Marker({position:LL(p.la,p.lo),icon:ic.url,iconSize:new Tmapv3.Size(Math.round(ic.w*0.8),Math.round(ic.h*0.8)),anchor:'bottom',map:TMM}))}catch(e){}})}
 function initMap(){
   if(ENG==='tmap'){if(TMM)return;loadTmap(function(){try{curStyle=nightNow()?'NIGHT':'ROAD';TMM=new Tmapv3.Map('map',{center:LL(37.4979,127.0276),width:'100%',height:'100%',zoom:17,mapType:curStyle});
@@ -872,7 +880,7 @@ function drawRoute(force){if(!mapReady)return;
   map.getSource('dest').setData({type:'FeatureCollection',features:NAV?[{type:'Feature',geometry:{type:'Point',coordinates:[NAV.dest.lo,NAV.dest.la]}}].concat((NAV.via||[]).map(function(p){return{type:'Feature',properties:{ic:'via'},geometry:{type:'Point',coordinates:[p.lo,p.la]}}})):[]});
 }
 function buildTbar(){var box=$('tbarIn');box.innerHTML='';if(!NAV||!NAV.total)return;var C=NAV.C||[],S=NAV.S,col={2:'#f5b400',3:'#ff7a00',4:'#e3151a'},st=0,cur=C[0]||0;for(var i=1;i<=S.length-1;i++){var c=i<S.length-1?(C[i]||0):-1;if(c!==cur){var el=document.createElement('i');el.style.width=((S[i]-S[st])/NAV.total*100)+'%';el.style.background=col[cur]||'#2b7bff';box.appendChild(el);st=i;cur=c}}}
-function endNav(){RWX=null;setTimeout(updWxWarn,0);favDismissed=false;setTimeout(showFav,1500);NAV=null;document.body.classList.remove('nav');setTimeout(mapResize,60);drawRoute(true)}
+function endNav(){if(TMM)tmDrawTurn(null);RWX=null;setTimeout(updWxWarn,0);favDismissed=false;setTimeout(showFav,1500);NAV=null;document.body.classList.remove('nav');setTimeout(mapResize,60);drawRoute(true)}
 function project(la,lo){
   var R=NAV.R,best=null,from=Math.max(0,NAV.idx-5),to=Math.min(R.length-2,NAV.idx+120),kx=111320*Math.cos(la*D2R),ky=111320;
   for(var i=from;i<=to;i++){var ax=(R[i][1]-lo)*kx,ay=(R[i][0]-la)*ky,bx=(R[i+1][1]-lo)*kx,by=(R[i+1][0]-la)*ky,dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy,t=L2?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L2)):0,px=ax+t*dx,py=ay+t*dy,dd=Math.sqrt(px*px+py*py);
@@ -890,7 +898,7 @@ function navTick(la,lo,kmh,now){
   if(remain<30||dist(la,lo,NAV.dest.la,NAV.dest.lo)<30){say('목적지에 도착했습니다',660,3);endNav();return null}
   NAV.G.forEach(function(g){if(g.t===185&&!g.done&&g.s<NAV.s-5){g.done=1;if(NAV.via&&NAV.via.length)NAV.via.shift();say('경유지에 도착했습니다',660,2,1);drawRoute()}});
   var nx=null,nx2=null;for(var i=0;i<NAV.G.length;i++){if(NAV.G[i].s>NAV.s+3&&NAV.G[i].t!==200){if(!nx)nx=NAV.G[i];else{nx2=NAV.G[i];break}}}
-  NAV.nextD=nx?nx.s-NAV.s:null;
+  NAV.nextD=nx?nx.s-NAV.s:null;if(TMM)tmDrawTurn(nx&&nx.s-NAV.s<500?nx:null);
   if(nx){var dd=nx.s-NAV.s,nm=ttName(nx.t);
     $('tArrow').innerHTML=AR[arrowKind(nx.t)];$('tDist').innerHTML=bigD(dd);
     $('tName').textContent=nx.t===201?NAV.dest.name:nx.t===185?'경유지 · '+((NAV.via||[])[0]||{name:''}).name:(nx.pname||nx.name||nm);
