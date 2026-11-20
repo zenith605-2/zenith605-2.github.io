@@ -123,8 +123,10 @@
   .wxg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.wxg div{background:#fff;border-radius:12px;padding:10px;font-size:15px;color:#555}.wxg b{display:block;font-size:22px;color:#111;margin-top:2px}
   .dayrow{display:flex;align-items:center;gap:14px;padding:10px 4px;border-bottom:1px solid #eef0f3;font-size:20px}.dayrow span:first-child{width:80px}.dayrow svg{width:30px;height:30px}.dayrow .pp{width:60px;color:#2b7bff;font-size:17px}.dayrow b{margin-left:auto}
   .hr{display:flex;gap:10px;overflow-x:auto;padding:6px 0}.hr div{flex:none;width:76px;text-align:center;background:#f1f5fb;border-radius:14px;padding:10px 4px;font-size:16px}.hr b{display:block;font-size:22px;margin:4px 0}.hr svg{width:30px;height:30px;display:block;margin:4px auto}
-  .sheet{position:fixed;inset:0;background:#000a;z-index:20;display:none}
-  .sheet.show{display:block}
+  .sheet{position:fixed;inset:0;background:#000a;z-index:20;display:block;visibility:hidden;opacity:0;transition:opacity .22s ease,visibility 0s linear .26s}
+  .sheet.show{visibility:visible;opacity:1;transition:opacity .2s ease}
+  .sheet .panel{transform:translateX(-40px);transition:transform .26s cubic-bezier(.2,.8,.2,1)}
+  .sheet.show .panel{transform:none}
   .panel{position:absolute;left:0;top:0;bottom:0;width:min(560px,48vw);background:#fff;color:#111;border-top-right-radius:22px;border-bottom-right-radius:22px;overflow:auto;padding:22px;box-sizing:border-box}
   .panel.full{width:min(760px,70vw)}
   .sheet h2{font-size:24px;margin:8px 0 14px}
@@ -185,7 +187,7 @@
   .note{font-size:13px;color:#9aa1ab;margin:10px 2px}
   /* 야간 모드: 지도와 함께 화면 전체를 어둡게 */
   #bottom .ic,.sbar .bk{color:#111}
-  html:has(body.night),body.night{background:#15181d}
+  html:has(body.night),body.night{background:#15181d;color-scheme:dark}
   .maplibregl-ctrl-attrib{font-size:10px;opacity:.8}.maplibregl-ctrl-attrib:not(.uopen) .maplibregl-ctrl-attrib-inner{display:none}.maplibregl-ctrl-attrib:not(.uopen){padding:0!important;min-height:24px;min-width:24px}body.night .maplibregl-ctrl-attrib{background:#2a2e35cc;color:#aab}body.night .maplibregl-ctrl-attrib a{color:#aab}body.night .maplibregl-ctrl-attrib-button{filter:invert(1)}
   body.night .rb,body.night .wxc,body.night #restChip{background:#2a2e35;color:#e8eaed;box-shadow:0 2px 8px #0009}
   body.night #bottom{background:#1c1f24;color:#e8eaed;box-shadow:0 -2px 12px #0008}body.night #bottom .ic{color:#e8eaed}
@@ -200,6 +202,7 @@
   body.night .keyRow input{background:#2a2e35;color:#e8eaed;border-color:#3a3f47}
   body.night .opt button.sel{background:#2b7bff;color:#fff}body.night .pl .ac button.via{background:#4a3517;color:#ffb75e}
   body.night #fav .grip{background:#4a4f57}
+  body.night .wxg div,body.night .hr div{background:#2f343b;color:#aab1ba}body.night .wxg b,body.night .hr b{color:#f1f3f5}body.night .dayrow{border-color:#30353c}body.night .trip .badge{background:#1f3a2a;color:#6fd59a}body.night .score{background:#1f2f4a;color:#8fb6ff}body.night .tmb{background:#2a2e35}
   /* 전체 크기 한 단계 줄임 (11/20 실차: 버튼이 다 크다) */
   .rb{width:46px;height:46px}.rb svg{width:22px;height:22px}#rightBtns{gap:8px}#zoomGrp{gap:8px}
   #spd{font-size:32px}
