@@ -278,6 +278,9 @@
   .cc .vw i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#888;font-style:normal;font-size:13px}
   .cc .dd{position:absolute;left:6px;top:6px;background:#2b7bff;color:#fff;font-size:13px;font-weight:800;border-radius:6px;padding:1px 7px}
   .cc .nm{font-size:13px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#ddd}
+  #tbar::before{content:'';position:absolute;left:0;right:0;top:-18px;bottom:-18px}#jamChip{pointer-events:auto;cursor:pointer}
+  .jc{flex:0 0 150px;height:142px;box-sizing:border-box;border-radius:10px;background:#ff7a0026;border-left:6px solid #ff7a00;padding:10px 12px;display:flex;flex-direction:column;gap:6px}.jc.red{background:#e3151a2e;border-left-color:#e3151a}.jc.ok{background:#22b14c26;border-left-color:#22b14c;flex-basis:170px}
+  .jc .a{font-size:24px;font-weight:900}.jc .b{font-size:15px;font-weight:700;color:#ffb070}.jc.red .b{color:#ff7070}.jc.ok .b{color:#7ddc95}.jc .m{font-size:15px;font-weight:700;color:#fff}.jc .b,.jc .a{white-space:nowrap}.jc .c{font-size:13px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   #cctvRow .note{color:#aaa;font-size:14px;padding:30px 4px}
   #cctvBig{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,90vw);z-index:41;background:#000;border-radius:14px;overflow:hidden;display:none;box-shadow:0 10px 40px #000a}
   #cctvBig.on{display:block}#cctvBig video{width:100%;aspect-ratio:16/9;display:block;background:#000}#cctvBig .nm{color:#fff;font-size:16px;font-weight:700;padding:10px 14px}
@@ -324,7 +327,7 @@
   <div id="zoomGrp"><button class="rb" id="zIn">+</button><button class="rb" id="zOut">−</button></div>
   <button class="rb" id="mute" title="소리"><svg viewBox="0 0 24 24" id="muteIc"></svg></button>
 </div>
-<div id="cctvBar"><div class="hd"><b>가는 길 CCTV</b><span id="cctvN"></span><button type="button" id="cctvX">✕</button></div><div id="cctvRow"></div></div>
+<div id="cctvBar"><div class="hd"><b>가는 길 상황</b><span id="cctvN"></span><button type="button" id="cctvX">✕</button></div><div id="cctvRow"></div></div>
 <div id="cctvBig"><video id="cctvBigV" muted playsinline autoplay></video><div class="nm" id="cctvBigN"></div><button type="button" id="cctvBigX">✕</button></div>
 <div id="prog"><div id="progFill"></div><div id="progDot"></div></div>
 <div id="diag"></div>
@@ -1073,20 +1076,29 @@ function ccPlay(v,url,id){if(CC.hls[id])return;if(window.Hls&&Hls.isSupported())
 function ccStop(id){var h=CC.hls[id];if(h){try{h.destroy()}catch(e){}delete CC.hls[id]}}
 function ccStopAll(){Object.keys(CC.hls).forEach(ccStop)}
 function ccVisible(){var row=$('cctvRow'),r=row.getBoundingClientRect();Array.prototype.forEach.call(row.querySelectorAll('.cc'),function(c){var b=c.getBoundingClientRect(),on=b.right>r.left-40&&b.left<r.right+40,id=c.dataset.i;if(on&&Object.keys(CC.hls).length<6)ccPlay(c.querySelector('video'),CC.list[id].u,id);else if(!on)ccStop(id)})}
+function jamList(){if(!NAV||!NAV.C||!NAV.S)return[];var C=NAV.C,S=NAV.S,R=NAV.R,G=NAV.G||[],out=[],i=Math.max(0,NAV.idx);
+  while(i<S.length-1){if((C[i]||0)<3){i++;continue}var st=i,en=i,gap=0,bad=0,j=i;for(;j<S.length-1;j++){if((C[j]||0)>=3){en=j;gap=0;if(C[j]===4)bad+=S[j+1]-S[j]}else{gap+=S[j+1]-S[j];if(gap>80)break}}
+    var a=Math.max(S[st],NAV.s),L=S[en+1]-a;if(L>=150){var slow=L-bad,sec=bad/(8/3.6)+slow/(18/3.6),nm='';for(var g=G.length-1;g>=0;g--)if(G[g].s<=S[st]+30&&G[g].name){nm=G[g].name;break}
+      var mid=a+L/2,m=st;while(m<en&&S[m+1]<mid)m++;out.push({ahead:Math.max(0,S[st]-NAV.s),L:L,min:Math.max(1,Math.round(sec/60)),red:bad>L/2,nm:nm,la:R[m][0],lo:R[m][1],z:L>3000?-3:L>1200?-2:-1})}
+    i=j+1}return out}
+function jamLook(j){setFree(true);zoff=j.z;manZT=Date.now();if(TMM){TMM.setCenter(LL(j.la,j.lo));tmZ=null}else if(map)map.setCenter([j.lo,j.la]);setTimeout(function(){panBy(0,-110)},60)}
+function jamCards(row){var J=jamList();if(!J.length){var e=document.createElement('div');e.className='jc ok';e.innerHTML='<div class="a">막히는 곳 없음</div><div class="b">남은 경로 전부 원활</div>';row.appendChild(e);return 0}
+  J.forEach(function(j){var e=document.createElement('div');e.className='jc'+(j.red?' red':'');e.innerHTML='<div class="a"></div><div class="b"></div><div class="c"></div>';e.querySelector('.a').textContent=j.ahead>30?fmtD(j.ahead)+' 앞':'지금';e.querySelector('.b').textContent=(j.red?'정체 ':'서행 ')+fmtD(j.L);e.querySelector('.c').before(Object.assign(document.createElement('div'),{className:'m',textContent:'약 '+j.min+'분 더'}));e.querySelector('.c').textContent=j.nm||'';e.onclick=function(){if(!row._dragged)jamLook(j)};row.appendChild(e)});return J.length}
 function cctvClose(){$('cctvBar').classList.remove('on');ccStopAll();cctvBigClose()}
 function cctvBigClose(){$('cctvBig').classList.remove('on');ccStop('big')}
-function cctvOpen(){if(!NAV){toast('길 안내 중에 볼 수 있어요');return}var bar=$('cctvBar'),row=$('cctvRow');bar.classList.add('on');row.innerHTML='<div class="note">CCTV 찾는 중…</div>';$('cctvN').textContent='';
+function cctvOpen(){if(!NAV){toast('길 안내 중에 볼 수 있어요');return}var bar=$('cctvBar'),row=$('cctvRow');bar.classList.add('on');row.innerHTML='';var nJ=jamCards(row);var wait=document.createElement('div');wait.className='note';wait.textContent='CCTV 찾는 중…';row.appendChild(wait);$('cctvN').textContent=nJ?'막히는 곳 '+nJ+'곳 · 누르면 지도에서 보기':'';var noteSet=function(t){wait.textContent=t};
   var R=NAV.R,S=NAV.S,i0=NAV.idx||0,a=[],x0=999,x1=-999,y0=999,y1=-999;for(var i=i0;i<R.length&&S[i]-NAV.s<40000;i++){var p=R[i];if(Math.max(x1,p[1])-Math.min(x0,p[1])>1.4||Math.max(y1,p[0])-Math.min(y0,p[0])>1.4)break;x0=Math.min(x0,p[1]);x1=Math.max(x1,p[1]);y0=Math.min(y0,p[0]);y1=Math.max(y1,p[0]);a.push(i)}
-  if(a.length<2){row.innerHTML='<div class="note">앞쪽 경로가 짧습니다</div>';return}
+  if(a.length<2){noteSet('');return}
   fetch(RELAY.replace(/tmap\/?$/,'')+'cctv?minX='+(x0-0.01)+'&maxX='+(x1+0.01)+'&minY='+(y0-0.01)+'&maxY='+(y1+0.01)).then(function(r){return r.json().then(function(d){return{st:r.status,d:d}})}).then(function(o){
-    if(o.st===503){row.innerHTML='<div class="note">CCTV 연결 준비 중입니다 (인증키 연결 전)</div>';return}
+    if(o.st===503){noteSet('CCTV는 인증키 연결 뒤에 나옵니다');return}
     var out=[];(o.d.list||[]).forEach(function(c){var bd=1e9,bs=0;for(var k=0;k<a.length-1;k++){var A=R[a[k]],B=R[a[k+1]];var q=projSeg(c[0],c[1],A,B),dd=dist(c[0],c[1],q[0],q[1]);if(dd<bd){bd=dd;bs=S[a[k]]+dist(A[0],A[1],q[0],q[1])}}if(bd<150&&bs>NAV.s-100)out.push({la:c[0],lo:c[1],n:c[2].replace(/^\[[^\]]*\]\s*/,''),u:c[3],s:bs})});
     out.sort(function(x,y){return x.s-y.s});var seen={};out=out.filter(function(c){var k=Math.round(c.s/150);if(seen[k])return false;seen[k]=1;return true});CC.list=out;
-    if(!out.length){row.innerHTML='<div class="note">앞쪽 40km 경로에 CCTV가 없습니다</div>';return}
-    $('cctvN').textContent=out.length+'곳 · 끌어서 넘기기';row.innerHTML='';
-    out.forEach(function(c,i){var el=document.createElement('div');el.className='cc';el.dataset.i=i;el.innerHTML='<div class="vw"><video muted playsinline autoplay></video><i>불러오는 중</i><span class="dd"></span></div><div class="nm"></div>';el.querySelector('.dd').textContent=fmtD(Math.max(0,c.s-NAV.s));el.querySelector('.nm').textContent=c.n;
+    if(!out.length){noteSet('앞쪽 40km 경로에 CCTV가 없습니다');return}
+    wait.remove();$('cctvN').textContent=(nJ?'막히는 곳 '+nJ+' · ':'')+'CCTV '+out.length+'곳 · 끌어서 넘기기';
+    out.forEach(function(c,i){var el=document.createElement('div');el.className='cc';el.dataset.i=i;el.innerHTML='<div class="vw"><video muted playsinline autoplay></video><i>불러오는 중</i><span class="dd"></span></div><div class="nm"></div>';el.querySelector('.dd').textContent=fmtD(Math.max(0,c.s-NAV.s));var ci=0;while(ci<NAV.S.length-2&&NAV.S[ci+1]<c.s)ci++;var lv=(NAV.C||[])[ci]||0;if(lv>=2)el.querySelector('.dd').style.background=lv>=4?'#e3151a':lv>=3?'#ff7a00':'#d99a00';el.querySelector('.nm').textContent=c.n;
       el.onclick=function(){if(row._dragged)return;$('cctvBigN').textContent=c.n+' · '+fmtD(Math.max(0,c.s-NAV.s))+' 앞';$('cctvBig').classList.add('on');ccStop('big');ccPlay($('cctvBigV'),c.u,'big')};row.appendChild(el)});
-    hlsLoad(ccVisible)}).catch(function(e){row.innerHTML='<div class="note">불러오지 못했습니다</div>'})}
+    hlsLoad(ccVisible)}).catch(function(e){noteSet('CCTV를 불러오지 못했습니다')})}
+$('tbar').addEventListener('click',function(){if(NAV)cctvOpen()});$('jamChip').addEventListener('click',function(){if(NAV)cctvOpen()});
 $('cctvBtn').onclick=function(){if($('cctvBar').classList.contains('on'))cctvClose();else cctvOpen()};$('cctvX').onclick=cctvClose;$('cctvBigX').onclick=cctvBigClose;
 (function(){var row=$('cctvRow'),st=null,t=null;row.addEventListener('scroll',function(){clearTimeout(t);t=setTimeout(ccVisible,200)});
   row.addEventListener('pointerdown',function(e){st={x:e.clientX,l:row.scrollLeft};row._dragged=false});
