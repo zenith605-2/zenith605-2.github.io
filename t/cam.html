@@ -19,15 +19,15 @@
   @keyframes blink{0%{opacity:1}100%{opacity:.12}}
 
   #left{position:fixed;left:0;top:0;z-index:5;display:flex;flex-direction:column;align-items:flex-start}
-  #turn{display:none;background:#17643f;color:#fff;border-bottom-right-radius:14px;padding:14px 26px 14px 18px;align-items:center;gap:18px;min-width:380px;box-shadow:0 4px 14px #0004}
+  #turn{display:none;background:#17643f;color:#fff;border-bottom-right-radius:12px;padding:8px 16px 8px 10px;align-items:center;gap:10px;min-width:0;box-shadow:0 4px 14px #0004}
   body.nav #turn{display:flex}
-  #tArrow{width:92px;height:92px;flex:none}
-  #tDist{font-size:64px;font-weight:800;line-height:1;letter-spacing:-1px}
-  #tDist small{font-size:34px;font-weight:700;margin-left:2px}
-  #tName{font-size:24px;margin-top:6px;max-width:330px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #next{display:none;background:#0f4a2e;color:#fff;border-bottom-right-radius:12px;padding:8px 18px;align-items:center;gap:12px;font-size:36px;font-weight:800;box-shadow:0 4px 14px #0004}
+  #tArrow{width:56px;height:56px;flex:none}
+  #tDist{font-size:40px;font-weight:800;line-height:1;letter-spacing:-1px}
+  #tDist small{font-size:22px;font-weight:700;margin-left:2px}
+  #tName{font-size:17px;margin-top:3px;max-width:230px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #next{display:none;background:#0f4a2e;color:#fff;border-bottom-right-radius:10px;padding:4px 12px;align-items:center;gap:8px;font-size:22px;font-weight:800;box-shadow:0 4px 14px #0004}
   body.nav #next.show{display:flex}
-  #nArrow{width:44px;height:44px}
+  #nArrow{width:28px;height:28px}
 
   #alertBox{position:fixed;left:24px;bottom:96px;z-index:5;display:flex;flex-direction:column;align-items:center;gap:6px}
   #signWrap{position:relative;width:118px;height:118px;display:none}
@@ -396,13 +396,25 @@ var curStyle='liberty';
 function nightNow(){if(CFG.night==='on')return true;if(CFG.night==='off')return false;var h=new Date().getHours();return h>=19||h<6}
 function applyNight(force){if(!map)return;var want=nightNow()?'dark':'liberty';if(want!==curStyle||force===true&&want!==curStyle){curStyle=want;map.setStyle('https://tiles.openfreemap.org/styles/'+want)}}
 setInterval(applyNight,60000);
-function updCamSrc(la,lo){
-  if(!mapReady||!CAMS.length)return;
-  if(camSrcAt&&dist(camSrcAt[0],camSrcAt[1],la,lo)<400)return;camSrcAt=[la,lo];
-  var f=[],c0=Math.floor(la*100),c1=Math.floor(lo*100);
+/* 지도 아이콘: 카메라·방지턱은 가는 방향 것만 (안내 중엔 경로 위, 아니면 앞쪽 부채꼴), 슈퍼차저·휴게소는 전부 */
+function sideOk(segH,la,lo,p){var d=dist(la,lo,p[0],p[1]);if(d<1)return true;var df=adiff(segH,brg(la,lo,p[0],p[1])),lat=d*Math.sin(df*D2R);return lat>=-12&&lat<=30}
+function routeHits(N){var cam={},bmp={},R=N.R,S=N.S,last=-1e9;
+  for(var i=0;i<R.length-1;i++){if(S[i]-last<20)continue;last=S[i];var h=brg(R[i][0],R[i][1],R[i+1][0],R[i+1][1]),c0=Math.floor(R[i][0]*100),c1=Math.floor(R[i][1]*100);
+    for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var k=(c0+a)+'_'+(c1+b),ids=GRID[k];
+      if(ids)ids.forEach(function(id){if(cam[id]!=null)return;var c=CAMS[id],d=dist(R[i][0],R[i][1],c[0],c[1]);if(d<35&&sideOk(h,R[i][0],R[i][1],c))cam[id]=S[i]});
+      var bs=BGRID[k];if(bs)bs.forEach(function(id){if(bmp[id]!=null)return;var p=BUMPS[id];if(dist(R[i][0],R[i][1],p[0],p[1])<18)bmp[id]=S[i]})}}
+  N.cams=cam;N.bumps=bmp}
+var camSrcT=0,camSrcH=null;
+function aheadOk(la,lo,h,p,max){var d=dist(la,lo,p[0],p[1]);if(d>max)return false;if(d<15)return true;var df=adiff(h,brg(la,lo,p[0],p[1]));if(Math.abs(df)>35)return false;var lat=d*Math.sin(df*D2R);return lat>=-15&&lat<=35}
+function updCamSrc(la,lo,h){
+  if(!mapReady||!CAMS.length)return;var now=Date.now();
+  if(camSrcAt&&now-camSrcT<1500&&dist(camSrcAt[0],camSrcAt[1],la,lo)<60&&(h==null||camSrcH==null||Math.abs(adiff(h,camSrcH))<15))return;camSrcAt=[la,lo];camSrcT=now;camSrcH=h;
+  var f=[],c0=Math.floor(la*100),c1=Math.floor(lo*100),nav=NAV&&NAV.cams,s0=nav?NAV.s:0;
+  var camOk=function(id,c){if(nav){var cs=NAV.cams[id];return cs!=null&&cs>s0-30&&cs<s0+3000}if(h==null)return dist(la,lo,c[0],c[1])<1500;return aheadOk(la,lo,h,c,2500)};
+  var bumpOk=function(id,p){if(nav){var bs=NAV.bumps[id];return bs!=null&&bs>s0-20&&bs<s0+800}if(h==null)return false;return aheadOk(la,lo,h,p,600)};
   for(var a=-3;a<=3;a++)for(var b=-3;b<=3;b++){var ck=(c0+a)+'_'+(c1+b),ids=GRID[ck];
-    if(ids)for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];f.push({type:'Feature',geometry:{type:'Point',coordinates:[c[1],c[0]]},properties:{ic:c[3]==='R'?'sig':'lim'+(c[3]==='X'?'x':'')+(c[5]===2?'z':'')+'-'+c[2],o:c[3]==='R'?0:1}})}
-    if(CFG.bumpOn&&Math.abs(a)<=1&&Math.abs(b)<=1&&BGRID[ck])BGRID[ck].forEach(function(i){var p=BUMPS[i];f.push({type:'Feature',geometry:{type:'Point',coordinates:[p[1],p[0]]},properties:{ic:'bump',o:-1}})});
+    if(ids)for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];if(!camOk(ids[j],c))continue;f.push({type:'Feature',geometry:{type:'Point',coordinates:[c[1],c[0]]},properties:{ic:c[3]==='R'?'sig':'lim'+(c[3]==='X'?'x':'')+(c[5]===2?'z':'')+'-'+c[2],o:c[3]==='R'?0:1}})}
+    if(CFG.bumpOn&&Math.abs(a)<=1&&Math.abs(b)<=1&&BGRID[ck])BGRID[ck].forEach(function(i){var p=BUMPS[i];if(bumpOk(i,p))f.push({type:'Feature',geometry:{type:'Point',coordinates:[p[1],p[0]]},properties:{ic:'bump',o:-1}})});
     if(CFG.poiOn&&PGRID[ck])PGRID[ck].forEach(function(t){var p=poiOf(t);f.push({type:'Feature',geometry:{type:'Point',coordinates:[p[1],p[0]]},properties:{ic:t[0]==='sc'?'sc':'rest'+p[3],o:2}})})}
   map.getSource('cams').setData({type:'FeatureCollection',features:f});
 }
@@ -680,12 +692,12 @@ function parseRoute(d){
 }
 function applyRoute(d,r){
   NAV={dest:d,fare:r.fare,opt:r.opt[0],R:r.R,S:r.S,G:r.G,C:r.C,total:r.dist,time:r.time,idx:0,s:0,offT:0,lastRoute:Date.now(),spoken:{},via:[]};
-  document.body.classList.add('nav');lastDrawIdx=-1;routePois(NAV);buildTbar();drawRoute();routeWeather();
+  document.body.classList.add('nav');lastDrawIdx=-1;routePois(NAV);routeHits(NAV);camSrcAt=null;buildTbar();drawRoute();routeWeather();
 }
 $('reroute').onclick=function(){if(NAV)route()};
 function route(){
   if(!NAV)return;var c=fix||{la:37.4979,lo:127.0276};NAV.lastRoute=Date.now();
-  fetchRoute(c,NAV.dest,NAV.opt||'0',NAV.via).then(function(r){if(!NAV)return;NAV.R=r.R;NAV.S=r.S;NAV.G=r.G;NAV.C=r.C;NAV.total=r.dist;NAV.time=r.time;NAV.fare=r.fare;NAV.idx=0;NAV.s=0;NAV.spoken={};lastDrawIdx=-1;routePois(NAV);buildTbar();drawRoute();if(demo&&demo.route)demo.s=0})
+  fetchRoute(c,NAV.dest,NAV.opt||'0',NAV.via).then(function(r){if(!NAV)return;NAV.R=r.R;NAV.S=r.S;NAV.G=r.G;NAV.C=r.C;NAV.total=r.dist;NAV.time=r.time;NAV.fare=r.fare;NAV.idx=0;NAV.s=0;NAV.spoken={};lastDrawIdx=-1;routePois(NAV);routeHits(NAV);camSrcAt=null;buildTbar();drawRoute();if(demo&&demo.route)demo.s=0})
   .catch(function(e){if(NAV){$('tDist').textContent='경로 실패';$('tName').textContent=e.message}});
 }
 function drawRoute(){if(!mapReady)return;
@@ -768,7 +780,7 @@ function tick(){
   var age=Math.min(2,(now-fix.t)/1000),la=fix.la,lo=fix.lo;
   if(head!=null&&v>1){var p=move(la,lo,head,v*age);la=p[0];lo=p[1]}
   var kmh=v*3.6;$('spd').textContent=Math.round(kmh);
-  if(mapReady&&mapOn){map.jumpTo({center:[lo,la],bearing:(head==null||!CFG.rot)?0:head,zoom:(kmh>70?15.5:16.5)+zoff,pitch:0,padding:{top:(innerHeight-78)*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo)}
+  if(mapReady&&mapOn){map.jumpTo({center:[lo,la],bearing:(head==null||!CFG.rot)?0:head,zoom:(kmh>70?15.5:16.5)+zoff,pitch:0,padding:{top:(innerHeight-78)*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo,v>1.5?head:null)}
   $('carMk').style.transform='translate(-50%,-50%) rotate('+((!CFG.rot&&head!=null)?head:0)+'deg)';
   var nv=navTick(la,lo,kmh,now);
   if(nv){var eta=new Date(now+nv.rt*1000),h=eta.getHours();var mins=Math.round(nv.rt/60),rtT=mins>=60?Math.floor(mins/60)+'시간 '+(mins%60)+'분':mins+'분';$('bInfo').innerHTML='<span>'+(h<12?'오전':'오후')+' <b>'+String(h%12||12).padStart(2,'0')+':'+String(eta.getMinutes()).padStart(2,'0')+'</b></span><span><b>'+bigD(nv.remain).replace('<small>','</b><span>').replace('</small>','</span>')+'</span><span>'+rtT+' 남음</span><span class="gray">'+NAV.dest.name.replace(/</g,'')+'</span>'}
