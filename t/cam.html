@@ -234,6 +234,16 @@
   #arrCard .aa{display:flex;gap:8px}#arrCard .at{font-size:13px;color:#555;margin-top:10px;line-height:1.5}#arrLog{margin-top:8px;border:0;background:#f1f3f6;border-radius:9px;padding:7px 12px;font-size:13px;color:#111}body.night #arrCard .at{color:#aab}body.night #arrLog{background:#2a2e35;color:#e8eaed}#arrFav{width:44px;height:42px;border:0;border-radius:10px;background:#f1f3f6;font-size:18px;color:#111}
   #arrGo{flex:1;height:42px;border:2px solid #2b7bff;border-radius:10px;background:none;color:#2b7bff;font-size:16px;font-weight:700}
   body.night #arrCard{background:#1c1f24;color:#e8eaed}body.night #arrFav{background:#2a2e35;color:#e8eaed}
+  #jamChip,#hwBox{display:none;margin:8px 0 0 10px;background:#fff;color:#111;border-radius:12px;box-shadow:0 3px 10px #0003;font-size:14px}
+  #jamChip{padding:6px 11px}#jamChip.show,#hwBox.show{display:block}#jamChip b{color:#e3151a}
+  #hwBox{padding:4px 0;min-width:230px}#hwBox .hr2{display:flex;align-items:center;gap:8px;padding:5px 11px}#hwBox .hr2+.hr2{border-top:1px solid #eef0f3}
+  #hwBox .hk{flex:none;min-width:26px;height:20px;border-radius:5px;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px}
+  #hwBox .hn{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}#hwBox .hd{font-weight:700}#hwBox .he{color:#8a9099;font-size:12px}
+  body.night #jamChip,body.night #hwBox{background:#2a2e35;color:#e8eaed}body.night #hwBox .hr2+.hr2{border-color:#3a3f47}
+  #fastCard{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:9;background:#fff;color:#111;border-radius:14px;box-shadow:0 6px 20px #0004;padding:12px 14px;display:none;min-width:280px}
+  #fastCard.show{display:block}#fastCard .ft b{display:block;font-size:17px;color:#16803a}#fastCard .ft span{font-size:13px;color:#555}#fastCard .fa{display:flex;gap:8px;margin-top:10px}
+  #fastCard .fa button{flex:1;height:38px;border:0;border-radius:9px;font-size:15px;font-weight:700;background:#f1f3f6;color:#111}#fastCard #fastYes{background:#2b7bff;color:#fff}
+  body.night #fastCard{background:#1c1f24;color:#e8eaed}body.night #fastCard .ft span{color:#aab}body.night #fastCard .fa #fastNo{background:#2a2e35;color:#e8eaed}
 </style>
 </head>
 <body>
@@ -246,7 +256,10 @@
   <div id="turn"><svg id="tArrow" viewBox="0 0 100 100"></svg><div><div id="tDist">-</div><div id="tName"></div></div></div>
   <div id="next"><svg id="nArrow" viewBox="0 0 100 100"></svg><span id="nDist"></span></div>
   <button id="restChip"></button>
+  <div id="jamChip"></div>
+  <div id="hwBox"></div>
 </div>
+<div id="fastCard"><div class="ft"><b id="fastT"></b><span id="fastS"></span></div><div class="fa"><button id="fastNo">그대로</button><button id="fastYes">바꾸기</button></div></div>
 <div id="arrCard"><div class="ah"><b id="arrName"></b><button id="arrX" aria-label="닫기"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button></div><div class="as" id="arrSub"></div><div class="aa"><button id="arrFav">★</button><button id="arrGo">목적지로 계속 안내</button></div><div class="at" id="arrTrip"></div><button id="arrLog">주행 기록 보기</button></div>
 <div id="bumpBox"><svg viewBox="0 0 100 90"><polygon points="50,6 95,84 5,84" fill="#ffc81e" stroke="#e3151a" stroke-width="8" stroke-linejoin="round"/><path d="M24 70 Q50 42 76 70 Z" fill="#111"/><rect x="18" y="69" width="64" height="5" fill="#111"/></svg><b id="bumpD">-</b></div>
 <div id="alertBox">
@@ -604,6 +617,10 @@ function getL(k){try{return JSON.parse(LS.getItem(k)||(k==='favDest'?'[]':'null'
 function setHome(k,d){LS.setItem(k,JSON.stringify({name:d.name,la:d.la,lo:d.lo}))}
 function addFav(d){var f=getL('favDest').filter(function(x){return x.name!==d.name});f.unshift({name:d.name,la:d.la,lo:d.lo});LS.setItem('favDest',JSON.stringify(f.slice(0,20)))}
 var favDismissed=false;
+var FEC={};
+function favEta(d,el){if(!fix)return;var k=d.name,c=FEC[k];var put=function(r){var eta=new Date(Date.now()+r.time*1000);el.textContent='약 '+hm(r.time*1000)+' · '+tm(eta)+' 도착'};
+  if(c&&Date.now()-c.t<300000&&dist(c.la,c.lo,fix.la,fix.lo)<500){put(c.r);return}
+  fetchRoute(fix,d,'0').then(function(r){FEC[k]={r:r,t:Date.now(),la:fix.la,lo:fix.lo};put(r)}).catch(function(){})}
 function renderFav(){
   var box=$('favList');box.innerHTML='';var items=[];
   var h=getL('homeDest'),w=getL('workDest');
@@ -614,7 +631,7 @@ function renderFav(){
   r.forEach(function(d){if(!seen[d.name])items.push(['최근',d])});
   items.forEach(function(it){var b=document.createElement('button');b.className='fc';var d=it[1];
     b.innerHTML='<div class="k"></div><div class="n"></div><div class="d"></div>';b.querySelector('.k').textContent=it[0];
-    if(d){b.querySelector('.n').textContent=d.name;if(fix)b.querySelector('.d').textContent=fmtD(dist(fix.la,fix.lo,d.la,d.lo));b.onclick=function(){hideFav();startNav(d)}}
+    if(d){b.querySelector('.n').textContent=d.name;if(fix)b.querySelector('.d').textContent=fmtD(dist(fix.la,fix.lo,d.la,d.lo));if(it[0]==='집'||it[0]==='회사')favEta(d,b.querySelector('.d'));b.onclick=function(){hideFav();startNav(d)}}
     else{b.querySelector('.n').textContent='등록하기';b.querySelector('.d').textContent='검색 결과에서 ['+it[0]+'] 누르기';b.onclick=function(){hideFav();$('navBtn').onclick()}}
     box.appendChild(b)});
 }
@@ -781,6 +798,10 @@ var IC={pin:'<svg viewBox="0 0 24 24"><path d="M12 22s7-6.3 7-12a7 7 0 1 0-14 0c
   bank:'<svg viewBox="0 0 24 24"><path d="M12 3 3 8h18z" fill="#475569"/><path d="M5 10v7M9.7 10v7M14.3 10v7M19 10v7" stroke="#475569" stroke-width="2"/><rect x="3" y="18" width="18" height="2.5" fill="#475569"/></svg>',
   park:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="#2b7bff"/><path d="M9.5 17V7h3.2a3 3 0 0 1 0 6H9.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/></svg>'};
 function secH(t){var d=document.createElement('div');d.className='sec';d.textContent=t;return d}
+var DTB=null;
+function detour(list){if(!NAV||!fix||!list.length)return;var N=NAV,c={la:fix.la,lo:fix.lo};
+  var base=DTB&&DTB.N===N&&Date.now()-DTB.t<120000?Promise.resolve(DTB.time):fetchRoute(c,N.dest,N.opt||'0',N.via).then(function(r){DTB={N:N,t:Date.now(),time:r.time};return r.time});
+  base.then(function(bt){list.slice(0,4).forEach(function(x){fetchRoute(c,N.dest,N.opt||'0',(N.via||[]).concat([x.dd]).slice(0,5)).then(function(r){var m=Math.max(0,Math.round((r.time-bt)/60)),sb=x.el.querySelector('.sb');if(sb)sb.textContent+=' · 들르면 +'+m+'분'}).catch(function(){})})}).catch(function(){})}
 function placeItem(dd,sub,ic){
   var el=document.createElement('div');el.className='pl';el.innerHTML='<div class="ic">'+(IC[ic]||IC.pin)+'</div><div class="tx"><div class="nm"></div><div class="sb"></div><div class="ac"></div></div>';
   el.querySelector('.nm').textContent=dd.name;el.querySelector('.sb').textContent=sub||'';
@@ -798,7 +819,7 @@ function quick(kind){var box=$('results'),c=fix||{la:37.4979,lo:127.0276};box.in
     api('pois/search/around?version=1&centerLat='+c.la+'&centerLon='+c.lo+'&categories='+encodeURIComponent(cn)+'&radius=3&count=40&reqCoordType=WGS84GEO&resCoordType=WGS84GEO').then(function(d){
       var seen={},ps=poiList(d).filter(function(p){return !/(주차장|정문|후문|입구|출구)\d*$/.test(p.name.trim())||cn==='주차장'}).map(function(p){var l=poiLL(p);return{p:p,l:l,d:dist(c.la,c.lo,l.la,l.lo)}}).filter(function(x){if(seen[x.p.name])return false;seen[x.p.name]=1;return true}).sort(function(a,b){return a.d-b.d}).slice(0,20);
       box.innerHTML='';if(!ps.length){box.innerHTML='<div class="note">3km 안에 없습니다</div>';return}box.appendChild(secH('가까운 '+cat[1]));
-      ps.forEach(function(x){var addr=[x.p.middleAddrName,x.p.lowerAddrName].filter(Boolean).join(' ');box.appendChild(placeItem({name:x.p.name,la:x.l.la,lo:x.l.lo},fmtD(x.d)+(addr?' · '+addr:''),cat[0]))})
+      var DL=[];ps.forEach(function(x){var addr=[x.p.middleAddrName,x.p.lowerAddrName].filter(Boolean).join(' '),dd={name:x.p.name,la:x.l.la,lo:x.l.lo},el=placeItem(dd,fmtD(x.d)+(addr?' · '+addr:''),cat[0]);DL.push({dd:dd,el:el});box.appendChild(el)});if(NAV)detour(DL)
     }).catch(function(e){box.innerHTML='<div class="note">검색 실패: '+e.message+'</div>'});return}
   if(kind==='park'||kind==='dpark'){    var t=kind==='dpark'&&NAV?NAV.dest:c;box.innerHTML='<div class="note">찾는 중…</div>';
     api('pois/search/around?version=1&centerLat='+t.la+'&centerLon='+t.lo+'&categories='+encodeURIComponent('주차장')+'&radius=1&count=15&reqCoordType=WGS84GEO&resCoordType=WGS84GEO').then(function(d){
@@ -811,7 +832,7 @@ function quick(kind){var box=$('results'),c=fix||{la:37.4979,lo:127.0276};box.in
   var title=items.length?'경로 위 '+(kind==='sc'?'슈퍼차저':'휴게소 · 졸음쉼터'):'가까운 '+(kind==='sc'?'슈퍼차저':'휴게소 · 졸음쉼터');
   if(!items.length)items=src.map(function(p){return{p:p,d:dist(c.la,c.lo,p[0],p[1])}}).sort(function(a,b){return a.d-b.d}).slice(0,15).map(function(x){return{p:x.p,sub:'직선 '+fmtD(x.d)}});
   box.innerHTML='';box.appendChild(secH(title));
-  items.slice(0,20).forEach(function(x){box.appendChild(placeItem({name:nm(x.p),la:x.p[0],lo:x.p[1]},(kind==='rest'?(x.p[3]==='R'?'졸음쉼터 · ':'휴게소 · '):'')+x.sub,kind==='sc'?'sc':(x.p[3]==='R'?'nap':'rest')))});
+  var DL=[];items.slice(0,20).forEach(function(x){var dd={name:nm(x.p),la:x.p[0],lo:x.p[1]},el=placeItem(dd,(kind==='rest'?(x.p[3]==='R'?'졸음쉼터 · ':'휴게소 · '):'')+x.sub,kind==='sc'?'sc':(x.p[3]==='R'?'nap':'rest'));DL.push({dd:dd,el:el});box.appendChild(el)});if(NAV)detour(DL);
   var m=document.createElement('div');m.className='note';m.textContent=kind==='sc'?'슈퍼차저 위치: OpenStreetMap 기준(일부만 등록돼 있을 수 있음). 실시간 빈자리는 아직 없습니다.':'휴게소 · 졸음쉼터: OpenStreetMap 기준';box.appendChild(m);hideKb()}
 function addVia(d){if(!NAV)return;NAV.via=(NAV.via||[]).concat([{name:d.name,la:d.la,lo:d.lo}]).slice(0,5);show('navSheet',0);sayParts(['via_add'],true,'경유지를 추가했습니다',520,1);route()}
 $('clearVia').onclick=function(){if(NAV){NAV.via=[];route()}show('menuSheet',0)};
@@ -837,7 +858,7 @@ function predict(d,o,b){var t=new Date();if(o[0]==='am'||o[0]==='pm'){t.setDate(
     $('predOut').appendChild(el)}).catch(function(e){var el=document.createElement('div');el.className='muted';el.textContent=o[1]+': 예측 실패 ('+e.message+')';$('predOut').appendChild(el)})}
 function renderRecent(){var r=[];try{r=JSON.parse(LS.getItem('recentDest')||'[]')}catch(e){}var box=$('recent');box.innerHTML='';$('recentH').style.display=r.length?'':'none';r.forEach(function(d){box.appendChild(placeItem(d,fix?fmtD(dist(fix.la,fix.lo,d.la,d.lo)):'','clock'))})}
 function saveRecent(d){var r=[];try{r=JSON.parse(LS.getItem('recentDest')||'[]')}catch(e){}r=r.filter(function(x){return x.name!==d.name});r.unshift({name:d.name,la:d.la,lo:d.lo});LS.setItem('recentDest',JSON.stringify(r.slice(0,8)))}
-var OPTS=[['0','추천'],['2','최소시간'],['1','무료도로'],['10','최단거리']];
+var OPTS=[['0','추천'],['2','최소시간'],['1','무료도로'],['10','최단거리'],['4','고속도로 우선'],['3','초보'],['19','어린이보호구역 회피']];
 function selRoute(el,d){if(rtSel)rtSel.classList.remove('sel');rtSel=el;el.classList.add('sel');$('rtGo').style.display='block';$('rtGo').onclick=function(){show('rtSheet',0);applyRoute(d,el._r)};previewRoute(el._r,d)}
 function startNav(d){
   rtSel=null;$('rtGo').style.display='none';
@@ -865,10 +886,10 @@ function fetchRoute(c,dest,opt,via){
   return api('routes?version=1&format=json',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(parseRoute);
 }
 function parseRoute(d){
-  var R=[],G=[],C=[],time=0,fare=0;
+  var R=[],G=[],C=[],T=[],time=0,fare=0;
   (d.features||[]).forEach(function(f){var g=f.geometry,p=f.properties;
     if(g.type==='LineString'&&p.index==null)return;
-    if(g.type==='LineString'){var base=R.length,skip=0;g.coordinates.forEach(function(xy,i){if(R.length&&i===0){var L=R[R.length-1];if(L[0]===xy[1]&&L[1]===xy[0]){skip=1;return}}R.push([xy[1],xy[0]]);C.push(0)});(g.traffic||[]).forEach(function(tr){for(var k=tr[0];k<tr[1];k++){var gi=base+k-skip;if(gi>=0&&gi<C.length)C[gi]=tr[2]}})}
+    if(g.type==='LineString'){var base=R.length,skip=0;g.coordinates.forEach(function(xy,i){if(R.length&&i===0){var L=R[R.length-1];if(L[0]===xy[1]&&L[1]===xy[0]){skip=1;return}}R.push([xy[1],xy[0]]);C.push(0);T.push(p.roadType==null?-1:p.roadType)});(g.traffic||[]).forEach(function(tr){for(var k=tr[0];k<tr[1];k++){var gi=base+k-skip;if(gi>=0&&gi<C.length)C[gi]=tr[2]}})}
     else if(g.type==='Point'&&p.turnType==null&&/^B/.test(p.pointType||'')){G.push({la:g.coordinates[1],lo:g.coordinates[0],t:185,name:'',pname:'경유지',ri:Math.max(0,R.length-1)})}
     else if(g.type==='Point'&&p.turnType!=null){G.push({la:g.coordinates[1],lo:g.coordinates[0],t:p.turnType,name:p.nextRoadName||'',pname:p.name||'',ri:Math.max(0,R.length-1)})}
     if(p.totalTime)time=p.totalTime;if(p.totalFare!=null&&p.totalTime)fare=p.totalFare;
@@ -877,7 +898,7 @@ function parseRoute(d){
   G.forEach(function(gp){var bi=gp.ri,bd=1e9,j0=gp.t===185?0:Math.max(0,gp.ri-3),j1=gp.t===185?R.length:Math.min(R.length,gp.ri+3);for(var j=j0;j<j1;j++){var dd=dist(gp.la,gp.lo,R[j][0],R[j][1]);if(dd<bd){bd=dd;bi=j}}gp.s=S[bi]});
   G.sort(function(x,y){return x.s-y.s});
   if(R.length<2)throw new Error('경로 없음');
-  return{R:R,S:S,G:G,C:C,time:time,fare:fare,dist:S[S.length-1]};
+  return{R:R,S:S,G:G,C:C,T:T,time:time,fare:fare,dist:S[S.length-1]};
 }
 var PREV=null,rtSel=null;
 function previewRoute(r,d){PREV={R:r.R,C:r.C,S:r.S,dest:d};drawRoute(true);fitRoute(r.R)}
@@ -888,13 +909,22 @@ function fitRoute(R){if(!mapReady||!R||R.length<2)return;var a0=90,a1=-90,o0=180
     var m0=mapPx(c.la,c.lo),m1=mapPx(c.la,c.lo+0.01),mpx=0.01/Math.max(1,Math.abs(m1.x-m0.x)),dx=(pw+(W-pw)/2)-W/2;TMM.setCenter(LL(c.la,c.lo-dx*mpx));tmZ=null;tmMppZ=null;return}
   map.fitBounds([[o0,a0],[o1,a1]],{padding:{left:pw+50,right:80,top:60,bottom:60},bearing:0,duration:0})}
 function applyRoute(d,r){
-  endPreview();hideArrive(true);  NAV={dest:d,fare:r.fare,opt:r.opt[0],R:r.R,S:r.S,G:r.G,C:r.C,total:r.dist,time:r.time,idx:0,s:0,offT:0,lastRoute:Date.now(),spoken:{},via:[],t0:Date.now()};
+  endPreview();hideArrive(true);  NAV={dest:d,fare:r.fare,opt:r.opt[0],R:r.R,S:r.S,G:r.G,C:r.C,T:r.T,total:r.dist,time:r.time,idx:0,s:0,offT:0,lastRoute:Date.now(),spoken:{},via:[],t0:Date.now()};
   document.body.classList.add('nav');setTimeout(mapResize,60);sayParts(['start'],true,'',520,1);lastDrawIdx=-1;routePois(NAV);routeHits(NAV);camSrcAt=null;buildTbar();drawRoute();routeWeather();
 }
 $('reroute').onclick=function(){if(NAV)route()};
+/* 더 빠른 경로 제안 (티맵식): 3분마다 다시 찾고, 다른 길인데 3분 이상 빠르면 묻는다. 같은 길이면 교통 정보·도착 시각만 조용히 새로 */
+var fastR=null,fastT=0;
+function applyRouteData(r){NAV.R=r.R;NAV.S=r.S;NAV.G=r.G;NAV.C=r.C;NAV.T=r.T;NAV.total=r.dist;NAV.time=r.time;NAV.fare=r.fare;NAV.idx=0;NAV.s=0;NAV.spoken={};NAV.lastRoute=Date.now();lastDrawIdx=-1;routePois(NAV);routeHits(NAV);camSrcAt=null;buildTbar();drawRoute(true);if(demo&&demo.route)demo.s=0}
+function fastCheck(now){if(!NAV||demo||now-NAV.lastRoute<180000||now-(NAV.fastChk||0)<180000)return;var remain=NAV.total-NAV.s;if(remain<3000)return;NAV.fastChk=now;var N=NAV,c=fix||{la:37.4979,lo:127.0276};
+  fetchRoute(c,N.dest,N.opt||'0',N.via).then(function(r){if(NAV!==N)return;var rem=N.total-N.s,cur=N.time*rem/Math.max(1,N.total);
+    if(Math.abs(r.dist-rem)<Math.max(150,rem*0.03)){applyRouteData(r);return}
+    var save=cur-r.time;if(save>=180){fastR=r;fastT=Date.now();var eta=new Date(Date.now()+r.time*1000);$('fastT').textContent='더 빠른 경로 · '+Math.round(save/60)+'분 단축';$('fastS').textContent=tm(eta)+' 도착 · '+fmtD(r.dist);show('fastCard',1);beep(760,0.1,2,CFG.volG)}}).catch(function(){})}
+$('fastYes').onclick=function(){if(fastR&&NAV)applyRouteData(fastR);fastR=null;show('fastCard',0)};
+$('fastNo').onclick=function(){fastR=null;show('fastCard',0)};
 function route(){
   if(!NAV)return;var c=fix||{la:37.4979,lo:127.0276};NAV.lastRoute=Date.now();
-  fetchRoute(c,NAV.dest,NAV.opt||'0',NAV.via).then(function(r){if(!NAV)return;NAV.R=r.R;NAV.S=r.S;NAV.G=r.G;NAV.C=r.C;NAV.total=r.dist;NAV.time=r.time;NAV.fare=r.fare;NAV.idx=0;NAV.s=0;NAV.spoken={};lastDrawIdx=-1;routePois(NAV);routeHits(NAV);camSrcAt=null;buildTbar();drawRoute();if(demo&&demo.route)demo.s=0})
+  fetchRoute(c,NAV.dest,NAV.opt||'0',NAV.via).then(function(r){if(!NAV)return;NAV.R=r.R;NAV.S=r.S;NAV.G=r.G;NAV.C=r.C;NAV.T=r.T;NAV.total=r.dist;NAV.time=r.time;NAV.fare=r.fare;NAV.idx=0;NAV.s=0;NAV.spoken={};lastDrawIdx=-1;routePois(NAV);routeHits(NAV);camSrcAt=null;buildTbar();drawRoute();if(demo&&demo.route)demo.s=0})
   .catch(function(e){if(NAV){$('tDist').textContent='경로 실패';$('tName').textContent=e.message}});
 }
 function drawRoute(force){if(!mapReady)return;
@@ -920,7 +950,7 @@ $('arrLog').onclick=function(){hideArrive(true);$('mTrips').onclick()};
 $('arrFav').onclick=function(){if(ARR){addFav(ARR.dest);this.textContent='✓'}};
 $('arrGo').onclick=function(){if(!ARR)return;var d=ARR.dest,o=ARR.opt||'0',c=fix||{la:37.4979,lo:127.0276};this.textContent='경로 찾는 중…';var b=this;
   fetchRoute(c,d,o).then(function(r){r.opt=[o,''];b.textContent='목적지로 계속 안내';applyRoute(d,r)}).catch(function(e){b.textContent='경로 실패'})};
-function endNav(){if(TMM)tmDrawTurn(null);RWX=null;setTimeout(updWxWarn,0);favDismissed=false;setTimeout(showFav,1500);NAV=null;document.body.classList.remove('nav');setTimeout(mapResize,60);drawRoute(true)}
+function endNav(){fastR=null;show('fastCard',0);show('jamChip',0);show('hwBox',0);if(TMM)tmDrawTurn(null);RWX=null;setTimeout(updWxWarn,0);favDismissed=false;setTimeout(showFav,1500);NAV=null;document.body.classList.remove('nav');setTimeout(mapResize,60);drawRoute(true)}
 function project(la,lo){
   var R=NAV.R,best=null,from=Math.max(0,NAV.idx-5),to=Math.min(R.length-2,NAV.idx+120),kx=111320*Math.cos(la*D2R),ky=111320;
   for(var i=from;i<=to;i++){var ax=(R[i][1]-lo)*kx,ay=(R[i][0]-la)*ky,bx=(R[i+1][1]-lo)*kx,by=(R[i+1][0]-la)*ky,dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy,t=L2?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L2)):0,px=ax+t*dx,py=ay+t*dy,dd=Math.sqrt(px*px+py*py);
@@ -988,6 +1018,19 @@ function findBump(la,lo,h,lim){var c0=Math.floor(la*100),c1=Math.floor(lo*100),b
     for(var j=0;j<ids.length;j++){var i=ids[j],p=BUMPS[i],d=dist(la,lo,p[0],p[1]);if(d>lim||d<4)continue;var df=adiff(h,brg(la,lo,p[0],p[1]));if(Math.abs(df)>20)continue;if(Math.abs(d*Math.sin(df*D2R))>15)continue;if(!best||d<best.d)best={i:i,d:d}}}
   return best}
 $('restChip').onclick=function(){show('navSheet',1);renderRecent();renderQuick();quick('rest')};
+/* 정체 구간: 앞 3km 안의 지체·정체(교통 3·4) 묶음 길이와 대략 시간 */
+function jamInfo(){if(!NAV||!NAV.C||!NAV.S)return null;var C=NAV.C,S=NAV.S,i=Math.max(0,NAV.idx),st=-1,en=-1,bad=0;
+  for(;i<S.length-1&&S[i]<NAV.s+3000;i++){if((C[i]||0)>=3){st=i;break}}if(st<0)return null;
+  var gap=0;for(var j=st;j<S.length-1;j++){if((C[j]||0)>=3){en=j;gap=0;if(C[j]===4)bad+=S[j+1]-S[j]}else{gap+=S[j+1]-S[j];if(gap>80)break}}
+  var a=Math.max(S[st],NAV.s),L=S[en+1]-a;if(L<150)return null;var slow=L-bad,sec=bad/(8/3.6)+slow/(18/3.6),ahead=S[st]-NAV.s;
+  return(ahead>30?fmtD(ahead)+' 앞 ':'')+'<b>정체 '+fmtD(L)+'</b> · 약 '+Math.max(1,Math.round(sec/60))+'분'}
+/* 고속도로 모드: 고속도로(도로 종류 0·1)나 70km/h 넘을 때, 앞의 IC·JC·휴게소·졸음쉼터 3개 */
+function hwRows(kmh,now){if(!NAV||!NAV.S)return null;var T=NAV.T||[],rt=T[Math.max(0,NAV.idx)];if(!(rt===0||rt===1||kmh>70))return null;
+  var L=[],rem=NAV.total-NAV.s,secPerM=NAV.time/Math.max(1,NAV.total);
+  NAV.G.forEach(function(g){if(g.t>=101&&g.t<=116&&g.s>NAV.s+100){var nm=(g.pname||g.name||'').replace(/</g,'');var j=/분기|JC|분기점/.test(nm),tg=/TG|톨게이트|요금소/.test(nm);L.push({s:g.s,k:j?'JC':tg?'TG':'IC',c:j?'#7c3aed':'#475569',n:(nm||TT[g.t])+(nm?' · '+TT[g.t].replace(/(오른쪽|왼쪽) /,''):'')})}});
+  (NAV.rp||[]).forEach(function(x){if(x.k==='rest'&&x.s>NAV.s+100)L.push({s:x.s,k:x.p[3]==='R'?'쉼':'휴',c:x.p[3]==='R'?'#4a8a3f':'#1f5fd6',n:x.p[2].replace(/</g,'')})});
+  L.sort(function(a,b){return a.s-b.s});L=L.filter(function(x){return x.s-NAV.s<80000}).slice(0,3);if(!L.length)return null;
+  return L.map(function(x){var d=x.s-NAV.s,eta=new Date(now+d*secPerM*1000);return'<div class="hr2"><span class="hk" style="background:'+x.c+'">'+x.k+'</span><span class="hn">'+x.n+'</span><span class="hd">'+fmtD(d)+'</span><span class="he">'+tm(eta).replace('오전 ','').replace('오후 ','')+'</span></div>'}).join('')}
 function camTag(c){if(c[4]===1)return'구간단속 시작';if(c[4]===2)return'구간단속 끝';if(c[5]===2)return'어린이보호';if(c[3]==='R')return'신호단속';if(c[3]==='X')return'신호과속';return'과속단속'}
 var bInfoH='';
 $('bMid').addEventListener('click',function(){if(!NAV)$('navBtn').onclick()});
@@ -1032,7 +1075,9 @@ function tick(){
   if(bp){$('bumpD').textContent=fmtD(bp.d);$('bumpBox').className='on';if(!bAnn[bp.i]){bAnn[bp.i]=now;beep(420,0.1,2)}}else $('bumpBox').className='';
   for(var bk in bAnn)if(now-bAnn[bk]>60000)delete bAnn[bk];
   if(now-restAt>2000){restAt=now;var rc=null;if(NAV&&NAV.rp&&kmh>50)for(var ri=0;ri<NAV.rp.length;ri++){var rq=NAV.rp[ri];if(rq.k==='rest'&&rq.s>NAV.s+300&&rq.s-NAV.s<60000){rc=rq;break}}
-    if(rc){$('restChip').innerHTML='<b>'+(rc.p[3]==='R'?'졸음쉼터':'휴게소')+'</b> '+rc.p[2].replace(/</g,'')+' · '+fmtD(rc.s-NAV.s);show('restChip',1)}else show('restChip',0)}
+    var hw=hwRows(kmh,now);if(hw){$('hwBox').innerHTML=hw;show('hwBox',1);show('restChip',0)}else{show('hwBox',0);if(rc){$('restChip').innerHTML='<b>'+(rc.p[3]==='R'?'졸음쉼터':'휴게소')+'</b> '+rc.p[2].replace(/</g,'')+' · '+fmtD(rc.s-NAV.s);show('restChip',1)}else show('restChip',0)}
+    var jm=jamInfo();if(jm){$('jamChip').innerHTML=jm;show('jamChip',1)}else show('jamChip',0);
+    if(fastR&&now-fastT>20000){fastR=null;show('fastCard',0)}fastCheck(now)}
   arrTick(la,lo,now);
   tripTick(la,lo,kmh,now,over);
   document.body.classList.toggle('over',over);document.body.classList.toggle('zone',zone);
