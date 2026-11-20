@@ -220,6 +220,10 @@
   .pred button{font-size:14px;padding:8px 11px}
   #restChip{font-size:15px;padding:6px 11px}#snd{font-size:15px;padding:7px 16px}
   .back{font-size:26px}
+  .bsearch{display:inline-flex;align-items:center;gap:8px;background:#f1f3f6;color:#555;border-radius:20px;padding:7px 18px 7px 12px;font-size:16px;cursor:pointer;align-self:center}
+  .bsearch svg{width:18px;height:18px}
+  body.night .bsearch{background:#2a2e35;color:#c3c8cf}
+  body:not(.nav) #bMid{cursor:pointer}
 </style>
 </head>
 <body>
@@ -892,6 +896,8 @@ function findBump(la,lo,h,lim){var c0=Math.floor(la*100),c1=Math.floor(lo*100),b
   return best}
 $('restChip').onclick=function(){show('navSheet',1);renderRecent();renderQuick();quick('rest')};
 function camTag(c){if(c[4]===1)return'구간단속 시작';if(c[4]===2)return'구간단속 끝';if(c[5]===2)return'어린이보호';if(c[3]==='R')return'신호단속';if(c[3]==='X')return'신호과속';return'과속단속'}
+var bInfoH='';
+$('bMid').addEventListener('click',function(){if(!NAV)$('navBtn').onclick()});
 function tick(){
   var now=Date.now();
   if(!fix){$('diag').textContent='위치 기다리는 중';requestAnimationFrame(tick);return}
@@ -905,7 +911,7 @@ function tick(){
   $('carMk').style.transform='translate(-50%,-50%) rotate('+((!CFG.rot&&mh!=null)?mh:0)+'deg)';
   var nv=navTick(la,lo,kmh,now);
   if(nv){var eta=new Date(now+nv.rt*1000),h=eta.getHours();var mins=Math.round(nv.rt/60),rtT=mins>=60?Math.floor(mins/60)+'시간 '+(mins%60)+'분':mins+'분';$('bInfo').innerHTML='<span>'+(h<12?'오전':'오후')+' <b>'+String(h%12||12).padStart(2,'0')+':'+String(eta.getMinutes()).padStart(2,'0')+'</b></span><span><b>'+bigD(nv.remain).replace('<small>','</b><span>').replace('</small>','</span>')+'</span><span>'+rtT+' 남음</span><span class="gray">'+NAV.dest.name.replace(/</g,'')+'</span>'}
-  else if(!NAV){var d0=new Date(),h0=d0.getHours();$('bInfo').innerHTML='<span class="gray">목적지를 검색하려면 오른쪽 돋보기</span><span>'+(h0<12?'오전':'오후')+' <b>'+String(h0%12||12).padStart(2,'0')+':'+String(d0.getMinutes()).padStart(2,'0')+'</b></span>'}
+  else if(!NAV){var d0=new Date(),h0=d0.getHours();var tH='<span class="bsearch"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>어디로 갈까요?</span><span>'+(h0<12?'오전':'오후')+' <b>'+String(h0%12||12).padStart(2,'0')+':'+String(d0.getMinutes()).padStart(2,'0')+'</b></span>';if(bInfoH!==tH){bInfoH=tH;$('bInfo').innerHTML=tH}}
   var over=false,zone=false,alertD=target?alertFor(target.c[2]):alertFor(0);
   if(head!=null&&v>1.5&&CAMS.length){
     var t=findAhead(la,lo,head);
