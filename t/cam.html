@@ -160,8 +160,9 @@
   .sbar{display:flex;align-items:center;gap:6px;background:#f1f3f6;border-radius:16px;padding:5px 6px 5px 2px;height:56px;box-sizing:border-box}
   .sbar .bk{flex:none;width:44px;height:44px;border:0;background:none;display:flex;align-items:center;justify-content:center;padding:0}
   .sbar .bk svg{width:26px;height:26px}
-  .sbar input{flex:1;min-width:0;font-size:21px;border:0;outline:0;background:none;color:#111}
+  .sbar input{-webkit-appearance:none;appearance:none;flex:1;min-width:0;font-size:21px;border:0;outline:0;background:none;color:#111}
   .sbar input::placeholder{color:#9aa1ab}
+  .sbar input::-webkit-search-cancel-button{display:none}
   .sbar .clr{flex:none;width:30px;height:30px;border:0;border-radius:50%;background:#c9ced6;color:#fff;font-size:15px;font-weight:800;display:none;padding:0}
   .sbar.has .clr{display:block}
   .sbar .go{flex:none;height:44px;padding:0 18px;border:0;border-radius:12px;background:#2b7bff;color:#fff;font-size:17px;font-weight:700}
@@ -185,6 +186,7 @@
   /* 야간 모드: 지도와 함께 화면 전체를 어둡게 */
   #bottom .ic,.sbar .bk{color:#111}
   html:has(body.night),body.night{background:#15181d}
+  .maplibregl-ctrl-attrib{font-size:10px;opacity:.8}.maplibregl-ctrl-attrib:not(.uopen) .maplibregl-ctrl-attrib-inner{display:none}.maplibregl-ctrl-attrib:not(.uopen){padding:0!important;min-height:24px;min-width:24px}body.night .maplibregl-ctrl-attrib{background:#2a2e35cc;color:#aab}body.night .maplibregl-ctrl-attrib a{color:#aab}body.night .maplibregl-ctrl-attrib-button{filter:invert(1)}
   body.night .rb,body.night .wxc,body.night #restChip{background:#2a2e35;color:#e8eaed;box-shadow:0 2px 8px #0009}
   body.night #bottom{background:#1c1f24;color:#e8eaed;box-shadow:0 -2px 12px #0008}body.night #bottom .ic{color:#e8eaed}
   body.night #bInfo .gray{color:#8b929b}body.night #tbar{background:#3a3f47}body.night #tbarDone{background:#565c66}body.night #tbarDot{background:#1c1f24}
@@ -257,7 +259,7 @@
 <div id="fav"><div class="gripHit" id="favGrip"><div class="grip"></div></div><div class="hd"><b>어디로 갈까요?</b><button id="favSearch">검색</button><button id="favClose">닫기</button></div><div id="favList"></div></div>
 
 <div class="sheet" id="navSheet"><div class="panel">
-  <div class="sbar" id="sbar"><button class="bk" id="navClose" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><input id="q" placeholder="어디로 갈까요?" autocomplete="off"><button class="clr" id="qClr" aria-label="지우기">✕</button><button class="go" id="qGo">검색</button></div>
+  <form class="sbar" id="sbar" action="javascript:void(0)"><button class="bk" id="navClose" type="button" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><input id="q" type="search" enterkeyhint="search" placeholder="어디로 갈까요?" autocomplete="off"><button class="clr" id="qClr" type="button" aria-label="지우기">✕</button><button class="go" id="qGo" type="submit">검색</button></form>
   <div class="chips" id="quick"></div>
   <div id="results"></div>
   <div class="sec" id="recentH">최근 목적지</div><div id="recent"></div>
@@ -464,6 +466,7 @@ function initMap(){
     map.addSource('cams',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
     map.addLayer({id:'cams-i',type:'symbol',source:'cams',layout:{'icon-image':['get','ic'],'icon-size':['interpolate',['linear'],['zoom'],11,0.4,14,0.6,16,0.75,18,0.9],'icon-allow-overlap':true,'icon-ignore-placement':true,'icon-rotation-alignment':'viewport','symbol-sort-key':['get','o']}});
     mapReady=true;camSrcAt=null;drawRoute();
+    setTimeout(function(){var b=document.querySelector('.maplibregl-ctrl-attrib-button');if(b&&!b._u){b._u=1;b.addEventListener('click',function(e){e.stopPropagation();b.parentNode.classList.toggle('uopen')},true)}},300);
   });
 }
 var curStyle='liberty';
@@ -663,8 +666,13 @@ var NAV=null;
 function api(path,opt){opt=opt||{};opt.headers=Object.assign(KEY?{'appKey':KEY,'Accept':'application/json'}:{'Accept':'application/json'},opt.headers||{});return fetch((KEY?'https://apis.openapi.sk.com/tmap/':RELAY+'tmap/')+path,opt).then(function(r){if(r.status===204)return{};if(!r.ok)return r.text().then(function(t){var m=t;try{m=JSON.parse(t).error||t}catch(e){}throw new Error((r.status===429?'':'HTTP '+r.status+' ')+String(m).slice(0,120))});return r.json()})}
 $('navBtn').onclick=function(){hideFav();show('navSheet',1);renderRecent();renderQuick();$('sbar').classList.toggle('has',!!$('q').value);$('results').innerHTML='';setTimeout(function(){$('q').focus()},50)};
 $('navClose').onclick=function(){show('navSheet',0);showFav()};
-$('q').onkeydown=function(e){if(e.key==='Enter')search()};
-$('qGo').onclick=search;
+/* 차 키보드 [입력]: 한글 조합 중이면 Enter 가 글자 확정에 먹히므로 여러 길로 받는다 (0.6초 안 같은 검색은 한 번만) */
+var lastQ='',lastQT=0;function searchOnce(){var q=$('q').value.trim();if(!q)return;if(q===lastQ&&Date.now()-lastQT<600)return;lastQ=q;lastQT=Date.now();search()}
+function isEnter(e){return e.key==='Enter'||e.keyCode===13||e.which===13}
+$('q').addEventListener('keydown',function(e){if(isEnter(e)){e.preventDefault();setTimeout(searchOnce,0)}});
+$('q').addEventListener('keyup',function(e){if(isEnter(e))setTimeout(searchOnce,30)});
+$('sbar').addEventListener('submit',function(e){e.preventDefault();setTimeout(searchOnce,0)});
+
 $('q').addEventListener('input',function(){$('sbar').classList.toggle('has',!!this.value)});
 $('qClr').onclick=function(){$('q').value='';$('sbar').classList.remove('has');$('results').innerHTML='';$('q').focus()};
 function poiList(d){return(((d||{}).searchPoiInfo||{}).pois||{}).poi||[]}
