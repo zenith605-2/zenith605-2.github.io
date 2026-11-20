@@ -552,7 +552,7 @@ function tmDrawTurn(g){if(!TMM)return;var k=g?g.s+'_'+g.t:null;if(k===tmTurnKey)
     tmTurn.push(new Tmapv3.Polygon({paths:tri,fillColor:'#ffffff',fillOpacity:1,strokeColor:'#1b2533',strokeWeight:3,zIndex:999,map:TMM}));
   }catch(e){}}
 function segLen(c){var L=0;for(var i=1;i<c.length;i++)L+=dist(c[i-1][1],c[i-1][0],c[i][1],c[i][0]);return L}
-var tmJob=0;function runJobs(J,tok){var k=0;(function step(){if(tok!==tmJob)return;for(var n=0;n<6&&k<J.length;n++,k++){try{J[k]()}catch(e){}}if(k<J.length)setTimeout(step,16);else tmTurnKey=null})()}
+var tmJob=0;function runJobs(J,tok,done,cancel){var k=0;(function step(){if(tok!==tmJob){if(cancel)cancel();return}for(var n=0;n<6&&k<J.length;n++,k++){try{J[k]()}catch(e){}}if(k<J.length)setTimeout(step,16);else{tmTurnKey=null;if(done)done()}})()}
 function slimRoute(fs){if(!fs.length)return fs;var th=200,out=fs;
   for(var k=0;k<6;k++){var a=out.map(function(f){return{c:f.properties.c,co:f.geometry.coordinates.slice(),L:segLen(f.geometry.coordinates)}});
     for(var i=0;i<a.length;i++){if(a[i].L<th){var nb=i>0?a[i-1]:a[i+1];if(nb)a[i].c=nb.c}}
@@ -560,13 +560,13 @@ function slimRoute(fs){if(!fs.length)return fs;var th=200,out=fs;
     out=m.map(function(x){return{properties:{c:x.c},geometry:{coordinates:x.co}}});if(out.length<=25)break;th*=2}
   out.forEach(function(f){var c=f.geometry.coordinates,r=[c[0]],last=c[0];for(var i=1;i<c.length-1;i++){if(dist(last[1],last[0],c[i][1],c[i][0])>=8){r.push(c[i]);last=c[i]}}if(c.length>1)r.push(c[c.length-1]);f.geometry.coordinates=r});
   return out}
-function tmDrawRoute(fs,pins){fs=slimRoute(fs);var JOB=[],tok=++tmJob;tmLines.forEach(function(l){try{l.setMap(null)}catch(e){}});tmLines=[];tmPins.forEach(function(m){try{m.setMap(null)}catch(e){}});tmPins=[];
+function tmDrawRoute(fs,pins){fs=slimRoute(fs);var JOB=[],tok=++tmJob,oldL=tmLines,oldP=tmPins,NL=[],NP=[];/* 새 선을 다 그린 뒤에 옛 선을 지움 (깜박임 방지) */
   var col={1:'#22b14c',2:'#f5b400',3:'#ff7a00',4:'#e3151a'},dk={1:'#16803a',2:'#b88600',3:'#c25500',4:'#a50e12'};
-  fs.forEach(function(ft){var c=ft.properties.c;try{JOB.push(function(){tmLines.push(new Tmapv3.Polyline({path:ft.geometry.coordinates.map(function(q){return LL(q[1],q[0])}),strokeColor:col[c]||'#2b7bff',strokeWeight:14,strokeOpacity:1,outlineColor:dk[c]||'#1546b8',outlineWidth:3,zIndex:10,map:TMM}))})}catch(e){}});tmTurnKey=null;
+  fs.forEach(function(ft){var c=ft.properties.c;try{JOB.push(function(){NL.push(new Tmapv3.Polyline({path:ft.geometry.coordinates.map(function(q){return LL(q[1],q[0])}),strokeColor:col[c]||'#2b7bff',strokeWeight:14,strokeOpacity:1,outlineColor:dk[c]||'#1546b8',outlineWidth:3,zIndex:10,map:TMM}))})}catch(e){}});tmTurnKey=null;
   var RT=PREV||NAV;if(RT&&RT.R&&RT.R.length>1&&RT.S){var s0=PREV?0:(NAV.s||0),s1=PREV?-1:Math.min(RT.S[RT.S.length-1]-15,s0+3000),step=250;
     for(var sd=s0+40;sd<s1;sd+=step){var A=routePointAt(RT,sd),B=routePointAt(RT,sd+6),h=brg(A.la,A.lo,B.la,B.lo),L=move(B.la,B.lo,h+150,5),R=move(B.la,B.lo,h-150,5);
-      (function(L,R,B){JOB.push(function(){tmLines.push(new Tmapv3.Polyline({path:[LL(L[0],L[1]),LL(B.la,B.lo),LL(R[0],R[1])],strokeColor:'#ffffff',strokeWeight:3,strokeOpacity:1,zIndex:11,map:TMM}))})})(L,R,B)}}
-  pins.forEach(function(p){var ic=tmIcon(p.ic);if(!ic)return;try{JOB.push(function(){tmPins.push(new Tmapv3.Marker({position:LL(p.la,p.lo),icon:ic.url,iconSize:new Tmapv3.Size(Math.round(ic.w*0.8),Math.round(ic.h*0.8)),anchor:'bottom',map:TMM}))})}catch(e){}});runJobs(JOB,tok)}
+      (function(L,R,B){JOB.push(function(){NL.push(new Tmapv3.Polyline({path:[LL(L[0],L[1]),LL(B.la,B.lo),LL(R[0],R[1])],strokeColor:'#ffffff',strokeWeight:3,strokeOpacity:1,zIndex:11,map:TMM}))})})(L,R,B)}}
+  pins.forEach(function(p){var ic=tmIcon(p.ic);if(!ic)return;try{JOB.push(function(){NP.push(new Tmapv3.Marker({position:LL(p.la,p.lo),icon:ic.url,iconSize:new Tmapv3.Size(Math.round(ic.w*0.8),Math.round(ic.h*0.8)),anchor:'bottom',map:TMM}))})}catch(e){}});var rm=function(a){a.forEach(function(x){try{x.setMap(null)}catch(e){}})};runJobs(JOB,tok,function(){rm(oldL);rm(oldP);tmLines=NL;tmPins=NP},function(){rm(NL);rm(NP)})}
 function initMap(){
   if(ENG==='tmap'){if(TMM)return;loadTmap(function(){try{curStyle=nightNow()?'NIGHT':'ROAD';TMM=new Tmapv3.Map('map',{center:LL(37.4979,127.0276),width:'100%',height:'100%',zoom:17,mapType:curStyle});
       TMM.on('ConfigLoad',function(){try{TMM.setInteractive(false)}catch(e){}mapReady=true;camSrcAt=null;tmZ=tmB=tmMppZ=null;drawRoute(true)})}catch(e){ENG='ml';TMM=null;initMap()}},function(){ENG='ml';initMap()});return}
