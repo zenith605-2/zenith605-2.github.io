@@ -126,13 +126,15 @@
   .muted{color:#777;font-size:17px}
   .wide{display:block;width:100%;font-size:24px;padding:18px;border:0;border-radius:14px;background:#2b7bff;color:#fff;margin-top:18px;font-weight:700}
   .keyRow{display:flex;gap:10px}.keyRow input{flex:1;font-size:22px;padding:12px;border:2px solid #ccc;border-radius:10px}.keyRow button{font-size:20px;border:0;border-radius:10px;background:#2b7bff;color:#fff;padding:0 18px}
+  #snd{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:9;background:#111d;color:#fff;font-size:20px;font-weight:700;border-radius:24px;padding:10px 22px;display:none}
+  #snd.show{display:block}
   #start{position:fixed;inset:0;background:#101215f2;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:30;color:#fff}
   #start button{font-size:40px;padding:26px 60px;border-radius:20px;border:0;background:#3d8bff;color:#fff;font-weight:800}
   #start p{font-size:22px;opacity:.75;margin-top:24px;text-align:center}
 </style>
 </head>
 <body>
-<div id="start"><button id="go">시작</button><p id="loadMsg">카메라 데이터 받는 중…</p></div>
+<div id="snd">화면을 한 번 누르면 경고음이 켜집니다</div><span id="loadMsg" hidden></span>
 <div id="map"></div>
 <div id="carMk"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="36" fill="#fff"/><circle cx="40" cy="40" r="36" fill="none" stroke="#1d6ff2" stroke-width="5"/><path d="M40 16 L56 56 L40 47 L24 56 Z" fill="#1d6ff2" stroke="#1d6ff2" stroke-width="3" stroke-linejoin="round"/></svg></div>
 <div id="warn"></div>
@@ -347,7 +349,10 @@ function voicesReady(){if('speechSynthesis' in window)KO=speechSynthesis.getVoic
 if('speechSynthesis' in window){voicesReady();speechSynthesis.onvoiceschanged=voicesReady}
 function beep(f,len,n,vol){if(muted||!ac)return;var gv=0.5*(vol==null?CFG.volW:vol);for(var i=0;i<(n||1);i++){var o=ac.createOscillator(),g=ac.createGain(),t0=ac.currentTime+i*(len+0.08);o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(gv,t0);g.gain.setValueAtTime(0,t0+len);o.start(t0);o.stop(t0+len)}}
 function say(t,f,n,guide){if(muted)return;var vol=guide?CFG.volG:CFG.volW;if(KO){var u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=1.1;u.volume=vol;speechSynthesis.cancel();speechSynthesis.speak(u)}else beep(f||880,0.12,n||2,vol)}
-$('go').onclick=function(){ac=new (window.AudioContext||window.webkitAudioContext)();beep(660,0.1,1);$('start').style.display='none';setTimeout(showFav,400);if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){})};
+function unlockAudio(){try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state!=='running')ac.resume();}catch(e){}setTimeout(function(){show('snd',!ac||ac.state!=='running')},300)}
+addEventListener('pointerdown',function(){var was=ac&&ac.state==='running';unlockAudio();if(!was)setTimeout(function(){if(ac&&ac.state==='running')beep(660,0.08,1)},350)},true);
+unlockAudio();setTimeout(showFav,600);
+if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){});
 $('mute').onclick=function(){muted=!muted;$('muteIc').innerHTML=muted?MUTE_OFF:MUTE_ON};
 
 
@@ -589,7 +594,7 @@ renderSet();
 loadCams();
 setMap(mapOn);
 requestAnimationFrame(tick);
-if(/autodemo/.test(location.search)){$('start').style.display='none';var iv=setInterval(function(){if(CAMS.length){clearInterval(iv);if(/navdemo/.test(location.search)&&KEY){startNav({name:'양재역',la:37.4842,lo:127.0346});var iv2=setInterval(function(){var f=document.querySelector('#rtList .rt');if(f&&!/shot/.test(location.search)){clearInterval(iv2);f.click();setTimeout(toggleDemo,300)}},300)}else toggleDemo()}},200)}
+if(/autodemo/.test(location.search)){var iv=setInterval(function(){if(CAMS.length){clearInterval(iv);if(/navdemo/.test(location.search)&&KEY){startNav({name:'양재역',la:37.4842,lo:127.0346});var iv2=setInterval(function(){var f=document.querySelector('#rtList .rt');if(f&&!/shot/.test(location.search)){clearInterval(iv2);f.click();setTimeout(toggleDemo,300)}},300)}else toggleDemo()}},200)}
 </script>
 </body>
 </html>
