@@ -270,12 +270,16 @@ $('stopNav').onclick=function(){endNav();show('menuSheet',0)};
 /* 카메라 데이터 */
 var CAMS=[],GRID={};
 function cellKey(la,lo){return Math.floor(la*100)+'_'+Math.floor(lo*100)}
-function indexCams(arr){var fx={};try{fx=JSON.parse(LS.getItem('camfix2')||'{}')}catch(e){}for(var q in fx){if(arr[q]){arr[q][0]=fx[q][0];arr[q][1]=fx[q][1]}}CAMS=arr;GRID={};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(GRID[k]=GRID[k]||[]).push(i)}camSrcAt=null}
+function indexCams(arr){var fx={};try{fx=JSON.parse(LS.getItem('camfix3')||'{}')}catch(e){}for(var i0=0;i0<arr.length;i0++){var a0=arr[i0];if(a0[6]==null)a0[6]=a0[0].toFixed(5)+'_'+a0[1].toFixed(5);var f0=fx[a0[6]];if(f0){a0[0]=f0[0];a0[1]=f0[1]}}CAMS=arr;GRID={};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(GRID[k]=GRID[k]||[]).push(i)}camSrcAt=null}
+var DATA='https://actparty.app/tesla-webnav/';
 function loadCams(){
-  var VER='cams-20261020b';
-  try{var c=LS.getItem(VER);if(c){indexCams(JSON.parse(c));$('loadMsg').textContent='카메라 '+CAMS.length.toLocaleString()+'개 (저장본)';return}}catch(e){}
-  fetch('cams.json?v=20261020b').then(function(r){return r.json()}).then(function(a){indexCams(a);$('loadMsg').textContent='카메라 '+a.length.toLocaleString()+'개 받음';try{for(var k in LS)if(k.indexOf('cams-')===0)LS.removeItem(k);LS.setItem(VER,JSON.stringify(a))}catch(e){}})
-  .catch(function(e){$('loadMsg').textContent='카메라 데이터를 못 받았습니다: '+e.message});
+  var cur=LS.getItem('camsVer'),have=null;
+  try{var c=LS.getItem('camsData');if(c){have=JSON.parse(c);indexCams(have);$('loadMsg').textContent='카메라 '+CAMS.length.toLocaleString()+'개 (저장본)'}}catch(e){}
+  fetch(DATA+'cams-ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(vj){
+    if(have&&vj.ver===cur)return;
+    return fetch(DATA+'cams.json?v='+vj.ver).then(function(r){return r.json()}).then(function(a){indexCams(a);$('loadMsg').textContent='카메라 '+a.length.toLocaleString()+'개 받음 (기준 '+vj.ref+')';
+      try{for(var k in LS)if(k.indexOf('cams-')===0)LS.removeItem(k);LS.setItem('camsData',JSON.stringify(a));LS.setItem('camsVer',vj.ver);LS.setItem('camsRef',vj.ref)}catch(e){}})
+  }).catch(function(e){if(!have)$('loadMsg').textContent='카메라 데이터를 못 받았습니다: '+e.message});
 }
 
 /* 지도 */
@@ -530,7 +534,7 @@ setInterval(function(){if(!demo)return;var now=Date.now(),dt=(now-demo.t)/1000;d
 
 /* 카메라 경고 */
 var lastPassed=null,target=null,passed={},announced={},lastBeep=0,section=null;
-function fixCam(b){var id=target?target.id:lastPassed;if(id==null||!fix){b.textContent='고칠 카메라 없음';setTimeout(function(){b.textContent='카메라 여기'},1500);return}var fx={};try{fx=JSON.parse(LS.getItem('camfix2')||'{}')}catch(e){}fx[id]=[fix.la,fix.lo];LS.setItem('camfix2',JSON.stringify(fx));var old=dist(CAMS[id][0],CAMS[id][1],fix.la,fix.lo);CAMS[id][0]=fix.la;CAMS[id][1]=fix.lo;indexCams(CAMS);passed[id]=Date.now();if(target&&target.id===id)target=null;b.textContent='고침 ('+Math.round(old)+'m 옮김)';setTimeout(function(){b.textContent='카메라 여기'},2500)}
+function fixCam(b){var id=target?target.id:lastPassed;if(id==null||!fix){b.textContent='고칠 카메라 없음';setTimeout(function(){b.textContent='카메라 여기'},1500);return}var fx={};try{fx=JSON.parse(LS.getItem('camfix3')||'{}')}catch(e){}fx[CAMS[id][6]]=[fix.la,fix.lo];LS.setItem('camfix3',JSON.stringify(fx));var old=dist(CAMS[id][0],CAMS[id][1],fix.la,fix.lo);CAMS[id][0]=fix.la;CAMS[id][1]=fix.lo;indexCams(CAMS);passed[id]=Date.now();if(target&&target.id===id)target=null;b.textContent='고침 ('+Math.round(old)+'m 옮김)';setTimeout(function(){b.textContent='카메라 여기'},2500)}
 function findAhead(la,lo,h){
   var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;
   for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;
@@ -577,7 +581,7 @@ function tick(){
   document.body.classList.toggle('over',over);document.body.classList.toggle('zone',zone);
   if(over&&now-lastBeep>700){beep(1400,0.15,1);lastBeep=now}
   if(CFG.diag){var g=gaps.length?Math.round(gaps.reduce(function(a,b){return a+b},0)/gaps.length):0;
-    $('diag').textContent=(demo?'시연 중 · ':'')+'정확도 '+Math.round(lastAcc)+'m · 간격 '+g+'ms · 수신 '+fixes+'\n속도 '+spdSrc+' · 알림 '+fmtD(alertD)+' · 음성 '+(KO?'한국어':'없음')}
+    $('diag').textContent=(demo?'시연 중 · ':'')+'정확도 '+Math.round(lastAcc)+'m · 간격 '+g+'ms · 수신 '+fixes+'\n속도 '+spdSrc+' · 알림 '+fmtD(alertD)+' · 음성 '+(KO?'한국어':'없음')+' · 카메라 기준 '+(LS.getItem('camsRef')||'-')}
   requestAnimationFrame(tick);
 }
 
