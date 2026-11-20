@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>웹 내비 정보</title>
+<style>
+:root{--bg:#f4f5f7;--fg:#111;--sub:#666;--card:#fff;--line:#e3e6ea}
+@media (prefers-color-scheme:dark){:root{--bg:#15171b;--fg:#eee;--sub:#9aa0a8;--card:#1c1f24;--line:#2c3036}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 60px}
+h1{font-size:24px;margin:8px 0 4px}h2{font-size:18px;margin:28px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+ul{margin:6px 0;padding-left:20px}li{margin:3px 0}.sub{color:var(--sub);font-size:14px}
+a{color:#2b7bff}.back{display:inline-block;margin-bottom:8px;text-decoration:none;font-size:15px}
+</style></head><body><main>
+<a class="back" href="cam.html">‹ 내비로 돌아가기</a>
+<h1>웹 내비 정보</h1>
+<p class="sub">테슬라 등 차량 브라우저에서 쓰는 무료 웹 내비게이션입니다. 로그인 없이 동작합니다.</p>
+
+<h2>꼭 읽어 주세요</h2>
+<div class="card"><ul>
+<li>참고용 안내입니다. 실제 도로 표지판과 교통 법규를 따르세요.</li>
+<li>운전 중에는 화면을 조작하지 마세요. 목적지 입력은 정차 중에 하세요.</li>
+<li>단속카메라·과속방지턱 등 공공데이터는 실제보다 늦게 반영될 수 있습니다.</li>
+<li>GPS가 끊기는 터널 등에서는 위치를 추정해 보여 줍니다.</li>
+</ul></div>
+
+<h2>개인정보와 위치</h2>
+<div class="card"><ul>
+<li>회원가입·로그인이 없고, 이름·연락처 같은 개인정보를 받지 않습니다.</li>
+<li>현재 위치는 차량 브라우저 안에서만 계산합니다. 서버에 위치를 저장하지 않습니다.</li>
+<li>길찾기·장소 검색을 할 때 출발지·목적지 좌표가 중계 서버를 거쳐 TMAP으로 전달되며, 중계 서버는 이를 저장하지 않습니다.</li>
+<li>즐겨찾기·최근 목적지·설정은 이 차 브라우저에만 저장됩니다. 브라우저 데이터를 지우면 함께 지워집니다.</li>
+<li>광고·추적 쿠키를 쓰지 않습니다.</li>
+</ul></div>
+
+<h2>데이터 출처</h2>
+<div class="card"><ul>
+<li>지도·길찾기·실시간 교통·장소·충전기 상태·제한속도: <b>TMAP</b> (티맵모빌리티 / SK open API)</li>
+<li>무인 단속카메라: 경찰청 전국무인교통단속카메라표준데이터 (공공데이터포털)</li>
+<li>과속방지턱: 국토교통부 전국과속방지턱표준데이터 (공공데이터포털), OpenStreetMap</li>
+<li>교통사고 다발지역: 도로교통공단 전국교통사고다발지역표준데이터 (공공데이터포털)</li>
+<li>도로 CCTV·주의운전구간: 국토교통부 국가교통정보센터(ITS) 공개 API</li>
+<li>휴게소·졸음쉼터: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> 기여자 (ODbL)</li>
+<li>테슬라 슈퍼차저 위치: supercharge.info 커뮤니티 데이터, OpenStreetMap</li>
+<li>날씨·미세먼지: <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0)</li>
+<li>안내 음성: Google Gemini 음성 합성으로 미리 녹음</li>
+</ul>
+<p class="sub">공공데이터는 공공누리 이용 조건에 따라 이용합니다. 이 서비스는 테슬라·TMAP과 관계없는 개인 프로젝트입니다.</p></div>
+</main></body></html>

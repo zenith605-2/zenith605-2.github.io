@@ -289,10 +289,17 @@
   #tSub{font-size:13px;opacity:.8;margin-top:1px;max-width:230px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#tSub:empty{display:none}
   #limNow{width:52px;height:52px;border-radius:50%;background:#fff;border:7px solid #e3151a;box-sizing:border-box;color:#111;font-size:21px;font-weight:900;display:none;align-items:center;justify-content:center;box-shadow:0 2px 8px #0004;letter-spacing:-1px}
   #limNow.show{display:flex}#alertBox.on #limNow{display:none}body.overLim #spd{color:#e3151a}
+  #agree{position:fixed;inset:0;z-index:70;background:#000b;display:none;align-items:center;justify-content:center}#agree.on{display:flex}
+  #agree .ag{background:#fff;color:#111;border-radius:16px;padding:22px 26px;width:min(460px,90vw);box-shadow:0 10px 40px #0007}
+  #agree b{font-size:20px}#agree ul{margin:12px 0 18px;padding-left:20px;font-size:16px;line-height:1.7}
+  #agree button{width:100%;height:52px;border:0;border-radius:12px;background:#2b7bff;color:#fff;font-size:18px;font-weight:800}
+  #agree a{display:block;text-align:center;margin-top:12px;color:#888;font-size:14px}
+  body.night #agree .ag{background:#1c1f24;color:#eee}
 </style>
 </head>
 <body>
 <button id="kbSink" tabindex="-1" aria-hidden="true" style="position:fixed;left:-200px;top:0;width:1px;height:1px;opacity:0"></button><div id="snd">화면을 한 번 누르면 경고음이 켜집니다</div><span id="loadMsg" hidden></span>
+<div id="agree"><div class="ag"><b>시작하기 전에</b><ul><li>참고용 안내입니다. 실제 표지판과 법규를 따르세요.</li><li>운전 중에는 화면을 조작하지 마세요.</li><li>단속카메라 정보는 늦게 반영될 수 있습니다.</li><li>위치는 이 차 안에서만 쓰고 저장하지 않습니다.</li></ul><button type="button" id="agreeOk">확인하고 시작</button><a href="about.html">정보·출처</a></div></div>
 <div id="boot"><div class="bx"><div class="sp"></div><div class="bt">지도를 불러오는 중</div></div></div><script>setTimeout(function(){var b=document.getElementById('boot');if(b)b.style.display='none'},15000)</script>
 <div id="map"></div>
 <div id="drChip">GPS 신호 없음 · 추정 위치로 안내 중</div>
@@ -396,6 +403,7 @@
   <h2 style="font-size:20px;margin-top:22px">야간 모드</h2><div class="opt" id="nightOpts"></div>
   <h2 style="font-size:20px;margin-top:22px">티맵 키 (지도 인증용 · 이 차에만 저장)</h2><div class="keyRow"><input id="keyIn" placeholder="앱 키 붙여 넣기" autocomplete="off"><button id="keySave">저장</button></div><p class="muted" id="keyState"></p>
   <h2 style="font-size:20px;margin-top:18px">CCTV 키 (국가교통정보센터 · 이 차에만 저장)</h2><div class="keyRow"><input id="itsIn" placeholder="인증키 붙여 넣기" autocomplete="off"><button id="itsSave">저장</button></div><p class="muted" id="itsState"></p>
+  <h2 style="font-size:20px;margin-top:22px"><a href="about.html" style="color:inherit">정보·출처·개인정보 ›</a></h2>
   <h2 style="font-size:20px;margin-top:22px">진단 정보 표시</h2><div class="opt"><button id="diagBtn">켜짐</button></div>
 </div></div>
 
@@ -453,6 +461,8 @@ function onOffRows(box,list){var TB=$(box);TB.innerHTML='';list.forEach(function
 $('keySave').onclick=function(){var k=$('keyIn').value.trim();if(!k){KEY='';LS.removeItem('tmapKey');renderSet();return}if(k.length<20){$('keyState').textContent='키가 너무 짧습니다';return}KEY=k;LS.setItem('tmapKey',k);$('keyIn').value='';renderSet()};
 $('itsSave').onclick=function(){var k=$('itsIn').value.trim().replace(/\s/g,'');if(!k){LS.removeItem('itsKey');$('itsState').textContent='지움';return}if(!/^[0-9a-f]{32}$/i.test(k)){$('itsState').textContent='32자리 키가 아닙니다';return}LS.setItem('itsKey',k);$('itsIn').value='';$('itsState').textContent='저장됨 · 가는 길 CCTV 사용 가능'};
 try{if(LS.getItem('itsKey'))$('itsState').textContent='저장됨'}catch(e){}
+try{if(LS.getItem('agreed')!=='1')$('agree').classList.add('on')}catch(e){}
+$('agreeOk').onclick=function(){try{LS.setItem('agreed','1')}catch(e){}$('agree').classList.remove('on');try{unlockAudio()}catch(e){}};
 $('diagBtn').onclick=function(){CFG.diag=!CFG.diag;LS.setItem('diagOff',CFG.diag?'0':'1');renderSet()};
 $('effIn').onchange=function(){var x=Number(this.value);if(x>=2&&x<=12){CFG.eff=x;LS.setItem('eff',String(x))}};$('kwhIn').onchange=function(){var x=Number(this.value);if(x>=0&&x<=1000){CFG.kwh=x;LS.setItem('kwh',String(x))}};
 $('setClose').onclick=function(){show('setSheet',0)};
@@ -863,6 +873,7 @@ $('wxClose').onclick=function(){show('wxSheet',0)};$('wxSheet').onclick=function
 
 /* 길 안내 */
 var NAV=null;
+function errText(e){var m=String(e&&e.message||e);return /429|quota|LIMIT|한도|초과/i.test(m)?'오늘 무료 길 안내를 모두 썼어요 · 단속카메라 경고는 계속됩니다':m}
 function api(path,opt){opt=opt||{};opt.headers=Object.assign(KEY?{'appKey':KEY,'Accept':'application/json'}:{'Accept':'application/json'},opt.headers||{});return fetch((KEY?'https://apis.openapi.sk.com/tmap/':RELAY+'tmap/')+path,opt).then(function(r){if(r.status===204)return{};if(!r.ok)return r.text().then(function(t){var m=t;try{m=JSON.parse(t).error||t}catch(e){}throw new Error((r.status===429?'':'HTTP '+r.status+' ')+String(m).slice(0,120))});return r.json()})}
 $('navBtn').onclick=function(){hideFav();show('navSheet',1);renderRecent();renderQuick();$('sbar').classList.toggle('has',!!$('q').value);$('results').innerHTML='';setTimeout(function(){$('q').focus()},50)};
 $('navClose').onclick=function(){show('navSheet',0);showFav()};
@@ -987,7 +998,7 @@ function startNav(d){try{lpClose()}catch(e){}
 /* 경로: 처음엔 추천 1개만(티맵 경로 11원/건 아끼기), 나머지는 [다른 경로 더 보기] */
 var RTS=null;
 function fetchOpts(list,first){var S0=RTS,d=S0.d,c=S0.c;var mb=$('rtMore');if(mb)mb.remove();var ld=document.createElement('div');ld.className='muted';ld.textContent='경로 찾는 중…';$('rtList').appendChild(ld);
-  Promise.all(list.map(function(o){return fetchRoute(c,d,o[0]).then(function(r){r.opt=o;return r}).catch(function(e){return{err:e.message,opt:o}})})).then(function(rs){
+  Promise.all(list.map(function(o){return fetchRoute(c,d,o[0]).then(function(r){r.opt=o;return r}).catch(function(e){return{err:errText(e),opt:o}})})).then(function(rs){
     if(RTS!==S0)return;ld.remove();var box=$('rtList'),seen=S0.seen,shown=0;
     rs.forEach(function(r){if(r.err)return;var key=Math.round(r.dist/100)+'_'+Math.round(r.time/60);if(seen[key]){seen[key].push(r.opt[1]);return}seen[key]=[r.opt[1]];
       var el=document.createElement('div');el.className='rt';var eta=new Date(Date.now()+r.time*1000),h=eta.getHours(),mins=Math.round(r.time/60);
@@ -1052,7 +1063,7 @@ $('fastNo').onclick=function(){fastR=null;show('fastCard',0)};
 function route(){
   if(!NAV)return;var c=fix||{la:37.4979,lo:127.0276};NAV.lastRoute=Date.now();
   fetchRoute(c,NAV.dest,NAV.opt||'0',NAV.via).then(function(r){if(!NAV)return;NAV.R=r.R;NAV.S=r.S;NAV.G=r.G;NAV.C=r.C;NAV.T=r.T;NAV.F=r.F;NAV.V=r.V;NAV.total=r.dist;NAV.time=r.time;NAV.fare=r.fare;NAV.idx=0;NAV.s=0;NAV.spoken={};lastDrawIdx=-1;routePois(NAV);routeHits(NAV);incMatch();camSrcAt=null;buildTbar();drawRoute();if(demo&&demo.route)demo.s=0})
-  .catch(function(e){if(NAV){$('tDist').textContent='경로 실패';$('tName').textContent=e.message}});
+  .catch(function(e){if(NAV){$('tDist').textContent='경로 실패';$('tName').textContent=errText(e)}});
 }
 function drawRoute(force){if(!mapReady)return;
   var RT=PREV||NAV||(ARR?{R:[],C:[],dest:ARR.dest}:null),on=RT&&RT.R&&RT.R.length;
