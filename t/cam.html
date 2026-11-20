@@ -348,7 +348,7 @@
   <div class="band" id="tollBand"></div>
   <p class="muted">통행료는 예상 금액입니다. 전기차 감면은 2026년 30%, 2027년 20% (전기차로 등록한 하이패스 단말기일 때만). 출퇴근 할인·기타 감면은 반영하지 않습니다.</p>
   <h2 style="font-size:20px;margin-top:22px">야간 모드</h2><div class="opt" id="nightOpts"></div>
-  <h2 style="font-size:20px;margin-top:22px">티맵 키 (선택 · 비워 두면 중계 서버)</h2><div class="keyRow"><input id="keyIn" placeholder="앱 키 붙여 넣기" autocomplete="off"><button id="keySave">저장</button></div><p class="muted" id="keyState"></p>
+  <h2 style="font-size:20px;margin-top:22px">티맵 키 (지도 인증용 · 이 차에만 저장)</h2><div class="keyRow"><input id="keyIn" placeholder="앱 키 붙여 넣기" autocomplete="off"><button id="keySave">저장</button></div><p class="muted" id="keyState"></p>
   <h2 style="font-size:20px;margin-top:22px">진단 정보 표시</h2><div class="opt"><button id="diagBtn">켜짐</button></div>
 </div></div>
 
@@ -516,7 +516,7 @@ function tmIcon(id){if(tmIconC[id])return tmIconC[id];var cv=iconCanvas(id);if(!
 function loadTmap(ok,fail){if(window.Tmapv3)return ok();var base='https://topopentile1.tmap.co.kr/scriptSDKV3/';window.Tmapvector={_getScriptLocation:function(){return base},VERSION_NUMBER:Date.now()};
   var l=document.createElement('link');l.rel='stylesheet';l.href=base+'vsm.css';document.head.appendChild(l);
   var done=false,s=document.createElement('script'),t=setTimeout(function(){if(!done){done=true;fail()}},15000);
-  s.src=base+'tmapjs3.min.js?version=20231206';s.onload=function(){if(done)return;done=true;clearTimeout(t);window.Tmapv3?ok():fail()};s.onerror=function(){if(done)return;done=true;clearTimeout(t);fail()};document.head.appendChild(s)}
+  s.src=base+'tmapjs3.min.js?version=20231206'+(KEY?'&appKey='+encodeURIComponent(KEY):''); /* 약관: 지도 SDK 는 키 인증. 키는 이 차(설정)에만 저장, 서버가 내려주지 않음 */s.onload=function(){if(done)return;done=true;clearTimeout(t);window.Tmapv3?ok():fail()};s.onerror=function(){if(done)return;done=true;clearTimeout(t);fail()};document.head.appendChild(s)}
 function mapResize(){if(TMM){var e=$('map');try{TMM.resize(e.clientWidth,e.clientHeight)}catch(x){}}else if(map)map.resize()}
 function mapPx(la,lo){if(TMM){var p=TMM.realToScreen(LL(la,lo));return{x:p.x,y:p.y}}if(map){var q=map.project([lo,la]);return{x:q.x,y:q.y}}return{x:-999,y:-999}}
 /* 차를 화면 아래쪽(68%)에 두고 따라가기: 중심을 진행 방향 앞으로 밀어 둔다 */
