@@ -116,7 +116,10 @@
   .wxc{position:fixed;right:18px;top:16px;z-index:6;display:none;align-items:center;gap:8px;background:#fff;color:#111;border:0;border-radius:26px;padding:8px 16px;box-shadow:0 3px 12px #0003;font-size:18px}
   .wxc.show{display:flex}.wxc b{font-size:24px}.wxc svg{width:30px;height:30px}
   .aq{font-size:15px;font-weight:800;border-radius:10px;padding:3px 8px;color:#fff}
-  .hr{display:flex;gap:10px;overflow-x:auto;padding:6px 0}.hr div{flex:none;width:76px;text-align:center;background:#f1f5fb;border-radius:14px;padding:10px 4px;font-size:16px}.hr b{display:block;font-size:22px;margin:4px 0}.hr svg{width:30px;height:30px}
+  .wxnow .wxbig{display:flex;align-items:center;gap:12px}.wxnow .wxbig svg{width:56px;height:56px}.wxnow .wxbig b{font-size:46px}.wxnow .wxbig span{font-size:22px}
+  .wxg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.wxg div{background:#fff;border-radius:12px;padding:10px;font-size:15px;color:#555}.wxg b{display:block;font-size:22px;color:#111;margin-top:2px}
+  .dayrow{display:flex;align-items:center;gap:14px;padding:10px 4px;border-bottom:1px solid #eef0f3;font-size:20px}.dayrow span:first-child{width:80px}.dayrow svg{width:30px;height:30px}.dayrow .pp{width:60px;color:#2b7bff;font-size:17px}.dayrow b{margin-left:auto}
+  .hr{display:flex;gap:10px;overflow-x:auto;padding:6px 0}.hr div{flex:none;width:76px;text-align:center;background:#f1f5fb;border-radius:14px;padding:10px 4px;font-size:16px}.hr b{display:block;font-size:22px;margin:4px 0}.hr svg{width:30px;height:30px;display:block;margin:4px auto}
   .sheet{position:fixed;inset:0;background:#000a;z-index:20;display:none}
   .sheet.show{display:block}
   .panel{position:absolute;left:0;top:0;bottom:0;width:min(560px,48vw);background:#fff;color:#111;border-top-right-radius:22px;border-bottom-right-radius:22px;overflow:auto;padding:22px;box-sizing:border-box}
@@ -162,7 +165,7 @@
   <div id="tag"></div>
 </div>
 
-<button id="wx" class="wxc"><span id="wxIc"></span><b id="wxT">-</b><span id="wxA"></span></button>
+<button id="wx" class="wxc"><span id="wxIc"></span><b id="wxT">-</b><span id="wxA"></span><span id="wxW" class="aq" style="display:none;background:#e3151a"></span></button>
 <div id="rightBtns">
   <button class="rb" id="navBtn" title="목적지"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#111" stroke-width="2.6"/><path d="M15 15 L21 21" stroke="#111" stroke-width="2.8" stroke-linecap="round"/></svg></button>
   <div id="zoomGrp"><button class="rb" id="zIn">+</button><button class="rb" id="zOut">−</button></div>
@@ -483,16 +486,34 @@ function wxSvg(c,day){var k=wxKind(c);
 function aqGrade(v,pm25){var t=pm25?[15,35,75]:[30,80,150];if(v==null)return null;return v<=t[0]?['좋음','#2b7bff']:v<=t[1]?['보통','#22a35a']:v<=t[2]?['나쁨','#f08c00']:['매우나쁨','#e3151a']}
 function loadWx(){var c=fix||null;if(!c)return;var now=Date.now();if(WX&&now-wxAt<15*60e3&&wxPos&&dist(wxPos[0],wxPos[1],c.la,c.lo)<5000)return;wxAt=now;wxPos=[c.la,c.lo];
   var q='latitude='+c.la.toFixed(3)+'&longitude='+c.lo.toFixed(3)+'&timezone=Asia%2FSeoul';
-  Promise.all([fetch('https://api.open-meteo.com/v1/forecast?'+q+'&current=temperature_2m,weather_code,is_day&hourly=temperature_2m,precipitation_probability,weather_code,is_day&forecast_hours=12').then(function(r){return r.json()}),
+  Promise.all([fetch('https://api.open-meteo.com/v1/forecast?'+q+'&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day,precipitation&hourly=temperature_2m,precipitation_probability,weather_code,is_day&forecast_hours=24&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset&forecast_days=7&wind_speed_unit=ms').then(function(r){return r.json()}),
     fetch('https://air-quality-api.open-meteo.com/v1/air-quality?'+q+'&current=pm10,pm2_5').then(function(r){return r.json()}).catch(function(){return{}})])
-  .then(function(a){WX={w:a[0],a:a[1]};var cu=a[0].current||{},aq=(a[1]||{}).current||{};
+  .then(function(a){WX={w:a[0],a:a[1],at:c};if(KEY)revName(c.la,c.lo,function(n){WX.place=n});var cu=a[0].current||{},aq=(a[1]||{}).current||{};
     $('wxIc').innerHTML=wxSvg(cu.weather_code,cu.is_day);$('wxT').textContent=Math.round(cu.temperature_2m)+'°';
     var g=aqGrade(aq.pm2_5,true);$('wxA').innerHTML=g?'<span class="aq" style="background:'+g[1]+'">초미세 '+g[0]+'</span>':'';show('wx',1)}).catch(function(){})}
 setInterval(loadWx,60000);setTimeout(loadWx,3000);
-$('wx').onclick=function(){if(!WX)return;var w=WX.w,cu=w.current,aq=(WX.a||{}).current||{},h=w.hourly,g1=aqGrade(aq.pm10,false),g2=aqGrade(aq.pm2_5,true);
-  var html='<div class="item"><span>'+wxName(cu.weather_code)+' '+Math.round(cu.temperature_2m)+'°</span><small>미세먼지 '+(aq.pm10!=null?Math.round(aq.pm10)+'㎍/㎥ '+g1[0]:'-')+' · 초미세먼지 '+(aq.pm2_5!=null?Math.round(aq.pm2_5)+'㎍/㎥ '+g2[0]:'-')+'</small></div><div class="hr">';
-  for(var i=0;i<h.time.length;i++){var hh=Number(h.time[i].slice(11,13));html+='<div>'+(hh<12?'오전 ':'오후 ')+(hh%12||12)+'시'+wxSvg(h.weather_code[i],h.is_day[i])+'<b>'+Math.round(h.temperature_2m[i])+'°</b>'+(h.precipitation_probability[i]!=null?h.precipitation_probability[i]+'%':'')+'</div>'}
-  $('wxBody').innerHTML=html+'</div>';show('wxSheet',1)};
+function hh12(h){return (h<12?'오전 ':'오후 ')+(h%12||12)+'시'}
+$('wx').onclick=function(){if(!WX)return;var w=WX.w,cu=w.current,aq=(WX.a||{}).current||{},h=w.hourly,dl=w.daily||{},g1=aqGrade(aq.pm10,false),g2=aqGrade(aq.pm2_5,true);
+  var html='<div class="item wxnow"><div class="wxbig">'+wxSvg(cu.weather_code,cu.is_day)+'<b>'+Math.round(cu.temperature_2m)+'°</b><span>'+(WX.place||'현재 위치')+' · '+wxName(cu.weather_code)+'</span></div>'+
+    '<div class="wxg"><div>체감<b>'+Math.round(cu.apparent_temperature)+'°</b></div><div>습도<b>'+cu.relative_humidity_2m+'%</b></div><div>바람<b>'+(cu.wind_speed_10m!=null?cu.wind_speed_10m.toFixed(1):'-')+'m/s</b></div>'+
+    '<div>미세먼지<b style="color:'+(g1?g1[1]:'#111')+'">'+(g1?g1[0]:'-')+'</b></div><div>초미세<b style="color:'+(g2?g2[1]:'#111')+'">'+(g2?g2[0]:'-')+'</b></div>'+
+    (dl.sunrise?'<div>일출·일몰<b>'+dl.sunrise[0].slice(11,16)+' · '+dl.sunset[0].slice(11,16)+'</b></div>':'')+'</div></div>';
+  if(RWX&&RWX.pts.length){html+='<h2 style="font-size:20px;margin:14px 0 4px">경로 날씨 · '+(NAV?NAV.dest.name:'')+'</h2><div class="hr">';RWX.pts.forEach(function(p){html+='<div style="width:110px">'+p.lbl+'<br><small>'+p.time+'</small>'+wxSvg(p.code,p.day)+'<b>'+Math.round(p.t)+'°</b>'+(p.pp!=null?p.pp+'%':'')+'</div>'});html+='</div>'}
+  html+='<h2 style="font-size:20px;margin:14px 0 4px">24시간</h2><div class="hr">';
+  for(var i=0;i<h.time.length;i++){html+='<div>'+hh12(Number(h.time[i].slice(11,13)))+wxSvg(h.weather_code[i],h.is_day[i])+'<b>'+Math.round(h.temperature_2m[i])+'°</b>'+(h.precipitation_probability[i]!=null?h.precipitation_probability[i]+'%':'')+'</div>'}
+  html+='</div>';
+  if(dl.time){html+='<h2 style="font-size:20px;margin:14px 0 4px">7일</h2>';var dn=['일','월','화','수','목','금','토'];dl.time.forEach(function(t,i){var d=new Date(t+'T00:00');html+='<div class="dayrow"><span>'+(i===0?'오늘':dn[d.getDay()]+'요일')+'</span>'+wxSvg(dl.weather_code[i],1)+'<span class="pp">'+(dl.precipitation_probability_max[i]!=null?dl.precipitation_probability_max[i]+'%':'')+'</span><b>'+Math.round(dl.temperature_2m_min[i])+'° / '+Math.round(dl.temperature_2m_max[i])+'°</b></div>'})}
+  $('wxBody').innerHTML=html;show('wxSheet',1)};
+/* 경로 날씨: 경로를 따라 약 25km마다, 지나갈 시각의 예보 */
+var RWX=null;
+function routeWeather(){RWX=null;updWxWarn();if(!NAV||!NAV.R||NAV.R.length<2)return;var N=NAV,step=25000,pts=[],s0=N.s||0;
+  for(var sd=s0;sd<N.total;sd+=step)pts.push(sd);pts.push(N.total);if(pts.length>8){var k=Math.ceil(pts.length/8);pts=pts.filter(function(x,i){return i%k===0||i===pts.length-1})}
+  var P=pts.map(function(sd){var q=routePointAt(N,sd);q.sd=sd;q.eta=Date.now()+N.time*1000*(sd-s0)/Math.max(1,N.total-s0);return q});
+  fetch('https://api.open-meteo.com/v1/forecast?latitude='+P.map(function(p){return p.la.toFixed(3)}).join(',')+'&longitude='+P.map(function(p){return p.lo.toFixed(3)}).join(',')+'&hourly=temperature_2m,precipitation_probability,weather_code,is_day&forecast_hours=24&timezone=Asia%2FSeoul').then(function(r){return r.json()}).then(function(d){if(NAV!==N)return;var arr=Array.isArray(d)?d:[d];
+    RWX={pts:P.map(function(p,i){var hr=(arr[i]||arr[0]).hourly,et=new Date(p.eta),key=et.getFullYear()+'-'+String(et.getMonth()+1).padStart(2,'0')+'-'+String(et.getDate()).padStart(2,'0')+'T'+String(et.getHours()).padStart(2,'0')+':00',j=Math.max(0,hr.time.indexOf(key));
+      return{lbl:i===0?'출발':i===P.length-1?'도착':Math.round((p.sd-s0)/1000)+'km',time:tm(p.eta),t:hr.temperature_2m[j],pp:hr.precipitation_probability[j],code:hr.weather_code[j],day:hr.is_day[j]}})};updWxWarn()}).catch(function(){})}
+function routePointAt(N,sd){var R=N.R,S=N.S;for(var i=0;i<R.length-1;i++){if(S[i+1]>=sd){var t=(sd-S[i])/Math.max(0.01,S[i+1]-S[i]);return{la:R[i][0]+(R[i+1][0]-R[i][0])*t,lo:R[i][1]+(R[i+1][1]-R[i][1])*t}}}return{la:R[R.length-1][0],lo:R[R.length-1][1]}}
+function updWxWarn(){var el=$('wxW');if(!el)return;var bad=null;if(RWX)RWX.pts.forEach(function(p){var k=wxKind(p.code);if(!bad&&(k==='rain'||k==='snow'||k==='storm')&&(p.pp==null||p.pp>=40))bad=wxName(p.code)});el.textContent=bad?'경로에 '+bad:'';el.style.display=bad?'':'none'}
 $('wxClose').onclick=function(){show('wxSheet',0)};$('wxSheet').onclick=function(e){if(e.target===this)show('wxSheet',0)};
 
 /* 길 안내 */
@@ -556,7 +577,7 @@ function parseRoute(d){
 }
 function applyRoute(d,r){
   NAV={dest:d,fare:r.fare,opt:r.opt[0],R:r.R,S:r.S,G:r.G,C:r.C,total:r.dist,time:r.time,idx:0,s:0,offT:0,lastRoute:Date.now(),spoken:{}};
-  document.body.classList.add('nav');lastDrawIdx=-1;buildTbar();drawRoute();
+  document.body.classList.add('nav');lastDrawIdx=-1;buildTbar();drawRoute();routeWeather();
 }
 $('reroute').onclick=function(){if(NAV)route()};
 function route(){
@@ -571,7 +592,7 @@ function drawRoute(){if(!mapReady)return;
   map.getSource('dest').setData({type:'FeatureCollection',features:NAV?[{type:'Feature',geometry:{type:'Point',coordinates:[NAV.dest.lo,NAV.dest.la]}}]:[]});
 }
 function buildTbar(){var box=$('tbarIn');box.innerHTML='';if(!NAV||!NAV.total)return;var C=NAV.C||[],S=NAV.S,col={2:'#f5b400',3:'#ff7a00',4:'#e3151a'},st=0,cur=C[0]||0;for(var i=1;i<=S.length-1;i++){var c=i<S.length-1?(C[i]||0):-1;if(c!==cur){var el=document.createElement('i');el.style.width=((S[i]-S[st])/NAV.total*100)+'%';el.style.background=col[cur]||'#2b7bff';box.appendChild(el);st=i;cur=c}}}
-function endNav(){favDismissed=false;setTimeout(showFav,1500);NAV=null;document.body.classList.remove('nav');drawRoute()}
+function endNav(){RWX=null;setTimeout(updWxWarn,0);favDismissed=false;setTimeout(showFav,1500);NAV=null;document.body.classList.remove('nav');drawRoute()}
 function project(la,lo){
   var R=NAV.R,best=null,from=Math.max(0,NAV.idx-5),to=Math.min(R.length-2,NAV.idx+120),kx=111320*Math.cos(la*D2R),ky=111320;
   for(var i=from;i<=to;i++){var ax=(R[i][1]-lo)*kx,ay=(R[i][0]-la)*ky,bx=(R[i+1][1]-lo)*kx,by=(R[i+1][0]-la)*ky,dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy,t=L2?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L2)):0,px=ax+t*dx,py=ay+t*dy,dd=Math.sqrt(px*px+py*py);
@@ -673,7 +694,7 @@ renderSet();
 loadCams();
 setMap(mapOn);
 requestAnimationFrame(tick);
-if(/autodemo/.test(location.search)){var iv=setInterval(function(){if(CAMS.length){clearInterval(iv);if(/navdemo/.test(location.search)&&KEY){startNav({name:'양재역',la:37.4842,lo:127.0346});var iv2=setInterval(function(){var f=document.querySelector('#rtList .rt');if(f&&!/shot/.test(location.search)){clearInterval(iv2);f.click();setTimeout(toggleDemo,300)}},300)}else toggleDemo()}},200)}
+if(/autodemo/.test(location.search)){var iv=setInterval(function(){if(CAMS.length){clearInterval(iv);if(/navdemo/.test(location.search)&&KEY){startNav(/far/.test(location.search)?{name:'대전역',la:36.3324,lo:127.4342}:{name:'양재역',la:37.4842,lo:127.0346});var iv2=setInterval(function(){var f=document.querySelector('#rtList .rt');if(f&&!/shot/.test(location.search)){clearInterval(iv2);f.click();setTimeout(toggleDemo,300)}},300)}else toggleDemo()}},200)}
 </script>
 </body>
 </html>
