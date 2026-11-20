@@ -1115,11 +1115,11 @@ function limRoute(N){var R=N.R,n=R.length,step=Math.max(1,Math.ceil(n/480)),idx=
   api('road/matchToRoads500?version=1',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body}).then(function(d){if(!(NAV&&NAV.R===R))return;
     var M=((d||{}).resultData||{}).matchedPoints||[],at={};M.forEach(function(m){if(m.sourceIndex!=null){var v=+m.speed||0;at[m.sourceIndex]=(m.roadCategory>=11||v<20)?0:v}});
     var L=new Array(n),cur=at[0]||0,k=0;for(var i=0;i<n;i++){while(k<idx.length-1&&idx[k+1]<=i){k++;if(at[k]!=null)cur=at[k]}L[i]=cur}
-    NAV.LIM=L}).catch(function(){})}
+    NAV.LIM=L}).catch(function(){if(NAV&&NAV.R===R)NAV.LIMFAIL=1})}
 function limNear(la,lo){if(LIMN.busy)return;LIMN.busy=1;api('road/nearToRoad?version=1&lat='+la.toFixed(6)+'&lon='+lo.toFixed(6)).then(function(d){var h=((d||{}).resultData||{}).header||{},v=+h.speed||0;LIMN.v=(h.roadCategory>=11||v<20)?0:v;LIMN.la=la;LIMN.lo=lo;LIMN.t=Date.now()}).catch(function(){LIMN.t=Date.now()}).then(function(){LIMN.busy=0})}
 function limNow(la,lo,kmh,now){var v=0;
   if(NAV&&NAV.R){if(!PREV&&NAV.R!==LIMR&&now-LIMT>5000&&now-(NAV.t0||0)>1500){LIMR=NAV.R;LIMT=now;NAV.LIM=null;limRoute(NAV)}if(NAV.LIM)v=NAV.LIM[Math.max(0,Math.min(NAV.LIM.length-1,NAV.idx))]||0}
-  else{if(kmh>10&&now-LIMN.t>15000&&dist(la,lo,LIMN.la,LIMN.lo)>150)limNear(la,lo);if(now-LIMN.t<60000&&dist(la,lo,LIMN.la,LIMN.lo)<300)v=LIMN.v}
+  if(!NAV||!NAV.R||NAV.LIMFAIL){if(kmh>10&&now-LIMN.t>15000&&dist(la,lo,LIMN.la,LIMN.lo)>150)limNear(la,lo);if(now-LIMN.t<60000&&dist(la,lo,LIMN.la,LIMN.lo)<300)v=LIMN.v}
   var e=$('limNow');if(v){if(e.textContent!==String(v))e.textContent=v;e.classList.add('show')}else e.classList.remove('show');document.body.classList.toggle('overLim',!!v&&kmh>v+5)}
 function endNav(){cctvClose();try{LS.removeItem('navResume')}catch(e){}show('incChip',0);fastR=null;show('fastCard',0);show('jamChip',0);show('hwBox',0);if(TMM)tmDrawTurn(null);RWX=null;setTimeout(updWxWarn,0);favDismissed=false;setTimeout(showFav,1500);NAV=null;document.body.classList.remove('nav');setTimeout(mapResize,60);drawRoute(true)}
 function project(la,lo){
