@@ -165,8 +165,8 @@
   .sbar input{-webkit-appearance:none;appearance:none;flex:1;min-width:0;font-size:21px;border:0;outline:0;background:none;color:#111}
   .sbar input::placeholder{color:#9aa1ab}
   .sbar input::-webkit-search-cancel-button{display:none}
-  .sbar .clr{flex:none;width:30px;height:30px;border:0;border-radius:50%;background:#c9ced6;color:#fff;font-size:15px;font-weight:800;display:none;padding:0}
-  .sbar.has .clr{display:block}
+  .sbar .clr{flex:none;width:30px;height:30px;border:0;border-radius:50%;background:#c9ced6;display:none;padding:0;align-items:center;justify-content:center}
+  .sbar.has .clr{display:flex}
   .sbar .go{flex:none;height:44px;padding:0 18px;border:0;border-radius:12px;background:#2b7bff;color:#fff;font-size:17px;font-weight:700}
   .chips{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 2px}
   .chips::-webkit-scrollbar{display:none}
@@ -219,19 +219,19 @@
   .keyRow input{font-size:16px;padding:9px}.keyRow button{font-size:15px;padding:0 14px}.muted{font-size:14px}
   .pred button{font-size:14px;padding:8px 11px}
   #restChip{font-size:15px;padding:6px 11px}#snd{font-size:15px;padding:7px 16px}
-  .back{font-size:26px}
+  .back{font-size:26px;display:inline-flex;align-items:center;justify-content:center;color:inherit}
   .bsearch{display:inline-flex;align-items:center;gap:8px;background:#f1f3f6;color:#555;border-radius:20px;padding:7px 18px 7px 12px;font-size:16px;cursor:pointer;align-self:center}
   .bsearch svg{width:18px;height:18px}
   body.night .bsearch{background:#2a2e35;color:#c3c8cf}
   body:not(.nav) #bMid{cursor:pointer}
   #bottom{border-radius:0!important}#fav{border-radius:0!important;box-shadow:0 -1px 0 #0001,0 -6px 16px #0002}body.night #fav{box-shadow:0 -1px 0 #ffffff14}
-  #rtSheet{background:transparent}#rtSheet .panel{width:min(430px,44vw);box-shadow:4px 0 22px #0004}
-  #rtList{display:grid;grid-template-columns:1fr 1fr;gap:8px}#rtList .rt{margin:0;cursor:pointer}#rtList .rt .rs{white-space:normal}
+  #rtSheet{background:transparent}#rtSheet .panel{width:min(340px,38vw);padding:12px;box-shadow:4px 0 22px #0004}
+  #rtList{display:grid;grid-template-columns:1fr 1fr;gap:8px}#rtList .rt{margin:0;cursor:pointer;padding:8px 10px;border-radius:11px}#rtList .rt .rk{font-size:11px}#rtList .rt .rm{font-size:12px}#rtList .rt .rm b{font-size:18px}#rtList .rt .rs{font-size:11px;line-height:1.35}#rtList .rt .tb{height:5px;margin-top:6px}#rtSheet h2{font-size:16px!important}#rtSheet .pred button{font-size:12px;padding:6px 9px}#rtGo{font-size:16px;padding:10px;margin-top:10px}#rtList .rt .rs{white-space:normal}
   #rtGo{position:sticky;bottom:0;box-shadow:0 -8px 16px #fff}body.night #rtGo{box-shadow:0 -8px 16px #1c1f24}
   #arrCard{position:fixed;left:0;top:0;z-index:7;width:min(380px,46vw);background:#fff;color:#111;border-bottom-right-radius:14px;padding:12px 14px 14px;box-shadow:0 4px 14px #0003;display:none;box-sizing:border-box}
   #arrCard.show{display:block}#arrCard .ah{display:flex;align-items:center;gap:8px}#arrCard .ah b{flex:1;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   #arrCard .ah button{border:0;background:none;font-size:20px;color:inherit;padding:2px 6px}#arrCard .as{font-size:14px;color:#8a9099;margin:4px 0 10px}
-  #arrCard .aa{display:flex;gap:8px}#arrFav{width:44px;height:42px;border:0;border-radius:10px;background:#f1f3f6;font-size:18px;color:#111}
+  #arrCard .aa{display:flex;gap:8px}#arrCard .at{font-size:13px;color:#555;margin-top:10px;line-height:1.5}#arrLog{margin-top:8px;border:0;background:#f1f3f6;border-radius:9px;padding:7px 12px;font-size:13px;color:#111}body.night #arrCard .at{color:#aab}body.night #arrLog{background:#2a2e35;color:#e8eaed}#arrFav{width:44px;height:42px;border:0;border-radius:10px;background:#f1f3f6;font-size:18px;color:#111}
   #arrGo{flex:1;height:42px;border:2px solid #2b7bff;border-radius:10px;background:none;color:#2b7bff;font-size:16px;font-weight:700}
   body.night #arrCard{background:#1c1f24;color:#e8eaed}body.night #arrFav{background:#2a2e35;color:#e8eaed}
 </style>
@@ -247,7 +247,7 @@
   <div id="next"><svg id="nArrow" viewBox="0 0 100 100"></svg><span id="nDist"></span></div>
   <button id="restChip"></button>
 </div>
-<div id="arrCard"><div class="ah"><b id="arrName"></b><button id="arrX" aria-label="닫기">✕</button></div><div class="as" id="arrSub"></div><div class="aa"><button id="arrFav">★</button><button id="arrGo">목적지로 계속 안내</button></div></div>
+<div id="arrCard"><div class="ah"><b id="arrName"></b><button id="arrX" aria-label="닫기"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button></div><div class="as" id="arrSub"></div><div class="aa"><button id="arrFav">★</button><button id="arrGo">목적지로 계속 안내</button></div><div class="at" id="arrTrip"></div><button id="arrLog">주행 기록 보기</button></div>
 <div id="bumpBox"><svg viewBox="0 0 100 90"><polygon points="50,6 95,84 5,84" fill="#ffc81e" stroke="#e3151a" stroke-width="8" stroke-linejoin="round"/><path d="M24 70 Q50 42 76 70 Z" fill="#111"/><rect x="18" y="69" width="64" height="5" fill="#111"/></svg><b id="bumpD">-</b></div>
 <div id="alertBox">
   <div id="spd">-</div>
@@ -261,6 +261,7 @@
 
 <button id="wx" class="wxc"><span id="wxIc"></span><b id="wxT">-</b><span id="wxA"></span><span id="wxW" class="aq" style="display:none;background:#e3151a"></span></button>
 <div id="rightBtns">
+  <button class="rb" id="recenter" title="현위치" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="#2b7bff"/><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   <button class="rb" id="navBtn" title="목적지"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15 15 L21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg></button>
   <div id="zoomGrp"><button class="rb" id="zIn">+</button><button class="rb" id="zOut">−</button></div>
   <button class="rb" id="mute" title="소리"><svg viewBox="0 0 24 24" id="muteIc"></svg></button>
@@ -277,7 +278,7 @@
 <div id="fav"><div class="gripHit" id="favGrip"><div class="grip"></div></div><div class="hd"><b>어디로 갈까요?</b><button id="favSearch">검색</button><button id="favClose">닫기</button></div><div id="favList"></div></div>
 
 <div class="sheet" id="navSheet"><div class="panel">
-  <form class="sbar" id="sbar" action="javascript:void(0)"><button class="bk" id="navClose" type="button" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><input id="q" type="search" enterkeyhint="search" placeholder="어디로 갈까요?" autocomplete="off"><button class="clr" id="qClr" type="button" aria-label="지우기">✕</button><button class="go" id="qGo" type="submit">검색</button></form>
+  <form class="sbar" id="sbar" action="javascript:void(0)"><button class="bk" id="navClose" type="button" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><input id="q" type="search" enterkeyhint="search" placeholder="어디로 갈까요?" autocomplete="off"><button class="clr" id="qClr" type="button" aria-label="지우기"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M7 7l10 10M17 7L7 17" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></button><button class="go" id="qGo" type="submit">검색</button></form>
   <div class="chips" id="quick"></div>
   <div id="results"></div>
   <div class="sec" id="recentH">최근 목적지</div><div id="recent"></div>
@@ -291,14 +292,14 @@
 </div></div>
 
 <div class="sheet" id="wxSheet"><div class="panel full">
-  <div style="display:flex;align-items:center"><h2 style="flex:1">날씨 · 미세먼지</h2><button class="back" id="wxClose">✕</button></div>
+  <div style="display:flex;align-items:center"><h2 style="flex:1">날씨 · 미세먼지</h2><button class="back" id="wxClose"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button></div>
   <div id="wxBody"></div>
   <p class="muted">날씨·대기질: Open-Meteo (모델 예측값, 측정소 실측과 다를 수 있음)</p>
 </div></div>
 
 <div class="sheet" id="tripSheet"><div class="panel full">
-  <div style="display:flex;align-items:center"><h2 style="flex:1">주행 기록</h2><button class="back" id="tripClose">✕</button></div>
-  <div id="tripMapBox" class="tmb"><div id="tripMap"></div><button class="back" id="tmClose">✕</button></div>
+  <div style="display:flex;align-items:center"><h2 style="flex:1">주행 기록</h2><button class="back" id="tripClose"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button></div>
+  <div id="tripMapBox" class="tmb"><div id="tripMap"></div><button class="back" id="tmClose"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button></div>
   <div id="tripSum" class="item"></div><div id="tripList"></div>
 </div></div>
 
@@ -312,7 +313,7 @@
 </div></div>
 
 <div class="sheet" id="setSheet"><div class="panel full">
-  <div style="display:flex;align-items:center"><h2 style="flex:1">설정</h2><button class="back" id="setClose">✕</button></div>
+  <div style="display:flex;align-items:center"><h2 style="flex:1">설정</h2><button class="back" id="setClose"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button></div>
   <h2 style="font-size:20px">과속단속카메라 안내 설정</h2><p class="muted" style="margin:0">제한속도별 안내 시작 기준</p><div id="alertOpts"></div>
   <h2 style="font-size:20px;margin-top:22px">알림 · 표시</h2><div class="band" id="showBand"></div>
   <h2 style="font-size:20px;margin-top:22px">화면 자동 회전</h2><div class="opt" id="rotOpts"></div>
@@ -446,9 +447,15 @@ function zoomNow(kmh,now){var dt=zLastT?Math.min(0.2,(now-zLastT)/1000):0;zLastT
 /* 두 손가락 핀치로 확대·축소 (지도는 계속 내 위치를 따라감) */
 var PT={},pinch0=null;
 function ptGap(){var k=Object.keys(PT);if(k.length<2)return 0;var a=PT[k[0]],b=PT[k[1]];return Math.sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y))}
-$('map').addEventListener('pointerdown',function(e){if(PREV)return;PT[e.pointerId]={x:e.clientX,y:e.clientY};if(Object.keys(PT).length===2)pinch0={d:ptGap(),z:zoff}});
-$('map').addEventListener('pointermove',function(e){if(!PT[e.pointerId])return;PT[e.pointerId]={x:e.clientX,y:e.clientY};if(pinch0&&Object.keys(PT).length>=2){var g=ptGap();if(g>10&&pinch0.d>10){zoff=Math.max(-6,Math.min(3,pinch0.z+Math.log(g/pinch0.d)/Math.LN2));manZT=Date.now()}e.preventDefault()}},true);
-function ptEnd(e){delete PT[e.pointerId];if(Object.keys(PT).length<2&&pinch0){pinch0=null;manZT=Date.now()}}
+var drag=null,FREE=0;
+function mppNow(la,lo){var a=mapPx(la,lo),q=move(la,lo,0,100),b=mapPx(q[0],q[1]),d=Math.sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));return d>1?100/d:1}
+function panBy(dx,dy){if(TMM){var c=TMM.getCenter(),la=c.lat(),lo=c.lng(),m=mppNow(la,lo),b=TMM.getBearing()||0,p=move(la,lo,b,dy*m);p=move(p[0],p[1],b+90,-dx*m);TMM.setCenter(LL(p[0],p[1]))}else if(map)map.panBy([-dx,-dy],{duration:0})}
+function setFree(on){FREE=on?Date.now():0;$('recenter').style.display=on?'flex':'none';if(!on){tmZ=tmB=tmMppZ=null}}
+$('recenter').onclick=function(){setFree(false)};
+$('map').addEventListener('pointerdown',function(e){if(PREV)return;PT[e.pointerId]={x:e.clientX,y:e.clientY};var n=Object.keys(PT).length;if(n===1)drag={x:e.clientX,y:e.clientY,moved:false};if(n===2){drag=null;pinch0={d:ptGap(),z:zoff}}},true);
+$('map').addEventListener('pointermove',function(e){if(!drag||!PT[e.pointerId]||Object.keys(PT).length!==1||!mapReady)return;PT[e.pointerId]={x:e.clientX,y:e.clientY};var dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.moved&&Math.sqrt(dx*dx+dy*dy)<8)return;drag.moved=true;panBy(dx,dy);drag.x=e.clientX;drag.y=e.clientY;setFree(true);e.preventDefault()},true);
+$('map').addEventListener('pointermove',function(e){if(!PT[e.pointerId]||Object.keys(PT).length<2)return;PT[e.pointerId]={x:e.clientX,y:e.clientY};if(pinch0&&Object.keys(PT).length>=2){var g=ptGap();if(g>10&&pinch0.d>10){zoff=Math.max(-6,Math.min(3,pinch0.z+Math.log(g/pinch0.d)/Math.LN2));manZT=Date.now();if(FREE)FREE=Date.now()}e.preventDefault()}},true);
+function ptEnd(e){delete PT[e.pointerId];if(!Object.keys(PT).length)drag=null;if(Object.keys(PT).length<2&&pinch0){pinch0=null;manZT=Date.now()}}
 ['pointerup','pointercancel','pointerleave'].forEach(function(n){$('map').addEventListener(n,ptEnd,true)});
 $('map').addEventListener('wheel',function(e){e.preventDefault();setZ(e.deltaY>0?-0.25:0.25)},{passive:false});
 $('zIn').onclick=function(){setZ(0.5)};$('zOut').onclick=function(){setZ(-0.5)};
@@ -498,8 +505,11 @@ function tmDrawTurn(g){if(!TMM)return;var k=g?g.s+'_'+g.t:null;if(k===tmTurnKey)
   [['#1b2533',26,998],['#ffffff',18,999]].forEach(function(st){var o={strokeColor:st[0],strokeWeight:st[1],strokeOpacity:1,zIndex:st[2],map:TMM};
     try{tmTurn.push(new Tmapv3.Polyline(Object.assign({path:shaft},o)));tmTurn.push(new Tmapv3.Polyline(Object.assign({path:head},o)))}catch(e){}})}
 function tmDrawRoute(fs,pins){tmLines.forEach(function(l){try{l.setMap(null)}catch(e){}});tmLines=[];tmPins.forEach(function(m){try{m.setMap(null)}catch(e){}});tmPins=[];
-  var col={2:'#f5b400',3:'#ff7a00',4:'#e3151a'},dk={2:'#b88600',3:'#c25500',4:'#a50e12'};
+  var col={1:'#22b14c',2:'#f5b400',3:'#ff7a00',4:'#e3151a'},dk={1:'#16803a',2:'#b88600',3:'#c25500',4:'#a50e12'};
   fs.forEach(function(ft){var c=ft.properties.c;try{tmLines.push(new Tmapv3.Polyline({path:ft.geometry.coordinates.map(function(q){return LL(q[1],q[0])}),strokeColor:col[c]||'#2b7bff',strokeWeight:14,strokeOpacity:1,outlineColor:dk[c]||'#1546b8',outlineWidth:3,zIndex:10,map:TMM}))}catch(e){}});tmTurnKey=null;
+  var RT=PREV||NAV;if(RT&&RT.R&&RT.R.length>1&&RT.S){var s0=PREV?0:(NAV.s||0),s1=Math.min(RT.S[RT.S.length-1]-15,s0+(PREV?1e9:4000)),step=PREV?Math.max(80,(s1-s0)/60):70;
+    for(var sd=s0+40;sd<s1;sd+=step){var A=routePointAt(RT,sd),B=routePointAt(RT,sd+6),h=brg(A.la,A.lo,B.la,B.lo),L=move(B.la,B.lo,h+150,5),R=move(B.la,B.lo,h-150,5);
+      try{tmLines.push(new Tmapv3.Polyline({path:[LL(L[0],L[1]),LL(B.la,B.lo),LL(R[0],R[1])],strokeColor:'#ffffff',strokeWeight:3,strokeOpacity:1,zIndex:11,map:TMM}))}catch(e){}}}
   pins.forEach(function(p){var ic=tmIcon(p.ic);if(!ic)return;try{tmPins.push(new Tmapv3.Marker({position:LL(p.la,p.lo),icon:ic.url,iconSize:new Tmapv3.Size(Math.round(ic.w*0.8),Math.round(ic.h*0.8)),anchor:'bottom',map:TMM}))}catch(e){}})}
 function initMap(){
   if(ENG==='tmap'){if(TMM)return;loadTmap(function(){try{curStyle=nightNow()?'NIGHT':'ROAD';TMM=new Tmapv3.Map('map',{center:LL(37.4979,127.0276),width:'100%',height:'100%',zoom:17,mapType:curStyle});
@@ -511,8 +521,8 @@ function initMap(){
   map.on('style.load',function(){mapReady=false;
     map.getStyle().layers.forEach(function(l){if(l.type==='fill-extrusion'){map.setLayoutProperty(l.id,'visibility','none');return}if(l.type==='symbol'&&l.layout&&l.layout['text-field'])map.setLayoutProperty(l.id,'text-field',['coalesce',['get','name:ko'],['get','name']])});
     map.addSource('route',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
-    map.addLayer({id:'route-o',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','c'],2,'#b88600',3,'#c25500',4,'#a50e12','#1546b8'],'line-width':18}});
-    map.addLayer({id:'route-l',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','c'],2,'#f5b400',3,'#ff7a00',4,'#e3151a','#2b7bff'],'line-width':13}});
+    map.addLayer({id:'route-o',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','c'],1,'#16803a',2,'#b88600',3,'#c25500',4,'#a50e12','#1546b8'],'line-width':18}});
+    map.addLayer({id:'route-l',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','c'],1,'#22b14c',2,'#f5b400',3,'#ff7a00',4,'#e3151a','#2b7bff'],'line-width':13}});
     map.addLayer({id:'route-c',type:'symbol',source:'route',layout:{'symbol-placement':'line','symbol-spacing':70,'icon-image':'chev','icon-allow-overlap':true,'icon-rotation-alignment':'map'}});
     map.addSource('dest',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
     map.addLayer({id:'dest-i',type:'symbol',source:'dest',layout:{'icon-image':['coalesce',['get','ic'],'dest'],'icon-anchor':'bottom','icon-allow-overlap':true,'icon-rotation-alignment':'viewport'}});
@@ -535,12 +545,12 @@ function routeHits(N){var cam={},bmp={},R=N.R,S=N.S,last=-1e9;
       var bs=BGRID[k];if(bs)bs.forEach(function(id){if(bmp[id]!=null)return;var p=BUMPS[id];if(dist(R[i][0],R[i][1],p[0],p[1])<18)bmp[id]=S[i]})}}
   N.cams=cam;N.bumps=bmp}
 var camSrcT=0,camSrcH=null;
-function aheadOk(la,lo,h,p,max){var d=dist(la,lo,p[0],p[1]);if(d>max)return false;if(d<15)return true;var df=adiff(h,brg(la,lo,p[0],p[1]));if(Math.abs(df)>35)return false;var lat=d*Math.sin(df*D2R);return lat>=-10&&lat<=32}
+function aheadOk(la,lo,h,p,max){var d=dist(la,lo,p[0],p[1]);if(d>max)return false;if(d<15)return true;var df=adiff(h,brg(la,lo,p[0],p[1]));if(Math.abs(df)>30)return false;var lat=d*Math.sin(df*D2R);return lat>=-6&&lat<=30}
 function updCamSrc(la,lo,h){
   if(!mapReady||!CAMS.length)return;var now=Date.now();
   if(camSrcAt&&now-camSrcT<1500&&dist(camSrcAt[0],camSrcAt[1],la,lo)<60&&(h==null||camSrcH==null||Math.abs(adiff(h,camSrcH))<15))return;camSrcAt=[la,lo];camSrcT=now;camSrcH=h;
   var f=[],c0=Math.floor(la*100),c1=Math.floor(lo*100),nav=NAV&&NAV.cams,s0=nav?NAV.s:0;
-  var camOk=function(id,c){if(nav){var cs=NAV.cams[id];return cs!=null&&cs>s0-30&&cs<s0+3000}if(h==null)return dist(la,lo,c[0],c[1])<300;return aheadOk(la,lo,h,c,2500)};
+  var camOk=function(id,c){if(nav){var cs=NAV.cams[id];return cs!=null&&cs>s0-30&&cs<s0+3000}if(h==null)return false;return aheadOk(la,lo,h,c,2500)};
   var bumpOk=function(id,p){if(nav){var bs=NAV.bumps[id];return bs!=null&&bs>s0-20&&bs<s0+800}if(h==null)return false;return aheadOk(la,lo,h,p,600)};
   for(var a=-3;a<=3;a++)for(var b=-3;b<=3;b++){var ck=(c0+a)+'_'+(c1+b),ids=GRID[ck];
     if(ids)for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];if(!camOk(ids[j],c))continue;f.push({type:'Feature',geometry:{type:'Point',coordinates:[c[1],c[0]]},properties:{ic:c[3]==='R'?'sig':'lim'+(c[3]==='X'?'x':'')+(c[5]===2?'z':'')+'-'+c[2],o:c[3]==='R'?0:1}})}
@@ -580,7 +590,7 @@ if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){});
 var VO={},voSrc=[],voGen=0,VOD=[];for(var vd=50;vd<=1000;vd+=50)VOD.push(vd);VOD.push(1500,2000);
 function dk(m){var b=VOD[0];VOD.forEach(function(x){if(Math.abs(x-m)<Math.abs(b-m))b=x});return b}
 function tk(t){if(t>=131&&t<=142)return 't131';if(t>=182&&t<=189)return 't185';return TT[t]?'t'+t:'t11'}
-function voLoad(k){if(VO[k])return VO[k];return VO[k]=fetch('vo/'+k+'.m4a').then(function(r){if(!r.ok)throw 0;return r.arrayBuffer()}).then(function(b){return new Promise(function(res,rej){ac.decodeAudioData(b,res,rej)})}).catch(function(){delete VO[k];return null})}
+function voLoad(k){if(VO[k])return VO[k];return VO[k]=fetch('vo/'+k+'.mp3').then(function(r){if(!r.ok)throw 0;return r.arrayBuffer()}).then(function(b){return new Promise(function(res,rej){ac.decodeAudioData(b,res,rej)})}).catch(function(){delete VO[k];return null})}
 function sayParts(keys,guide,text,f,n){if(muted)return;keys=keys.filter(Boolean);if(!ac||ac.state!=='running'||!keys.length)return say(text,f,n,guide);
   var gen=++voGen;Promise.all(keys.map(voLoad)).then(function(bs){if(gen!==voGen)return;if(bs.some(function(b){return!b}))return say(text,f,n,guide);
     voSrc.forEach(function(x){try{x.stop()}catch(e){}});voSrc=[];var g=ac.createGain();g.gain.value=Math.min(1,(guide?CFG.volG:CFG.volW)*1.2);g.connect(ac.destination);var t=ac.currentTime+0.04;
@@ -840,7 +850,7 @@ function startNav(d){
       var el=document.createElement('div');el.className='rt';var eta=new Date(Date.now()+r.time*1000),h=eta.getHours(),mins=Math.round(r.time/60);
       el.innerHTML='<div class="rk"></div><div class="rm"><b>'+(mins>=60?Math.floor(mins/60)+'시간 '+(mins%60)+'분':mins+'분')+'</b> · '+fmtD(r.dist)+'</div><div class="rs">'+(h<12?'오전 ':'오후 ')+(h%12||12)+':'+String(eta.getMinutes()).padStart(2,'0')+' 도착'+(CFG.tollShow?' · 통행료 '+tollOf(r.fare).toLocaleString()+'원':'')+' · 전기요금 약 '+(Math.round(r.dist/1000/CFG.eff*CFG.kwh/100)*100).toLocaleString()+'원</div><div class="tb"></div>';
       var lab=seen[key];el.querySelector('.rk').textContent=lab[0];el._lab=lab;
-      var tb=el.querySelector('.tb'),col={2:'#f5b400',3:'#ff7a00',4:'#e3151a'},st=0,cur=r.C[0]||0;for(var i=1;i<=r.S.length-1;i++){var cc=i<r.S.length-1?(r.C[i]||0):-1;if(cc!==cur){var seg=document.createElement('i');seg.style.width=((r.S[i]-r.S[st])/r.dist*100)+'%';seg.style.background=col[cur]||'#2b7bff';tb.appendChild(seg);st=i;cur=cc}}
+      var tb=el.querySelector('.tb'),col={1:'#22b14c',2:'#f5b400',3:'#ff7a00',4:'#e3151a'},st=0,cur=r.C[0]||0;for(var i=1;i<=r.S.length-1;i++){var cc=i<r.S.length-1?(r.C[i]||0):-1;if(cc!==cur){var seg=document.createElement('i');seg.style.width=((r.S[i]-r.S[st])/r.dist*100)+'%';seg.style.background=col[cur]||'#2b7bff';tb.appendChild(seg);st=i;cur=cc}}
       el._r=r;el.onclick=function(){if(rtSel===el){show('rtSheet',0);applyRoute(d,r);return}selRoute(el,d)};box.appendChild(el);shown++;if(shown===1)setTimeout(function(){selRoute(el,d)},0);
       setTimeout(function(){el.querySelector('.rk').textContent=lab.join(' · ')},0)});
     if(!shown)box.innerHTML='<div class="item">경로를 찾지 못했습니다: '+((rs[0]||{}).err||'')+'</div>';
@@ -896,16 +906,17 @@ function drawRoute(force){if(!mapReady)return;
   map.getSource('route').setData({type:'FeatureCollection',features:fs});
   map.getSource('dest').setData({type:'FeatureCollection',features:NAV?[{type:'Feature',geometry:{type:'Point',coordinates:[NAV.dest.lo,NAV.dest.la]}}].concat((NAV.via||[]).map(function(p){return{type:'Feature',properties:{ic:'via'},geometry:{type:'Point',coordinates:[p.lo,p.la]}}})):[]});
 }
-function buildTbar(){var box=$('tbarIn');box.innerHTML='';if(!NAV||!NAV.total)return;var C=NAV.C||[],S=NAV.S,col={2:'#f5b400',3:'#ff7a00',4:'#e3151a'},st=0,cur=C[0]||0;for(var i=1;i<=S.length-1;i++){var c=i<S.length-1?(C[i]||0):-1;if(c!==cur){var el=document.createElement('i');el.style.width=((S[i]-S[st])/NAV.total*100)+'%';el.style.background=col[cur]||'#2b7bff';box.appendChild(el);st=i;cur=c}}}
+function buildTbar(){var box=$('tbarIn');box.innerHTML='';if(!NAV||!NAV.total)return;var C=NAV.C||[],S=NAV.S,col={1:'#22b14c',2:'#f5b400',3:'#ff7a00',4:'#e3151a'},st=0,cur=C[0]||0;for(var i=1;i<=S.length-1;i++){var c=i<S.length-1?(C[i]||0):-1;if(c!==cur){var el=document.createElement('i');el.style.width=((S[i]-S[st])/NAV.total*100)+'%';el.style.background=col[cur]||'#2b7bff';box.appendChild(el);st=i;cur=c}}}
 /* 도착 카드 (티맵처럼): 목적지·거리·시간, ★, 목적지로 계속 안내, 차→목적지 점선 */
 var ARR=null,arrDots=[],arrDotAt=0;
-function showArrive(N){if(!N)return;ARR={dest:N.dest,opt:N.opt,t:Date.now()};$('arrName').textContent=N.dest.name;$('arrSub').textContent=fmtD(N.total)+' · '+hm(Date.now()-(N.t0||Date.now()));$('arrFav').textContent='★';show('arrCard',1);hideFav();drawRoute(true);arrDotAt=0}
+function showArrive(N){if(!N)return;var T=TRIP,tx='';if(T&&T.m>200){var du=Date.now()-T.st,sc=scoreOf({ha:T.ha||0,hb:T.hb||0,over:T.over||0});tx='이번 주행 '+(T.m/1000).toFixed(1)+'km · '+hm(du)+' · 평균 '+Math.round(T.m/Math.max(1,du/1000)*3.6)+'km/h<br>운전 점수 '+sc+' · 급가속 '+(T.ha||0)+' · 급감속 '+(T.hb||0)+' · 전기요금 약 '+(Math.round(T.m/1000/CFG.eff*CFG.kwh/10)*10).toLocaleString()+'원';endTrip(Date.now())}$('arrTrip').innerHTML=tx;$('arrTrip').style.display=tx?'':'none';ARR={dest:N.dest,opt:N.opt,t:Date.now()};$('arrName').textContent=N.dest.name;$('arrSub').textContent=fmtD(N.total)+' · '+hm(Date.now()-(N.t0||Date.now()));$('arrFav').textContent='★';show('arrCard',1);hideFav();drawRoute(true);arrDotAt=0}
 function clearDots(){arrDots.forEach(function(l){try{l.setMap(null)}catch(e){}});arrDots=[]}
 function hideArrive(silent){if(!ARR)return;ARR=null;show('arrCard',0);clearDots();drawRoute(true);if(!silent){favDismissed=false;setTimeout(showFav,800)}}
 function arrTick(la,lo,now){if(!ARR)return;var d=dist(la,lo,ARR.dest.la,ARR.dest.lo);if(d>800||now-ARR.t>300000){hideArrive();return}
   if(!TMM||now-arrDotAt<2000)return;arrDotAt=now;clearDots();if(d<8||d>500)return;var h=brg(la,lo,ARR.dest.la,ARR.dest.lo);
   for(var m=6;m<d-4&&arrDots.length<60;m+=8){var a=move(la,lo,h,m),b=move(la,lo,h,m+2.5);try{arrDots.push(new Tmapv3.Polyline({path:[LL(a[0],a[1]),LL(b[0],b[1])],strokeColor:'#2b7bff',strokeWeight:7,strokeOpacity:1,zIndex:20,map:TMM}))}catch(e){}}}
 $('arrX').onclick=function(){hideArrive()};
+$('arrLog').onclick=function(){hideArrive(true);$('mTrips').onclick()};
 $('arrFav').onclick=function(){if(ARR){addFav(ARR.dest);this.textContent='✓'}};
 $('arrGo').onclick=function(){if(!ARR)return;var d=ARR.dest,o=ARR.opt||'0',c=fix||{la:37.4979,lo:127.0276};this.textContent='경로 찾는 중…';var b=this;
   fetchRoute(c,d,o).then(function(r){r.opt=[o,''];b.textContent='목적지로 계속 안내';applyRoute(d,r)}).catch(function(e){b.textContent='경로 실패'})};
@@ -963,8 +974,9 @@ function findAhead(la,lo,h){
   var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;
   for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;
     for(var j=0;j<ids.length;j++){var id=ids[j],c=CAMS[id];if(passed[id])continue;var d=dist(la,lo,c[0],c[1]);if(d>2100||d<5)continue;
-      var df=adiff(h,brg(la,lo,c[0],c[1]));if(Math.abs(df)>25)continue;
-      var lat=d*Math.sin(df*D2R);if(lat<-12||lat>30)continue;
+      if(NAV&&NAV.cams){var cs=NAV.cams[id];if(cs==null||cs<NAV.s-10)continue}
+      var df=adiff(h,brg(la,lo,c[0],c[1]));if(Math.abs(df)>(NAV&&NAV.cams?40:20))continue;
+      var lat=d*Math.sin(df*D2R);if(!(NAV&&NAV.cams)&&(lat<-6||lat>28))continue;
       if(!best||d<best.d)best={id:id,c:c,d:d}}}
   return best;
 }
@@ -987,14 +999,16 @@ function tick(){
   var kmh=v*3.6;$('spd').textContent=Math.round(kmh);
   var mla=la,mlo=lo,mh=head;
   if(NAV&&NAV.R&&NAV.R.length>1){var sp=project(la,lo);if(sp&&sp.d<30){var A=NAV.R[sp.i],B=NAV.R[sp.i+1];mla=A[0]+(B[0]-A[0])*sp.t;mlo=A[1]+(B[1]-A[1])*sp.t;if(v>2){var sh=brg(A[0],A[1],B[0],B[1]);if(head==null||Math.abs(adiff(head,sh))<45)mh=sh}}}
-  if(mapReady&&mapOn&&!PREV&&TMM){tmFollow(mla,mlo,(mh==null||!CFG.rot)?0:mh,zoomNow(kmh,now));updCamSrc(la,lo,head)}
+  if(FREE&&Date.now()-FREE>12000&&!Object.keys(PT).length)setFree(false);
+  if(FREE&&mapReady&&mapOn){var fz=zCur+zoff;if(TMM){if(tmZ==null||Math.abs(fz-tmZ)>0.01){TMM.setZoom(fz);tmZ=fz}}else if(map){map.setZoom(fz);var fq=map.project([mlo,mla]);$('carMk').style.left=fq.x+'px';$('carMk').style.top=fq.y+'px'}}
+  if(mapReady&&mapOn&&!PREV&&!FREE&&TMM){tmFollow(mla,mlo,(mh==null||!CFG.rot)?0:mh,zoomNow(kmh,now));updCamSrc(la,lo,head)}
   if(mapReady&&mapOn&&TMM){var cq=mapPx(mla,mlo);$('carMk').style.left=cq.x+'px';$('carMk').style.top=cq.y+'px'}
-  if(mapReady&&mapOn&&!TMM&&!PREV){var mH=$('map').clientHeight;map.jumpTo({center:[mlo,mla],bearing:(mh==null||!CFG.rot)?0:mh,zoom:zoomNow(kmh,now),pitch:0,padding:{top:mH*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo,head);
+  if(mapReady&&mapOn&&!TMM&&!PREV&&!FREE){var mH=$('map').clientHeight;map.jumpTo({center:[mlo,mla],bearing:(mh==null||!CFG.rot)?0:mh,zoom:zoomNow(kmh,now),pitch:0,padding:{top:mH*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo,head);
     var cp=map.project([mlo,mla]);$('carMk').style.left=cp.x+'px';$('carMk').style.top=cp.y+'px'}
   $('carMk').style.transform='translate(-50%,-50%) rotate('+((!CFG.rot&&mh!=null)?mh:0)+'deg)';
   var nv=navTick(la,lo,kmh,now);
   if(nv){var eta=new Date(now+nv.rt*1000),h=eta.getHours();var mins=Math.round(nv.rt/60),rtT=mins>=60?Math.floor(mins/60)+'시간 '+(mins%60)+'분':mins+'분';$('bInfo').innerHTML='<span>'+(h<12?'오전':'오후')+' <b>'+String(h%12||12).padStart(2,'0')+':'+String(eta.getMinutes()).padStart(2,'0')+'</b></span><span><b>'+bigD(nv.remain).replace('<small>','</b><span>').replace('</small>','</span>')+'</span><span>'+rtT+' 남음</span><span class="gray">'+NAV.dest.name.replace(/</g,'')+'</span>'}
-  else if(!NAV){var d0=new Date(),h0=d0.getHours();var tH='<span class="bsearch"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>어디로 갈까요?</span><span>'+(h0<12?'오전':'오후')+' <b>'+String(h0%12||12).padStart(2,'0')+':'+String(d0.getMinutes()).padStart(2,'0')+'</b></span>';if(bInfoH!==tH){bInfoH=tH;$('bInfo').innerHTML=tH}}
+  else if(!NAV){var d0=new Date(),h0=d0.getHours();var DN=['일','월','화','수','목','금','토'];var tH='<span class="bsearch"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>어디로 갈까요?</span><span class="gray">'+(d0.getMonth()+1)+'월 '+d0.getDate()+'일 ('+DN[d0.getDay()]+')</span><span>'+(h0<12?'오전':'오후')+' <b>'+String(h0%12||12).padStart(2,'0')+':'+String(d0.getMinutes()).padStart(2,'0')+'</b></span>';if(bInfoH!==tH){bInfoH=tH;$('bInfo').innerHTML=tH}}
   var over=false,zone=false,alertD=target?alertFor(target.c[2]):alertFor(0);
   if(head!=null&&v>1.5&&CAMS.length){
     var t=findAhead(la,lo,head);
