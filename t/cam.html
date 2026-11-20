@@ -830,14 +830,14 @@ function quick(kind){var box=$('results'),c=fix||{la:37.4979,lo:127.0276};box.in
       var ps=(((d||{}).searchPoiInfo||{}).pois||{}).poi||[];box.innerHTML='';if(ps.length)box.appendChild(secH(kind==='dpark'?NAV.dest.name+' 주변 주차장':'주변 주차장'));else box.innerHTML='<div class="note">반경 1km 안에 주차장이 없습니다</div>';
       ps.forEach(function(p){var la=parseFloat(p.frontLat||p.noorLat),lo=parseFloat(p.frontLon||p.noorLon);box.appendChild(placeItem({name:p.name,la:la,lo:lo},(kind==='dpark'?'목적지에서 ':'')+fmtD(dist(t.la,t.lo,la,lo))+(kind==='dpark'?'':' · 직선'),'park'))})
     }).catch(function(e){box.innerHTML='<div class="item">검색 실패: '+e.message+'</div>'});return}
-  var items=[],src=kind==='sc'?SC:REST,nm=function(p){return kind==='sc'?p[2]+(p[3]?' · '+p[3]+'기':''):p[2]};
+  var items=[],src=kind==='sc'?SC:REST,nm=function(p){return kind==='sc'?p[2]+(p[3]?' · '+p[3]+'기':'')+(p[4]?' · '+p[4]+'kW':''):p[2]};
   if(!src.length){box.innerHTML='<div class="muted">데이터를 아직 못 받았습니다</div>';return}
   if(NAV&&NAV.rp)NAV.rp.forEach(function(x){if(x.k===kind&&x.s>NAV.s+50)items.push({p:x.p,sub:'경로 따라 '+fmtD(x.s-NAV.s)+(x.off>150?' · 경로에서 '+fmtD(x.off):'')})});
   var title=items.length?'경로 위 '+(kind==='sc'?'슈퍼차저':'휴게소 · 졸음쉼터'):'가까운 '+(kind==='sc'?'슈퍼차저':'휴게소 · 졸음쉼터');
   if(!items.length)items=src.map(function(p){return{p:p,d:dist(c.la,c.lo,p[0],p[1])}}).sort(function(a,b){return a.d-b.d}).slice(0,15).map(function(x){return{p:x.p,sub:'직선 '+fmtD(x.d)}});
   box.innerHTML='';box.appendChild(secH(title));
   var DL=[];items.slice(0,20).forEach(function(x){var dd={name:nm(x.p),la:x.p[0],lo:x.p[1]},el=placeItem(dd,(kind==='rest'?(x.p[3]==='R'?'졸음쉼터 · ':'휴게소 · '):'')+x.sub,kind==='sc'?'sc':(x.p[3]==='R'?'nap':'rest'));DL.push({dd:dd,el:el});box.appendChild(el)});if(NAV)detour(DL);
-  var m=document.createElement('div');m.className='note';m.textContent=kind==='sc'?'슈퍼차저 위치: OpenStreetMap 기준(일부만 등록돼 있을 수 있음). 실시간 빈자리는 아직 없습니다.':'휴게소 · 졸음쉼터: OpenStreetMap 기준';box.appendChild(m);hideKb()}
+  var m=document.createElement('div');m.className='note';m.textContent=kind==='sc'?'슈퍼차저: supercharge.info 커뮤니티 자료 기준(한국 약 190곳, 매일 갱신). 실시간 빈자리·가격은 테슬라가 공개하지 않아 없습니다.':'휴게소 · 졸음쉼터: OpenStreetMap 기준';box.appendChild(m);hideKb()}
 function addVia(d){if(!NAV)return;NAV.via=(NAV.via||[]).concat([{name:d.name,la:d.la,lo:d.lo}]).slice(0,5);show('navSheet',0);sayParts(['via_add'],true,'경유지를 추가했습니다',520,1);route()}
 $('clearVia').onclick=function(){if(NAV){NAV.via=[];route()}show('menuSheet',0)};
 /* 경로 주변 슈퍼차저 · 휴게소 (경로를 따라 간 거리) */
