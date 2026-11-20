@@ -1209,9 +1209,10 @@ function tickBody(){
   if(!fix){$('diag').textContent='위치 기다리는 중';return}
   var age=(now-(fix.mt||fix.t))/1000,la=fix.la,lo=fix.lo;
   /* 터널 등 GPS 끊김: 안내 중이면 마지막 속도로 경로를 따라(최대 4분), 아니면 직진으로(최대 40초) 추정 위치를 이어 간다. 카메라 경고도 이 위치로 계속 */
-  if(DR.fix!==(fix.mt||fix.t)){DR.fix=fix.mt||fix.t;DR.s=null;if(NAV&&NAV.R&&NAV.R.length>1){var dp=project(fix.la,fix.lo);if(dp&&dp.d<30)DR.s=NAV.S[dp.i]+dp.t*(NAV.S[dp.i+1]-NAV.S[dp.i])}}
-  var drOn=false;
-  if(age>2.5&&v>4&&NAV&&DR.s!=null&&age<240){var dq=routePoint(Math.min(NAV.total-1,DR.s+v*age));la=dq.la;lo=dq.lo;head=dq.h;drOn=true}
+  var drDt=DR.lt?Math.min(0.5,(now-DR.lt)/1000):0;DR.lt=now;
+  if(DR.fix!==(fix.mt||fix.t)){DR.fix=fix.mt||fix.t;DR.s=null;DR.d=0;if(NAV&&NAV.R&&NAV.R.length>1){var dp=project(fix.la,fix.lo);if(dp&&dp.d<30)DR.s=NAV.S[dp.i]+dp.t*(NAV.S[dp.i+1]-NAV.S[dp.i])}}
+  var drOn=false;DR.d=(DR.d||0)+v*drDt;
+  if(age>2.5&&v>4&&NAV&&DR.s!=null&&age<240){var dq=routePoint(Math.min(NAV.total-1,DR.s+DR.d));la=dq.la;lo=dq.lo;head=dq.h;drOn=true}
   else if(age>2.5&&v>4&&head!=null&&age<40){var p=move(la,lo,head,v*age);la=p[0];lo=p[1];drOn=true}
   else if(head!=null&&v>1){var p=move(la,lo,head,v*Math.min(2,age));la=p[0];lo=p[1]}
   if(drOn!==DR.on){DR.on=drOn;show('drChip',drOn)}
