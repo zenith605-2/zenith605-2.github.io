@@ -8,93 +8,188 @@
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css">
 <style>
   html,body{margin:0;height:100%;background:#101215;color:#fff;font-family:system-ui,sans-serif;overflow:hidden}
-  body{transition:background .15s}
-  body.over{background:#b30000}
-  body.zone:not(.over){background:#3a3200}
-  #wrap{position:fixed;inset:0;display:grid;grid-template-columns:1.25fr 1fr;gap:18px;padding:22px;box-sizing:border-box}
-  .panel{background:#ffffff12;border-radius:22px;padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative}
-  #spdBox .v{font-size:150px;font-weight:800;line-height:1}
-  #spdBox .u{font-size:28px;opacity:.7}
-  #limit{width:150px;height:150px;border-radius:50%;background:#fff;border:16px solid #e02020;box-sizing:border-box;color:#111;font-size:64px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
-  #limit.off{opacity:.15}
-  #camTxt{font-size:40px;font-weight:800;text-align:center}
-  #camSub{font-size:24px;opacity:.85;margin-top:8px;text-align:center}
-  #bar{width:90%;height:22px;background:#ffffff22;border-radius:11px;margin-top:18px;overflow:hidden}
-  #bar i{display:block;height:100%;width:0;background:#ffb000;transition:width .2s}
-  #sec{position:absolute;top:14px;left:18px;right:18px;font-size:24px;font-weight:700;text-align:center;color:#ffd75a}
-  #diag{position:fixed;right:14px;bottom:10px;font-size:14px;opacity:.6;text-align:right;white-space:pre}
-  #btns{position:fixed;right:14px;bottom:54px;display:flex;gap:10px}
-  #btns button{font-size:18px;padding:10px 16px;border-radius:10px;border:0;background:#ffffff22;color:#fff}
-  #start{position:fixed;inset:0;background:#101215f2;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
+  #map{position:fixed;inset:0}
+  body.nomap #map{display:none}
+  #bigSpd{display:none;position:fixed;left:0;right:0;top:34%;text-align:center}
+  body.nomap #bigSpd{display:block}
+  #bigSpd .v{font-size:170px;font-weight:800;line-height:1}
+  #bigSpd .u{font-size:30px;opacity:.7}
+  #carMk{position:fixed;left:50%;top:68%;width:44px;height:84px;transform:translate(-50%,-50%);filter:drop-shadow(0 2px 6px #000a);z-index:3;pointer-events:none;color:#e9e9e9}
+  #carMk svg{width:100%;height:100%}
+  body.nomap #carMk{display:none}
+  #warn{position:fixed;inset:0;pointer-events:none;z-index:4}
+  body.over #warn{box-shadow:inset 0 0 0 26px #ff1a1a;background:#ff000033;animation:blink .55s steps(2,jump-none) infinite}
+  @keyframes blink{0%{opacity:1}100%{opacity:.15}}
+  @keyframes cardBlink{0%{background:#d00000f5}100%{background:#15181dee}}
+  body.zone:not(.over) #warn{box-shadow:inset 0 0 0 14px #ffcc00}
+  .card{position:fixed;z-index:5;background:#15181dee;border-radius:20px;box-shadow:0 6px 24px #0008}
+  #camCard{left:18px;top:18px;padding:16px 20px;display:flex;gap:16px;align-items:center;min-width:300px;max-width:44vw}
+  body.over #camCard{background:#d00000f5;animation:cardBlink .55s steps(2,jump-none) infinite}
+  body.zone:not(.over) #camCard{background:#5a4800f0}
+  #limit{flex:none;width:96px;height:96px;border-radius:50%;background:#fff;border:11px solid #e02020;box-sizing:border-box;color:#111;font-size:42px;font-weight:900;display:flex;align-items:center;justify-content:center}
+  #limit.off{opacity:.2}
+  #limit.sig{background:none;border:0}
+  #signs{display:flex;gap:8px;align-items:center;flex:none}
+  #signs svg{width:84px;height:84px;display:none}
+  #signs svg.show{display:block}
+  #secBadge{display:none;background:#1f5fd6;color:#fff;font-weight:800;font-size:18px;border-radius:8px;padding:6px 8px;text-align:center;line-height:1.15}
+  #secBadge.show{display:block}
+  #camTxt{font-size:30px;font-weight:800}
+  #camSub{font-size:20px;opacity:.9;margin-top:4px}
+  #sec{font-size:19px;font-weight:700;color:#ffd75a;margin-top:4px}
+  #bar{height:14px;background:#ffffff26;border-radius:7px;margin-top:10px;overflow:hidden;width:100%}
+  #bar i{display:block;height:100%;width:0;background:#ffb000}
+  #camCard.idle{min-width:0;padding:10px 16px}
+  #camCard.idle #signs,#camCard.idle #bar{display:none}
+  #camCard.idle #camTxt{font-size:20px;font-weight:600;opacity:.8}
+  #turnCard{right:18px;top:18px;padding:14px 20px;display:none;align-items:center;gap:16px;background:#0f6b3ff0;max-width:46vw}
+  body.nav #turnCard{display:flex}
+  #tArrow{font-size:72px;line-height:1;font-weight:800}
+  #tDist{font-size:44px;font-weight:800;line-height:1.05}
+  #tName{font-size:20px;opacity:.95;margin-top:4px}
+  #spdOv{left:18px;bottom:18px;padding:8px 20px;text-align:center}
+  body.nomap #spdOv{display:none}
+  #spdOv .v{font-size:68px;font-weight:800;line-height:1}
+  #spdOv .u{font-size:16px;opacity:.7}
+  #eta{display:none;left:170px;bottom:18px;padding:14px 20px;font-size:24px;font-weight:700}
+  body.nav #eta{display:block}
+  body.nomap #eta{left:18px}
+  #btns{position:fixed;right:14px;bottom:14px;display:flex;gap:8px;z-index:6;flex-wrap:wrap;justify-content:flex-end;max-width:62vw}
+  #btns button{font-size:18px;padding:11px 15px;border-radius:12px;border:0;background:#22262ddd;color:#fff}
+  #btns button.main{background:#2b7bff;font-weight:700}
+  #diag{position:fixed;right:16px;bottom:70px;font-size:12px;opacity:.55;text-align:right;white-space:pre;z-index:6;text-shadow:0 0 3px #000}
+  .sheet{position:fixed;inset:0;background:#0d0f12f4;z-index:20;display:none;overflow:auto}
+  .sheet.show{display:block}
+  .sheet .in{max-width:900px;margin:0 auto;padding:26px}
+  .sheet h2{font-size:28px;margin:6px 0 16px}
+  .sheet input{font-size:26px;padding:14px 16px;border-radius:12px;border:0;width:100%;box-sizing:border-box;background:#fff;color:#111}
+  .sheet button{font-size:22px;padding:14px 20px;border-radius:12px;border:0;background:#2b7bff;color:#fff;margin:10px 10px 0 0}
+  .sheet button.gray{background:#333a44}
+  .sheet button.sel{background:#ffb000;color:#111;font-weight:800}
+  .item{background:#1d2128;border-radius:14px;padding:14px 18px;margin:10px 0;font-size:22px}
+  .item small{display:block;font-size:16px;opacity:.65;margin-top:4px}
+  .row{display:flex;gap:10px;align-items:center}
+  .muted{opacity:.6;font-size:17px}
+  #start{position:fixed;inset:0;background:#101215f2;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:30}
   #start button{font-size:40px;padding:26px 60px;border-radius:20px;border:0;background:#3d8bff;color:#fff;font-weight:800}
   #start p{font-size:22px;opacity:.75;margin-top:24px;text-align:center}
-  #mapBox{padding:0;overflow:hidden}
-  #map{position:absolute;inset:0;border-radius:22px}
-  #mapBox .spdOv{position:absolute;left:18px;top:16px;background:#000b;border-radius:16px;padding:8px 18px;z-index:3;text-align:center}
-  #mapBox .spdOv .v{font-size:64px;font-weight:800;line-height:1}
-  #mapBox .spdOv .u{font-size:16px;opacity:.7}
-  #carMk{position:absolute;left:50%;top:68%;width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-bottom:42px solid #2b7bff;transform:translate(-50%,-60%);filter:drop-shadow(0 0 6px #fff);z-index:3;pointer-events:none}
-  body.nomap #mapBox{display:none}
-  body.nomap #wrap{grid-template-columns:1fr 1fr}
-  body:not(.nomap) #spdBox{display:none}
-  body.over #mapBox{box-shadow:0 0 0 10px #ff2020}
 </style>
 </head>
 <body>
 <div id="start"><button id="go">시작</button><p id="loadMsg">카메라 데이터 받는 중…</p></div>
-<div id="wrap">
-  <div class="panel" id="mapBox"><div id="map"></div><div id="carMk"></div><div class="spdOv"><div class="v" id="spd2">-</div><div class="u">km/h</div></div></div>
-  <div class="panel" id="spdBox"><div class="v" id="spd">-</div><div class="u">km/h</div></div>
-  <div class="panel"><div id="sec"></div><div id="limit" class="off">-</div><div id="camTxt">주변 단속 카메라 없음</div><div id="camSub"></div><div id="bar"><i id="barI"></i></div></div>
-</div>
-<div id="btns"><button id="demo">시연</button><button id="mute">소리 끄기</button><button id="fixBtn">카메라 여기</button><button id="mapBtn">지도 끄기</button></div>
+<div id="map"></div>
+<div id="carMk"><svg viewBox="0 0 44 84"><path d="M22 2 C33 2 40 7 41 16 L42 66 C42 77 36 82 22 82 C8 82 2 77 2 66 L3 16 C4 7 11 2 22 2 Z" fill="currentColor" stroke="#0006" stroke-width="1.5"/><path d="M8 26 C12 21 32 21 36 26 L34 37 C27 34 17 34 10 37 Z" fill="#1b2430"/><path d="M10 40 C17 38 27 38 34 40 L34 58 C27 60 17 60 10 58 Z" fill="#2a3442" opacity=".85"/><path d="M10 63 C16 66 28 66 34 63 L33 72 C27 75 17 75 11 72 Z" fill="#1b2430"/><path d="M3 24 L0 27 L3 29 Z M41 24 L44 27 L41 29 Z" fill="currentColor" stroke="#0006"/><rect x="9" y="4" width="7" height="3" rx="1.5" fill="#fff8"/><rect x="28" y="4" width="7" height="3" rx="1.5" fill="#fff8"/><rect x="8" y="78" width="9" height="2.5" rx="1" fill="#e22"/><rect x="27" y="78" width="9" height="2.5" rx="1" fill="#e22"/></svg></div>
+<div id="bigSpd"><div class="v" id="spd">-</div><div class="u">km/h</div></div>
+<div id="warn"></div>
+<div class="card idle" id="camCard"><div id="signs"><div id="limit" class="off">-</div><svg id="sgChild" viewBox="0 0 100 92"><polygon points="50,6 95,86 5,86" fill="#fff" stroke="#e02020" stroke-width="10" stroke-linejoin="round"/><circle cx="40" cy="44" r="6" fill="#111"/><circle cx="61" cy="50" r="5" fill="#111"/><path d="M40 51 L36 68 M40 51 L46 66 M40 54 L31 60 M40 54 L50 58 M61 56 L58 70 M61 56 L65 70 M61 59 L53 61 M61 59 L69 63" stroke="#111" stroke-width="5" stroke-linecap="round" fill="none"/></svg><svg id="sgSig" viewBox="0 0 60 100"><rect x="10" y="4" width="40" height="92" rx="10" fill="#222" stroke="#fff" stroke-width="4"/><circle cx="30" cy="25" r="10" fill="#ff3030"/><circle cx="30" cy="50" r="10" fill="#ffc400"/><circle cx="30" cy="75" r="10" fill="#22c55e"/></svg><div id="secBadge">구간<br>단속</div></div><div style="flex:1"><div id="camTxt">주변 단속 카메라 없음</div><div id="camSub"></div><div id="sec"></div><div id="bar"><i id="barI"></i></div></div></div>
+<div class="card" id="turnCard"><div id="tArrow">↑</div><div><div id="tDist">-</div><div id="tName"></div></div></div>
+<div class="card" id="spdOv"><div class="v" id="spd2">-</div><div class="u">km/h</div></div>
+<div class="card" id="eta"></div>
 <div id="diag"></div>
+<div id="btns"><button id="navBtn" class="main">목적지</button><button id="demo">시연</button><button id="mute">소리 끄기</button><button id="fixBtn">카메라 여기</button><button id="mapBtn">지도 끄기</button><button id="setBtn">설정</button></div>
+
+<div class="sheet" id="navSheet"><div class="in">
+  <div class="row"><h2 style="flex:1">목적지</h2><button class="gray" id="navClose">닫기</button></div>
+  <div class="row"><input id="q" placeholder="장소, 주소 검색" autocomplete="off"><button id="qGo" style="margin:0">검색</button></div>
+  <div id="navStop" style="display:none"><button class="gray" id="stopNav">안내 끝내기</button></div>
+  <div id="results"></div>
+  <h2 style="font-size:22px;margin-top:22px">최근 목적지</h2><div id="recent" class="muted">없음</div>
+</div></div>
+
+<div class="sheet" id="setSheet"><div class="in">
+  <div class="row"><h2 style="flex:1">설정</h2><button class="gray" id="setClose">닫기</button></div>
+  <h2 style="font-size:22px">과속 카메라 알림 거리</h2>
+  <div id="alertOpts"></div>
+  <p class="muted">자동: 빠를수록 일찍 알립니다 (300~800m)</p>
+  <h2 style="font-size:22px;margin-top:26px">티맵 키 (길 안내용, 이 차에만 저장)</h2>
+  <div class="row"><input id="keyIn" placeholder="앱 키 붙여 넣기" autocomplete="off"><button id="keySave" style="margin:0">저장</button></div>
+  <p class="muted" id="keyState"></p>
+  <h2 style="font-size:22px;margin-top:26px">내 차 색상</h2>
+  <div id="carOpts"></div>
+  <h2 style="font-size:22px;margin-top:26px">진단 정보 표시</h2>
+  <button id="diagBtn" class="gray">켜짐</button>
+</div></div>
+
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
 var $=function(i){return document.getElementById(i)};
-var CAMS=[],GRID={};
-function cellKey(la,lo){return Math.floor(la*100)+'_'+Math.floor(lo*100)}
-function indexCams(arr){var fx={};try{fx=JSON.parse(localStorage.getItem('camfix')||'{}')}catch(e){}for(var q in fx){if(arr[q]){arr[q][0]=fx[q][0];arr[q][1]=fx[q][1]}}CAMS=arr;GRID={};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(GRID[k]=GRID[k]||[]).push(i)}}
-function loadCams(){
-  var VER='cams-20261020';
-  try{var c=localStorage.getItem(VER);if(c){indexCams(JSON.parse(c));$('loadMsg').textContent='카메라 '+CAMS.length.toLocaleString()+'개 (저장본)';return}}catch(e){}
-  fetch('cams.json?v=20261020').then(function(r){return r.json()}).then(function(a){indexCams(a);$('loadMsg').textContent='카메라 '+a.length.toLocaleString()+'개 받음';try{for(var k in localStorage)if(k.indexOf('cams-')===0)localStorage.removeItem(k);localStorage.setItem(VER,JSON.stringify(a))}catch(e){}})
-  .catch(function(e){$('loadMsg').textContent='카메라 데이터를 못 받았습니다: '+e.message});
-}
-loadCams();
-setTimeout(function(){setMap(mapOn)},0);
-
+var LS=window.localStorage;
 var D2R=Math.PI/180;
 function dist(a,b,c,d){var x=(d-b)*D2R*Math.cos((a+c)/2*D2R),y=(c-a)*D2R;return Math.sqrt(x*x+y*y)*6371000}
 function brg(a,b,c,d){var y=Math.sin((d-b)*D2R)*Math.cos(c*D2R),x=Math.cos(a*D2R)*Math.sin(c*D2R)-Math.sin(a*D2R)*Math.cos(c*D2R)*Math.cos((d-b)*D2R);return (Math.atan2(y,x)/D2R+360)%360}
-function adiff(a,b){var d=((b-a)%360+540)%360-180;return d}
+function adiff(a,b){return ((b-a)%360+540)%360-180}
 function move(la,lo,h,m){var dy=m*Math.cos(h*D2R)/111320,dx=m*Math.sin(h*D2R)/(111320*Math.cos(la*D2R));return[la+dy,lo+dx]}
+function fmtD(m){return m>=1000?(m/1000).toFixed(m>=10000?0:1)+'km':Math.round(m/10)*10+'m'}
+
+/* 설정 */
+var CFG={car:LS.getItem('carColor')||'#e9e9e9',alert:LS.getItem('alertMode')||'auto',diag:LS.getItem('diagOff')!=='1'};
+var KEY=LS.getItem('tmapKey')||'';
+var urlK=(location.search.match(/[?&]k=([^&]+)/)||[])[1];if(urlK){KEY=decodeURIComponent(urlK)}
+function renderSet(){
+  var opts=[['auto','자동'],['300','300m'],['500','500m'],['800','800m'],['1000','1km']];
+  $('alertOpts').innerHTML='';
+  opts.forEach(function(o){var b=document.createElement('button');b.textContent=o[1];b.className=CFG.alert===o[0]?'sel':'gray';b.onclick=function(){CFG.alert=o[0];LS.setItem('alertMode',o[0]);announced={};renderSet()};$('alertOpts').appendChild(b)});
+  $('carOpts').innerHTML='';[['#e9e9e9','흰색'],['#1c1c1e','검정'],['#8c9096','회색'],['#b3121b','빨강'],['#1f4fa8','파랑']].forEach(function(o){var b=document.createElement('button');b.textContent=o[1];b.className=CFG.car===o[0]?'sel':'gray';b.onclick=function(){CFG.car=o[0];LS.setItem('carColor',o[0]);renderSet()};$('carOpts').appendChild(b)});
+  $('carMk').style.color=CFG.car;
+  $('keyState').textContent=KEY?'저장됨 ('+KEY.slice(0,4)+'…'+KEY.slice(-3)+')':'아직 없음';
+  $('diagBtn').textContent=CFG.diag?'켜짐':'꺼짐';$('diag').style.display=CFG.diag?'':'none';
+}
+$('setBtn').onclick=function(){renderSet();$('setSheet').classList.add('show')};
+$('setClose').onclick=function(){$('setSheet').classList.remove('show')};
+$('keySave').onclick=function(){var k=$('keyIn').value.trim();if(k.length<20){$('keyState').textContent='키가 너무 짧습니다';return}KEY=k;LS.setItem('tmapKey',k);$('keyIn').value='';renderSet()};
+$('diagBtn').onclick=function(){CFG.diag=!CFG.diag;LS.setItem('diagOff',CFG.diag?'0':'1');renderSet()};
+renderSet();
+function alertDist(v){return CFG.alert==='auto'?Math.min(800,Math.max(300,v*25)):Number(CFG.alert)}
+
+/* 카메라 데이터 */
+var CAMS=[],GRID={};
+function cellKey(la,lo){return Math.floor(la*100)+'_'+Math.floor(lo*100)}
+function indexCams(arr){var fx={};try{fx=JSON.parse(LS.getItem('camfix')||'{}')}catch(e){}for(var q in fx){if(arr[q]){arr[q][0]=fx[q][0];arr[q][1]=fx[q][1]}}CAMS=arr;GRID={};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(GRID[k]=GRID[k]||[]).push(i)}camSrcAt=null}
+function loadCams(){
+  var VER='cams-20261020';
+  try{var c=LS.getItem(VER);if(c){indexCams(JSON.parse(c));$('loadMsg').textContent='카메라 '+CAMS.length.toLocaleString()+'개 (저장본)';return}}catch(e){}
+  fetch('cams.json?v=20261020').then(function(r){return r.json()}).then(function(a){indexCams(a);$('loadMsg').textContent='카메라 '+a.length.toLocaleString()+'개 받음';try{for(var k in LS)if(k.indexOf('cams-')===0)LS.removeItem(k);LS.setItem(VER,JSON.stringify(a))}catch(e){}})
+  .catch(function(e){$('loadMsg').textContent='카메라 데이터를 못 받았습니다: '+e.message});
+}
 
 /* 지도 */
-var mapReady=false,map=null,mapOn=localStorage.getItem('mapOff')!=='1',camSrcAt=null;
-function setMap(on){mapOn=on;document.body.classList.toggle('nomap',!on);$('mapBtn').textContent=on?'지도 끄기':'지도 켜기';localStorage.setItem('mapOff',on?'0':'1');if(on&&!map)initMap();if(map)setTimeout(function(){map.resize()},50)}
+var mapReady=false,map=null,mapOn=LS.getItem('mapOff')!=='1',camSrcAt=null;
+function setMap(on){mapOn=on;document.body.classList.toggle('nomap',!on);$('mapBtn').textContent=on?'지도 끄기':'지도 켜기';LS.setItem('mapOff',on?'0':'1');if(on&&!map)initMap();if(map)setTimeout(function(){map.resize()},50)}
 function initMap(){
   if(!window.maplibregl){$('mapBtn').textContent='지도 불러오기 실패';return}
   map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[127.0276,37.4979],zoom:16.5,pitch:0,maxPitch:0,interactive:false,attributionControl:{compact:true}});
-  map.on('load',function(){mapReady=true;
+  map.on('styleimagemissing',function(e){makeSign(e.id)});
+  map.on('load',function(){
     map.getStyle().layers.forEach(function(l){if(l.type==='fill-extrusion'||/poi/.test(l.id)){map.setLayoutProperty(l.id,'visibility','none');return}if(l.type==='symbol'&&l.layout&&l.layout['text-field'])map.setLayoutProperty(l.id,'text-field',['coalesce',['get','name:ko'],['get','name']])});
+    map.addSource('route',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+    map.addLayer({id:'route-o',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#fff','line-width':14}});
+    map.addLayer({id:'route-l',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#2b7bff','line-width':9}});
     map.addSource('cams',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
-    map.addLayer({id:'cams-c',type:'circle',source:'cams',paint:{'circle-radius':['case',['==',['get','k'],'S'],13,6],'circle-color':['case',['==',['get','z'],2],'#ffcc00',['==',['get','k'],'S'],'#e02020','#888'],'circle-stroke-color':'#fff','circle-stroke-width':3}});
-    map.addLayer({id:'cams-t',type:'symbol',source:'cams',layout:{'text-field':['get','l'],'text-size':13,'text-font':['Noto Sans Bold'],'text-allow-overlap':true},paint:{'text-color':'#fff'}});
-    camSrcAt=null;
+    map.addLayer({id:'cams-i',type:'symbol',source:'cams',layout:{'icon-image':['get','ic'],'icon-allow-overlap':true,'icon-ignore-placement':true,'icon-rotation-alignment':'viewport','symbol-sort-key':['get','o']}});
+    mapReady=true;camSrcAt=null;drawRoute();
   });
 }
+function makeSign(id){
+  if(!map||map.hasImage(id))return;var cv=document.createElement('canvas'),x=cv.getContext('2d'),R=2;
+  if(id==='sig'){cv.width=22*R;cv.height=40*R;x.scale(R,R);x.fillStyle='#222';x.strokeStyle='#fff';x.lineWidth=2;x.beginPath();x.roundRect(2,2,18,36,5);x.fill();x.stroke();['#ff3030','#ffc400','#22c55e'].forEach(function(c,i){x.fillStyle=c;x.beginPath();x.arc(11,10+i*10,3.6,0,7);x.fill()})}
+  else if(/^limz?-/.test(id)){var n=id.split('-')[1],z=id.indexOf('limz')===0,S=46;cv.width=S*R;cv.height=S*R;x.scale(R,R);
+    if(z){x.fillStyle='#ffcc00';x.beginPath();x.arc(S/2,S/2,S/2,0,7);x.fill()}
+    x.fillStyle='#e02020';x.beginPath();x.arc(S/2,S/2,z?19:21,0,7);x.fill();x.fillStyle='#fff';x.beginPath();x.arc(S/2,S/2,z?13.5:15,0,7);x.fill();
+    x.fillStyle='#111';x.font='800 '+(n.length>2?13:16)+'px system-ui,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(n,S/2,S/2+1)}
+  else return;
+  map.addImage(id,x.getImageData(0,0,cv.width,cv.height),{pixelRatio:R});
+}
 function updCamSrc(la,lo){
-  if(!map||!map.getSource('cams')||!CAMS.length)return;
+  if(!mapReady||!CAMS.length)return;
   if(camSrcAt&&dist(camSrcAt[0],camSrcAt[1],la,lo)<400)return;camSrcAt=[la,lo];
   var f=[],c0=Math.floor(la*100),c1=Math.floor(lo*100);
-  for(var a=-3;a<=3;a++)for(var b=-3;b<=3;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];f.push({type:'Feature',geometry:{type:'Point',coordinates:[c[1],c[0]]},properties:{k:c[3],z:c[5],l:c[2]?String(c[2]):''}})}}
+  for(var a=-3;a<=3;a++)for(var b=-3;b<=3;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];f.push({type:'Feature',geometry:{type:'Point',coordinates:[c[1],c[0]]},properties:{ic:c[3]==='S'?(c[5]===2?'limz-':'lim-')+c[2]:'sig',o:c[3]==='S'?1:0}})}}
   map.getSource('cams').setData({type:'FeatureCollection',features:f});
 }
 $('mapBtn').onclick=function(){setMap(!mapOn)};
 
-/* 위치 상태 */
-var fix=null,prevFix=null,v=0,head=null,fixes=0,gaps=[],spdSrc='-',lastAcc=0;
+/* 위치 */
+var fix=null,prevFix=null,v=0,head=null,fixes=0,gaps=[],spdSrc='-',lastAcc=0,demo=null;
 function onFix(la,lo,acc,h,spd,t){
   fixes++;lastAcc=acc;
   if(fix){gaps.push(t-fix.t);if(gaps.length>10)gaps.shift()}
@@ -104,7 +199,6 @@ function onFix(la,lo,acc,h,spd,t){
   if(spd!=null&&!isNaN(spd)&&spd>0){v=v*0.3+spd*0.7;spdSrc='차'}else if(calc!=null){v=v*0.5+calc*0.5;spdSrc='계산'}else if(spd===0){v=0;spdSrc='차'}
   if(h!=null&&!isNaN(h)&&v>1.5)head=h;
 }
-var demo=null;
 if(navigator.geolocation){navigator.geolocation.watchPosition(function(p){if(demo)return;var c=p.coords;onFix(c.latitude,c.longitude,c.accuracy,c.heading,c.speed,Date.now())},function(e){$('camSub').textContent='위치 오류: '+e.message},{enableHighAccuracy:true,maximumAge:0,timeout:30000})}
 
 /* 소리 */
@@ -112,29 +206,108 @@ var ac=null,muted=false,KO=false;
 function voicesReady(){if('speechSynthesis' in window)KO=speechSynthesis.getVoices().some(function(x){return /ko/i.test(x.lang)})}
 if('speechSynthesis' in window){voicesReady();speechSynthesis.onvoiceschanged=voicesReady}
 function beep(f,len,n){if(muted||!ac)return;for(var i=0;i<(n||1);i++){var o=ac.createOscillator(),g=ac.createGain(),t0=ac.currentTime+i*(len+0.08);o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(0.4,t0);g.gain.setValueAtTime(0,t0+len);o.start(t0);o.stop(t0+len)}}
-function say(t,fallbackN){if(muted)return;if(KO){var u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=1.1;speechSynthesis.cancel();speechSynthesis.speak(u)}else beep(880,0.12,fallbackN||2)}
+function say(t,f,n){if(muted)return;if(KO){var u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=1.1;speechSynthesis.cancel();speechSynthesis.speak(u)}else beep(f||880,0.12,n||2)}
 $('go').onclick=function(){ac=new (window.AudioContext||window.webkitAudioContext)();beep(660,0.1,1);$('start').style.display='none';if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){})};
-$('fixBtn').onclick=function(){var id=target?target.id:lastPassed;if(id==null||!fix){this.textContent='고칠 카메라 없음';var b=this;setTimeout(function(){b.textContent='카메라 여기'},1500);return}var fx={};try{fx=JSON.parse(localStorage.getItem('camfix')||'{}')}catch(e){}fx[id]=[fix.la,fix.lo];localStorage.setItem('camfix',JSON.stringify(fx));var old=dist(CAMS[id][0],CAMS[id][1],fix.la,fix.lo);CAMS[id][0]=fix.la;CAMS[id][1]=fix.lo;indexCams(CAMS);passed[id]=Date.now();if(target&&target.id===id)target=null;this.textContent='고침 ('+Math.round(old)+'m 옮김)';var b=this;setTimeout(function(){b.textContent='카메라 여기'},2500)};
 $('mute').onclick=function(){muted=!muted;this.textContent=muted?'소리 켜기':'소리 끄기'};
 
-/* 시연: 가장 가까운 속도 카메라를 향해 900m 앞에서 75km/h로 달린다 */
+/* 길 안내 */
+var NAV=null;
+var TT={11:['↑','직진'],12:['↰','좌회전'],13:['↱','우회전'],14:['↶','유턴'],16:['↖','8시 방향 좌회전'],17:['↖','10시 방향 좌회전'],18:['↗','2시 방향 우회전'],19:['↘','4시 방향 우회전'],101:['↗','오른쪽 고속도로 입구'],102:['↖','왼쪽 고속도로 입구'],103:['↑','고속도로 입구'],104:['↗','오른쪽 고속도로 출구'],105:['↖','왼쪽 고속도로 출구'],106:['↑','고속도로 출구'],111:['↗','오른쪽 도시고속도로 입구'],112:['↖','왼쪽 도시고속도로 입구'],113:['↑','도시고속도로 입구'],114:['↗','오른쪽 도시고속도로 출구'],115:['↖','왼쪽 도시고속도로 출구'],116:['↑','도시고속도로 출구'],117:['↗','오른쪽 방향'],118:['↖','왼쪽 방향'],119:['↑','지하차도'],120:['↑','고가도로'],121:['↑','터널'],122:['↑','교량'],123:['↑','지하차도 옆길'],124:['↑','고가도로 옆길'],201:['◎','목적지']};
+function ttInfo(t){if(TT[t])return TT[t];if(t>=131&&t<=142)return['⟳','회전교차로'];if(t>=182&&t<=189)return['•','경유지'];return['↑','직진']}
+function api(path,opt){opt=opt||{};opt.headers=Object.assign({'appKey':KEY,'Accept':'application/json'},opt.headers||{});return fetch('https://apis.openapi.sk.com/tmap/'+path,opt).then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+' '+t.slice(0,120))});return r.json()})}
+function openNav(){$('navSheet').classList.add('show');$('navStop').style.display=NAV?'block':'none';renderRecent();if(!KEY){$('results').innerHTML='<div class="item">티맵 키가 없습니다. [설정]에서 먼저 넣어 주세요.</div>'}setTimeout(function(){$('q').focus()},50)}
+$('navBtn').onclick=openNav;
+$('navClose').onclick=function(){$('navSheet').classList.remove('show')};
+$('stopNav').onclick=function(){endNav();$('navSheet').classList.remove('show')};
+$('q').onkeydown=function(e){if(e.key==='Enter')search()};
+$('qGo').onclick=search;
+function search(){
+  var q=$('q').value.trim();if(!q||!KEY)return;$('results').innerHTML='<div class="muted">찾는 중…</div>';
+  var c=fix||{la:37.4979,lo:127.0276};
+  api('pois?version=1&count=12&searchKeyword='+encodeURIComponent(q)+'&centerLat='+c.la+'&centerLon='+c.lo+'&reqCoordType=WGS84GEO&resCoordType=WGS84GEO&searchtypCd=A').then(function(d){
+    var ps=(((d||{}).searchPoiInfo||{}).pois||{}).poi||[];
+    if(!ps.length){$('results').innerHTML='<div class="muted">결과 없음</div>';return}
+    $('results').innerHTML='';
+    ps.forEach(function(p){var la=parseFloat(p.frontLat||p.noorLat),lo=parseFloat(p.frontLon||p.noorLon);var addr=[p.upperAddrName,p.middleAddrName,p.lowerAddrName].filter(Boolean).join(' ');
+      var el=document.createElement('div');el.className='item';el.innerHTML='<b></b><small></small>';el.querySelector('b').textContent=p.name;el.querySelector('small').textContent=addr+' · '+fmtD(dist(c.la,c.lo,la,lo));
+      el.onclick=function(){startNav({name:p.name,la:la,lo:lo})};$('results').appendChild(el)});
+  }).catch(function(e){$('results').innerHTML='<div class="item">검색 실패: '+e.message+'</div>'});
+}
+function renderRecent(){var r=[];try{r=JSON.parse(LS.getItem('recentDest')||'[]')}catch(e){}var box=$('recent');if(!r.length){box.textContent='없음';return}box.innerHTML='';box.className='';r.forEach(function(d){var el=document.createElement('div');el.className='item';el.textContent=d.name;el.onclick=function(){startNav(d)};box.appendChild(el)})}
+function saveRecent(d){var r=[];try{r=JSON.parse(LS.getItem('recentDest')||'[]')}catch(e){}r=r.filter(function(x){return x.name!==d.name});r.unshift({name:d.name,la:d.la,lo:d.lo});LS.setItem('recentDest',JSON.stringify(r.slice(0,8)))}
+function startNav(d){
+  if(!KEY){openNav();return}
+  $('navSheet').classList.remove('show');saveRecent(d);
+  NAV={dest:d,R:[],S:[],G:[],total:0,time:0,idx:0,s:0,off:0,offT:0,lastRoute:0,spoken:{}};
+  document.body.classList.add('nav');$('tDist').textContent='경로 찾는 중';$('tName').textContent=d.name;$('tArrow').textContent='…';
+  route();
+}
+function route(){
+  if(!NAV)return;var c=fix||{la:37.4979,lo:127.0276};NAV.lastRoute=Date.now();
+  var body={startX:String(c.lo),startY:String(c.la),endX:String(NAV.dest.lo),endY:String(NAV.dest.la),reqCoordType:'WGS84GEO',resCoordType:'WGS84GEO',searchOption:'0',trafficInfo:'N'};
+  if(head!=null&&v>2){body.angle=String(Math.round(head));body.speed=String(Math.round(v*3.6))}
+  api('routes?version=1&format=json',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(d){
+    if(!NAV)return;var R=[],G=[];
+    (d.features||[]).forEach(function(f){var g=f.geometry,p=f.properties;
+      if(g.type==='LineString'){g.coordinates.forEach(function(xy,i){if(R.length&&i===0){var L=R[R.length-1];if(L[0]===xy[0]&&L[1]===xy[1])return}R.push([xy[1],xy[0]])})}
+      else if(g.type==='Point'&&p.turnType!=null){G.push({la:g.coordinates[1],lo:g.coordinates[0],t:p.turnType,name:p.nextRoadName||'',desc:p.description||'',pname:p.name||'',ri:Math.max(0,R.length-1)})}
+      if(p.totalTime)NAV.time=p.totalTime;
+    });
+    var S=[0];for(var i=1;i<R.length;i++)S.push(S[i-1]+dist(R[i-1][0],R[i-1][1],R[i][0],R[i][1]));
+    G.forEach(function(gp){var bi=gp.ri,bd=1e9;for(var j=Math.max(0,gp.ri-3);j<Math.min(R.length,gp.ri+3);j++){var dd=dist(gp.la,gp.lo,R[j][0],R[j][1]);if(dd<bd){bd=dd;bi=j}}gp.s=S[bi]});
+    NAV.R=R;NAV.S=S;NAV.G=G;NAV.total=S[S.length-1]||0;NAV.idx=0;NAV.spoken={};NAV.calcAt=Date.now();
+    drawRoute();
+  }).catch(function(e){if(NAV){$('tDist').textContent='경로 실패';$('tName').textContent=e.message}});
+}
+function drawRoute(){if(!mapReady)return;var f=NAV&&NAV.R.length?[{type:'Feature',geometry:{type:'LineString',coordinates:NAV.R.map(function(p){return[p[1],p[0]]})}}]:[];map.getSource('route').setData({type:'FeatureCollection',features:f})}
+function endNav(){NAV=null;document.body.classList.remove('nav');drawRoute()}
+function project(la,lo){
+  var R=NAV.R,best=null,from=Math.max(0,NAV.idx-5),to=Math.min(R.length-2,NAV.idx+120),kx=111320*Math.cos(la*D2R),ky=111320;
+  for(var i=from;i<=to;i++){var ax=(R[i][1]-lo)*kx,ay=(R[i][0]-la)*ky,bx=(R[i+1][1]-lo)*kx,by=(R[i+1][0]-la)*ky,dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy,t=L2?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L2)):0,px=ax+t*dx,py=ay+t*dy,dd=Math.sqrt(px*px+py*py);
+    if(!best||dd<best.d)best={i:i,t:t,d:dd}}
+  return best;
+}
+function navTick(la,lo,kmh,now){
+  if(!NAV||NAV.R.length<2)return;
+  var pr=project(la,lo);if(!pr)return;
+  NAV.idx=pr.i;NAV.s=NAV.S[pr.i]+pr.t*(NAV.S[pr.i+1]-NAV.S[pr.i]);
+  if(pr.d>50&&v>3){if(!NAV.offT)NAV.offT=now;if(now-NAV.offT>4000&&now-NAV.lastRoute>15000){NAV.offT=0;$('tDist').textContent='경로 다시 찾는 중';say('경로를 다시 찾습니다',440,1);route();return}}else NAV.offT=0;
+  var remain=NAV.total-NAV.s;
+  if(remain<30||dist(la,lo,NAV.dest.la,NAV.dest.lo)<30){say('목적지에 도착했습니다',660,3);endNav();return}
+  var nx=null;for(var i=0;i<NAV.G.length;i++){if(NAV.G[i].s>NAV.s+3&&NAV.G[i].t!==200){nx=NAV.G[i];break}}
+  if(nx){var dd=nx.s-NAV.s,ti=ttInfo(nx.t);
+    $('tArrow').textContent=ti[0];$('tDist').textContent=fmtD(dd);$('tName').textContent=(nx.pname?nx.pname+' · ':'')+(nx.t===201?NAV.dest.name:ti[1]+(nx.name?' · '+nx.name:''));
+    var far=kmh>70?1000:300,key=nx.s+'';
+    if(dd<far&&dd>120&&!NAV.spoken[key+'f']){NAV.spoken[key+'f']=1;say(fmtD(Math.round(dd/50)*50).replace('m','미터').replace('km','킬로미터')+' 앞 '+ti[1]+'입니다',520,2)}
+    if(dd<60&&!NAV.spoken[key+'n']){NAV.spoken[key+'n']=1;say(ti[1]+'입니다',520,1)}
+  }
+  var rt=NAV.total?NAV.time*remain/NAV.total:0,eta=new Date(now+rt*1000);
+  $('eta').textContent='도착 '+eta.getHours()+':'+String(eta.getMinutes()).padStart(2,'0')+' · '+fmtD(remain);
+}
+
+/* 시연 */
 $('demo').onclick=function(){
   if(demo){demo=null;this.textContent='시연';return}
+  if(NAV&&NAV.R.length>1){demo={route:true,s:Math.max(0,NAV.s),t:Date.now(),kmh:55};this.textContent='시연 끝';return}
   var base=fix||{la:37.4979,lo:127.0276},best=null,bd=1e9;
   for(var i=0;i<CAMS.length;i++){var c=CAMS[i];if(c[3]!=='S')continue;var d=dist(base.la,base.lo,c[0],c[1]);if(d<bd){bd=d;best=c}}
-  if(!best){alert('카메라 데이터가 아직 없습니다');return}
+  if(!best)return;
   var h=45,st=move(best[0],best[1],h+180,900);
   demo={la:st[0],lo:st[1],h:h,t:Date.now(),kmh:Math.max(75,best[2]+15)};prevFix=null;fix=null;passed={};target=null;
   this.textContent='시연 끝';
 };
-setInterval(function(){if(!demo)return;var now=Date.now(),dt=(now-demo.t)/1000;demo.t=now;var p=move(demo.la,demo.lo,demo.h,demo.kmh/3.6*dt);demo.la=p[0];demo.lo=p[1];onFix(p[0],p[1],3,demo.h,demo.kmh/3.6,now)},1000);
+function routePoint(s){var R=NAV.R,S=NAV.S;for(var i=0;i<R.length-1;i++){if(S[i+1]>=s){var t=(s-S[i])/Math.max(0.01,S[i+1]-S[i]);return{la:R[i][0]+(R[i+1][0]-R[i][0])*t,lo:R[i][1]+(R[i+1][1]-R[i][1])*t,h:brg(R[i][0],R[i][1],R[i+1][0],R[i+1][1])}}}return{la:R[R.length-1][0],lo:R[R.length-1][1],h:0}}
+setInterval(function(){if(!demo)return;var now=Date.now(),dt=(now-demo.t)/1000;demo.t=now;
+  if(demo.route){if(!NAV||NAV.R.length<2){demo=null;$('demo').textContent='시연';return}demo.s+=demo.kmh/3.6*dt;var q=routePoint(demo.s);onFix(q.la,q.lo,3,q.h,demo.kmh/3.6,now);return}
+  var p=move(demo.la,demo.lo,demo.h,demo.kmh/3.6*dt);demo.la=p[0];demo.lo=p[1];onFix(p[0],p[1],3,demo.h,demo.kmh/3.6,now)},1000);
 
-/* 경고 판단 */
+/* 카메라 경고 */
 var lastPassed=null,target=null,passed={},announced={},lastBeep=0,section=null;
+$('fixBtn').onclick=function(){var id=target?target.id:lastPassed,b=this;if(id==null||!fix){b.textContent='고칠 카메라 없음';setTimeout(function(){b.textContent='카메라 여기'},1500);return}var fx={};try{fx=JSON.parse(LS.getItem('camfix')||'{}')}catch(e){}fx[id]=[fix.la,fix.lo];LS.setItem('camfix',JSON.stringify(fx));var old=dist(CAMS[id][0],CAMS[id][1],fix.la,fix.lo);CAMS[id][0]=fix.la;CAMS[id][1]=fix.lo;indexCams(CAMS);passed[id]=Date.now();if(target&&target.id===id)target=null;b.textContent='고침 ('+Math.round(old)+'m 옮김)';setTimeout(function(){b.textContent='카메라 여기'},2500)};
 function findAhead(la,lo,h){
   var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;
   for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var ids=GRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;
-    for(var j=0;j<ids.length;j++){var id=ids[j],c=CAMS[id];if(passed[id])continue;var d=dist(la,lo,c[0],c[1]);if(d>1000||d<5)continue;
+    for(var j=0;j<ids.length;j++){var id=ids[j],c=CAMS[id];if(passed[id])continue;var d=dist(la,lo,c[0],c[1]);if(d>1100||d<5)continue;
       var df=adiff(h,brg(la,lo,c[0],c[1]));if(Math.abs(df)>25)continue;
       var lat=d*Math.sin(df*D2R);if(lat<-12||lat>30)continue;
       if(!best||d<best.d)best={id:id,c:c,d:d}}}
@@ -146,36 +319,46 @@ function tick(){
   var age=Math.min(2,(now-fix.t)/1000),la=fix.la,lo=fix.lo;
   if(head!=null&&v>1){var p=move(la,lo,head,v*age);la=p[0];lo=p[1]}
   var kmh=v*3.6;$('spd').textContent=Math.round(kmh);$('spd2').textContent=Math.round(kmh);
-  if(map&&mapOn&&mapReady){var hh=$('map').clientHeight;map.jumpTo({center:[lo,la],bearing:head==null?0:head,zoom:kmh>70?15.5:16.5,pitch:0,padding:{top:hh*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo)}
-  var over=false,zone=false;
+  if(mapReady&&mapOn){map.jumpTo({center:[lo,la],bearing:head==null?0:head,zoom:kmh>70?15.5:16.5,pitch:0,padding:{top:innerHeight*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo)}
+  navTick(la,lo,kmh,now);
+  var over=false,zone=false,alertD=alertDist(v);
   if(head!=null&&v>1.5&&CAMS.length){
     var t=findAhead(la,lo,head);
     if(target&&(!t||t.id!==target.id)){var tc=CAMS[target.id];var dNow=dist(la,lo,tc[0],tc[1]);var behind=Math.abs(adiff(head,brg(la,lo,tc[0],tc[1])))>90;
-      if(behind||dNow>target.d+40){passed[target.id]=now;lastPassed=target.id;setTimeout(function(){lastPassed=null},20000);if(tc[4]===1)section={lim:tc[2],t:now,m:0,lastLa:la,lastLo:lo};if(tc[4]===2&&section){section=null;say('구간단속이 끝났습니다',1)}target=null}}
+      if(behind||dNow>target.d+40){passed[target.id]=now;lastPassed=target.id;if(tc[4]===1)section={lim:tc[2],t:now,m:0,lastLa:la,lastLo:lo};if(tc[4]===2&&section){section=null;say('구간단속이 끝났습니다',880,1)}target=null}}
     if(t&&(!target||t.d<target.d+40))target=t;
   }
   for(var k in passed)if(now-passed[k]>120000)delete passed[k];
-  if(section){section.m+=dist(section.lastLa,section.lastLo,la,lo);section.lastLa=la;section.lastLo=lo;var avg=section.m/Math.max(1,(now-section.t)/1000)*3.6;$('sec').textContent='구간단속 '+section.lim+' · 평균 '+Math.round(avg)+'km/h · '+(section.m/1000).toFixed(1)+'km';if(avg>section.lim)over=true;if(section.m>30000)section=null}else $('sec').textContent='';
-  var alertD=Math.min(800,Math.max(300,v*25));
-  if(target){var c=target.c,d=dist(la,lo,c[0],c[1]);target.d=Math.min(target.d,d);
-    $('limit').className=c[2]?'':'off';$('limit').textContent=c[2]||'-';
+  if(lastPassed!=null&&passed[lastPassed]&&now-passed[lastPassed]>20000)lastPassed=null;
+  var secTxt='';
+  if(section){section.m+=dist(section.lastLa,section.lastLo,la,lo);section.lastLa=la;section.lastLo=lo;var avg=section.m/Math.max(1,(now-section.t)/1000)*3.6;secTxt='구간단속 '+section.lim+' · 평균 '+Math.round(avg)+'km/h · '+(section.m/1000).toFixed(1)+'km';if(avg>section.lim)over=true;if(section.m>30000)section=null}
+  $('sec').textContent=secTxt;
+  var card=$('camCard');
+  if(target&&target.d<Math.max(alertD,600)){var c=target.c,d=dist(la,lo,c[0],c[1]);target.d=Math.min(target.d,d);
+    card.classList.remove('idle');
+    $('limit').style.display=c[2]?'':'none';$('limit').className='';$('limit').textContent=c[2]||'';
+    $('sgChild').classList.toggle('show',c[5]===2);$('sgSig').classList.toggle('show',c[3]!=='S');$('secBadge').classList.toggle('show',c[4]>0);
     var name=c[4]===1?'구간단속 시작':c[4]===2?'구간단속 끝':c[3]==='S'?'과속 단속':'신호·기타 단속';
     $('camTxt').textContent=name+' '+(d<100?'곧 통과':Math.round(d/50)*50+'m');
     $('camSub').textContent=c[5]===2?'어린이보호구역':c[5]===1?'보호구역':'';
     $('barI').style.width=Math.max(0,Math.min(100,(1-d/alertD)*100))+'%';
     zone=c[5]>0&&d<alertD;
     if(d<alertD&&!announced[target.id]){announced[target.id]=1;var r=Math.round(d/50)*50;
-      say((c[5]===2?'어린이보호구역, ':'')+'전방 '+r+'미터, '+(c[2]?'제한속도 '+c[2]+', ':'')+(c[4]===1?'구간단속 시작입니다':'단속 카메라입니다'),2)}
+      say((c[5]===2?'어린이보호구역, ':'')+'전방 '+r+'미터, '+(c[2]?'제한속도 '+c[2]+', ':'')+(c[4]===1?'구간단속 시작입니다':'단속 카메라입니다'),880,2)}
     if(c[2]&&d<alertD&&kmh>c[2])over=true;
-  }else{$('limit').className=section?'':'off';$('limit').textContent=section?section.lim:'-';$('camTxt').textContent='주변 단속 카메라 없음';$('camSub').textContent='';$('barI').style.width='0'}
+  }else if(section){card.classList.remove('idle');$('limit').style.display='';$('sgChild').classList.remove('show');$('sgSig').classList.remove('show');$('secBadge').classList.add('show');$('limit').className='';$('limit').textContent=section.lim;$('camTxt').textContent='구간단속 중';$('camSub').textContent='';$('barI').style.width='0'}
+  else{card.classList.add('idle');$('sgChild').classList.remove('show');$('sgSig').classList.remove('show');$('secBadge').classList.remove('show');$('camTxt').textContent='주변 단속 카메라 없음';$('camSub').textContent='';$('barI').style.width='0'}
   document.body.classList.toggle('over',over);document.body.classList.toggle('zone',zone);
   if(over&&now-lastBeep>700){beep(1400,0.15,1);lastBeep=now}
-  var g=gaps.length?Math.round(gaps.reduce(function(a,b){return a+b},0)/gaps.length):0;
-  $('diag').textContent=(demo?'시연 중 · ':'')+'정확도 '+Math.round(lastAcc)+'m · 간격 '+g+'ms · 수신 '+fixes+' · 마지막 '+((now-fix.t)/1000).toFixed(1)+'초\n속도 출처 '+spdSrc+' · 방향 '+(head==null?'-':Math.round(head)+'°')+' · 카메라 '+CAMS.length.toLocaleString()+' · 음성 '+(KO?'한국어':'없음(삑)');
+  if(CFG.diag){var g=gaps.length?Math.round(gaps.reduce(function(a,b){return a+b},0)/gaps.length):0;
+    $('diag').textContent=(demo?'시연 중 · ':'')+'정확도 '+Math.round(lastAcc)+'m · 간격 '+g+'ms · 수신 '+fixes+'\n속도 '+spdSrc+' · 방향 '+(head==null?'-':Math.round(head)+'°')+' · 알림 '+(CFG.alert==='auto'?'자동 '+Math.round(alertD)+'m':CFG.alert+'m')+' · 음성 '+(KO?'한국어':'없음')}
   requestAnimationFrame(tick);
 }
+
+loadCams();
+setMap(mapOn);
 requestAnimationFrame(tick);
-if(/autodemo/.test(location.search)){var st=document.createElement('style');st.textContent='*{transition:none!important}';document.head.appendChild(st);$('start').style.display='none';var iv=setInterval(function(){if(CAMS.length){clearInterval(iv);$('demo').onclick.call($('demo'))}},200)}
+if(/autodemo/.test(location.search)){$('start').style.display='none';var iv=setInterval(function(){if(CAMS.length){clearInterval(iv);if(/navdemo/.test(location.search)&&KEY){startNav({name:'양재역',la:37.4842,lo:127.0346});var iv2=setInterval(function(){if(NAV&&NAV.R.length){clearInterval(iv2);$('demo').onclick.call($('demo'))}},300)}else $('demo').onclick.call($('demo'))}},200)}
 </script>
 </body>
 </html>
