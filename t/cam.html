@@ -182,6 +182,38 @@
   .pl .ac button.via{background:#fff1e0;color:#b85f00}
   .pl .ac button.done{color:#2b7bff}
   .note{font-size:13px;color:#9aa1ab;margin:10px 2px}
+  /* 야간 모드: 지도와 함께 화면 전체를 어둡게 */
+  #bottom .ic,.sbar .bk{color:#111}
+  body.night .rb,body.night .wxc,body.night #restChip{background:#2a2e35;color:#e8eaed;box-shadow:0 2px 8px #0009}
+  body.night #bottom{background:#1c1f24;color:#e8eaed;box-shadow:0 -2px 12px #0008}body.night #bottom .ic{color:#e8eaed}
+  body.night #bInfo .gray{color:#8b929b}body.night #tbar{background:#3a3f47}body.night #tbarDone{background:#565c66}body.night #tbarDot{background:#1c1f24}
+  body.night #spd{color:#fff;text-shadow:0 0 4px #000,0 0 4px #000,0 0 8px #000}
+  body.night #diag{color:#aab;text-shadow:0 0 3px #000}
+  body.night #fav,body.night .panel{background:#1c1f24;color:#e8eaed}
+  body.night .fc,body.night .item,body.night .rt,body.night .sbar,body.night .pl .ic,body.night .pl .ac button,body.night .opt button,body.night .grid button,body.night .pred button,body.night #fav .hd button{background:#2a2e35;color:#e8eaed}
+  body.night .chips button{background:#23272d;border-color:#3a3f47;color:#dfe2e6}
+  body.night .pl{border-color:#2f343b}body.night .pl .nm,body.night .sbar input,body.night .fc{color:#e8eaed}body.night .sbar .bk,body.night .back{color:#e8eaed}
+  body.night .band{background:#23272d;border-color:#3a3f47}body.night .band .row,body.night .band .bt{border-color:#30353c}
+  body.night .keyRow input{background:#2a2e35;color:#e8eaed;border-color:#3a3f47}
+  body.night .opt button.sel{background:#2b7bff;color:#fff}body.night .pl .ac button.via{background:#4a3517;color:#ffb75e}
+  body.night #fav .grip{background:#4a4f57}
+  /* 전체 크기 한 단계 줄임 (11/20 실차: 버튼이 다 크다) */
+  .rb{width:46px;height:46px}.rb svg{width:22px;height:22px}#rightBtns{gap:8px}#zoomGrp{gap:8px}
+  #spd{font-size:32px}
+  .wxc{right:12px;top:12px;padding:5px 12px;font-size:14px;gap:6px;border-radius:20px}.wxc b{font-size:18px}.wxc svg{width:22px;height:22px}.aq{font-size:12px;padding:2px 6px}
+  #fav{padding:8px 16px 12px}#fav .hd b{font-size:17px}#fav .hd button{font-size:14px;padding:6px 11px}
+  .fc{min-width:150px;max-width:220px;padding:11px 13px;border-radius:13px}.fc .k{font-size:12px}.fc .n{font-size:17px}.fc .d{font-size:12px}
+  .panel{padding:16px}.sheet h2{font-size:18px;margin:6px 0 10px}
+  .grid{gap:8px}.grid button{font-size:15px;padding:12px 6px;border-radius:11px}
+  .wide{font-size:17px;padding:12px;margin-top:12px;border-radius:11px}
+  .opt button{font-size:15px;padding:8px 12px;margin:5px 6px 0 0}
+  .band{border-radius:14px;margin:8px 0}.band .bt{font-size:15px;padding:11px 14px}.band .row{font-size:16px;padding:11px 14px}.band .row i{font-size:17px}
+  .item{font-size:18px;padding:11px 14px;margin:8px 0;border-radius:12px}.item small{font-size:13px}
+  .rt{padding:11px 14px;margin:8px 0;border-radius:13px}.rt .rk{font-size:13px}.rt .rm{font-size:15px}.rt .rm b{font-size:23px}.rt .rs{font-size:13px}.rt .tb{height:7px;margin-top:8px}
+  .keyRow input{font-size:16px;padding:9px}.keyRow button{font-size:15px;padding:0 14px}.muted{font-size:14px}
+  .pred button{font-size:14px;padding:8px 11px}
+  #restChip{font-size:15px;padding:6px 11px}#snd{font-size:15px;padding:7px 16px}
+  .back{font-size:26px}
 </style>
 </head>
 <body>
@@ -208,7 +240,7 @@
 
 <button id="wx" class="wxc"><span id="wxIc"></span><b id="wxT">-</b><span id="wxA"></span><span id="wxW" class="aq" style="display:none;background:#e3151a"></span></button>
 <div id="rightBtns">
-  <button class="rb" id="navBtn" title="목적지"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#111" stroke-width="2.6"/><path d="M15 15 L21 21" stroke="#111" stroke-width="2.8" stroke-linecap="round"/></svg></button>
+  <button class="rb" id="navBtn" title="목적지"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15 15 L21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg></button>
   <div id="zoomGrp"><button class="rb" id="zIn">+</button><button class="rb" id="zOut">−</button></div>
   <button class="rb" id="mute" title="소리"><svg viewBox="0 0 24 24" id="muteIc"></svg></button>
 </div>
@@ -216,15 +248,15 @@
 <div id="diag"></div>
 
 <div id="bottom">
-  <button class="ic" id="reroute" title="경로 다시 찾기"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6" fill="none" stroke="#111" stroke-width="2.4" stroke-linecap="round"/><path d="M20 4v5h-5" fill="none" stroke="#111" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="ic" id="reroute" title="경로 다시 찾기"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <div id="bMid"><div id="bInfo"></div><div id="tbar"><div id="tbarIn"></div><div id="tbarDone"></div><div id="tbarDot"></div></div></div>
-  <button class="ic" id="menuBtn" title="메뉴"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke="#111" stroke-width="2.6" stroke-linecap="round"/></svg></button>
+  <button class="ic" id="menuBtn" title="메뉴"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
 </div>
 
 <div id="fav"><div class="gripHit" id="favGrip"><div class="grip"></div></div><div class="hd"><b>어디로 갈까요?</b><button id="favSearch">검색</button><button id="favClose">닫기</button></div><div id="favList"></div></div>
 
 <div class="sheet" id="navSheet"><div class="panel">
-  <div class="sbar" id="sbar"><button class="bk" id="navClose" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="#222" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><input id="q" placeholder="어디로 갈까요?" autocomplete="off"><button class="clr" id="qClr" aria-label="지우기">✕</button><button class="go" id="qGo">검색</button></div>
+  <div class="sbar" id="sbar"><button class="bk" id="navClose" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><input id="q" placeholder="어디로 갈까요?" autocomplete="off"><button class="clr" id="qClr" aria-label="지우기">✕</button><button class="go" id="qGo">검색</button></div>
   <div class="chips" id="quick"></div>
   <div id="results"></div>
   <div class="sec" id="recentH">최근 목적지</div><div id="recent"></div>
@@ -416,7 +448,7 @@ function initMap(){
   map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/'+curStyle,center:[127.0276,37.4979],zoom:16.5,pitch:0,maxPitch:0,interactive:false,attributionControl:{compact:true}});
   map.on('styleimagemissing',function(e){makeImg(e.id)});
   map.on('style.load',function(){mapReady=false;
-    map.getStyle().layers.forEach(function(l){if(l.type==='fill-extrusion'||/poi/.test(l.id)){map.setLayoutProperty(l.id,'visibility','none');return}if(l.type==='symbol'&&l.layout&&l.layout['text-field'])map.setLayoutProperty(l.id,'text-field',['coalesce',['get','name:ko'],['get','name']])});
+    map.getStyle().layers.forEach(function(l){if(l.type==='fill-extrusion'){map.setLayoutProperty(l.id,'visibility','none');return}if(l.type==='symbol'&&l.layout&&l.layout['text-field'])map.setLayoutProperty(l.id,'text-field',['coalesce',['get','name:ko'],['get','name']])});
     map.addSource('route',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
     map.addLayer({id:'route-o',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','c'],2,'#b88600',3,'#c25500',4,'#a50e12','#1546b8'],'line-width':18}});
     map.addLayer({id:'route-l',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','c'],2,'#f5b400',3,'#ff7a00',4,'#e3151a','#2b7bff'],'line-width':13}});
@@ -430,10 +462,10 @@ function initMap(){
 }
 var curStyle='liberty';
 function nightNow(){if(CFG.night==='on')return true;if(CFG.night==='off')return false;var h=new Date().getHours();return h>=19||h<6}
-function applyNight(force){if(!map)return;var want=nightNow()?'dark':'liberty';if(want!==curStyle||force===true&&want!==curStyle){curStyle=want;map.setStyle('https://tiles.openfreemap.org/styles/'+want)}}
-setInterval(applyNight,60000);
+function applyNight(force){document.body.classList.toggle('night',nightNow());if(!map)return;var want=nightNow()?'dark':'liberty';if(want!==curStyle||force===true&&want!==curStyle){curStyle=want;map.setStyle('https://tiles.openfreemap.org/styles/'+want)}}
+setInterval(applyNight,60000);document.body.classList.toggle('night',nightNow());
 /* 지도 아이콘: 카메라·방지턱은 가는 방향 것만 (안내 중엔 경로 위, 아니면 앞쪽 부채꼴), 슈퍼차저·휴게소는 전부 */
-function sideOk(segH,la,lo,p){var d=dist(la,lo,p[0],p[1]);if(d<1)return true;var df=adiff(segH,brg(la,lo,p[0],p[1])),lat=d*Math.sin(df*D2R);return lat>=-12&&lat<=30}
+function sideOk(segH,la,lo,p){var d=dist(la,lo,p[0],p[1]);if(d<1)return true;var df=adiff(segH,brg(la,lo,p[0],p[1])),lat=d*Math.sin(df*D2R);return lat>=-10&&lat<=30}
 function routeHits(N){var cam={},bmp={},R=N.R,S=N.S,last=-1e9;
   for(var i=0;i<R.length-1;i++){if(S[i]-last<20)continue;last=S[i];var h=brg(R[i][0],R[i][1],R[i+1][0],R[i+1][1]),c0=Math.floor(R[i][0]*100),c1=Math.floor(R[i][1]*100);
     for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var k=(c0+a)+'_'+(c1+b),ids=GRID[k];
@@ -441,12 +473,12 @@ function routeHits(N){var cam={},bmp={},R=N.R,S=N.S,last=-1e9;
       var bs=BGRID[k];if(bs)bs.forEach(function(id){if(bmp[id]!=null)return;var p=BUMPS[id];if(dist(R[i][0],R[i][1],p[0],p[1])<18)bmp[id]=S[i]})}}
   N.cams=cam;N.bumps=bmp}
 var camSrcT=0,camSrcH=null;
-function aheadOk(la,lo,h,p,max){var d=dist(la,lo,p[0],p[1]);if(d>max)return false;if(d<15)return true;var df=adiff(h,brg(la,lo,p[0],p[1]));if(Math.abs(df)>35)return false;var lat=d*Math.sin(df*D2R);return lat>=-15&&lat<=35}
+function aheadOk(la,lo,h,p,max){var d=dist(la,lo,p[0],p[1]);if(d>max)return false;if(d<15)return true;var df=adiff(h,brg(la,lo,p[0],p[1]));if(Math.abs(df)>35)return false;var lat=d*Math.sin(df*D2R);return lat>=-10&&lat<=32}
 function updCamSrc(la,lo,h){
   if(!mapReady||!CAMS.length)return;var now=Date.now();
   if(camSrcAt&&now-camSrcT<1500&&dist(camSrcAt[0],camSrcAt[1],la,lo)<60&&(h==null||camSrcH==null||Math.abs(adiff(h,camSrcH))<15))return;camSrcAt=[la,lo];camSrcT=now;camSrcH=h;
   var f=[],c0=Math.floor(la*100),c1=Math.floor(lo*100),nav=NAV&&NAV.cams,s0=nav?NAV.s:0;
-  var camOk=function(id,c){if(nav){var cs=NAV.cams[id];return cs!=null&&cs>s0-30&&cs<s0+3000}if(h==null)return dist(la,lo,c[0],c[1])<1500;return aheadOk(la,lo,h,c,2500)};
+  var camOk=function(id,c){if(nav){var cs=NAV.cams[id];return cs!=null&&cs>s0-30&&cs<s0+3000}if(h==null)return dist(la,lo,c[0],c[1])<300;return aheadOk(la,lo,h,c,2500)};
   var bumpOk=function(id,p){if(nav){var bs=NAV.bumps[id];return bs!=null&&bs>s0-20&&bs<s0+800}if(h==null)return false;return aheadOk(la,lo,h,p,600)};
   for(var a=-3;a<=3;a++)for(var b=-3;b<=3;b++){var ck=(c0+a)+'_'+(c1+b),ids=GRID[ck];
     if(ids)for(var j=0;j<ids.length;j++){var c=CAMS[ids[j]];if(!camOk(ids[j],c))continue;f.push({type:'Feature',geometry:{type:'Point',coordinates:[c[1],c[0]]},properties:{ic:c[3]==='R'?'sig':'lim'+(c[3]==='X'?'x':'')+(c[5]===2?'z':'')+'-'+c[2],o:c[3]==='R'?0:1}})}
@@ -471,8 +503,8 @@ if(navigator.geolocation){navigator.geolocation.watchPosition(function(p){if(dem
 
 /* 소리 */
 var ac=null,muted=false,KO=false;
-var MUTE_ON='<path d="M4 9h4l5-4v14l-5-4H4z" fill="#111"/><path d="M16 8c1.5 1.2 1.5 6.8 0 8M18.5 5.5c3 2.5 3 10.5 0 13" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>';
-var MUTE_OFF='<path d="M4 9h4l5-4v14l-5-4H4z" fill="#111"/><path d="M16 9l5 6M21 9l-5 6" stroke="#e3151a" stroke-width="2.4" stroke-linecap="round"/>';
+var MUTE_ON='<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8c1.5 1.2 1.5 6.8 0 8M18.5 5.5c3 2.5 3 10.5 0 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+var MUTE_OFF='<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" stroke="#e3151a" stroke-width="2.4" stroke-linecap="round"/>';
 $('muteIc').innerHTML=MUTE_ON;
 function voicesReady(){if('speechSynthesis' in window)KO=speechSynthesis.getVoices().some(function(x){return /ko/i.test(x.lang)})}
 if('speechSynthesis' in window){voicesReady();speechSynthesis.onvoiceschanged=voicesReady}
