@@ -75,7 +75,7 @@ var mapReady=false,map=null,mapOn=localStorage.getItem('mapOff')!=='1',camSrcAt=
 function setMap(on){mapOn=on;document.body.classList.toggle('nomap',!on);$('mapBtn').textContent=on?'지도 끄기':'지도 켜기';localStorage.setItem('mapOff',on?'0':'1');if(on&&!map)initMap();if(map)setTimeout(function(){map.resize()},50)}
 function initMap(){
   if(!window.maplibregl){$('mapBtn').textContent='지도 불러오기 실패';return}
-  map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[127.0276,37.4979],zoom:16.5,pitch:45,interactive:false,attributionControl:{compact:true}});
+  map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[127.0276,37.4979],zoom:16.5,pitch:0,maxPitch:0,interactive:false,attributionControl:{compact:true}});
   map.on('load',function(){mapReady=true;
     map.getStyle().layers.forEach(function(l){if(l.type==='fill-extrusion'||/poi/.test(l.id)){map.setLayoutProperty(l.id,'visibility','none');return}if(l.type==='symbol'&&l.layout&&l.layout['text-field'])map.setLayoutProperty(l.id,'text-field',['coalesce',['get','name:ko'],['get','name']])});
     map.addSource('cams',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
@@ -146,7 +146,7 @@ function tick(){
   var age=Math.min(2,(now-fix.t)/1000),la=fix.la,lo=fix.lo;
   if(head!=null&&v>1){var p=move(la,lo,head,v*age);la=p[0];lo=p[1]}
   var kmh=v*3.6;$('spd').textContent=Math.round(kmh);$('spd2').textContent=Math.round(kmh);
-  if(map&&mapOn&&mapReady){var hh=$('map').clientHeight;map.jumpTo({center:[lo,la],bearing:head==null?0:head,zoom:kmh>70?15.5:16.5,pitch:45,padding:{top:hh*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo)}
+  if(map&&mapOn&&mapReady){var hh=$('map').clientHeight;map.jumpTo({center:[lo,la],bearing:head==null?0:head,zoom:kmh>70?15.5:16.5,pitch:0,padding:{top:hh*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo)}
   var over=false,zone=false;
   if(head!=null&&v>1.5&&CAMS.length){
     var t=findAhead(la,lo,head);
