@@ -680,7 +680,7 @@ var fix=null,prevFix=null,v=0,head=null,fixes=0,gaps=[],spdSrc='-',lastAcc=0,dem
 function onFix(la,lo,acc,h,spd,t){
   fixes++;lastAcc=acc;
   if(fix){gaps.push(t-fix.t);if(gaps.length>10)gaps.shift()}
-  prevFix=fix;fix={la:la,lo:lo,t:t,mt:t};if(prevFix&&spd!=null&&spd>5&&dist(prevFix.la,prevFix.lo,la,lo)<1)fix.mt=prevFix.mt;
+  prevFix=fix;fix={la:la,lo:lo,t:t,mt:t};var frozen=prevFix&&(spd!=null&&spd>0?spd:v)>5&&dist(prevFix.la,prevFix.lo,la,lo)<1&&t-prevFix.t<5000;if(frozen){if(!(spd!=null&&spd>0)){fix=prevFix;prevFix=null;return}fix.mt=prevFix.mt}
   var calc=null;
   if(prevFix){var dt=(t-prevFix.t)/1000;if(dt>0.2&&dt<5){var dm=dist(prevFix.la,prevFix.lo,la,lo);calc=dm/dt;if(dm>3)head=brg(prevFix.la,prevFix.lo,la,lo)}}
   if(spd!=null&&!isNaN(spd)&&spd>0){v=v*0.3+spd*0.7;spdSrc='차'}else if(calc!=null){v=v*0.5+calc*0.5;spdSrc='계산'}else if(spd===0){v=0;spdSrc='차'}
