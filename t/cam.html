@@ -564,20 +564,27 @@ $('wxClose').onclick=function(){show('wxSheet',0)};$('wxSheet').onclick=function
 
 /* 길 안내 */
 var NAV=null;
-function api(path,opt){opt=opt||{};opt.headers=Object.assign(KEY?{'appKey':KEY,'Accept':'application/json'}:{'Accept':'application/json'},opt.headers||{});return fetch((KEY?'https://apis.openapi.sk.com/tmap/':RELAY+'tmap/')+path,opt).then(function(r){if(!r.ok)return r.text().then(function(t){var m=t;try{m=JSON.parse(t).error||t}catch(e){}throw new Error((r.status===429?'':'HTTP '+r.status+' ')+String(m).slice(0,120))});return r.json()})}
+function api(path,opt){opt=opt||{};opt.headers=Object.assign(KEY?{'appKey':KEY,'Accept':'application/json'}:{'Accept':'application/json'},opt.headers||{});return fetch((KEY?'https://apis.openapi.sk.com/tmap/':RELAY+'tmap/')+path,opt).then(function(r){if(r.status===204)return{};if(!r.ok)return r.text().then(function(t){var m=t;try{m=JSON.parse(t).error||t}catch(e){}throw new Error((r.status===429?'':'HTTP '+r.status+' ')+String(m).slice(0,120))});return r.json()})}
 $('navBtn').onclick=function(){show('navSheet',1);renderRecent();renderQuick();$('results').innerHTML='';setTimeout(function(){$('q').focus()},50)};
 $('navClose').onclick=function(){show('navSheet',0);showFav()};
 $('q').onkeydown=function(e){if(e.key==='Enter')search()};
 $('qGo').onclick=search;
+function poiList(d){return(((d||{}).searchPoiInfo||{}).pois||{}).poi||[]}
+function poiQ(q,c,near){return api('pois?version=1&count=12&searchKeyword='+encodeURIComponent(q)+'&centerLat='+c.la+'&centerLon='+c.lo+'&reqCoordType=WGS84GEO&resCoordType=WGS84GEO&searchtypCd='+(near?'R&radius=3':'A')).then(poiList)}
+function poiLL(p){return{la:parseFloat(p.frontLat||p.noorLat),lo:parseFloat(p.frontLon||p.noorLon)}}
 function search(){
   var q=$('q').value.trim();if(!q)return;$('results').innerHTML='<div class="muted">찾는 중…</div>';
-  var c=fix||{la:37.4979,lo:127.0276};
-  api('pois?version=1&count=12&searchKeyword='+encodeURIComponent(q)+'&centerLat='+c.la+'&centerLon='+c.lo+'&reqCoordType=WGS84GEO&resCoordType=WGS84GEO&searchtypCd=A').then(function(d){
-    var ps=(((d||{}).searchPoiInfo||{}).pois||{}).poi||[];
+  var c=fix||{la:37.4979,lo:127.0276},w=q.split(/\s+/),title='';
+  /* 결과가 없으면: 붙여서 → 앞 낱말을 장소로 찾고 그 근처에서 나머지 (예: 오리 다이소 = 오리역 근처 다이소) → 반대로 */
+  poiQ(q,c).then(function(ps){if(ps.length||w.length<2)return ps;
+    return poiQ(w.join(''),c).then(function(p2){if(p2.length)return p2;
+      var tryNear=function(place,what){return poiQ(place,c).then(function(a){if(!a.length)return[];var best=a[0],bd=1e12;a.forEach(function(p){var l=poiLL(p),d=dist(c.la,c.lo,l.la,l.lo);if(d<bd){bd=d;best=p}});var at=poiLL(best);return poiQ(what,at,true).then(function(b){if(b.length)title=best.name+' 근처 \''+what+'\'';return b})})};
+      return tryNear(w[0],w.slice(1).join(' ')).then(function(b){return b.length?b:tryNear(w[w.length-1],w.slice(0,-1).join(' '))})})
+  }).then(function(ps){
     if(!ps.length){$('results').innerHTML='<div class="muted">결과 없음</div>';return}
-    $('results').innerHTML='';
-    ps.forEach(function(p){var la=parseFloat(p.frontLat||p.noorLat),lo=parseFloat(p.frontLon||p.noorLon);var addr=[p.upperAddrName,p.middleAddrName,p.lowerAddrName].filter(Boolean).join(' ');
-      $('results').appendChild(placeItem({name:p.name,la:la,lo:lo},addr+' · '+fmtD(dist(c.la,c.lo,la,lo))))});
+    $('results').innerHTML=title?'<h2 style="font-size:20px"></h2>':'';if(title)$('results').firstChild.textContent=title;
+    ps.forEach(function(p){var ll=poiLL(p),addr=[p.upperAddrName,p.middleAddrName,p.lowerAddrName].filter(Boolean).join(' ');
+      $('results').appendChild(placeItem({name:p.name,la:ll.la,lo:ll.lo},addr+' · '+fmtD(dist(c.la,c.lo,ll.la,ll.lo))))});
   }).catch(function(e){$('results').innerHTML='<div class="item">검색 실패: '+e.message+'</div>'});
 }
 function placeItem(dd,sub){
