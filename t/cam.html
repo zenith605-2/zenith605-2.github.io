@@ -1081,6 +1081,8 @@ function tick(){
   if(head!=null&&v>1.5&&CAMS.length){
     var t=findAhead(la,lo,head);
     if(target&&(!t||t.id!==target.id)){var tc=CAMS[target.id];var dNow=dist(la,lo,tc[0],tc[1]);var behind=Math.abs(adiff(head,brg(la,lo,tc[0],tc[1])))>90;
+      /* 회전·서행으로 카메라가 옆으로 빠지면(진행 방향 40° 밖, 안내 중엔 경로 위가 아니면) 대상에서 놓아 준다 — 옆 도로 카메라를 붙잡고 있던 문제 */
+      var dfT=Math.abs(adiff(head,brg(la,lo,tc[0],tc[1])));if(!behind&&dNow>40&&(dfT>40||(NAV&&NAV.cams&&NAV.cams[target.id]==null))){target=null;setAlert('','','')}else 
       if(behind||dNow>target.d+40){passed[target.id]=now;lastPassed=target.id;if(TRIP)TRIP.cams++;if(tc[4]===1)section={lim:tc[2],t:now,m:0,lastLa:la,lastLo:lo};if(tc[4]===2&&section){section=null;sayParts(['sec_end'],false,'구간단속이 끝났습니다',880,1)}target=null}}
     if(t&&(!target||t.d<target.d+40))target=t;
   }
