@@ -30,12 +30,12 @@
   #nArrow{width:28px;height:28px}
 
   #alertBox{position:fixed;left:24px;bottom:96px;z-index:5;display:flex;flex-direction:column;align-items:center;gap:6px}
-  #signWrap{position:relative;width:118px;height:118px;display:none}
+  #signWrap{position:relative;width:84px;height:84px;display:none}
   #alertBox.on #signWrap{display:block}
-  .lim{position:absolute;inset:0;border-radius:50%;background:#fff;border:15px solid #e3151a;box-sizing:border-box;color:#111;font-size:48px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px #0005}
+  .lim{position:absolute;inset:0;border-radius:50%;background:#fff;border:11px solid #e3151a;box-sizing:border-box;color:#111;font-size:34px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px #0005}
   .lim.z{box-shadow:0 0 0 6px #ffcc00,0 3px 10px #0005}
   #sgChild,#sgSig{position:absolute;display:none}
-  #sgChild{width:56px;height:52px;right:-22px;top:-14px}
+  #sgChild{width:40px;height:37px;right:-16px;top:-10px}
   #sgSig{width:62px;height:104px;left:28px;top:7px}
   #alertBox.child #sgChild,#alertBox.sig #sgSig{display:block}
   #alertBox.sig #sgSig{display:none}
@@ -43,12 +43,12 @@
   .lim b{font-weight:900;line-height:1}
   .tl{display:flex;gap:3px;background:#222;border-radius:7px;padding:3px 5px;margin-bottom:2px}
   .tl i{display:block;width:8px;height:8px;border-radius:50%}
-  #alertBox.sx .lim b{font-size:40px}
-  #alertBox.sig .tl{transform:scale(1.8)}
-  #pill{display:none;background:#e3151a;color:#fff;font-size:34px;font-weight:800;border-radius:8px;padding:2px 14px;min-width:96px;text-align:center;box-shadow:0 3px 10px #0004}
+  #alertBox.sx .lim b{font-size:28px}
+  #alertBox.sig .tl{transform:scale(1.4)}
+  #pill{display:none;background:#e3151a;color:#fff;font-size:24px;font-weight:800;border-radius:7px;padding:1px 10px;min-width:70px;text-align:center;box-shadow:0 3px 10px #0004}
   #alertBox.on #pill{display:block}
   body.over #pill{animation:blink .55s steps(2,jump-none) infinite}
-  #tag{display:none;background:#ffc81e;color:#111;font-size:22px;font-weight:800;border-radius:8px;padding:3px 12px;min-width:96px;text-align:center;box-shadow:0 3px 10px #0004;margin-top:-4px}
+  #tag{display:none;background:#ffc81e;color:#111;font-size:16px;font-weight:800;border-radius:7px;padding:2px 9px;min-width:70px;text-align:center;box-shadow:0 3px 10px #0004;margin-top:-4px}
   #alertBox.on #tag{display:block}
   #alertBox.sec #tag{background:#1f5fd6;color:#fff}
   #spd{margin-bottom:4px;font-size:40px;font-weight:900;line-height:1;margin-top:2px;color:#111;text-shadow:0 0 4px #fff,0 0 4px #fff,0 0 8px #fff}
@@ -143,11 +143,11 @@
   #start{position:fixed;inset:0;background:#101215f2;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:30;color:#fff}
   #start button{font-size:40px;padding:26px 60px;border-radius:20px;border:0;background:#3d8bff;color:#fff;font-weight:800}
   #start p{font-size:22px;opacity:.75;margin-top:24px;text-align:center}
-  #bumpBox{position:fixed;left:166px;bottom:112px;z-index:5;display:none;flex-direction:column;align-items:center;gap:4px}
+  #bumpBox{position:fixed;left:126px;bottom:104px;z-index:5;display:none;flex-direction:column;align-items:center;gap:4px}
   #bumpBox.on{display:flex}
-  #bumpBox svg{width:80px;height:72px;filter:drop-shadow(0 3px 6px #0005)}
-  #bumpBox b{background:#ffc81e;color:#111;font-size:26px;font-weight:800;border-radius:8px;padding:2px 12px;box-shadow:0 3px 10px #0004}
-  body.nomap #bumpBox{left:calc(50% + 100px)}
+  #bumpBox svg{width:58px;height:52px;filter:drop-shadow(0 3px 6px #0005)}
+  #bumpBox b{background:#ffc81e;color:#111;font-size:19px;font-weight:800;border-radius:8px;padding:2px 12px;box-shadow:0 3px 10px #0004}
+  body.nomap #bumpBox{left:calc(50% + 80px)}
   #restChip{display:none;margin:8px 0 0 10px;background:#fff;color:#111;border:0;border-radius:14px;padding:8px 14px;font-size:20px;box-shadow:0 3px 10px #0003;text-align:left;max-width:360px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   #restChip.show{display:block}#restChip b{color:#2b7bff}
   body.big #turn,body.big #next{zoom:1.2}body.big #alertBox,body.big #bumpBox{zoom:1.3}body.big #bInfo{zoom:1.15}body.big .panel{zoom:1.12}
@@ -396,7 +396,7 @@ function initMap(){
     map.addSource('dest',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
     map.addLayer({id:'dest-i',type:'symbol',source:'dest',layout:{'icon-image':['coalesce',['get','ic'],'dest'],'icon-anchor':'bottom','icon-allow-overlap':true,'icon-rotation-alignment':'viewport'}});
     map.addSource('cams',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
-    map.addLayer({id:'cams-i',type:'symbol',source:'cams',layout:{'icon-image':['get','ic'],'icon-allow-overlap':true,'icon-ignore-placement':true,'icon-rotation-alignment':'viewport','symbol-sort-key':['get','o']}});
+    map.addLayer({id:'cams-i',type:'symbol',source:'cams',layout:{'icon-image':['get','ic'],'icon-size':['interpolate',['linear'],['zoom'],11,0.4,14,0.6,16,0.75,18,0.9],'icon-allow-overlap':true,'icon-ignore-placement':true,'icon-rotation-alignment':'viewport','symbol-sort-key':['get','o']}});
     mapReady=true;camSrcAt=null;drawRoute();
   });
 }
@@ -788,7 +788,7 @@ function tick(){
   var age=Math.min(2,(now-fix.t)/1000),la=fix.la,lo=fix.lo;
   if(head!=null&&v>1){var p=move(la,lo,head,v*age);la=p[0];lo=p[1]}
   var kmh=v*3.6;$('spd').textContent=Math.round(kmh);
-  if(mapReady&&mapOn){map.jumpTo({center:[lo,la],bearing:(head==null||!CFG.rot)?0:head,zoom:(kmh>70?15.5:16.5)+zoff,pitch:0,padding:{top:(innerHeight-78)*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo,v>1.5?head:null)}
+  if(mapReady&&mapOn){map.jumpTo({center:[lo,la],bearing:(head==null||!CFG.rot)?0:head,zoom:(kmh>70?15.5:16.5)+zoff,pitch:0,padding:{top:(innerHeight-78)*0.36,bottom:0,left:0,right:0}});updCamSrc(la,lo,head)}
   $('carMk').style.transform='translate(-50%,-50%) rotate('+((!CFG.rot&&head!=null)?head:0)+'deg)';
   var nv=navTick(la,lo,kmh,now);
   if(nv){var eta=new Date(now+nv.rt*1000),h=eta.getHours();var mins=Math.round(nv.rt/60),rtT=mins>=60?Math.floor(mins/60)+'시간 '+(mins%60)+'분':mins+'분';$('bInfo').innerHTML='<span>'+(h<12?'오전':'오후')+' <b>'+String(h%12||12).padStart(2,'0')+':'+String(eta.getMinutes()).padStart(2,'0')+'</b></span><span><b>'+bigD(nv.remain).replace('<small>','</b><span>').replace('</small>','</span>')+'</span><span>'+rtT+' 남음</span><span class="gray">'+NAV.dest.name.replace(/</g,'')+'</span>'}
