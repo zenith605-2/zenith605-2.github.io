@@ -86,6 +86,8 @@
 
   #fav{position:fixed;left:0;right:0;bottom:78px;z-index:8;background:#fff;color:#111;border-top-left-radius:22px;border-top-right-radius:22px;box-shadow:0 -4px 18px #0003;padding:10px 22px 18px;transform:translateY(calc(100% + 120px));transition:transform .35s ease;visibility:hidden}
   #fav.show{transform:none;visibility:visible}
+  #fav{touch-action:pan-x}#fav.drag{transition:none}
+  #fav .grip{width:90px;height:8px;margin:0 auto 6px;cursor:grab}#fav .gripHit{padding:8px 0 4px;margin:-10px 0 0}
   #fav .hd{display:flex;align-items:center;gap:10px}
   #fav .hd b{font-size:22px;flex:1}
   #fav .hd button{border:0;background:#eef1f5;border-radius:10px;font-size:18px;padding:8px 14px}
@@ -193,7 +195,7 @@
   <button class="ic" id="menuBtn" title="메뉴"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke="#111" stroke-width="2.6" stroke-linecap="round"/></svg></button>
 </div>
 
-<div id="fav"><div class="grip"></div><div class="hd"><b>어디로 갈까요?</b><button id="favSearch">검색</button><button id="favClose">닫기</button></div><div id="favList"></div></div>
+<div id="fav"><div class="gripHit" id="favGrip"><div class="grip"></div></div><div class="hd"><b>어디로 갈까요?</b><button id="favSearch">검색</button><button id="favClose">닫기</button></div><div id="favList"></div></div>
 
 <div class="sheet" id="navSheet"><div class="panel">
   <div class="srch"><button class="back" id="navClose">‹</button><input id="q" placeholder="장소 검색" autocomplete="off"><button id="qGo">검색</button></div>
@@ -479,6 +481,12 @@ function renderFav(){
 function showFav(){if(NAV||favDismissed)return;renderFav();show('fav',1)}
 function hideFav(){show('fav',0)}
 $('favClose').onclick=function(){favDismissed=true;hideFav()};
+/* 아래로 끌거나 손잡이를 누르면 내려간다 */
+(function(){var F=$('fav'),y0=null,dy=0,moved=false;
+  F.addEventListener('pointerdown',function(e){if(e.target.closest('button')&&!e.target.closest('#favGrip'))return;y0=e.clientY;dy=0;moved=false;F.classList.add('drag')});
+  F.addEventListener('pointermove',function(e){if(y0==null)return;dy=Math.max(0,e.clientY-y0);if(dy>6)moved=true;F.style.transform=dy?'translateY('+dy+'px)':''});
+  var end=function(e){if(y0==null)return;F.classList.remove('drag');F.style.transform='';var tap=!moved&&e&&e.target&&e.target.closest&&e.target.closest('#favGrip');if(dy>60||tap){favDismissed=true;hideFav()}y0=null;dy=0};
+  F.addEventListener('pointerup',end);F.addEventListener('pointercancel',end);F.addEventListener('pointerleave',end)})();
 $('favSearch').onclick=function(){hideFav();$('navBtn').onclick()};
 setInterval(function(){if($('fav').classList.contains('show')&&v>6)hideFav()},1000);
 
