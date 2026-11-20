@@ -395,6 +395,7 @@
   <p class="muted">통행료는 예상 금액입니다. 전기차 감면은 2026년 30%, 2027년 20% (전기차로 등록한 하이패스 단말기일 때만). 출퇴근 할인·기타 감면은 반영하지 않습니다.</p>
   <h2 style="font-size:20px;margin-top:22px">야간 모드</h2><div class="opt" id="nightOpts"></div>
   <h2 style="font-size:20px;margin-top:22px">티맵 키 (지도 인증용 · 이 차에만 저장)</h2><div class="keyRow"><input id="keyIn" placeholder="앱 키 붙여 넣기" autocomplete="off"><button id="keySave">저장</button></div><p class="muted" id="keyState"></p>
+  <h2 style="font-size:20px;margin-top:18px">CCTV 키 (국가교통정보센터 · 이 차에만 저장)</h2><div class="keyRow"><input id="itsIn" placeholder="인증키 붙여 넣기" autocomplete="off"><button id="itsSave">저장</button></div><p class="muted" id="itsState"></p>
   <h2 style="font-size:20px;margin-top:22px">진단 정보 표시</h2><div class="opt"><button id="diagBtn">켜짐</button></div>
 </div></div>
 
@@ -450,6 +451,8 @@ function renderSet(){
 }
 function onOffRows(box,list){var TB=$(box);TB.innerHTML='';list.forEach(function(o){var row=document.createElement('div');row.className='row';row.innerHTML='<span></span><i></i>';row.querySelector('span').textContent=o[1];row.querySelector('i').textContent=CFG[o[0]]?'켬':'끔';row.querySelector('i').style.color=CFG[o[0]]?'#2b7bff':'#999';row.onclick=function(){CFG[o[0]]=!CFG[o[0]];LS.setItem(o[0],CFG[o[0]]?'1':'0');renderSet()};TB.appendChild(row)})}
 $('keySave').onclick=function(){var k=$('keyIn').value.trim();if(!k){KEY='';LS.removeItem('tmapKey');renderSet();return}if(k.length<20){$('keyState').textContent='키가 너무 짧습니다';return}KEY=k;LS.setItem('tmapKey',k);$('keyIn').value='';renderSet()};
+$('itsSave').onclick=function(){var k=$('itsIn').value.trim().replace(/\s/g,'');if(!k){LS.removeItem('itsKey');$('itsState').textContent='지움';return}if(!/^[0-9a-f]{32}$/i.test(k)){$('itsState').textContent='32자리 키가 아닙니다';return}LS.setItem('itsKey',k);$('itsIn').value='';$('itsState').textContent='저장됨 · 가는 길 CCTV 사용 가능'};
+try{if(LS.getItem('itsKey'))$('itsState').textContent='저장됨'}catch(e){}
 $('diagBtn').onclick=function(){CFG.diag=!CFG.diag;LS.setItem('diagOff',CFG.diag?'0':'1');renderSet()};
 $('effIn').onchange=function(){var x=Number(this.value);if(x>=2&&x<=12){CFG.eff=x;LS.setItem('eff',String(x))}};$('kwhIn').onchange=function(){var x=Number(this.value);if(x>=0&&x<=1000){CFG.kwh=x;LS.setItem('kwh',String(x))}};
 $('setClose').onclick=function(){show('setSheet',0)};
@@ -1095,8 +1098,11 @@ function cctvBigClose(){$('cctvBig').classList.remove('on');ccStop('big')}
 function cctvOpen(){if(!NAV){toast('길 안내 중에 볼 수 있어요');return}var bar=$('cctvBar'),row=$('cctvRow');bar.classList.add('on');row.innerHTML='';var nJ=jamCards(row);var wait=document.createElement('div');wait.className='note';wait.textContent='CCTV 찾는 중…';row.appendChild(wait);$('cctvN').textContent=nJ?'막히는 곳 '+nJ+'곳 · 누르면 지도에서 보기':'';var noteSet=function(t){wait.textContent=t};
   var R=NAV.R,S=NAV.S,i0=NAV.idx||0,a=[],x0=999,x1=-999,y0=999,y1=-999;for(var i=i0;i<R.length&&S[i]-NAV.s<40000;i++){var p=R[i];if(Math.max(x1,p[1])-Math.min(x0,p[1])>1.4||Math.max(y1,p[0])-Math.min(y0,p[0])>1.4)break;x0=Math.min(x0,p[1]);x1=Math.max(x1,p[1]);y0=Math.min(y0,p[0]);y1=Math.max(y1,p[0]);a.push(i)}
   if(a.length<2){noteSet('');return}
-  fetch(RELAY.replace(/tmap\/?$/,'')+'cctv?minX='+(x0-0.01)+'&maxX='+(x1+0.01)+'&minY='+(y0-0.01)+'&maxY='+(y1+0.01)).then(function(r){return r.json().then(function(d){return{st:r.status,d:d}})}).then(function(o){
-    if(o.st===503){noteSet('CCTV는 인증키 연결 뒤에 나옵니다');return}
+  var bb='&minX='+(x0-0.01).toFixed(4)+'&maxX='+(x1+0.01).toFixed(4)+'&minY='+(y0-0.01).toFixed(4)+'&maxY='+(y1+0.01).toFixed(4),IK=LS.getItem('itsKey');
+  var src=IK?Promise.all(['ex','its'].map(function(t){return fetch('https://openapi.its.go.kr:9443/cctvInfo?apiKey='+IK+'&type='+t+'&cctvType=4&getType=json'+bb).then(function(r){return r.json()}).then(function(d){return((d.response||{}).data||[]).map(function(c){return[+c.coordy,+c.coordx,String(c.cctvname||'').trim(),c.cctvurl,t]})}).catch(function(){return[]})})).then(function(a){return{st:200,d:{list:a[0].concat(a[1])}}})
+    :fetch(RELAY+'cctv?'+bb.slice(1)).then(function(r){return r.json().then(function(d){return{st:r.status,d:d}})});
+  src.then(function(o){
+    if(o.st===503){noteSet('CCTV는 설정(≡)에서 CCTV 키를 넣으면 나옵니다');return}
     var out=[];(o.d.list||[]).forEach(function(c){var bd=1e9,bs=0;for(var k=0;k<a.length-1;k++){var A=R[a[k]],B=R[a[k+1]];var q=projSeg(c[0],c[1],A,B),dd=dist(c[0],c[1],q[0],q[1]);if(dd<bd){bd=dd;bs=S[a[k]]+dist(A[0],A[1],q[0],q[1])}}if(bd<150&&bs>NAV.s-100)out.push({la:c[0],lo:c[1],n:c[2].replace(/^\[[^\]]*\]\s*/,''),u:c[3],s:bs})});
     out.sort(function(x,y){return x.s-y.s});var seen={};out=out.filter(function(c){var k=Math.round(c.s/150);if(seen[k])return false;seen[k]=1;return true});CC.list=out;
     if(!out.length){noteSet('앞쪽 40km 경로에 CCTV가 없습니다');return}
