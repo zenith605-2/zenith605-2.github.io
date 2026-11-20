@@ -1258,12 +1258,16 @@ function tickBody(){
   document.body.classList.toggle('over',over);document.body.classList.toggle('zone',zone);
   if(over&&now-lastBeep>700){beep(1400,0.15,1);lastBeep=now}
   if(CFG.diag){var g=gaps.length?Math.round(gaps.reduce(function(a,b){return a+b},0)/gaps.length):0;
-    $('diag').textContent=(demo?'시연 중 · ':'')+'정확도 '+Math.round(lastAcc)+'m · 간격 '+g+'ms · 수신 '+fixes+'\n속도 '+spdSrc+' · 알림 '+fmtD(alertD)+' · 음성 '+(KO?'한국어':'없음')+' · 카메라 기준 '+(LS.getItem('camsRef')||'-')}
+    $('diag').textContent=(demo?'시연 중 · ':'')+'정확도 '+Math.round(lastAcc)+'m · 간격 '+g+'ms · 수신 '+fixes+'\n속도 '+spdSrc+' · 알림 '+fmtD(alertD)+' · 음성 '+(KO?'한국어':'없음')+' · 카메라 기준 '+(LS.getItem('camsRef')||'-')+HID.last}
   
 }
 
 /* 한 번의 오류로 화면 갱신이 영영 멈추지 않게: 오류는 진단 줄에 남기고 다음 프레임 계속 */
 var lastErr='',errN=0,bootT0=Date.now();
+/* 후진 카메라 등으로 브라우저가 가려지면 requestAnimationFrame 이 멈출 수 있어, 가려진 동안은 1초마다 직접 돌려 경고를 이어 간다. 가려진 시간·그동안 받은 위치 수는 진단 줄에 */
+var HID={t:0,f:0,ticks:0,last:''};
+document.addEventListener('visibilitychange',function(){if(document.hidden){HID.t=Date.now();HID.f=fixes;HID.ticks=0}else if(HID.t){HID.last=' · 가려짐 '+Math.round((Date.now()-HID.t)/1000)+'초 위치 '+(fixes-HID.f)+'회 갱신 '+HID.ticks+'회';HID.t=0}});
+setInterval(function(){if(!document.hidden)return;HID.ticks++;try{tickBody()}catch(e){errN++;lastErr=String(e&&e.message||e).slice(0,80)}},1000);
 (function(){try{if(nightNow())$('boot').classList.add('dk')}catch(e){}var iv=setInterval(function(){var w=Date.now()-bootT0;if((mapReady||!mapOn)&&(fix||w>8000)||w>12000){clearInterval(iv);$('boot').classList.add('off');setTimeout(function(){$('boot').style.display='none'},400)}},150)})();
 function tick(){try{tickBody()}catch(e){errN++;lastErr=String(e&&e.message||e).slice(0,80);try{$('diag').style.display='';$('diag').textContent='오류 '+errN+': '+lastErr}catch(x){}}requestAnimationFrame(tick)}
 addEventListener('error',function(e){errN++;lastErr=String(e.message).slice(0,80)});
