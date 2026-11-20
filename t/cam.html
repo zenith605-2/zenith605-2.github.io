@@ -245,6 +245,7 @@
   #fastCard.show{display:block}#fastCard .ft b{display:block;font-size:17px;color:#16803a}#fastCard .ft span{font-size:13px;color:#555}#fastCard .fa{display:flex;gap:8px;margin-top:10px}
   #fastCard .fa button{flex:1;height:38px;border:0;border-radius:9px;font-size:15px;font-weight:700;background:#f1f3f6;color:#111}#fastCard #fastYes{background:#2b7bff;color:#fff}
   body.night #fastCard{background:#1c1f24;color:#e8eaed}body.night #fastCard .ft span{color:#aab}body.night #fastCard .fa #fastNo{background:#2a2e35;color:#e8eaed}
+  .more{display:block;width:100%;margin-top:8px;border:0;border-radius:10px;background:#f1f3f6;color:#333;font-size:13px;padding:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}body.night .more{background:#2a2e35;color:#c3c8cf}
 </style>
 </head>
 <body>
@@ -623,7 +624,7 @@ function addFav(d){var f=getL('favDest').filter(function(x){return x.name!==d.na
 var favDismissed=false;
 var FEC={};
 function favEta(d,el){if(!fix)return;var k=d.name,c=FEC[k];var put=function(r){var eta=new Date(Date.now()+r.time*1000);el.textContent='약 '+hm(r.time*1000)+' · '+tm(eta)+' 도착'};
-  if(c&&Date.now()-c.t<300000&&dist(c.la,c.lo,fix.la,fix.lo)<500){put(c.r);return}
+  if(c&&Date.now()-c.t<1800000&&dist(c.la,c.lo,fix.la,fix.lo)<2000){put(c.r);return}
   fetchRoute(fix,d,'0').then(function(r){FEC[k]={r:r,t:Date.now(),la:fix.la,lo:fix.lo};put(r)}).catch(function(){})}
 function renderFav(){
   var box=$('favList');box.innerHTML='';var items=[];
@@ -805,7 +806,8 @@ function secH(t){var d=document.createElement('div');d.className='sec';d.textCon
 var DTB=null;
 function detour(list){if(!NAV||!fix||!list.length)return;var N=NAV,c={la:fix.la,lo:fix.lo};
   var base=DTB&&DTB.N===N&&Date.now()-DTB.t<120000?Promise.resolve(DTB.time):fetchRoute(c,N.dest,N.opt||'0',N.via).then(function(r){DTB={N:N,t:Date.now(),time:r.time};return r.time});
-  base.then(function(bt){list.slice(0,4).forEach(function(x){fetchRoute(c,N.dest,N.opt||'0',(N.via||[]).concat([x.dd]).slice(0,5)).then(function(r){var m=Math.max(0,Math.round((r.time-bt)/60)),sb=x.el.querySelector('.sb');if(sb)sb.textContent+=' · 들르면 +'+m+'분'}).catch(function(){})})}).catch(function(){})}
+  base.then(function(bt){list.slice(0,3).forEach(function(x){fetchRoute(c,N.dest,N.opt||'0',(N.via||[]).concat([x.dd]).slice(0,5)).then(function(r){var m=Math.max(0,Math.round((r.time-bt)/60)),sb=x.el.querySelector('.sb');if(sb)sb.textContent+=' · 들르면 +'+m+'분'}).catch(function(){})})}).catch(function(){})}
+function detourBtn(box,DL){if(!DL.length)return;var b=document.createElement('button');b.className='more';b.textContent='들르면 몇 분 더 걸리는지 보기 (위 3곳)';b.onclick=function(){b.disabled=true;b.textContent='계산 중…';detour(DL);setTimeout(function(){b.remove()},1500)};var h=box.querySelector('.sec');if(h&&h.nextSibling)box.insertBefore(b,h.nextSibling);else box.insertBefore(b,box.firstChild)}
 function placeItem(dd,sub,ic){
   var el=document.createElement('div');el.className='pl';el.innerHTML='<div class="ic">'+(IC[ic]||IC.pin)+'</div><div class="tx"><div class="nm"></div><div class="sb"></div><div class="ac"></div></div>';
   el.querySelector('.nm').textContent=dd.name;el.querySelector('.sb').textContent=sub||'';
@@ -823,7 +825,7 @@ function quick(kind){var box=$('results'),c=fix||{la:37.4979,lo:127.0276};box.in
     api('pois/search/around?version=1&centerLat='+c.la+'&centerLon='+c.lo+'&categories='+encodeURIComponent(cn)+'&radius=3&count=40&reqCoordType=WGS84GEO&resCoordType=WGS84GEO').then(function(d){
       var seen={},ps=poiList(d).filter(function(p){return !/(주차장|정문|후문|입구|출구)\d*$/.test(p.name.trim())||cn==='주차장'}).map(function(p){var l=poiLL(p);return{p:p,l:l,d:dist(c.la,c.lo,l.la,l.lo)}}).filter(function(x){if(seen[x.p.name])return false;seen[x.p.name]=1;return true}).sort(function(a,b){return a.d-b.d}).slice(0,20);
       box.innerHTML='';if(!ps.length){box.innerHTML='<div class="note">3km 안에 없습니다</div>';return}box.appendChild(secH('가까운 '+cat[1]));
-      var DL=[];ps.forEach(function(x){var addr=[x.p.middleAddrName,x.p.lowerAddrName].filter(Boolean).join(' '),dd={name:x.p.name,la:x.l.la,lo:x.l.lo},el=placeItem(dd,fmtD(x.d)+(addr?' · '+addr:''),cat[0]);DL.push({dd:dd,el:el});box.appendChild(el)});if(NAV)detour(DL)
+      var DL=[];ps.forEach(function(x){var addr=[x.p.middleAddrName,x.p.lowerAddrName].filter(Boolean).join(' '),dd={name:x.p.name,la:x.l.la,lo:x.l.lo},el=placeItem(dd,fmtD(x.d)+(addr?' · '+addr:''),cat[0]);DL.push({dd:dd,el:el});box.appendChild(el)});if(NAV)detourBtn(box,DL)
     }).catch(function(e){box.innerHTML='<div class="note">검색 실패: '+e.message+'</div>'});return}
   if(kind==='park'||kind==='dpark'){    var t=kind==='dpark'&&NAV?NAV.dest:c;box.innerHTML='<div class="note">찾는 중…</div>';
     api('pois/search/around?version=1&centerLat='+t.la+'&centerLon='+t.lo+'&categories='+encodeURIComponent('주차장')+'&radius=1&count=15&reqCoordType=WGS84GEO&resCoordType=WGS84GEO').then(function(d){
@@ -836,7 +838,7 @@ function quick(kind){var box=$('results'),c=fix||{la:37.4979,lo:127.0276};box.in
   var title=items.length?'경로 위 '+(kind==='sc'?'슈퍼차저':'휴게소 · 졸음쉼터'):'가까운 '+(kind==='sc'?'슈퍼차저':'휴게소 · 졸음쉼터');
   if(!items.length)items=src.map(function(p){return{p:p,d:dist(c.la,c.lo,p[0],p[1])}}).sort(function(a,b){return a.d-b.d}).slice(0,15).map(function(x){return{p:x.p,sub:'직선 '+fmtD(x.d)}});
   box.innerHTML='';box.appendChild(secH(title));
-  var DL=[];items.slice(0,20).forEach(function(x){var dd={name:nm(x.p),la:x.p[0],lo:x.p[1]},el=placeItem(dd,(kind==='rest'?(x.p[3]==='R'?'졸음쉼터 · ':'휴게소 · '):'')+x.sub,kind==='sc'?'sc':(x.p[3]==='R'?'nap':'rest'));DL.push({dd:dd,el:el});box.appendChild(el)});if(NAV)detour(DL);
+  var DL=[];items.slice(0,20).forEach(function(x){var dd={name:nm(x.p),la:x.p[0],lo:x.p[1]},el=placeItem(dd,(kind==='rest'?(x.p[3]==='R'?'졸음쉼터 · ':'휴게소 · '):'')+x.sub,kind==='sc'?'sc':(x.p[3]==='R'?'nap':'rest'));DL.push({dd:dd,el:el});box.appendChild(el)});if(NAV)detourBtn(box,DL);
   var m=document.createElement('div');m.className='note';m.textContent=kind==='sc'?'슈퍼차저: supercharge.info 커뮤니티 자료 기준(한국 약 190곳, 매일 갱신). 실시간 빈자리·가격은 테슬라가 공개하지 않아 없습니다.':'휴게소 · 졸음쉼터: OpenStreetMap 기준';box.appendChild(m);hideKb()}
 function addVia(d){if(!NAV)return;NAV.via=(NAV.via||[]).concat([{name:d.name,la:d.la,lo:d.lo}]).slice(0,5);show('navSheet',0);sayParts(['via_add'],true,'경유지를 추가했습니다',520,1);route()}
 $('clearVia').onclick=function(){if(NAV){NAV.via=[];route()}show('menuSheet',0)};
@@ -865,21 +867,28 @@ function saveRecent(d){var r=[];try{r=JSON.parse(LS.getItem('recentDest')||'[]')
 var OPTS=[['0','추천'],['2','최소시간'],['1','무료도로'],['10','최단거리'],['4','고속도로 우선'],['3','초보'],['19','어린이보호구역 회피']];
 function selRoute(el,d){if(rtSel)rtSel.classList.remove('sel');rtSel=el;el.classList.add('sel');$('rtGo').style.display='block';$('rtGo').onclick=function(){show('rtSheet',0);applyRoute(d,el._r)};previewRoute(el._r,d)}
 function startNav(d){
-  rtSel=null;$('rtGo').style.display='none';
+  rtSel=null;rtBase=0;$('rtGo').style.display='none';
   show('navSheet',0);hideFav();saveRecent(d);
   $('rtList').innerHTML='<div class="muted">경로 찾는 중…</div>';$('rtDest').textContent=d.name;renderPred(d);show('rtSheet',1);
   var c=fix||{la:37.4979,lo:127.0276};
-  Promise.all(OPTS.map(function(o){return fetchRoute(c,d,o[0]).then(function(r){r.opt=o;return r}).catch(function(e){return{err:e.message,opt:o}})})).then(function(rs){
-    var box=$('rtList');box.innerHTML='';var seen={},shown=0;
+  RTS={d:d,c:c,seen:{},shown:0};$('rtList').innerHTML='';fetchOpts(OPTS.slice(0,3),true);
+}
+/* 경로 비교: 처음 3개만(티맵 무료 하루 1,000건 아끼기), 나머지는 [다른 경로 더 보기] */
+var RTS=null;
+function fetchOpts(list,first){var S0=RTS,d=S0.d,c=S0.c;var mb=$('rtMore');if(mb)mb.remove();var ld=document.createElement('div');ld.className='muted';ld.textContent='경로 찾는 중…';$('rtList').appendChild(ld);
+  Promise.all(list.map(function(o){return fetchRoute(c,d,o[0]).then(function(r){r.opt=o;return r}).catch(function(e){return{err:e.message,opt:o}})})).then(function(rs){
+    if(RTS!==S0)return;ld.remove();var box=$('rtList'),seen=S0.seen,shown=0;
     rs.forEach(function(r){if(r.err)return;var key=Math.round(r.dist/100)+'_'+Math.round(r.time/60);if(seen[key]){seen[key].push(r.opt[1]);return}seen[key]=[r.opt[1]];
       var el=document.createElement('div');el.className='rt';var eta=new Date(Date.now()+r.time*1000),h=eta.getHours(),mins=Math.round(r.time/60);
       el.innerHTML='<div class="rk"></div><div class="rm"><b>'+(mins>=60?Math.floor(mins/60)+'시간 '+(mins%60)+'분':mins+'분')+'</b> · '+fmtD(r.dist)+'</div><div class="rs">'+(h<12?'오전 ':'오후 ')+(h%12||12)+':'+String(eta.getMinutes()).padStart(2,'0')+' 도착'+(CFG.tollShow?' · 통행료 '+tollOf(r.fare).toLocaleString()+'원':'')+' · 전기요금 약 '+(Math.round(r.dist/1000/CFG.eff*CFG.kwh/100)*100).toLocaleString()+'원</div><div class="tb"></div>';
       var lab=seen[key];el.querySelector('.rk').textContent=lab[0];el._lab=lab;
       var tb=el.querySelector('.tb'),col={1:'#22b14c',2:'#f5b400',3:'#ff7a00',4:'#e3151a'},st=0,cur=r.C[0]||0;for(var i=1;i<=r.S.length-1;i++){var cc=i<r.S.length-1?(r.C[i]||0):-1;if(cc!==cur){var seg=document.createElement('i');seg.style.width=((r.S[i]-r.S[st])/r.dist*100)+'%';seg.style.background=col[cur]||'#2b7bff';tb.appendChild(seg);st=i;cur=cc}}
-      el._r=r;el.onclick=function(){if(rtSel===el){show('rtSheet',0);applyRoute(d,r);return}selRoute(el,d)};box.appendChild(el);shown++;if(shown===1)setTimeout(function(){selRoute(el,d)},0);
+      el._r=r;el.onclick=function(){if(rtSel===el){show('rtSheet',0);applyRoute(d,r);return}selRoute(el,d)};box.appendChild(el);shown++;S0.shown++;if(first&&shown===1)setTimeout(function(){selRoute(el,d)},0);
       setTimeout(function(){el.querySelector('.rk').textContent=lab.join(' · ')},0)});
-    if(!shown)box.innerHTML='<div class="item">경로를 찾지 못했습니다: '+((rs[0]||{}).err||'')+'</div>';
-    rtBase=0;rs.forEach(function(r){if(!r.err&&(!rtBase||r.time<rtBase))rtBase=r.time});
+    if(!S0.shown)box.innerHTML='<div class="item">경로를 찾지 못했습니다: '+((rs[0]||{}).err||'')+'</div>';
+    rs.forEach(function(r){if(!r.err&&(!rtBase||r.time<rtBase))rtBase=r.time});
+    var rest=OPTS.filter(function(o){return !rs.some(function(r){return r.opt[0]===o[0]})&&!Object.keys(seen).some(function(k){return seen[k].indexOf(o[1])>=0})});
+    if(first&&rest.length){var b=document.createElement('button');b.id='rtMore';b.className='more';b.textContent='다른 경로 더 보기 ('+rest.map(function(o){return o[1]}).join(' · ')+')';b.onclick=function(){fetchOpts(rest,false)};box.parentNode.insertBefore(b,box.nextSibling)}
   });
 }
 $('rtClose').onclick=function(){show('rtSheet',0);endPreview();showFav()};
@@ -920,7 +929,7 @@ $('reroute').onclick=function(){if(NAV)route()};
 /* 더 빠른 경로 제안 (티맵식): 3분마다 다시 찾고, 다른 길인데 3분 이상 빠르면 묻는다. 같은 길이면 교통 정보·도착 시각만 조용히 새로 */
 var fastR=null,fastT=0;
 function applyRouteData(r){NAV.R=r.R;NAV.S=r.S;NAV.G=r.G;NAV.C=r.C;NAV.T=r.T;NAV.total=r.dist;NAV.time=r.time;NAV.fare=r.fare;NAV.idx=0;NAV.s=0;NAV.spoken={};NAV.lastRoute=Date.now();lastDrawIdx=-1;routePois(NAV);routeHits(NAV);incMatch();camSrcAt=null;buildTbar();drawRoute(true);if(demo&&demo.route)demo.s=0}
-function fastCheck(now){if(!NAV||demo||now-NAV.lastRoute<180000||now-(NAV.fastChk||0)<180000)return;var remain=NAV.total-NAV.s;if(remain<3000)return;NAV.fastChk=now;var N=NAV,c=fix||{la:37.4979,lo:127.0276};
+function fastCheck(now){if(!NAV||demo||now-NAV.lastRoute<420000||now-(NAV.fastChk||0)<420000)return;var remain=NAV.total-NAV.s;if(remain<5000)return;NAV.fastChk=now;var N=NAV,c=fix||{la:37.4979,lo:127.0276};
   fetchRoute(c,N.dest,N.opt||'0',N.via).then(function(r){if(NAV!==N)return;var rem=N.total-N.s,cur=N.time*rem/Math.max(1,N.total);
     if(Math.abs(r.dist-rem)<Math.max(150,rem*0.03)){applyRouteData(r);return}
     var save=cur-r.time;if(save>=180){fastR=r;fastT=Date.now();var eta=new Date(Date.now()+r.time*1000);$('fastT').textContent='더 빠른 경로 · '+Math.round(save/60)+'분 단축';$('fastS').textContent=tm(eta)+' 도착 · '+fmtD(r.dist);show('fastCard',1);beep(760,0.1,2,CFG.volG)}}).catch(function(){})}
