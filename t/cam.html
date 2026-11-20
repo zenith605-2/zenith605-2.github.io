@@ -494,7 +494,7 @@ function loadCams(){
   }).catch(function(e){if(!have)$('loadMsg').textContent='카메라 데이터를 못 받았습니다: '+e.message});
 }
 /* 과속방지턱 · 슈퍼차저 · 휴게소 (OSM + 국토부 표준데이터, 하루 한 번 갱신) */
-var BUMPS=[],BGRID={},SC=[],REST=[],PGRID={},ACC=[],AGRID={};
+var CAU=[],CGRID={},BUMPS=[],BGRID={},SC=[],REST=[],PGRID={},ACC=[],AGRID={};
 function gridOf(arr,g,tag){g=g||{};for(var i=0;i<arr.length;i++){var k=cellKey(arr[i][0],arr[i][1]);(g[k]=g[k]||[]).push(tag?[tag,i]:i)}return g}
 function useExtra(b,p,a){if(a){ACC=a;AGRID=gridOf(ACC)}BUMPS=b||[];BGRID=gridOf(BUMPS);SC=p.sc||[];REST=p.rest||[];PGRID=gridOf(REST,gridOf(SC,{},'sc'),'rest');camSrcAt=null}
 function poiOf(t){return t[0]==='sc'?SC[t[1]]:REST[t[1]]}
@@ -1193,6 +1193,10 @@ function findAhead(la,lo,h){
 var TL='<span class="tl"><i style="background:#ff3030"></i><i style="background:#ffc400"></i><i style="background:#22c55e"></i></span>';
 function setAlert(cls,lim,pill,tag){var b=$('alertBox');b.className=cls;$('lim').innerHTML=(/sx|sig/.test(cls)?TL:'')+(lim?'<b>'+lim+'</b>':'');$('lim').className='lim'+(/child/.test(cls)?' z':'');$('pill').textContent=pill;$('tag').textContent=tag||''}
 var bAnn={},aAnn={},restAt=0;
+/* 주의운전구간(국가교통정보센터, 집 맥이 하루 한 번 올림): 고속도로 사고잦은구간 등. 앞 700m, ±30°, 옆 80m 안 */
+(function(){fetch(DATA+'cctv-ver.json?t='+Math.floor(Date.now()/3600000)).then(function(r){return r.json()}).then(function(vj){return fetch(DATA+'caution.json?v='+vj.ver)}).then(function(r){return r.json()}).then(function(a){CAU=a;CGRID={};a.forEach(function(p,i){var k=Math.floor(p[0]*100)+'_'+Math.floor(p[1]*100);(CGRID[k]=CGRID[k]||[]).push(i)})}).catch(function(){})})();
+function findCau(la,lo,h){var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var ids=CGRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;for(var j=0;j<ids.length;j++){var i=ids[j],p=CAU[i],d=dist(la,lo,p[0],p[1]);if(d>700)continue;var df=adiff(h,brg(la,lo,p[0],p[1]));if(d>40&&(Math.abs(df)>30||Math.abs(d*Math.sin(df*D2R))>80))continue;if(!best||d<best.d)best={i:i,d:d,p:p}}}return best}
+var cAnn={};
 function accName(t){return{'자전거':'자전거 사고 다발','보행노인':'노인 보행 사고 다발','보행어린이':'어린이 보행 사고 다발','스쿨존어린이':'스쿨존 사고 다발'}[t]||'사고 다발 지역'}
 function findAcc(la,lo,h){var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;for(var a=-1;a<=1;a++)for(var b=-1;b<=1;b++){var ids=AGRID[(c0+a)+'_'+(c1+b)];if(!ids)continue;for(var j=0;j<ids.length;j++){var i=ids[j],p=ACC[i],d=dist(la,lo,p[0],p[1]);if(d>250)continue;var df=adiff(h,brg(la,lo,p[0],p[1]));if(d>40&&(Math.abs(df)>35||Math.abs(d*Math.sin(df*D2R))>60))continue;if(!best||d<best.d)best={i:i,d:d,p:p}}}return best}
 function findBump(la,lo,h,lim){var c0=Math.floor(la*100),c1=Math.floor(lo*100),best=null;
@@ -1289,7 +1293,8 @@ function tickBody(){
   if(bp){$('bumpD').textContent=fmtD(bp.d);$('bumpBox').className='on';if(!bAnn[bp.i]){bAnn[bp.i]=now;beep(420,0.1,2)}}else $('bumpBox').className='';
   for(var bk in bAnn)if(now-bAnn[bk]>60000)delete bAnn[bk];
   /* 사고 다발 지역(도로교통공단): 앞 250m, 진행 방향 ±35°, 옆 60m 안. 방지턱 경고가 떠 있으면 그 위로 올림 */
-  var ap=(head!=null&&kmh>10&&ACC.length)?findAcc(la,lo,head):null;
+  var ap=(head!=null&&kmh>10&&ACC.length)?findAcc(la,lo,head):null,cp=(!ap&&head!=null&&kmh>30&&CAU.length)?findCau(la,lo,head):null;
+  if(cp){$('accD').textContent=fmtD(cp.d);$('accT').textContent=cp.p[3].replace(/\s*주의$/,' 주의');$('accBox').className='on';$('accBox').style.bottom=bp?'160px':'';if(!cAnn[cp.i]){cAnn[cp.i]=now;beep(600,0.12,1)}}else
   if(ap){$('accD').textContent=fmtD(ap.d);$('accT').textContent=accName(ap.p[2]);$('accBox').className='on';$('accBox').style.bottom=bp?'160px':'';if(!aAnn[ap.i]){aAnn[ap.i]=now;beep(600,0.12,1)}}else $('accBox').className='';
   for(var ak in aAnn)if(now-aAnn[ak]>120000)delete aAnn[ak];
   if(now-restAt>2000){restAt=now;var rc=null;if(NAV&&NAV.rp&&kmh>50)for(var ri=0;ri<NAV.rp.length;ri++){var rq=NAV.rp[ri];if(rq.k==='rest'&&rq.s>NAV.s+300&&rq.s-NAV.s<60000){rc=rq;break}}
