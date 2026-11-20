@@ -108,6 +108,11 @@
   .band .row{display:flex;align-items:center;padding:16px 18px;font-size:21px;border-bottom:1px solid #eef0f3;cursor:pointer}
   .band .row:last-child{border-bottom:0}
   .band .row span{flex:1}.band .row i{color:#2b7bff;font-style:normal;font-size:24px;font-weight:800}
+  .tmb{display:none;position:relative;height:300px;border-radius:16px;overflow:hidden;margin:6px 0 12px}.tmb.show{display:block}
+  #tripMap{position:absolute;inset:0}.tmb .back{position:absolute;right:8px;top:6px;z-index:2;background:#fff;border-radius:50%;width:44px;height:44px;font-size:24px}
+  .trip .th{display:flex;align-items:center;gap:10px}.trip .tt{flex:1;font-size:20px}
+  .trip .badge{font-size:15px;font-weight:700;background:#e6f3ea;color:#1a7f42;border-radius:14px;padding:4px 10px}
+  .trip .tbig{font-size:18px;font-weight:600;margin-top:6px}.trip .tbig b{font-size:34px}.trip .mx{float:right;font-size:18px}
   .sheet{position:fixed;inset:0;background:#000a;z-index:20;display:none}
   .sheet.show{display:block}
   .panel{position:absolute;left:0;top:0;bottom:0;width:min(560px,48vw);background:#fff;color:#111;border-top-right-radius:22px;border-bottom-right-radius:22px;overflow:auto;padding:22px;box-sizing:border-box}
@@ -182,6 +187,7 @@
 
 <div class="sheet" id="tripSheet"><div class="panel full">
   <div style="display:flex;align-items:center"><h2 style="flex:1">주행 기록</h2><button class="back" id="tripClose">✕</button></div>
+  <div id="tripMapBox" class="tmb"><div id="tripMap"></div><button class="back" id="tmClose">✕</button></div>
   <div id="tripSum" class="item"></div><div id="tripList"></div>
 </div></div>
 
@@ -201,6 +207,10 @@
   <div class="keyRow" style="align-items:center"><span style="font-size:20px;width:200px">전비 (km/kWh)</span><input id="effIn" type="number" step="0.1" min="2" max="12"></div>
   <div class="keyRow" style="align-items:center;margin-top:10px"><span style="font-size:20px;width:200px">충전 단가 (원/kWh)</span><input id="kwhIn" type="number" step="10" min="0" max="1000"></div>
   <p class="muted">전기요금 = 거리 ÷ 전비 × 충전 단가</p>
+  <h2 style="font-size:20px;margin-top:22px">통행료</h2>
+  <div class="band" id="tollBand"></div>
+  <p class="muted">통행료는 예상 금액입니다. 전기차 감면은 2026년 30%, 2027년 20% (전기차로 등록한 하이패스 단말기일 때만). 출퇴근 할인·기타 감면은 반영하지 않습니다.</p>
+  <h2 style="font-size:20px;margin-top:22px">야간 모드</h2><div class="opt" id="nightOpts"></div>
   <h2 style="font-size:20px;margin-top:22px">티맵 키 (길 안내용, 이 차에만 저장)</h2><div class="keyRow"><input id="keyIn" placeholder="앱 키 붙여 넣기" autocomplete="off"><button id="keySave">저장</button></div><p class="muted" id="keyState"></p>
   <h2 style="font-size:20px;margin-top:22px">진단 정보 표시</h2><div class="opt"><button id="diagBtn">켜짐</button></div>
 </div></div>
@@ -233,7 +243,7 @@ var TT={11:'직진',12:'좌회전',13:'우회전',14:'유턴',16:'8시 방향 �
 function ttName(t){if(TT[t])return TT[t];if(t>=131&&t<=142)return'회전교차로';if(t>=182&&t<=189)return'경유지';return'직진'}
 
 /* 설정 */
-var CFG={eff:Number(LS.getItem('eff')||6),kwh:Number(LS.getItem('kwh')||300),a80:LS.getItem('a80')||'1000',a50:LS.getItem('a50')||'600',a0:LS.getItem('a0')||'300',rot:LS.getItem('rotOff')!=='1',volG:Number(LS.getItem('volG')||0.8),volW:Number(LS.getItem('volW')||0.8),car:LS.getItem('carColor')||'#e9e9e9',diag:LS.getItem('diagOff')!=='1'};
+var CFG={tollShow:LS.getItem('tollShow')!=='0',hipass:LS.getItem('hipass')!=='0',evHi:LS.getItem('evHi')==='1',night:LS.getItem('night')||'auto',eff:Number(LS.getItem('eff')||6),kwh:Number(LS.getItem('kwh')||300),a80:LS.getItem('a80')||'1000',a50:LS.getItem('a50')||'600',a0:LS.getItem('a0')||'300',rot:LS.getItem('rotOff')!=='1',volG:Number(LS.getItem('volG')||0.8),volW:Number(LS.getItem('volW')||0.8),car:LS.getItem('carColor')||'#e9e9e9',diag:LS.getItem('diagOff')!=='1'};
 var KEY=LS.getItem('tmapKey')||'';
 var urlK=(location.search.match(/[?&]k=([^&]+)/)||[])[1];if(urlK)KEY=decodeURIComponent(urlK);
 function optRow(box,opts,cur,cb){$(box).innerHTML='';opts.forEach(function(o){var b=document.createElement('button');b.textContent=o[1];b.className=cur===o[0]?'sel':'';b.onclick=function(){cb(o[0]);renderSet()};$(box).appendChild(b)})}
@@ -244,6 +254,8 @@ function renderSet(){
     r[2].forEach(function(o){var row=document.createElement('div');row.className='row';row.innerHTML='<span></span><i></i>';row.querySelector('span').textContent=o[1];row.querySelector('i').textContent=CFG[r[0]]===o[0]?'✓':'';row.onclick=function(){CFG[r[0]]=o[0];LS.setItem(r[0],o[0]);announced={};renderSet()};card.appendChild(row)});
     A.appendChild(card)});
   optRow('rotOpts',[['1','진행 방향 위'],['0','북쪽 위']],CFG.rot?'1':'0',function(v){CFG.rot=v==='1';LS.setItem('rotOff',CFG.rot?'0':'1')});
+  var TB=$('tollBand');TB.innerHTML='';[['tollShow','통행료 표시'],['hipass','하이패스 사용'],['evHi','전기차 감면 하이패스 단말기 사용']].forEach(function(o){var row=document.createElement('div');row.className='row';row.innerHTML='<span></span><i></i>';row.querySelector('span').textContent=o[1];row.querySelector('i').textContent=CFG[o[0]]?'켬':'끔';row.querySelector('i').style.color=CFG[o[0]]?'#2b7bff':'#999';row.onclick=function(){CFG[o[0]]=!CFG[o[0]];LS.setItem(o[0],CFG[o[0]]?'1':'0');renderSet()};TB.appendChild(row)});
+  optRow('nightOpts',[['auto','자동 (19시~6시)'],['on','항상'],['off','사용 안 함']],CFG.night,function(v){CFG.night=v;LS.setItem('night',v);applyNight(true)});
   $('effIn').value=CFG.eff;$('kwhIn').value=CFG.kwh;
   $('keyState').textContent=KEY?'저장됨 ('+KEY.slice(0,4)+'…'+KEY.slice(-3)+')':'아직 없음';
   $('diagBtn').textContent=CFG.diag?'켜짐':'꺼짐';$('diag').style.display=CFG.diag?'':'none';
@@ -252,6 +264,8 @@ $('keySave').onclick=function(){var k=$('keyIn').value.trim();if(k.length<20){$(
 $('diagBtn').onclick=function(){CFG.diag=!CFG.diag;LS.setItem('diagOff',CFG.diag?'0':'1');renderSet()};
 $('effIn').onchange=function(){var x=Number(this.value);if(x>=2&&x<=12){CFG.eff=x;LS.setItem('eff',String(x))}};$('kwhIn').onchange=function(){var x=Number(this.value);if(x>=0&&x<=1000){CFG.kwh=x;LS.setItem('kwh',String(x))}};
 $('setClose').onclick=function(){show('setSheet',0)};
+function evRate(){var y=new Date().getFullYear();return y===2026?0.3:y===2027?0.2:0}
+function tollOf(f){f=f||0;if(CFG.hipass&&CFG.evHi)f=f*(1-evRate());return Math.round(f/10)*10}
 function alertFor(lim){return Number(lim>=80?CFG.a80:lim>=50?CFG.a50:CFG.a0)}
 
 /* 메뉴 */
@@ -304,9 +318,10 @@ function makeImg(id){
 }
 function initMap(){
   if(!window.maplibregl)return;
-  map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[127.0276,37.4979],zoom:16.5,pitch:0,maxPitch:0,interactive:false,attributionControl:{compact:true}});
+  curStyle=nightNow()?'dark':'liberty';
+  map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/'+curStyle,center:[127.0276,37.4979],zoom:16.5,pitch:0,maxPitch:0,interactive:false,attributionControl:{compact:true}});
   map.on('styleimagemissing',function(e){makeImg(e.id)});
-  map.on('load',function(){
+  map.on('style.load',function(){mapReady=false;
     map.getStyle().layers.forEach(function(l){if(l.type==='fill-extrusion'||/poi/.test(l.id)){map.setLayoutProperty(l.id,'visibility','none');return}if(l.type==='symbol'&&l.layout&&l.layout['text-field'])map.setLayoutProperty(l.id,'text-field',['coalesce',['get','name:ko'],['get','name']])});
     map.addSource('route',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
     map.addLayer({id:'route-o',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','c'],2,'#b88600',3,'#c25500',4,'#a50e12','#1546b8'],'line-width':18}});
@@ -319,6 +334,10 @@ function initMap(){
     mapReady=true;camSrcAt=null;drawRoute();
   });
 }
+var curStyle='liberty';
+function nightNow(){if(CFG.night==='on')return true;if(CFG.night==='off')return false;var h=new Date().getHours();return h>=19||h<6}
+function applyNight(force){if(!map)return;var want=nightNow()?'dark':'liberty';if(want!==curStyle||force===true&&want!==curStyle){curStyle=want;map.setStyle('https://tiles.openfreemap.org/styles/'+want)}}
+setInterval(applyNight,60000);
 function updCamSrc(la,lo){
   if(!mapReady||!CAMS.length)return;
   if(camSrcAt&&dist(camSrcAt[0],camSrcAt[1],la,lo)<400)return;camSrcAt=[la,lo];
@@ -384,36 +403,58 @@ setInterval(function(){if($('fav').classList.contains('show')&&v>6)hideFav()},10
 
 /* 주행 기록 (로그인 전까지 이 차에 저장) */
 var TRIP=null,stillSince=0,overCount=0,wasOver=false;
+function revName(la,lo,cb){api('geo/reversegeocoding?version=1&lat='+la+'&lon='+lo+'&coordType=WGS84GEO&addressType=A10').then(function(d){var a=(d||{}).addressInfo||{};cb(a.legalDong||a.adminDong||a.gu_gun||'')}).catch(function(){cb('')})}
 function tripTick(la,lo,kmh,now,over){
   if(demo)return;
   if(over&&!wasOver&&TRIP)TRIP.over++;wasOver=over;
-  if(!TRIP){if(kmh>12){TRIP={st:now,m:0,max:0,over:0,la:la,lo:lo,path:[[+la.toFixed(5),+lo.toFixed(5)]],pl:[la,lo],dest:NAV?NAV.dest.name:''};stillSince=0}return}
+  if(!TRIP){if(kmh>12){TRIP={st:now,m:0,max:0,over:0,alerts:0,cams:0,fare:0,from:'',sla:la,slo:lo,la:la,lo:lo,path:[[+la.toFixed(5),+lo.toFixed(5)]],pl:[la,lo],dest:NAV?NAV.dest.name:''};stillSince=0;var T0=TRIP;if(KEY)revName(la,lo,function(n){T0.from=n})}return}
   var d=dist(TRIP.la,TRIP.lo,la,lo);if(d<200){TRIP.m+=d}TRIP.la=la;TRIP.lo=lo;
-  if(kmh>TRIP.max)TRIP.max=kmh;if(NAV&&!TRIP.dest)TRIP.dest=NAV.dest.name;
+  if(kmh>TRIP.max)TRIP.max=kmh;if(NAV){if(!TRIP.dest)TRIP.dest=NAV.dest.name;if(NAV.fare)TRIP.fare=NAV.fare}
   if(dist(TRIP.pl[0],TRIP.pl[1],la,lo)>60&&TRIP.path.length<3000){TRIP.path.push([+la.toFixed(5),+lo.toFixed(5)]);TRIP.pl=[la,lo]}
   if(kmh<3){if(!stillSince)stillSince=now;if(now-stillSince>180000)endTrip(stillSince)}else stillSince=0;
 }
 function endTrip(at){if(!TRIP)return;var t=TRIP;TRIP=null;if(t.m<300)return;
-  var rec={st:t.st,en:at||Date.now(),m:Math.round(t.m),max:Math.round(t.max),over:t.over,dest:t.dest,eff:CFG.eff,kwh:CFG.kwh,path:t.path};
-  var list=[];try{list=JSON.parse(LS.getItem('trips')||'[]')}catch(e){}list.unshift(rec);
+  var rec={st:t.st,en:at||Date.now(),m:Math.round(t.m),max:Math.round(t.max),over:t.over,alerts:t.alerts,cams:t.cams,toll:t.fare?tollOf(t.fare):0,from:t.from,dest:t.dest,eff:CFG.eff,kwh:CFG.kwh,path:t.path};
+  if(!rec.dest&&KEY&&t.la){revName(t.la,t.lo,function(n){rec.dest=n;saveTrip(rec)});return}
+  saveTrip(rec)}
+function saveTrip(rec){
+  var list=[];try{list=JSON.parse(LS.getItem('trips')||'[]')}catch(e){}list=list.filter(function(x){return x.st!==rec.st});list.unshift(rec);
   while(list.length>200)list.pop();
   try{LS.setItem('trips',JSON.stringify(list))}catch(e){list.forEach(function(x,i){if(i>20)x.path=[]});LS.setItem('trips',JSON.stringify(list))}}
 addEventListener('pagehide',function(){if(TRIP)endTrip()});
 function costOf(r){return Math.round(r.m/1000/r.eff*r.kwh/10)*10}
 function hm(ms){var m=Math.round(ms/60000);return m>=60?Math.floor(m/60)+'시간 '+(m%60)+'분':m+'분'}
 function tm(t){var d=new Date(t),h=d.getHours();return (h<12?'오전 ':'오후 ')+(h%12||12)+':'+String(d.getMinutes()).padStart(2,'0')}
+function loadTrips(){try{return JSON.parse(LS.getItem('trips')||'[]')}catch(e){return[]}}
+function weekStart(d){var x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x.getTime()}
+function sumOf(list,from){var o={n:0,m:0,t:0,c:0,tl:0,clean:0};list.forEach(function(r){if(r.st>=from){o.n++;o.m+=r.m;o.t+=r.en-r.st;o.c+=costOf(r);o.tl+=r.toll||0;if(!r.over)o.clean++}});return o}
+function sumLine(lbl,o){return '<div class="item"><span>'+lbl+' · '+o.n+'회 · '+(o.m/1000).toFixed(1)+'km · '+hm(o.t)+'</span><small>전기요금 약 '+o.c.toLocaleString()+'원'+(CFG.tollShow?' · 통행료 약 '+o.tl.toLocaleString()+'원':'')+' · 무결점 '+o.clean+'회</small></div>'}
 $('mTrips').onclick=function(){show('menuSheet',0);
-  var list=[];try{list=JSON.parse(LS.getItem('trips')||'[]')}catch(e){}
-  var now=new Date(),ym=now.getFullYear()+'-'+now.getMonth(),mm=0,mc=0,mt=0,mn=0;
-  list.forEach(function(r){var d=new Date(r.st);if(d.getFullYear()+'-'+d.getMonth()===ym){mm+=r.m;mc+=costOf(r);mt+=r.en-r.st;mn++}});
-  $('tripSum').innerHTML='<span></span><small></small>';$('tripSum').querySelector('span').textContent='이번 달 '+mn+'회 · '+(mm/1000).toFixed(1)+'km · '+hm(mt);$('tripSum').querySelector('small').textContent='예상 전기요금 약 '+mc.toLocaleString()+'원 (전비 '+CFG.eff+'km/kWh, '+CFG.kwh+'원/kWh 기준)';
+  var list=loadTrips(),now=new Date(),mStart=new Date(now.getFullYear(),now.getMonth(),1).getTime();
+  $('tripSum').outerHTML='<div id="tripSum">'+sumLine('이번 주',sumOf(list,weekStart(now)))+sumLine('이번 달',sumOf(list,mStart))+'<div class="acts"><button id="csvBtn">엑셀(CSV)로 내보내기</button></div></div>';
+  $('csvBtn').onclick=exportCsv;
   var box=$('tripList');box.innerHTML=list.length?'':'<div class="muted">아직 기록이 없습니다. 주행을 마치고 3분 정차하면 저장됩니다.</div>';
-  list.slice(0,60).forEach(function(r){var el=document.createElement('div');el.className='item';var d=new Date(r.st),dur=r.en-r.st;
-    el.innerHTML='<span></span><small></small>';el.querySelector('span').textContent=(d.getMonth()+1)+'/'+d.getDate()+' '+tm(r.st)+' → '+tm(r.en)+(r.dest?' · '+r.dest:'');
-    el.querySelector('small').textContent=(r.m/1000).toFixed(1)+'km · '+hm(dur)+' · 평균 '+Math.round(r.m/Math.max(1,dur/1000)*3.6)+'km/h · 최고 '+r.max+'km/h · 과속 경고 '+r.over+'회 · 전기요금 약 '+costOf(r).toLocaleString()+'원';
-    box.appendChild(el)});
+  var streak=0;for(var q=list.length-1;q>=0;q--){list[q]._streak=list[q].over?0:++streak;if(list[q].over)streak=0}
+  list.slice(0,60).forEach(function(r,i){var el=document.createElement('div');el.className='item trip';var d=new Date(r.st),dur=r.en-r.st;
+    el.innerHTML='<div class="th"><span class="tt"></span><span class="badge"></span></div><div class="tbig"><b></b> km · <span class="dur"></span><span class="mx"></span></div><small class="t1"></small><small class="t2"></small>';
+    el.querySelector('.tt').textContent=(d.getMonth()+1)+'/'+d.getDate()+' '+tm(r.st)+' · '+(r.from||'출발')+' → '+(r.dest||'도착');
+    var bd=el.querySelector('.badge');if(!r.over){bd.textContent='무결점 주행'+(r._streak>1?' · 연속 '+r._streak+'회':'')}else bd.style.display='none';
+    el.querySelector('b').textContent=(r.m/1000).toFixed(1);el.querySelector('.dur').textContent=hm(dur);el.querySelector('.mx').textContent='최고 '+r.max+'km/h';
+    el.querySelector('.t1').textContent='음성 안내 '+(r.alerts||0)+' · 카메라 통과 '+(r.cams||0)+' · 속도 초과 '+(r.over||0)+' · 평균 '+Math.round(r.m/Math.max(1,dur/1000)*3.6)+'km/h';
+    el.querySelector('.t2').textContent='전기요금 약 '+costOf(r).toLocaleString()+'원'+(CFG.tollShow&&r.toll?' · 통행료 '+r.toll.toLocaleString()+'원 (예상)':'');
+    el.onclick=function(){tripMap(r)};box.appendChild(el)});
   show('tripSheet',1)};
-$('tripClose').onclick=function(){show('tripSheet',0)};
+var tmap=null;
+function tripMap(r){if(!r.path||r.path.length<2||!window.maplibregl)return;show('tripMapBox',1);
+  var co=r.path.map(function(p){return[p[1],p[0]]}),b=new maplibregl.LngLatBounds(co[0],co[0]);co.forEach(function(c){b.extend(c)});
+  var draw=function(){if(tmap.getSource('tp')){tmap.getSource('tp').setData({type:'Feature',geometry:{type:'LineString',coordinates:co}})}else{tmap.addSource('tp',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:co}}});tmap.addLayer({id:'tp',type:'line',source:'tp',paint:{'line-color':'#2b7bff','line-width':6},layout:{'line-cap':'round','line-join':'round'}})}tmap.fitBounds(b,{padding:40,duration:0})};
+  if(!tmap){tmap=new maplibregl.Map({container:'tripMap',style:'https://tiles.openfreemap.org/styles/positron',interactive:false,attributionControl:{compact:true}});tmap.on('load',function(){tmap.getStyle().layers.forEach(function(l){if(l.type==='symbol'&&l.layout&&l.layout['text-field'])tmap.setLayoutProperty(l.id,'text-field',['coalesce',['get','name:ko'],['get','name']])});draw()})}else{tmap.resize();draw()}}
+function exportCsv(){var list=loadTrips(),rows=[['날짜','출발','도착','출발지','도착지','거리(km)','시간(분)','최고속도','속도초과','카메라통과','전기요금(원)','통행료(원)']];
+  list.forEach(function(r){var d=new Date(r.st);rows.push([d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),tm(r.st),tm(r.en),r.from||'',r.dest||'',(r.m/1000).toFixed(1),Math.round((r.en-r.st)/60000),r.max,r.over||0,r.cams||0,costOf(r),r.toll||0])});
+  var csv='﻿'+rows.map(function(x){return x.map(function(v){v=String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')}).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='주행기록.csv';document.body.appendChild(a);a.click();a.remove()}
+$('tripClose').onclick=function(){show('tripSheet',0);show('tripMapBox',0)};
+$('tmClose').onclick=function(){show('tripMapBox',0)};
 $('tripSheet').onclick=function(e){if(e.target===this)show('tripSheet',0)};
 
 /* 길 안내 */
@@ -449,7 +490,7 @@ function startNav(d){
     var box=$('rtList');box.innerHTML='';var seen={},shown=0;
     rs.forEach(function(r){if(r.err)return;var key=Math.round(r.dist/100)+'_'+Math.round(r.time/60);if(seen[key]){seen[key].push(r.opt[1]);return}seen[key]=[r.opt[1]];
       var el=document.createElement('div');el.className='rt';var eta=new Date(Date.now()+r.time*1000),h=eta.getHours(),mins=Math.round(r.time/60);
-      el.innerHTML='<div class="rk"></div><div class="rm"><b>'+(mins>=60?Math.floor(mins/60)+'시간 '+(mins%60)+'분':mins+'분')+'</b> · '+fmtD(r.dist)+'</div><div class="rs">'+(h<12?'오전 ':'오후 ')+(h%12||12)+':'+String(eta.getMinutes()).padStart(2,'0')+' 도착 · 통행료 '+(r.fare||0).toLocaleString()+'원'+' · 전기요금 약 '+(Math.round(r.dist/1000/CFG.eff*CFG.kwh/100)*100).toLocaleString()+'원</div><div class="tb"></div>';
+      el.innerHTML='<div class="rk"></div><div class="rm"><b>'+(mins>=60?Math.floor(mins/60)+'시간 '+(mins%60)+'분':mins+'분')+'</b> · '+fmtD(r.dist)+'</div><div class="rs">'+(h<12?'오전 ':'오후 ')+(h%12||12)+':'+String(eta.getMinutes()).padStart(2,'0')+' 도착'+(CFG.tollShow?' · 통행료 '+tollOf(r.fare).toLocaleString()+'원':'')+' · 전기요금 약 '+(Math.round(r.dist/1000/CFG.eff*CFG.kwh/100)*100).toLocaleString()+'원</div><div class="tb"></div>';
       var lab=seen[key];el.querySelector('.rk').textContent=lab[0];el._lab=lab;
       var tb=el.querySelector('.tb'),col={2:'#f5b400',3:'#ff7a00',4:'#e3151a'},st=0,cur=r.C[0]||0;for(var i=1;i<=r.S.length-1;i++){var cc=i<r.S.length-1?(r.C[i]||0):-1;if(cc!==cur){var seg=document.createElement('i');seg.style.width=((r.S[i]-r.S[st])/r.dist*100)+'%';seg.style.background=col[cur]||'#2b7bff';tb.appendChild(seg);st=i;cur=cc}}
       el.onclick=function(){show('rtSheet',0);applyRoute(d,r)};box.appendChild(el);shown++;
@@ -476,7 +517,7 @@ function parseRoute(d){
   return{R:R,S:S,G:G,C:C,time:time,fare:fare,dist:S[S.length-1]};
 }
 function applyRoute(d,r){
-  NAV={dest:d,opt:r.opt[0],R:r.R,S:r.S,G:r.G,C:r.C,total:r.dist,time:r.time,idx:0,s:0,offT:0,lastRoute:Date.now(),spoken:{}};
+  NAV={dest:d,fare:r.fare,opt:r.opt[0],R:r.R,S:r.S,G:r.G,C:r.C,total:r.dist,time:r.time,idx:0,s:0,offT:0,lastRoute:Date.now(),spoken:{}};
   document.body.classList.add('nav');lastDrawIdx=-1;buildTbar();drawRoute();
 }
 $('reroute').onclick=function(){if(NAV)route()};
@@ -567,7 +608,7 @@ function tick(){
   if(head!=null&&v>1.5&&CAMS.length){
     var t=findAhead(la,lo,head);
     if(target&&(!t||t.id!==target.id)){var tc=CAMS[target.id];var dNow=dist(la,lo,tc[0],tc[1]);var behind=Math.abs(adiff(head,brg(la,lo,tc[0],tc[1])))>90;
-      if(behind||dNow>target.d+40){passed[target.id]=now;lastPassed=target.id;if(tc[4]===1)section={lim:tc[2],t:now,m:0,lastLa:la,lastLo:lo};if(tc[4]===2&&section){section=null;say('구간단속이 끝났습니다',880,1)}target=null}}
+      if(behind||dNow>target.d+40){passed[target.id]=now;lastPassed=target.id;if(TRIP)TRIP.cams++;if(tc[4]===1)section={lim:tc[2],t:now,m:0,lastLa:la,lastLo:lo};if(tc[4]===2&&section){section=null;say('구간단속이 끝났습니다',880,1)}target=null}}
     if(t&&(!target||t.d<target.d+40))target=t;
   }
   for(var k in passed)if(now-passed[k]>120000)delete passed[k];
@@ -577,7 +618,7 @@ function tick(){
   if(target&&target.d<alertD+30){var c=target.c,d=dist(la,lo,c[0],c[1]);target.d=Math.min(target.d,d);
     setAlert('on'+(c[3]==='R'?' sig':'')+(c[3]==='X'?' sx':'')+(c[5]===2?' child':'')+(c[4]>0?' sec':''),c[2]||'',fmtD(d),camTag(c));
     zone=c[5]>0&&d<alertD;
-    if(d<alertD&&!announced[target.id]){announced[target.id]=1;var r=Math.round(d/50)*50;
+    if(d<alertD&&!announced[target.id]){announced[target.id]=1;if(TRIP)TRIP.alerts++;var r=Math.round(d/50)*50;
       say((c[5]===2?'어린이보호구역, ':'')+'전방 '+r+'미터, '+(c[2]?'제한속도 '+c[2]+', ':'')+(c[4]===1?'구간단속 시작입니다':'단속 카메라입니다'),880,2)}
     if(c[2]&&d<alertD&&kmh>c[2])over=true;
   }else if(section){setAlert('on sec',section.lim,'평균 '+Math.round(avg||0),'구간단속 중')}
