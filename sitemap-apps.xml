@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://actparty.app/a/com.farhanslab.banglatoolbox/</loc></url>
-  <url><loc>https://actparty.app/a/com.khan2631.mawangnest/</loc></url>
   <url><loc>https://actparty.app/a/com.khan2631.luckyfortress/</loc></url>
+  <url><loc>https://actparty.app/a/com.khan2631.mawangnest/</loc></url>
   <url><loc>https://actparty.app/a/com.lanternbench.guessadoo/</loc></url>
   <url><loc>https://actparty.app/a/com.mikaallyson.mochisun/</loc></url>
   <url><loc>https://actparty.app/a/com.bampado.app/</loc></url>
@@ -10,8 +10,6 @@
   <url><loc>https://actparty.app/a/com.dizzie.blockrogue/</loc></url>
   <url><loc>https://actparty.app/a/com.studio.packit/</loc></url>
   <url><loc>https://actparty.app/a/com.harumoru.app/</loc></url>
-  <url><loc>https://actparty.app/a/io.cho.simplemirror/</loc></url>
-  <url><loc>https://actparty.app/a/com.qocop.blockimpactlab/</loc></url>
   <url><loc>https://actparty.app/a/com.khan2631.tugwar/</loc></url>
   <url><loc>https://actparty.app/a/com.khan2631.bossrush/</loc></url>
   <url><loc>https://actparty.app/a/com.nfix.potato/</loc></url>
@@ -19,8 +17,10 @@
   <url><loc>https://actparty.app/a/com.forgenine.melodyx/</loc></url>
   <url><loc>https://actparty.app/a/com.tormentarena.game/</loc></url>
   <url><loc>https://actparty.app/a/com.mikaallyson.neonvelocity/</loc></url>
-  <url><loc>https://actparty.app/a/com.maniotventures.panpanic/</loc></url>
+  <url><loc>https://actparty.app/a/com.qocop.blockimpactlab/</loc></url>
   <url><loc>https://actparty.app/a/com.maniotventures.pigestal/</loc></url>
+  <url><loc>https://actparty.app/a/com.maniotventures.panpanic/</loc></url>
+  <url><loc>https://actparty.app/a/io.cho.simplemirror/</loc></url>
   <url><loc>https://actparty.app/a/com.khan2631.dungeonbreaker/</loc></url>
   <url><loc>https://actparty.app/a/com.khan2631.ashenascent/</loc></url>
   <url><loc>https://actparty.app/a/com.pickyo.cleartheway/</loc></url>
@@ -43,17 +43,17 @@
   <url><loc>https://actparty.app/a/com.erdemaltun.redrider/</loc></url>
   <url><loc>https://actparty.app/a/com.eidoslab.notibox/</loc></url>
   <url><loc>https://actparty.app/a/com.harusepan.memoryplay/</loc></url>
-  <url><loc>https://actparty.app/a/com.maniotventures.splatalanche/</loc></url>
   <url><loc>https://actparty.app/a/com.maniotventures.slingwake/</loc></url>
-  <url><loc>https://actparty.app/a/com.cho.salah/</loc></url>
-  <url><loc>https://actparty.app/a/com.zohaib.simplemoneymanager/</loc></url>
+  <url><loc>https://actparty.app/a/com.maniotventures.splatalanche/</loc></url>
   <url><loc>https://actparty.app/a/com.zohaib.aipdfdoctor/</loc></url>
   <url><loc>https://actparty.app/a/com.zohaib.testtayyar/</loc></url>
+  <url><loc>https://actparty.app/a/com.zohaib.simplemoneymanager/</loc></url>
   <url><loc>https://actparty.app/a/com.hangar31.railmind/</loc></url>
   <url><loc>https://actparty.app/a/com.mpsparki012.snap/</loc></url>
   <url><loc>https://actparty.app/a/com.nnluong.pixelquest/</loc></url>
-  <url><loc>https://actparty.app/a/com.zohaib.beautycamera/</loc></url>
+  <url><loc>https://actparty.app/a/com.cho.salah/</loc></url>
   <url><loc>https://actparty.app/a/com.zohaib.quickreelmaker/</loc></url>
+  <url><loc>https://actparty.app/a/com.zohaib.beautycamera/</loc></url>
   <url><loc>https://actparty.app/a/de.lichtinger.budgieflow/</loc></url>
   <url><loc>https://actparty.app/a/com.izworks.socialworker_exam/</loc></url>
   <url><loc>https://actparty.app/a/com.bigdaveappstudio.garageboss/</loc></url>
@@ -72,8 +72,8 @@
   <url><loc>https://actparty.app/a/com.app.wasgibbetzuessen/</loc></url>
   <url><loc>https://actparty.app/a/com.trexcreations.yardshark/</loc></url>
   <url><loc>https://actparty.app/a/app.pairrun/</loc></url>
-  <url><loc>https://actparty.app/a/com.maniotventures.savvyteas/</loc></url>
   <url><loc>https://actparty.app/a/com.dalbit.saju/</loc></url>
+  <url><loc>https://actparty.app/a/com.maniotventures.savvyteas/</loc></url>
   <url><loc>https://actparty.app/a/com.uagi.app/</loc></url>
   <url><loc>https://actparty.app/a/hu.leielcare.app/</loc></url>
   <url><loc>https://actparty.app/a/com.galaxygridgames.odyssey/</loc></url>
