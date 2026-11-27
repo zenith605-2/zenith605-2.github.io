@@ -312,8 +312,9 @@ def _page(a, others=()):
     # 앱 주인이 쓴 긴 설명 — 페이지마다 다른 유일한 본문이라 검색에 보이게 싣는다
     long_desc = (a.get('long_description') or '').strip()[:3000]
     looking = bool(a.get('recruiting')) and not a.get('released_at')
-    headline = (f'{name} — looking for closed testers' if looking
-                else f'{name} — Android app on ACT Party')
+    # 네이버(한국어 검색)에 제목이 영어로만 나와서 한국어를 앞에 둔다 (11/27 사용자 요청)
+    headline = (f'{name} — 비공개 테스터 모집 · closed testers' if looking
+                else f'{name} — 안드로이드 앱 · Android app')
     robots = '' if is_rich(a) else '<meta name="robots" content="noindex,follow">\n'
     about_card = (f'''  <div class="card" style="margin-bottom:16px">
     <h2 style="font-size:17px;margin:0 0 8px">About {e(name)}</h2>
@@ -518,8 +519,9 @@ def _page(a, others=()):
     # 검색 결과에 뜨는 한 줄. 설명이 없으면 상태로 대신한다.
     status = (f'{cur} of {need} testers so far. ' if cur < need
               else f'{cur} testers joined, more than the {need} Google asks for. ')
-    meta_desc = ((f'{name} by {dev} is looking for closed testers on ACT Party. {status}' if looking
-                  else f'{name} by {dev}, an Android app tested on ACT Party. ')
+    ko_status = (f'{cur}/{need}명. ' if cur < need else f'{cur}명 참여. ')
+    meta_desc = ((f'{name} 비공개 테스트 테스터 모집 중, {ko_status}{name} by {dev} is looking for closed testers on ACT Party. {status}' if looking
+                  else f'{name}: ACT Party에 올라온 안드로이드 앱. {name} by {dev}, an Android app tested on ACT Party. ')
                  + (desc or long_desc[:200]))[:300]
 
     ld = {
