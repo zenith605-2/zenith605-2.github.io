@@ -10,6 +10,7 @@ HTML 에 박힌 페이지를 따로 굽는다.
 """
 import html
 import io
+import datetime
 import json
 import re
 import os
@@ -42,6 +43,8 @@ STATIC_PAGES = [
     ('/guides/', '0.8'),
     ('/ko/test-pumasi.html', '0.9'),
     ('/test-for-test.html', '0.9'),
+    ('/ko/closed-testing-how.html', '0.8'),
+    ('/guides/test-swap.html', '0.8'),
     ('/a/', '0.6'),
     ('/guides/what-google-checks.html', '0.8'),
     ('/guides/daily-opens-data.html', '0.8'),
@@ -127,7 +130,7 @@ def is_rich(a):
 
 
 GUIDES_TESTING = [
-    ('/test-for-test.html', 'Test for test: swapping closed testing with other developers'),
+    ('/guides/test-swap.html', 'How to swap closed tests with other developers'),
     ('/guides/closed-test-setup.html', 'Setting up a closed test so testers can actually install'),
     ('/guides/why-testers-drop.html', 'Why testers disappear during closed testing'),
     ('/guides/app-not-available.html', 'Fixing "App not available" for testers'),
@@ -193,6 +196,91 @@ def apps_index(listed):
 </body>
 </html>
 """)
+
+
+BOARD_TEXT = {
+    'ko': dict(
+        path='/ko/test-pumasi.html', alt='/test-for-test.html', lang='ko',
+        title='앱 테스트 품앗이 — 지금 테스터를 찾는 안드로이드 앱 | ACT Party',
+        desc='비공개 테스트 테스터 12명이 필요한 안드로이드 앱 {n}개. 하나 골라 테스트하면 그 개발자가 내 앱을 테스트해 줍니다.',
+        h1='앱 테스트 품앗이',
+        sub='지금 테스터를 찾는 앱 {n}개 — 하나 테스트하면 그 개발자가 내 앱을 테스트해 줘요.',
+        cta='ACT Party 받고 내 앱 올리기', how='비공개 테스트 하는 법', how_href='/ko/closed-testing-how.html',
+        more='출시한 앱 · 전체 목록', other='English'),
+    'en': dict(
+        path='/test-for-test.html', alt='/ko/test-pumasi.html', lang='en',
+        title='Test for Test — Android apps looking for closed testers right now | ACT Party',
+        desc='{n} Android apps that need 12 closed testers. Test one and its developer tests yours back.',
+        h1='Test for test',
+        sub='{n} apps looking for closed testers now — test one and its developer tests yours back.',
+        cta='Get ACT Party and list your app', how='How to swap closed tests', how_href='/guides/test-swap.html',
+        more='Released apps · full list', other='한국어'),
+}
+
+
+def board_page(lang, listed):
+    """검색해서 들어오면 바로 앱 보드가 보이는 페이지 (2026-11-27 사용자 "테스트잇처럼 앱보드가
+    바로 나와야지, 뭔 글이 이렇게 많아"). 글은 how 페이지로 따로 뺐다."""
+    e = html.escape
+    t = BOARD_TEXT[lang]
+    # 지금 실제로 돌아가는 앱만 — 7일 안에 주인이 들어왔고, 아직 12명이 안 찼고, 옵트인이 안 깨진 앱.
+    # 모집 표시만 남은 앱까지 넣으면 565개가 되고, 신청해도 답이 없는 앱이 섞인다.
+    cut = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)).strftime('%Y-%m-%dT%H:%M:%S')
+    rec = [a for a in listed
+           if a.get('recruiting') and not a.get('released_at') and not a.get('owner_left')
+           and not a.get('optin_broken') and (a.get('last_seen_at') or '')[:19] >= cut
+           and (a.get('current_testers') or 0) < (a.get('needed_testers') or 12)]
+    rec.sort(key=lambda x: x.get('last_seen_at') or '', reverse=True)
+    n = len(rec)
+    cards = '\n'.join(
+        f'''    <a class="mini" href="/a/{e(a['package_name'])}/">
+      {f'<img src="{e(a["icon_url"])}" alt="" loading="lazy">' if a.get('icon_url')
+       else f'<span class="ph">{e((a.get("name") or "?")[:1].upper())}</span>'}
+      <span class="nm">{e(a.get('name') or a['package_name'])}</span>
+      <span class="muted">{a.get('current_testers') or 0}/{a.get('needed_testers') or 12}</span>
+    </a>''' for a in rec)
+    other_lang = 'en' if lang == 'ko' else 'ko'
+    return f"""<!DOCTYPE html>
+<html lang="{t['lang']}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{e(t['title'])}</title>
+<meta name="description" content="{e(t['desc'].format(n=n))}">
+<link rel="canonical" href="{SITE}{t['path']}">
+<link rel="alternate" hreflang="{lang}" href="{SITE}{t['path']}">
+<link rel="alternate" hreflang="{other_lang}" href="{SITE}{t['alt']}">
+<link rel="alternate" hreflang="x-default" href="{SITE}/test-for-test.html">
+<meta property="og:title" content="{e(t['h1'])} | ACT Party">
+<meta property="og:description" content="{e(t['sub'].format(n=n))}">
+<meta property="og:url" content="{SITE}{t['path']}">
+<meta property="og:image" content="{SITE}/img/{'og-ko-pumasi' if lang == 'ko' else 'og-en-t4t'}.png">
+<link rel="stylesheet" href="/assets/app.css?v={CACHE_V}">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="{t['how_href']}">{e(t['how'])}</a>
+      <a href="{t['alt']}" hreflang="{other_lang}">{e(t['other'])}</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap" style="padding-top:22px">
+  <h1 style="font-size:26px;margin:0 0 4px">{e(t['h1'])}</h1>
+  <p class="muted" style="margin:0 0 14px">{e(t['sub'].format(n=n))}</p>
+  <p style="margin:0 0 18px"><a class="btn" href="{ACT_STORE}" rel="noopener">{e(t['cta'])}</a></p>
+  <div class="minis">
+{cards}
+  </div>
+  <p style="margin:18px 0 0"><a href="/a/">{e(t['more'])}</a> · <a href="{t['how_href']}">{e(t['how'])}</a></p>
+</div>
+<footer class="bot"><div class="wrap"><p>
+  <a href="/">ACT Party</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p></div></footer>
+</body>
+</html>
+"""
 
 
 def page(a, others=()):
@@ -798,6 +886,10 @@ def main():
             app_urls.append(f'{SITE}/a/{pkg}/')
     with open(os.path.join(BASE, 'a', 'index.html'), 'w', encoding='utf-8', newline='') as f:
         f.write(apps_index(listed))
+    for lang in ('ko', 'en'):
+        with open(os.path.join(BASE, *BOARD_TEXT[lang]['path'].strip('/').split('/')), 'w',
+                  encoding='utf-8', newline='') as f:
+            f.write(board_page(lang, listed))
 
     # 사이트맵을 둘로 나눈다.
     #
