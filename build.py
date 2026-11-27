@@ -11,6 +11,7 @@ HTML 에 박힌 페이지를 따로 굽는다.
 import html
 import io
 import datetime
+import kw_pages
 import json
 import re
 import os
@@ -42,8 +43,7 @@ STATIC_PAGES = [
     ('/check.html', '0.9'),
     ('/guides/', '0.8'),
     ('/ko/test-pumasi.html', '0.9'),
-    ('/test-for-test.html', '0.9'),
-    ('/ko/closed-testing-how.html', '0.8'),
+    ('/android-closed-testing.html', '0.9'),
     ('/guides/test-swap.html', '0.8'),
     ('/a/', '0.6'),
     ('/guides/what-google-checks.html', '0.8'),
@@ -200,18 +200,18 @@ def apps_index(listed):
 
 BOARD_TEXT = {
     'ko': dict(
-        path='/ko/test-pumasi.html', alt='/test-for-test.html', lang='ko',
-        title='앱 테스트 품앗이 — 지금 테스터를 찾는 안드로이드 앱 | ACT Party',
+        path='/ko/test-pumasi.html', alt='/android-closed-testing.html', lang='ko',
+        title='비공개 테스트 품앗이 — 테스터를 찾는 안드로이드 앱 보드 | ACT Party',
         desc='비공개 테스트 테스터 12명이 필요한 안드로이드 앱 {n}개. 하나 골라 테스트하면 그 개발자가 내 앱을 테스트해 줍니다.',
-        h1='앱 테스트 품앗이',
+        h1='안드로이드 비공개 테스트 품앗이',
         sub='지금 테스터를 찾는 앱 {n}개 — 하나 테스트하면 그 개발자가 내 앱을 테스트해 줘요.',
         cta='ACT Party 받고 내 앱 올리기', how='비공개 테스트 하는 법', how_href='/ko/closed-testing-how.html',
         more='출시한 앱 · 전체 목록', other='English'),
     'en': dict(
-        path='/test-for-test.html', alt='/ko/test-pumasi.html', lang='en',
-        title='Test for Test — Android apps looking for closed testers right now | ACT Party',
+        path='/android-closed-testing.html', alt='/ko/test-pumasi.html', lang='en',
+        title='Android closed testing — apps looking for testers right now (free swap) | ACT Party',
         desc='{n} Android apps that need 12 closed testers. Test one and its developer tests yours back.',
-        h1='Test for test',
+        h1='Android closed testing',
         sub='{n} apps looking for closed testers now — test one and its developer tests yours back.',
         cta='Get ACT Party and list your app', how='How to swap closed tests', how_href='/guides/test-swap.html',
         more='Released apps · full list', other='한국어'),
@@ -240,6 +240,9 @@ def board_page(lang, listed):
       <span class="muted">{a.get('current_testers') or 0}/{a.get('needed_testers') or 12}</span>
     </a>''' for a in rec)
     other_lang = 'en' if lang == 'ko' else 'ko'
+    shots = '\n'.join(f'    <img src="/img/kw/{lang}_{n}.jpg" alt="ACT Party" width="160" height="284" loading="lazy" style="flex:none;width:160px;height:auto;border-radius:12px">'
+                       for n in ('01_board', '03_calendar', '04_today', '02_setup', '05_free'))
+    kwl = ' · '.join(f'<a href="{u}">{e(x)}</a>' for u, x in kw_pages.links(lang))
     return f"""<!DOCTYPE html>
 <html lang="{t['lang']}">
 <head>
@@ -250,7 +253,7 @@ def board_page(lang, listed):
 <link rel="canonical" href="{SITE}{t['path']}">
 <link rel="alternate" hreflang="{lang}" href="{SITE}{t['path']}">
 <link rel="alternate" hreflang="{other_lang}" href="{SITE}{t['alt']}">
-<link rel="alternate" hreflang="x-default" href="{SITE}/test-for-test.html">
+<link rel="alternate" hreflang="x-default" href="{SITE}/android-closed-testing.html">
 <meta property="og:title" content="{e(t['h1'])} | ACT Party">
 <meta property="og:description" content="{e(t['sub'].format(n=n))}">
 <meta property="og:url" content="{SITE}{t['path']}">
@@ -271,10 +274,14 @@ def board_page(lang, listed):
   <h1 style="font-size:26px;margin:0 0 4px">{e(t['h1'])}</h1>
   <p class="muted" style="margin:0 0 14px">{e(t['sub'].format(n=n))}</p>
   <p style="margin:0 0 18px"><a class="btn" href="{ACT_STORE}" rel="noopener">{e(t['cta'])}</a></p>
+  <div style="display:flex;gap:8px;overflow-x:auto;margin:0 0 18px">
+{shots}
+  </div>
   <div class="minis">
 {cards}
   </div>
   <p style="margin:18px 0 0"><a href="/a/">{e(t['more'])}</a> · <a href="{t['how_href']}">{e(t['how'])}</a></p>
+  <p class="muted" style="margin:10px 0 0;line-height:1.9">{kwl}</p>
 </div>
 <footer class="bot"><div class="wrap"><p>
   <a href="/">ACT Party</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p></div></footer>
@@ -886,6 +893,13 @@ def main():
             app_urls.append(f'{SITE}/a/{pkg}/')
     with open(os.path.join(BASE, 'a', 'index.html'), 'w', encoding='utf-8', newline='') as f:
         f.write(apps_index(listed))
+    urls += [f'{SITE}{p}' for p in kw_pages.write_all(BASE)]
+    # 옛 영어 보드 주소 — 새 주소로 보낸다 (색인 요청을 이미 했다)
+    with open(os.path.join(BASE, 'test-for-test.html'), 'w', encoding='utf-8', newline='') as f:
+        f.write('<!DOCTYPE html><html><head><meta charset="utf-8">'
+                f'<link rel="canonical" href="{SITE}/android-closed-testing.html">'
+                '<meta http-equiv="refresh" content="0; url=/android-closed-testing.html">'
+                '<meta name="robots" content="noindex"></head><body></body></html>\n')
     for lang in ('ko', 'en'):
         with open(os.path.join(BASE, *BOARD_TEXT[lang]['path'].strip('/').split('/')), 'w',
                   encoding='utf-8', newline='') as f:
