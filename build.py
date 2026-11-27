@@ -937,9 +937,9 @@ def main():
               newline='') as f:
         f.write('User-agent: *\nAllow: /\n'
                 'Disallow: /console.html\n'
-                # app.html?p=패키지 는 /a/패키지/ 의 JS 판이다 (noindex). 주소마다 따로
-                # 크롤링돼 '크롤링됨 - 색인 안 됨'에 쌓였다 (2026-11-27)
-                'Disallow: /app.html\n'
+                # app.html?p=패키지 는 /a/패키지/ 의 JS 판이고 noindex 다. robots 로 막으면
+                # 구글이 noindex 를 못 읽어 이미 색인된 주소가 안 빠진다(11/27 site: 검색에
+                # 'Trip_Super_J … actparty.app › app' 남음) → 막지 않는다
                 f'Sitemap: {SITE}/sitemap.xml\n')
 
     print(f'앱 페이지 {len(listed)}개, 글 페이지 {len(rows)}개, 사이트맵 {len(urls)}개 URL')

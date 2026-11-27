@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /console.html
-Disallow: /app.html
 Sitemap: https://actparty.app/sitemap.xml
