@@ -40,6 +40,8 @@ STATIC_PAGES = [
     ('/board.html', '0.9'),
     ('/check.html', '0.9'),
     ('/guides/', '0.8'),
+    ('/ko/test-pumasi.html', '0.9'),
+    ('/a/', '0.6'),
     ('/guides/what-google-checks.html', '0.8'),
     ('/guides/daily-opens-data.html', '0.8'),
     ('/guides/why-testers-drop.html', '0.7'),
@@ -121,6 +123,74 @@ RICH_MIN = 200
 
 def is_rich(a):
     return len(a.get('description') or '') + len(a.get('long_description') or '') >= RICH_MIN
+
+
+GUIDES_TESTING = [
+    ('/guides/closed-test-setup.html', 'Setting up a closed test so testers can actually install'),
+    ('/guides/why-testers-drop.html', 'Why testers disappear during closed testing'),
+    ('/guides/app-not-available.html', 'Fixing "App not available" for testers'),
+    ('/closed-testing-14-days.html', 'What the 14 days of closed testing look like'),
+]
+GUIDES_RELEASED = [
+    ('/guides/production-form.html', 'Answering the production access form'),
+    ('/guides/what-google-checks.html', 'What Google checks before granting production'),
+    ('/closed-testing-14-days.html', 'What the 14 days of closed testing look like'),
+]
+
+
+def apps_index(listed):
+    """/a/ — 색인할 앱 페이지를 한곳에서 링크한다 (2026-11-27). 지금까지 앱 페이지로 가는
+    정적 링크가 없어서(보드는 JS 로 그린다) 구글은 사이트맵으로만 앱 페이지를 알았다."""
+    e = html.escape
+    rich = [a for a in listed if is_rich(a)]
+    looking = [a for a in rich if a.get('recruiting') and not a.get('released_at')]
+    released = [a for a in rich if a.get('released_at')]
+    other = [a for a in rich if a not in looking and a not in released]
+
+    def lst(rows):
+        return '\n'.join(
+            f'      <li><a href="/a/{e(a["package_name"])}/">{e(a.get("name") or a["package_name"])}</a>'
+            f' <span class="muted">— {e((a.get("description") or "")[:90])}</span></li>'
+            for a in sorted(rows, key=lambda x: (x.get('name') or '').lower()))
+
+    def sec(title, ko, rows):
+        if not rows:
+            return ''
+        return (f'  <div class="card" style="margin-bottom:16px">\n'
+                f'    <h2 style="font-size:17px;margin:0 0 8px"><span data-ko="{e(ko)}">{e(title)}</span> ({len(rows)})</h2>\n'
+                f'    <ul style="margin:0;padding-left:18px;line-height:1.8">\n{lst(rows)}\n    </ul>\n  </div>\n')
+
+    return add_ko(f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Android apps in closed testing on ACT Party</title>
+<meta name="description" content="{len(rich)} Android apps listed on ACT Party: {len(looking)} looking for closed testers right now, {len(released)} already released on Google Play after their closed test.">
+<link rel="canonical" href="{SITE}/a/">
+<link rel="stylesheet" href="/assets/app.css?v={CACHE_V}">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot">ACT</span> ACT Party</a>
+    <nav>
+      <a href="/board.html">App board</a>
+      <a href="/guides/">Guides</a>
+      <a href="/console.html">My apps</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap narrow" style="padding-top:28px">
+  <h1 style="font-size:24px;margin:0 0 6px">Android apps on ACT Party</h1>
+  <p class="muted" style="margin:0 0 18px">Developers list their app here to find the 12 closed testers Google Play asks for, by testing each other's apps.</p>
+{sec('Looking for closed testers', '테스터를 찾는 앱', looking)}{sec('Released on Google Play', 'Google Play에 출시한 앱', released)}{sec('Other apps', '그 밖의 앱', other)}</div>
+<footer class="bot"><div class="wrap"><p>
+  <a href="/">ACT Party</a> · <a href="/guides/">Guides</a> ·
+  <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p></div></footer>
+</body>
+</html>
+""")
 
 
 def page(a, others=()):
@@ -338,9 +408,20 @@ def _page(a, others=()):
   </script>
 '''
 
+    # 가이드로 가는 고정 링크 (2026-11-27). 서치 콘솔에서 가이드가 '크롤링됨 - 색인 안 됨'
+    # 으로 빠져 있는데, 가이드로 들어오는 링크가 홈의 /guides/ 하나뿐이었다. 앱 페이지
+    # 수백 개가 상황에 맞는 가이드를 가리키면 구글이 가이드를 중요한 페이지로 본다.
+    picks = GUIDES_RELEASED if a.get('released_at') else GUIDES_TESTING
+    guides_card = '  <div class="card" style="margin-bottom:16px">\n' + \
+        '    <h2 style="font-size:17px;margin:0 0 8px"><span data-ko="비공개 테스트 가이드">Closed testing guides</span></h2>\n' + \
+        '    <ul style="margin:0;padding-left:18px;line-height:1.9">\n' + \
+        ''.join(f'      <li><a href="{u}">{e(t)}</a></li>\n' for u, t in picks) + \
+        '    </ul>\n  </div>\n'
+
     # 검색 결과에 뜨는 한 줄. 설명이 없으면 상태로 대신한다.
-    meta_desc = ((f'{name} by {dev} is looking for closed testers on ACT Party. '
-                  f'{cur} of {need} testers so far. ' if looking
+    status = (f'{cur} of {need} testers so far. ' if cur < need
+              else f'{cur} testers joined, more than the {need} Google asks for. ')
+    meta_desc = ((f'{name} by {dev} is looking for closed testers on ACT Party. {status}' if looking
                   else f'{name} by {dev}, an Android app tested on ACT Party. ')
                  + (desc or long_desc[:200]))[:300]
 
@@ -442,10 +523,10 @@ def _page(a, others=()):
     <div class="logo">ACT<i>PARTY</i></div>
   </a>
 
-{board}</div>
+{board}{guides_card}</div>
 
 <footer class="bot"><div class="wrap"><p>
-  <a href="/">ACT Party</a> · <a href="/guides/">Guides</a> ·
+  <a href="/">ACT Party</a> · <a href="/guides/">Guides</a> · <a href="/a/">All apps</a> ·
   <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p></div></footer>
 </body>
 </html>
@@ -713,6 +794,8 @@ def main():
             f.write(page(a, others))
         if is_rich(a):
             app_urls.append(f'{SITE}/a/{pkg}/')
+    with open(os.path.join(BASE, 'a', 'index.html'), 'w', encoding='utf-8', newline='') as f:
+        f.write(apps_index(listed))
 
     # 사이트맵을 둘로 나눈다.
     #
@@ -746,6 +829,9 @@ def main():
               newline='') as f:
         f.write('User-agent: *\nAllow: /\n'
                 'Disallow: /console.html\n'
+                # app.html?p=패키지 는 /a/패키지/ 의 JS 판이다 (noindex). 주소마다 따로
+                # 크롤링돼 '크롤링됨 - 색인 안 됨'에 쌓였다 (2026-11-27)
+                'Disallow: /app.html\n'
                 f'Sitemap: {SITE}/sitemap.xml\n')
 
     print(f'앱 페이지 {len(listed)}개, 글 페이지 {len(rows)}개, 사이트맵 {len(urls)}개 URL')
