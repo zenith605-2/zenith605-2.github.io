@@ -41,6 +41,7 @@ STATIC_PAGES = [
     ('/check.html', '0.9'),
     ('/guides/', '0.8'),
     ('/ko/test-pumasi.html', '0.9'),
+    ('/test-for-test.html', '0.9'),
     ('/a/', '0.6'),
     ('/guides/what-google-checks.html', '0.8'),
     ('/guides/daily-opens-data.html', '0.8'),
@@ -126,6 +127,7 @@ def is_rich(a):
 
 
 GUIDES_TESTING = [
+    ('/test-for-test.html', 'Test for test: swapping closed testing with other developers'),
     ('/guides/closed-test-setup.html', 'Setting up a closed test so testers can actually install'),
     ('/guides/why-testers-drop.html', 'Why testers disappear during closed testing'),
     ('/guides/app-not-available.html', 'Fixing "App not available" for testers'),
